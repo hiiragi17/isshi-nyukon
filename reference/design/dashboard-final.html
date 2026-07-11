@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="da74e87f-bcd4-477b-8711-c6348ed95152"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+
+<style>
+  body { margin:0; background:#E4E6E0; }
+  a { color:#33557E; } a:hover { color:#BF3B33; }
+  @keyframes stampIn { 0%{opacity:0;transform:rotate(-12deg) scale(1.9);} 55%{opacity:1;transform:rotate(-12deg) scale(0.92);} 100%{opacity:1;transform:rotate(-12deg) scale(1);} }
+  .stamp-in { animation: stampIn .38s cubic-bezier(.2,.9,.3,1.2) both; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:none;} }
+  .fade-up { animation: fadeUp .3s ease both; }
+  @media (prefers-reduced-motion: reduce){ .stamp-in,.fade-up{animation:none;} }
+  button:focus-visible { outline:3px solid #33557E; outline-offset:2px; }
+</style>
+</helmet>
+<section style="padding:36px 40px 24px; font-family:'Hiragino Kaku Gothic ProN','Yu Gothic','Noto Sans JP',sans-serif; color:#26333B;">
+  <div style="margin-bottom:24px;">
+    <div style="font-size:11px; letter-spacing:2.5px; color:#7C857F;">一肢入魂 — 画面⑥(成績)</div>
+    <h1 style="font-family:'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif; font-size:26px; font-weight:800; letter-spacing:2px; margin:6px 0 4px;">成績ダッシュボード — 最終案</h1>
+    <p style="font-size:13px; color:#7C857F; margin:0;"><a href="#1a">1a</a> の構造+<a href="#1b">1b</a> の集印カウンタと朱印アニメーション。マス検証: 実機390px幅で8列=約36px&lt;44px のため6列に変更(約50px)。学習中のマスを選び「再審理」を押すと朱印が押されます(デモ)。</p>
+  </div>
+
+  <!-- ============ 2a 最終案 ============ -->
+  <div id="2a" style="width:392px;">
+    <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:10px;">
+      <a href="#2a" style="font-size:12px; font-weight:700; border:1.5px solid #26333B; color:#26333B; text-decoration:none; padding:2px 9px; border-radius:10px;">2a</a>
+      <div>
+        <div style="font-family:'Hiragino Mincho ProN','Yu Mincho',serif; font-size:15px; font-weight:700;">最終案 — 検地帳×集印</div>
+        <div style="font-size:11.5px; color:#7C857F;">召喚状+6列マトリクス+セル詳細。完璧到達で朱印が押される</div>
+      </div>
+    </div>
+    <div style="background:#ECEEE9; border:1px solid #D8DAD2; border-radius:10px; padding:20px 16px 28px; display:flex; flex-direction:column; gap:12px;">
+
+      <div style="display:flex; justify-content:space-between; align-items:baseline;">
+        <div style="font-family:'Hiragino Mincho ProN','Yu Mincho',serif; font-size:17px; font-weight:800; letter-spacing:2px;">成績</div>
+        <div style="display:flex; gap:14px; font-size:12px; color:#7C857F; align-items:baseline;">
+          <span>集印 <b style="font-family:'Hiragino Mincho ProN','Yu Mincho',serif; color:#BF3B33; font-size:15px;">{{ m.sealCount }}</b>/32</span>
+          <span>試験まで <b style="font-family:'Hiragino Mincho ProN','Yu Mincho',serif; color:#BF3B33; font-size:15px;">96</b> 日</span>
+        </div>
+      </div>
+
+      <!-- 本日の召喚状 -->
+      <div style="background:#26333B; color:#FBFAF7; border-radius:10px; padding:16px 18px;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline;">
+          <div style="font-size:11px; letter-spacing:2.5px; color:#9FB0BC;">本日の召喚状</div>
+          <div style="font-size:11px; color:#9FB0BC;">忘却期限の近い順</div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">
+          <sc-for list="{{ today }}" as="t" hint-placeholder-count="3">
+            <div style="display:flex; justify-content:space-between; align-items:baseline; gap:8px; border-bottom:1px dotted #44535D; padding-bottom:6px;">
+              <div style="font-family:'Hiragino Mincho ProN','Yu Mincho',serif; font-size:13.5px; font-weight:700;">{{ t.name }}</div>
+              <div style="font-size:11px; color: {{ t.dueColor }}; white-space:nowrap;">{{ t.due }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <button sc-camel-on-click="{{ noop }}" style="width:100%; min-height:48px; margin-top:12px; font-size:15px; font-weight:700; font-family:'Hiragino Mincho ProN','Yu Mincho',serif; letter-spacing:4px; color:#26333B; background:#FBFAF7; border:none; border-radius:10px; cursor:pointer;">開廷する — 12肢</button>
+      </div>
+
+      <!-- マトリクス(6列) -->
+      <div style="background:#FBFAF7; border:1px solid #D8DAD2; border-radius:10px; padding:16px 18px;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
+          <div style="font-size:11px; letter-spacing:2.5px; color:#7C857F;">検地帳 — 分野×論点</div>
+          <div style="display:flex; gap:10px; font-size:10.5px; color:#7C857F; align-items:center;">
+            <span style="display:flex; align-items:center; gap:3px;"><span style="width:9px; height:9px; border-radius:50%; background:#BF3B33; display:inline-block;"></span>完璧</span>
+            <span style="display:flex; align-items:center; gap:3px;"><span style="width:9px; height:9px; border-radius:2px; background:#33557E; display:inline-block;"></span>学習中</span>
+            <span style="display:flex; align-items:center; gap:3px;"><span style="width:9px; height:9px; border-radius:2px; background:#FBFAF7; border:1px solid #D8DAD2; display:inline-block;"></span>未着手</span>
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <sc-for list="{{ m.fields }}" as="fd" hint-placeholder-count="4">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px;">
+                <div style="font-family:'Hiragino Mincho ProN','Yu Mincho',serif; font-size:13.5px; font-weight:700;">{{ fd.name }}</div>
+                <div style="font-size:11px; color:#7C857F;">{{ fd.summary }}</div>
+              </div>
+              <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:6px;">
+                <sc-for list="{{ fd.cells }}" as="c" hint-placeholder-count="8">
+                  <button sc-camel-on-click="{{ c.onTap }}" title="{{ c.name }}" class="{{ c.cls }}" style="aspect-ratio:1; min-width:0; width:100%; border-radius: {{ c.radius }}; background: {{ c.bg }}; border: {{ c.borderCss }}; cursor:pointer; padding:0; display:flex; align-items:center; justify-content:center;">
+                    <sc-if value="{{ c.stamped }}" hint-placeholder-val="{{ false }}"><span style="font-family:'Hiragino Mincho ProN','Yu Mincho',serif; font-size:13px; font-weight:800; color:#FBFAF7; transform:rotate(-12deg);">完</span></sc-if>
+                    <sc-if value="{{ c.isSelected }}" hint-placeholder-val="{{ false }}"><span style="width:6px; height:6px; border-radius:50%; background: {{ c.dotColor }};"></span></sc-if>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- 選択セル詳細 -->
+      <sc-if value="{{ m.selShown }}" hint-placeholder-val="{{ false }}">
+        <div class="fade-up" style="background:#26333B; color:#FBFAF7; border-radius:10px; padding:14px 18px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
+            <div>
+              <div style="font-size:11px; letter-spacing:2.5px; color:#9FB0BC;">{{ m.selField }}</div>
+              <div style="font-family:'Hiragino Mincho ProN','Yu Mincho',serif; font-size:16px; font-weight:800; margin-top:2px;">{{ m.selName }}</div>
+              <div style="font-size:12px; color:#9FB0BC; margin-top:4px;">{{ m.selDetail }}</div>
+            </div>
+            <sc-if value="{{ m.selStamped }}" hint-placeholder-val="{{ false }}">
+              <div class="stamp-in" style="flex-shrink:0; width:44px; height:44px; border-radius:50%; border:2.5px solid #BF3B33; color:#BF3B33; display:flex; align-items:center; justify-content:center; font-family:'Hiragino Mincho ProN','Yu Mincho',serif; font-weight:800; font-size:16px; transform:rotate(-12deg); background:rgba(251,250,247,0.92);">完</div>
+            </sc-if>
+          </div>
+          <button sc-camel-on-click="{{ m.selOnAction }}" style="width:100%; min-height:44px; margin-top:10px; font-size:13.5px; font-weight:700; font-family:'Hiragino Mincho ProN','Yu Mincho',serif; letter-spacing:3px; color:#FBFAF7; background:#BF3B33; border:none; border-radius:10px; cursor:pointer;">{{ m.selAction }}</button>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+</section>
+
+<section style="padding:36px 40px 64px; font-family:'Hiragino Kaku Gothic ProN','Yu Gothic','Noto Sans JP',sans-serif; color:#26333B;">
+  <div style="margin-bottom:24px;">
+    <div style="font-size:11px; letter-spacing:2.5px; color:#7C857F;">一肢入魂 — 画面⑥(成績)</div>
+    <h1 style="font-family:'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif; font-size:26px; font-weight:800; letter-spacing:2px; margin:6px 0 4px;">成績ダッシュボード — 2案</h1>
+    <p style="font-size:13px; color:#7C857F; margin:0;">朱(完璧)/藍(学習中)/白(未着手)の3状態。マスをタップすると論点の詳細が下に出ます。</p>
+  </div>
+
+  <div style="display:flex; gap:32px; align-items:flex-start; flex-wrap:wrap;">
+
+    <!-- ============ 1a 検地帳マトリクス ============ -->
+    <div id="1a" style="width:392px; flex-shrink:0;">
+      <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:10px;">
+        <a href="#1a" style="font-size:12px; font-weight:700; border:1.5px solid #26333B; color:#26333B; text-decoration:none; padding:2px 9px; border-radius:10px;">1a</a>
+        <div>
+          <div style="font-family:'Hiragino Mincho ProN','Yu Mincho',serif; font-size:15px; font-weight:700;">検地帳 — 全論点マトリクス</div>
+          <div style="font-size:11.5px; color:#7C857F;">分野=行、論点=マス。一望性最優先。上に「本日の召喚状」</div>
+        </div>
+      </div>
+      <div style="background:#ECEEE9; border:1px solid #D8DAD2; border-radius:10px; padding:20px 16px 28px; display:flex; flex-direction:column; gap:12px;">
+
+        <div style="display:flex; justify-content:space-between; align-items:baseline;">
+          <div style="font-family:'Hiragino Mincho ProN','Yu Mincho',serif; font-size:17px; font-weight:800; letter-spacing:2px;">成績</div>
+          <div style="font-size:12px; color:#7C857F;">試験まで <b style="font-family:'Hiragino Mincho ProN','Yu Mincho',serif; color:#BF3B33; font-size:15px;">96</b> 日</div>
+        </div>
+
+        <!-- 本日の召喚状 -->
+        <div style="background:#26333B; color:#FBFAF7; border-radius:10px; padding:16px 18px;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline;">
+            <div style="font-size:11px; letter-spacing:2.5px; color:#9FB0BC;">本日の召喚状</div>
+            <div style="font-size:11px; color:#9FB0BC;">忘却期限の近い順</div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">
+            <sc-for list="{{ today }}" as="t" hint-placeholder-count="3">
+              <div style="display:flex; justify-content:space-between; align-items:baseline; gap:8px; border-bottom:1px dotted #44535D; padding-bottom:6px;">
+                <div style="font-family:'Hiragino Mincho ProN','Yu Mincho',serif; font-size:13.5px; font-weight:700;">{{ t.name }}</div>
+                <div style="font-size:11px; color: {{ t.dueColor }}; white-space:nowrap;">{{ t.due }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <button sc-camel-on-click="{{ noop }}" style="width:100%; min-height:48px; margin-top:12px; font-size:15px; font-weight:700; font-family:'Hiragino Mincho ProN','Yu Mincho',serif; letter-spacing:4px; color:#26333B; background:#FBFAF7; border:none; border-radius:10px; cursor:pointer;">開廷する — 12肢</button>
+        </div>
+
+        <!-- マトリクス -->
+        <div style="background:#FBFAF7; border:1px solid #D8DAD2; border-radius:10px; padding:16px 18px;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
+            <div style="font-size:11px; letter-spacing:2.5px; color:#7C857F;">検地帳 — 分野×論点</div>
+            <div style="display:flex; gap:10px; font-size:10.5px; color:#7C857F; align-items:center;">
+              <span style="display:flex; align-items:center; gap:3px;"><span style="width:9px; height:9px; border-radius:50%; background:#BF3B33; display:inline-block;"></span>完璧</span>
+              <span style="display:flex; align-items:center; gap:3px;"><span style="width:9px; height:9px; border-radius:2px; background:#33557E; display:inline-block;"></span>学習中</span>
+              <span style="display:flex; align-items:center; gap:3px;"><span style="width:9px; height:9px; border-radius:2px; background:#FBFAF7; border:1px solid #D8DAD2; display:inline-block;"></span>未着手</span>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <sc-for list="{{ fields }}" as="fd" hint-placeholder-count="4">
+              <div>
+                <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px;">
+                  <div style="font-family:'Hiragino Mincho ProN','Yu Mincho',serif; font-size:13.5px; font-weight:700;">{{ fd.name }}</div>
+                  <div style="font-size:11px; color:#7C857F;">{{ fd.summary }}</div>
+                </div>
+                <div style="display:grid; grid-template-columns:repeat(8,1fr); gap:5px;">
+                  <sc-for list="{{ fd.cells }}" as="c" hint-placeholder-count="8">
+                    <button sc-camel-on-click="{{ c.onTap }}" title="{{ c.name }}" style="aspect-ratio:1; min-width:0; width:100%; border-radius: {{ c.radius }}; background: {{ c.bg }}; border: {{ c.borderCss }}; cursor:pointer; padding:0; display:flex; align-items:center; justify-content:center;">
+                      <sc-if value="{{ c.isSelected }}" hint-placeholder-val="{{ false }}"><span style="width:6px; height:6px; border-radius:50%; background: {{ c.dotColor }};"></span></sc-if>
+                    </button>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <!-- 選択セル詳細 -->
+        <sc-if value="{{ selShown }}" hint-placeholder-val="{{ false }}">
+          <div class="fade-up" style="background:#26333B; color:#FBFAF7; border-radius:10px; padding:14px 18px;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
+              <div>
+                <div style="font-size:11px; letter-spacing:2.5px; color:#9FB0BC;">{{ selField }}</div>
+                <div style="font-family:'Hiragino Mincho ProN','Yu Mincho',serif; font-size:16px; font-weight:800; margin-top:2px;">{{ selName }}</div>
+                <div style="font-size:12px; color:#9FB0BC; margin-top:4px;">{{ selDetail }}</div>
+              </div>
+              <sc-if value="{{ selStamped }}" hint-placeholder-val="{{ false }}">
+                <div class="stamp-in" style="flex-shrink:0; width:44px; height:44px; border-radius:50%; border:2.5px solid #BF3B33; color:#BF3B33; display:flex; align-items:center; justify-content:center; font-family:'Hiragino Mincho ProN','Yu Mincho',serif; font-weight:800; font-size:16px; transform:rotate(-12deg); background:rgba(251,250,247,0.92);">完</div>
+              </sc-if>
+            </div>
+            <button sc-camel-on-click="{{ noop }}" style="width:100%; min-height:44px; margin-top:10px; font-size:13.5px; font-weight:700; font-family:'Hiragino Mincho ProN','Yu Mincho',serif; letter-spacing:3px; color:#FBFAF7; background:#BF3B33; border:none; border-radius:10px; cursor:pointer;">{{ selAction }}</button>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+
+    <!-- ============ 1b 朱印帳 ============ -->
+    <div id="1b" style="width:392px; flex-shrink:0;">
+      <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:10px;">
+        <a href="#1b" style="font-size:12px; font-weight:700; border:1.5px solid #26333B; color:#26333B; text-decoration:none; padding:2px 9px; border-radius:10px;">1b</a>
+        <div>
+          <div style="font-family:'Hiragino Mincho ProN','Yu Mincho',serif; font-size:15px; font-weight:700;">朱印帳 — 論点=印影</div>
+          <div style="font-size:11.5px; color:#7C857F;">完璧=朱印が押る/学習中=藍の輪郭/未着手=空枠。集印の儀式感</div>
+        </div>
+      </div>
+      <div style="background:#ECEEE9; border:1px solid #D8DAD2; border-radius:10px; padding:20px 16px 28px; display:flex; flex-direction:column; gap:12px;">
+
+        <div style="display:flex; justify-content:space-between; align-items:baseline;">
+          <div style="font-family:'Hiragino Mincho ProN','Yu Mincho',serif; font-size:17px; font-weight:800; letter-spacing:2px;">朱印帳</div>
+          <div style="font-size:12px; color:#7C857F;">集印 <b style="font-family:'Hiragino Mincho ProN','Yu Mincho',serif; color:#BF3B33; font-size:15px;">{{ sealCount }}</b>/32</div>
+        </div>
+
+        <!-- 本日やるべき肢(帯) -->
+        <div style="background:#FBFAF7; border:1px solid #D8DAD2; border-left:4px solid #BF3B33; border-radius:10px; padding:14px 18px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+            <div>
+              <div style="font-size:11px; letter-spacing:2.5px; color:#7C857F;">本日の召喚状</div>
+              <div style="font-family:'Hiragino Mincho ProN','Yu Mincho',serif; font-size:14.5px; font-weight:700; margin-top:2px;">37条書面 ほか2論点 — 12肢</div>
+              <div style="font-size:11.5px; color:#7C857F; margin-top:2px;">忘却期限: 本日中 1件 / 3日以内 2件</div>
+            </div>
+            <button sc-camel-on-click="{{ noop }}" style="flex-shrink:0; min-height:48px; padding:0 18px; font-size:14px; font-weight:700; font-family:'Hiragino Mincho ProN','Yu Mincho',serif; letter-spacing:2px; color:#FBFAF7; background:#26333B; border:none; border-radius:10px; cursor:pointer;">開廷</button>
+          </div>
+        </div>
+
+        <!-- 朱印帳ページ -->
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <sc-for list="{{ pages }}" as="pg" hint-placeholder-count="4">
+            <div style="background:#FBFAF7; border:1px solid #D8DAD2; border-radius:10px; padding:14px 16px;">
+              <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
+                <div style="font-family:'Hiragino Mincho ProN','Yu Mincho',serif; font-size:13.5px; font-weight:700;">{{ pg.name }}</div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <div style="width:72px; height:4px; background:#D8DAD2; border-radius:2px;"><div style="height:4px; background:#BF3B33; border-radius:2px; width: {{ pg.barW }};"></div></div>
+                  <span style="font-size:11px; color:#7C857F;">{{ pg.summary }}</span>
+                </div>
+              </div>
+              <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px;">
+                <sc-for list="{{ pg.cells }}" as="c" hint-placeholder-count="8">
+                  <button sc-camel-on-click="{{ c.onTap }}" style="min-height:56px; border-radius:10px; cursor:pointer; background: {{ c.cellBg }}; border:1px solid {{ c.cellBorder }}; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; padding:4px 2px;">
+                    <span style="width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Hiragino Mincho ProN','Yu Mincho',serif; font-size:12px; font-weight:800; transform:rotate(-12deg); border:2px solid {{ c.sealBorder }}; color: {{ c.sealColor }}; background: {{ c.sealBg }};">{{ c.kanji }}</span>
+                    <span style="font-size:9.5px; color:#7C857F; line-height:1.2; text-align:center;">{{ c.short }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <!-- 選択詳細(共有) -->
+        <sc-if value="{{ selShown2 }}" hint-placeholder-val="{{ false }}">
+          <div class="fade-up" style="background:#26333B; color:#FBFAF7; border-radius:10px; padding:14px 18px;">
+            <div style="font-size:11px; letter-spacing:2.5px; color:#9FB0BC;">{{ selField2 }}</div>
+            <div style="font-family:'Hiragino Mincho ProN','Yu Mincho',serif; font-size:16px; font-weight:800; margin-top:2px;">{{ selName2 }}</div>
+            <div style="font-size:12px; color:#9FB0BC; margin-top:4px;">{{ selDetail2 }}</div>
+            <button sc-camel-on-click="{{ noop }}" style="width:100%; min-height:44px; margin-top:10px; font-size:13.5px; font-weight:700; font-family:'Hiragino Mincho ProN','Yu Mincho',serif; letter-spacing:3px; color:#FBFAF7; background:#BF3B33; border:none; border-radius:10px; cursor:pointer;">{{ selAction2 }}</button>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script="">
+class Component extends DCLogic {
+  state = { sel: null, sel2: null, mSel: null, mUp: [], mLast: null };
+
+  renderVals() {
+    const SHU = "#BF3B33", GREEN = "#3D7A55", AI = "#33557E", CARD = "#FBFAF7", LINE = "#D8DAD2", MUTED = "#7C857F";
+    const s = this.state;
+
+    // 0=未着手, 1=学習中, 2=完璧
+    const DATA = [
+      { name: "宅建業法", topics: [
+        ["免許", 2], ["宅建士", 2], ["営業保証金", 1], ["保証協会", 1],
+        ["媒介契約", 2], ["重要事項説明", 1], ["37条書面", 1], ["報酬", 0],
+      ]},
+      { name: "権利関係", topics: [
+        ["意思表示", 2], ["代理", 1], ["時効", 1], ["物権変動", 0],
+        ["抵当権", 0], ["債務不履行", 1], ["賃貸借", 1], ["借地借家", 0],
+      ]},
+      { name: "法令上の制限", topics: [
+        ["都市計画", 1], ["開発許可", 1], ["建築確認", 0], ["建蔽率・容積率", 0],
+        ["国土利用", 0], ["農地法", 2], ["土地区画整理", 0], ["宅造法", 0],
+      ]},
+      { name: "税・その他", topics: [
+        ["不動産取得税", 1], ["固定資産税", 0], ["印紙税", 2], ["登録免許税", 0],
+        ["地価公示", 1], ["鑑定評価", 0], ["住宅金融", 0], ["景品表示", 1],
+      ]},
+    ];
+    const DETAIL = {
+      0: (n) => ({ detail: "未着手 — まだ一度も審理していません。", action: n + " を初審理する" }),
+      1: (n) => ({ detail: "学習中 — 正答率 60%・最終審理 4日前。理由選択での失点が残っています。", action: n + " の弱点 6肢を再審理" }),
+      2: (n) => ({ detail: "完璧 — 3回連続で理由まで全問正解。次回確認は 12日後。", action: n + " を確認審理する(任意)" }),
+    };
+
+    const today = [
+      { name: "37条書面 — 4肢", due: "期限 本日中", dueColor: "#E4A9A4" },
+      { name: "重要事項説明 — 5肢", due: "期限 明日", dueColor: "#9FB0BC" },
+      { name: "代理 — 3肢", due: "期限 3日後", dueColor: "#9FB0BC" },
+    ];
+
+    /* ---------- 1a 検地帳 ---------- */
+    const fields = DATA.map((fd, fi) => {
+      const done = fd.topics.filter((t) => t[1] === 2).length;
+      const learning = fd.topics.filter((t) => t[1] === 1).length;
+      return {
+        name: fd.name,
+        summary: "朱 " + done + " · 藍 " + learning + " / " + fd.topics.length,
+        cells: fd.topics.map((t, ti) => {
+          const [name, lv] = t;
+          const key = fi + "-" + ti;
+          const isSel = s.sel === key;
+          return {
+            name,
+            isSelected: isSel,
+            bg: lv === 2 ? SHU : lv === 1 ? AI : CARD,
+            radius: lv === 2 ? "50%" : "3px",
+            borderCss: isSel ? "2px solid #26333B" : lv === 0 ? "1px solid " + LINE : "1px solid transparent",
+            dotColor: lv === 0 ? MUTED : "#FBFAF7",
+            onTap: () => this.setState({ sel: this.state.sel === key ? null : key }),
+          };
+        }),
+      };
+    });
+    let selField = "", selName = "", selDetail = "", selAction = "", selStamped = false;
+    if (s.sel) {
+      const [fi, ti] = s.sel.split("-").map(Number);
+      const [n, lv] = DATA[fi].topics[ti];
+      selField = DATA[fi].name; selName = n; selStamped = lv === 2;
+      const d = DETAIL[lv](n); selDetail = d.detail; selAction = d.action;
+    }
+
+    /* ---------- 1b 朱印帳 ---------- */
+    let sealCount = 0;
+    DATA.forEach((fd) => fd.topics.forEach((t) => { if (t[1] === 2) sealCount++; }));
+    const pages = DATA.map((fd, fi) => {
+      const done = fd.topics.filter((t) => t[1] === 2).length;
+      return {
+        name: fd.name,
+        summary: done + "/" + fd.topics.length,
+        barW: (done / fd.topics.length) * 100 + "%",
+        cells: fd.topics.map((t, ti) => {
+          const [name, lv] = t;
+          const key = fi + "-" + ti;
+          const isSel = s.sel2 === key;
+          return {
+            short: name,
+            kanji: lv === 2 ? "完" : lv === 1 ? "習" : "",
+            sealBorder: lv === 2 ? SHU : lv === 1 ? AI : LINE,
+            sealColor: lv === 2 ? SHU : lv === 1 ? AI : LINE,
+            sealBg: lv === 2 ? "rgba(191,59,51,0.08)" : "transparent",
+            cellBg: isSel ? "rgba(51,85,126,0.07)" : "transparent",
+            cellBorder: isSel ? AI : "transparent",
+            onTap: () => this.setState({ sel2: this.state.sel2 === key ? null : key }),
+          };
+        }),
+      };
+    });
+    let selField2 = "", selName2 = "", selDetail2 = "", selAction2 = "";
+    if (s.sel2) {
+      const [fi, ti] = s.sel2.split("-").map(Number);
+      const [n, lv] = DATA[fi].topics[ti];
+      selField2 = DATA[fi].name; selName2 = n;
+      const d = DETAIL[lv](n); selDetail2 = d.detail; selAction2 = d.action;
+    }
+
+    /* ---------- 2a 最終案 ---------- */
+    const mLv = (fi, ti) => {
+      const key = fi + "-" + ti;
+      return s.mUp.includes(key) ? 2 : DATA[fi].topics[ti][1];
+    };
+    let mSealCount = 0;
+    DATA.forEach((fd, fi) => fd.topics.forEach((t, ti) => { if (mLv(fi, ti) === 2) mSealCount++; }));
+    const mFields = DATA.map((fd, fi) => {
+      let done = 0, learning = 0;
+      fd.topics.forEach((t, ti) => { const lv = mLv(fi, ti); if (lv === 2) done++; else if (lv === 1) learning++; });
+      return {
+        name: fd.name,
+        summary: "朱 " + done + " · 藍 " + learning + " / " + fd.topics.length,
+        cells: fd.topics.map((t, ti) => {
+          const key = fi + "-" + ti;
+          const lv = mLv(fi, ti);
+          const isSel = s.mSel === key;
+          const justStamped = s.mLast === key;
+          return {
+            name: t[0],
+            isSelected: isSel && !justStamped,
+            stamped: justStamped,
+            cls: justStamped ? "stamp-in" : "",
+            bg: lv === 2 ? SHU : lv === 1 ? AI : CARD,
+            radius: lv === 2 ? "50%" : "3px",
+            borderCss: isSel ? "2px solid #26333B" : lv === 0 ? "1px solid " + LINE : "1px solid transparent",
+            dotColor: lv === 0 ? MUTED : "#FBFAF7",
+            onTap: () => this.setState({ mSel: this.state.mSel === key ? null : key, mLast: null }),
+          };
+        }),
+      };
+    });
+    let mSelField = "", mSelName = "", mSelDetail = "", mSelAction = "", mSelStamped = false, mSelOnAction = () => {};
+    if (s.mSel) {
+      const [fi, ti] = s.mSel.split("-").map(Number);
+      const n = DATA[fi].topics[ti][0];
+      const lv = mLv(fi, ti);
+      mSelField = DATA[fi].name; mSelName = n; mSelStamped = lv === 2;
+      const d = DETAIL[lv](n); mSelDetail = d.detail; mSelAction = d.action;
+      if (lv !== 2) {
+        const key = s.mSel;
+        mSelOnAction = () => this.setState({ mUp: [...this.state.mUp, key], mLast: key });
+      }
+    }
+    const m = {
+      sealCount: String(mSealCount),
+      fields: mFields,
+      selShown: s.mSel !== null,
+      selField: mSelField, selName: mSelName, selDetail: mSelDetail,
+      selAction: mSelAction, selStamped: mSelStamped, selOnAction: mSelOnAction,
+    };
+
+    return {
+      m,
+      noop: () => {},
+      today,
+      fields, selShown: s.sel !== null, selField, selName, selDetail, selAction, selStamped,
+      sealCount: String(sealCount),
+      pages, selShown2: s.sel2 !== null, selField2, selName2, selDetail2, selAction2,
+    };
+  }
+}
+</script>
+
+
+</body></html>
