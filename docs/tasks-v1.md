@@ -3,7 +3,7 @@
 ## T1. プロジェクト雛形
 Next.js(App Router・TypeScript)を初期化し、CLAUDE.mdの目標ディレクトリを作る。
 デザイントークンを `lib/tokens.ts`(または globals.css のCSS変数)に定義。
-- [ ] `npm run dev` が起動し、紙色背景の空ページが出る
+- [ ] `pnpm dev` が起動し、紙色背景の空ページが出る
 - [ ] reference/ 配下はビルド対象外(tsconfig exclude)
 
 ## T2. 型とデータ移植
