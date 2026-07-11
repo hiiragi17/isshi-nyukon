@@ -23,7 +23,7 @@ Attempt全件履歴 + 最新結果の導出関数(latestByItem)。
 components/engine/ に ZenshiEngine / CalcEngine / SpotEngine。
 共通部品: Diagram / TermPopup / Stamp / Eyebrow。
 play画面でセッション(範囲選択 → 出題 → 判決)がプロトタイプ同等に動く。
-- [ ] プロトタイプと画面・挙動・得点が一致(6テーマ・満点34点)
+- [ ] プロトタイプと画面・挙動・得点が一致(6テーマ・満点46点。○肢=2/×肢=3/calc=2/spot=errorCount)
 - [ ] 弱点復習 / 落とした肢だけ再戦 が動く
 
 ## T5. SRS
