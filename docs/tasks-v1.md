@@ -3,7 +3,7 @@
 ## T1. プロジェクト雛形
 Next.js(App Router・TypeScript)を初期化し、CLAUDE.mdの目標ディレクトリを作る。
 デザイントークンを `lib/tokens.ts`(または globals.css のCSS変数)に定義。
-- [ ] `npm run dev` が起動し、紙色背景の空ページが出る
+- [ ] `pnpm dev` が起動し、紙色背景の空ページが出る
 - [ ] reference/ 配下はビルド対象外(tsconfig exclude)
 
 ## T2. 型とデータ移植
@@ -23,7 +23,7 @@ Attempt全件履歴 + 最新結果の導出関数(latestByItem)。
 components/engine/ に ZenshiEngine / CalcEngine / SpotEngine。
 共通部品: Diagram / TermPopup / Stamp / Eyebrow。
 play画面でセッション(範囲選択 → 出題 → 判決)がプロトタイプ同等に動く。
-- [ ] プロトタイプと画面・挙動・得点が一致(6テーマ・満点34点)
+- [ ] プロトタイプと画面・挙動・得点が一致(6テーマ・満点46点。○肢=2/×肢=3/calc=2/spot=errorCount)
 - [ ] 弱点復習 / 落とした肢だけ再戦 が動く
 
 ## T5. SRS
