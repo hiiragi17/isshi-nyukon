@@ -5,10 +5,13 @@ import { mukenDairi } from "./kenri/muken-dairi";
 import { coolingOff } from "./gyoho/cooling-off";
 import { hoshu } from "./gyoho/hoshu";
 import { koukokuKisei } from "./gyoho/koukoku-kisei";
+import { youtoChiiki } from "./horei/youto-chiiki";
+import { kaihatsuKyoka } from "./horei/kaihatsu-kyoka";
+import { kenpeiYoseki } from "./horei/kenpei-yoseki";
 
 /**
- * 全問題。順序はプロトタイプの QUESTIONS と一致させる
- * (q1〜q6。履歴キーやスコアリングが配列インデックスに依存するため崩さない)。
+ * 全問題。既存の順序(q1〜q6)は履歴キーやスコアリングが配列インデックスに
+ * 依存するため崩さない。新規問題は末尾に追記する(既存インデックスを動かさない)。
  */
 export const QUESTIONS: Question[] = [
   nijuuJouto,
@@ -17,4 +20,7 @@ export const QUESTIONS: Question[] = [
   coolingOff,
   hoshu,
   koukokuKisei,
+  youtoChiiki,
+  kaihatsuKyoka,
+  kenpeiYoseki,
 ];
