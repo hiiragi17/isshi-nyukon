@@ -19,6 +19,9 @@ export function SpotAd({ questionId, ...rest }: Props) {
     case "q6":
       return <MidoridaiAd {...rest} />;
     default:
+      if (process.env.NODE_ENV !== "production") {
+        console.warn(`SpotAd: no ad registered for questionId "${questionId}"`);
+      }
       return null;
   }
 }
