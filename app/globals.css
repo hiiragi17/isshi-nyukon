@@ -41,3 +41,55 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/*
+ * 朱印スタンプ / フェードイン演出とホバー・フォーカス。
+ * プロトタイプ takken-zenshi-game.jsx の <style> ブロックと同値。
+ * prefers-reduced-motion では演出を止める。
+ */
+@keyframes stampIn {
+  0% {
+    opacity: 0;
+    transform: rotate(-12deg) scale(1.9);
+  }
+  55% {
+    opacity: 1;
+    transform: rotate(-12deg) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(-12deg) scale(1);
+  }
+}
+.stamp-in {
+  animation: stampIn 0.38s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.fade-up {
+  animation: fadeUp 0.3s ease both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .stamp-in,
+  .fade-up {
+    animation: none;
+  }
+}
+.seg-btn:hover {
+  background: rgba(51, 85, 126, 0.08);
+}
+.opt-btn:hover {
+  border-color: var(--color-ai-blue);
+}
+button:focus-visible {
+  outline: 3px solid var(--color-ai-blue);
+  outline-offset: 2px;
+}
