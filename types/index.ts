@@ -67,11 +67,20 @@ export type Diagram = {
 /* ---------- calc: 計算エンジン ---------- */
 /** 与件の整理表示(価格・取引態様・消費税課税の有無 など) */
 export type CalcGiven = { label: string; value: string };
+/** 汎用 calc の第二式が第一式の値(%)から結果を導く演算(容積率など) */
+export type CalcDeriveOp = "mul" | "div" | "identity";
 /** 途中式ビルダーの選択肢。correct 以外は「よくある計算ミス」を trap で説明 */
 export type CalcBuildOption = {
   formula: string;
   value?: number; // 数式が確定値を出す段のみ
   kind?: string; // 消費税の扱いなど、値以外の分岐識別子
+  /**
+   * 汎用 calc の第二式で、第一式の値 p(%)から結果を導く演算。
+   * mul: operand × p/100 / div: operand ÷ (p/100) / identity: p。
+   * 誤った第一式を選んだときも、その値を反映した結果を表示するために使う。
+   */
+  op?: CalcDeriveOp;
+  operand?: number; // op が mul / div のときの定数(容積率なら敷地面積)
   correct: boolean;
   trap: string; // 誤答肢の落とし穴の説明(正答肢は空文字)
 };
