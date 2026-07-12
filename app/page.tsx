@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SERIF, INK, CARD, MUTED } from "@/lib/tokens";
+import { SERIF, INK, CARD, MUTED, RADIUS } from "@/lib/tokens";
 
 /**
  * トップページ(暫定)。T6 で検地帳ダッシュボードに差し替える。
@@ -39,7 +39,7 @@ export default function Home() {
           letterSpacing: 5,
           color: CARD,
           background: INK,
-          borderRadius: 10,
+          borderRadius: RADIUS,
           textDecoration: "none",
         }}
       >

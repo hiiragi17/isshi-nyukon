@@ -4,10 +4,11 @@
  * 得点: ○肢=最大2点 / ×肢=最大3点(判定1 + 箇所1 + 理由1)。
  */
 import { useState } from "react";
-import { INK, CARD, AI_BLUE, SHU, GREEN, MUTED, LINE, SERIF, SANS } from "@/lib/tokens";
+import { INK, CARD, AI_BLUE, SHU, GREEN, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
 import { card } from "@/lib/gameStyles";
 import { SceneCard } from "../SceneCard";
 import { LessonAccordion } from "../LessonAccordion";
+import { Eyebrow } from "../Eyebrow";
 import { Stamp } from "../Stamp";
 import { termify } from "../TermText";
 import type { EngineCommonProps } from "./types";
@@ -104,17 +105,7 @@ export function ZenshiEngine({
         key={`${question.id}-${ci}`}
         style={{ ...card, padding: "20px 22px", position: "relative", marginBottom: 16 }}
       >
-        <div
-          style={{
-            fontFamily: SANS,
-            fontSize: 11,
-            letterSpacing: 2.5,
-            color: MUTED,
-            textTransform: "uppercase",
-          }}
-        >
-          肢 {ci + 1}
-        </div>
+        <Eyebrow>肢 {ci + 1}</Eyebrow>
         <p style={{ fontFamily: SERIF, fontSize: 17, lineHeight: 2.05, margin: "10px 0 4px" }}>
           {choice.segments.map((seg, i) => {
             const tappable = phase === "locate";
@@ -187,7 +178,7 @@ export function ZenshiEngine({
               background: CARD,
               color: INK,
               border: `2px solid ${INK}`,
-              borderRadius: 10,
+              borderRadius: RADIUS,
               cursor: "pointer",
             }}
           >
@@ -205,7 +196,7 @@ export function ZenshiEngine({
               background: CARD,
               color: SHU,
               border: `2px solid ${SHU}`,
-              borderRadius: 10,
+              borderRadius: RADIUS,
               cursor: "pointer",
             }}
           >
@@ -268,7 +259,7 @@ export function ZenshiEngine({
                   lineHeight: 1.7,
                   background: CARD,
                   border: `1.5px solid ${LINE}`,
-                  borderRadius: 10,
+                  borderRadius: RADIUS,
                   cursor: "pointer",
                   color: INK,
                   fontFamily: SANS,
@@ -326,7 +317,10 @@ export function ZenshiEngine({
               <p style={{ fontSize: 13, margin: "0 0 8px", color: MUTED }}>
                 正しい{choice.correct ? "根拠" : "理由"}:{" "}
                 <span style={{ color: INK }}>
-                  {termify(choice.reasons.find((r) => r.correct)!.text, onTerm)}
+                  {termify(
+                    (choice.reasons.find((r) => r.correct) ?? { text: "" }).text,
+                    onTerm,
+                  )}
                 </span>
               </p>
             )}
@@ -346,7 +340,7 @@ export function ZenshiEngine({
               color: CARD,
               background: INK,
               border: "none",
-              borderRadius: 10,
+              borderRadius: RADIUS,
               cursor: "pointer",
             }}
           >

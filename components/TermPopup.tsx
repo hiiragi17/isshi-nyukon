@@ -58,7 +58,13 @@ export function TermPopup({
               color: CARD,
               fontSize: 16,
               cursor: "pointer",
-              padding: "0 2px",
+              // タップ領域は44px以上を確保しつつ、負のマージンで見た目の位置は元のまま
+              minWidth: 44,
+              minHeight: 44,
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "-12px -12px -12px 0",
             }}
           >
             ✕

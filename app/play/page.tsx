@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { QUESTIONS } from "@/data/questions";
 import type { Question } from "@/types";
 import { storage, latestByItem, itemKey } from "@/lib/storage";
-import { INK, CARD, AI_BLUE, SHU, GREEN, MUTED, LINE, SERIF, SANS } from "@/lib/tokens";
+import { INK, CARD, AI_BLUE, SHU, GREEN, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
 import { page, col, card } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
 import { Stamp } from "@/components/Stamp";
@@ -22,7 +22,8 @@ import { CalcEngine } from "@/components/engine/CalcEngine";
 import { SpotEngine } from "@/components/engine/SpotEngine";
 
 type Item = { qi: number; ci: number };
-type Record = { qi: number; ci: number; pts: number; max: number };
+// 組み込みの Record<K,V> ユーティリティ型を隠さないよう ItemRecord とする
+type ItemRecord = { qi: number; ci: number; pts: number; max: number };
 type Hist = { pts: number; max: number };
 
 const itemCountOf = (q: Question) =>
@@ -47,7 +48,7 @@ export default function PlayPage() {
   const [sessionItems, setSessionItems] = useState<Item[]>([]);
   const [sessionSeq, setSessionSeq] = useState(0);
   const [idx, setIdx] = useState(0);
-  const [records, setRecords] = useState<Record[]>([]);
+  const [records, setRecords] = useState<ItemRecord[]>([]);
   const [history, setHistory] = useState<{ [key: string]: Hist }>({});
   const [lessonOpen, setLessonOpen] = useState(false);
   const [activeTerm, setActiveTerm] = useState<string | null>(null);
@@ -55,19 +56,22 @@ export default function PlayPage() {
   // 保存済みの全件履歴から「肢ごとの最新結果」を復元する
   useEffect(() => {
     let alive = true;
-    storage.getAttempts().then((attempts) => {
-      if (!alive) return;
-      const latest = latestByItem(attempts);
-      const h: { [key: string]: Hist } = {};
-      QUESTIONS.forEach((q, qi) => {
-        const n = itemCountOf(q);
-        for (let ci = 0; ci < n; ci++) {
-          const a = latest.get(itemKey(q.id, ci));
-          if (a) h[`${qi}-${ci}`] = { pts: a.pts, max: a.max };
-        }
-      });
-      setHistory(h);
-    });
+    storage
+      .getAttempts()
+      .then((attempts) => {
+        if (!alive) return;
+        const latest = latestByItem(attempts);
+        const h: { [key: string]: Hist } = {};
+        QUESTIONS.forEach((q, qi) => {
+          const n = itemCountOf(q);
+          for (let ci = 0; ci < n; ci++) {
+            const a = latest.get(itemKey(q.id, ci));
+            if (a) h[`${qi}-${ci}`] = { pts: a.pts, max: a.max };
+          }
+        });
+        setHistory(h);
+      })
+      .catch((e) => console.error("[storage] getAttempts に失敗しました", e));
     return () => {
       alive = false;
     };
@@ -112,13 +116,15 @@ export default function PlayPage() {
   const recordItem = (qi: number, ci: number, pts: number, max: number) => {
     setRecords((r) => [...r, { qi, ci, pts, max }]);
     setHistory((h) => ({ ...h, [`${qi}-${ci}`]: { pts, max } }));
-    void storage.saveAttempt({
-      questionId: QUESTIONS[qi].id,
-      choiceIndex: ci,
-      pts,
-      max,
-      answeredAt: new Date().toISOString(),
-    });
+    storage
+      .saveAttempt({
+        questionId: QUESTIONS[qi].id,
+        choiceIndex: ci,
+        pts,
+        max,
+        answeredAt: new Date().toISOString(),
+      })
+      .catch((e) => console.error("[storage] saveAttempt に失敗しました", e));
   };
 
   const startSession = (items: Item[]) => {
@@ -269,7 +275,7 @@ export default function PlayPage() {
                         style={{
                           textAlign: "left",
                           padding: 14,
-                          borderRadius: 10,
+                          borderRadius: RADIUS,
                           cursor: "pointer",
                           background: on ? "rgba(51,85,126,0.07)" : CARD,
                           border: `2px solid ${on ? AI_BLUE : LINE}`,
@@ -386,7 +392,7 @@ export default function PlayPage() {
               color: CARD,
               background: selected.size === 0 ? MUTED : INK,
               border: "none",
-              borderRadius: 10,
+              borderRadius: RADIUS,
               cursor: selected.size === 0 ? "not-allowed" : "pointer",
             }}
           >
@@ -407,7 +413,7 @@ export default function PlayPage() {
                 color: SHU,
                 background: CARD,
                 border: `2px solid ${SHU}`,
-                borderRadius: 10,
+                borderRadius: RADIUS,
                 cursor: "pointer",
               }}
             >
@@ -535,7 +541,7 @@ export default function PlayPage() {
                 color: CARD,
                 background: SHU,
                 border: "none",
-                borderRadius: 10,
+                borderRadius: RADIUS,
                 cursor: "pointer",
                 marginBottom: 10,
               }}
@@ -555,7 +561,7 @@ export default function PlayPage() {
               color: misses.length > 0 ? INK : CARD,
               background: misses.length > 0 ? CARD : INK,
               border: misses.length > 0 ? `2px solid ${INK}` : "none",
-              borderRadius: 10,
+              borderRadius: RADIUS,
               cursor: "pointer",
             }}
           >

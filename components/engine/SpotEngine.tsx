@@ -3,7 +3,7 @@
  * プロトタイプの spot エンジンと同一挙動。得点: errorCount − 誤指摘数(下限0)。
  */
 import { useState } from "react";
-import { INK, CARD, AI_BLUE, SHU, GREEN, MUTED, LINE, SERIF } from "@/lib/tokens";
+import { INK, CARD, AI_BLUE, SHU, GREEN, MUTED, LINE, SERIF, RADIUS } from "@/lib/tokens";
 import { card } from "@/lib/gameStyles";
 import { SceneCard } from "../SceneCard";
 import { LessonAccordion } from "../LessonAccordion";
@@ -94,7 +94,7 @@ export function SpotEngine({
       {spotPending && (
         <div
           className="fade-up"
-          style={{ background: INK, color: CARD, borderRadius: 10, padding: "16px 18px", marginBottom: 12 }}
+          style={{ background: INK, color: CARD, borderRadius: RADIUS, padding: "16px 18px", marginBottom: 12 }}
         >
           <div style={{ fontSize: 11, letterSpacing: 2.5, color: "#9FB0BC", marginBottom: 6 }}>
             疑義申立て
@@ -115,7 +115,7 @@ export function SpotEngine({
                 color: CARD,
                 background: SHU,
                 border: "none",
-                borderRadius: 10,
+                borderRadius: RADIUS,
                 cursor: "pointer",
               }}
             >
@@ -133,7 +133,7 @@ export function SpotEngine({
                 color: CARD,
                 background: "transparent",
                 border: "1px solid #5A6B77",
-                borderRadius: 10,
+                borderRadius: RADIUS,
                 cursor: "pointer",
               }}
             >
@@ -244,7 +244,7 @@ export function SpotEngine({
               color: CARD,
               background: INK,
               border: "none",
-              borderRadius: 10,
+              borderRadius: RADIUS,
               cursor: "pointer",
             }}
           >

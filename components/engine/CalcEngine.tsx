@@ -3,10 +3,11 @@
  * プロトタイプの calc エンジンと同一挙動。得点: 第一式1点 + 第二式1点 = 最大2点。
  */
 import { useState } from "react";
-import { INK, CARD, AI_BLUE, SHU, GREEN, MUTED, LINE, SERIF, SANS } from "@/lib/tokens";
+import { INK, CARD, AI_BLUE, SHU, GREEN, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
 import { card } from "@/lib/gameStyles";
 import { SceneCard } from "../SceneCard";
 import { LessonAccordion } from "../LessonAccordion";
+import { Eyebrow } from "../Eyebrow";
 import { Stamp } from "../Stamp";
 import { termify } from "../TermText";
 import type { EngineCommonProps } from "./types";
@@ -131,17 +132,7 @@ export function CalcEngine({
                 marginBottom: 8,
               }}
             >
-              <div
-                style={{
-                  fontFamily: SANS,
-                  fontSize: 11,
-                  letterSpacing: 2.5,
-                  color: MUTED,
-                  textTransform: "uppercase",
-                }}
-              >
-                {step.label}
-              </div>
+              <Eyebrow>{step.label}</Eyebrow>
               <span style={{ fontSize: 12, color: SHU }}>+1点</span>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -178,7 +169,7 @@ export function CalcEngine({
                       textAlign: "left",
                       minHeight: 48,
                       padding: "11px 14px",
-                      borderRadius: 10,
+                      borderRadius: RADIUS,
                       cursor: "pointer",
                       background: bg,
                       border: `2px solid ${border}`,
@@ -306,7 +297,7 @@ export function CalcEngine({
                   color: CARD,
                   background: INK,
                   border: "none",
-                  borderRadius: 10,
+                  borderRadius: RADIUS,
                   cursor: "pointer",
                 }}
               >
