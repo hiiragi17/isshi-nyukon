@@ -128,6 +128,19 @@ export default function PlayPage() {
     if (!raw) return;
     const items = parseItemKeys(raw);
     if (!items.length) return;
+    // 履歴の成否にかかわらずセッションは開始する。
+    // 履歴が読めた場合のみ perfectAtStart を埋め、失敗時は空集合で始める
+    // (ダッシュボードも同じストレージ失敗で空履歴に縮退するため挙動を揃える)。
+    const begin = (perfect: Set<number>) => {
+      setPerfectAtStart(perfect);
+      setSessionItems(items);
+      setSessionSeq((n) => n + 1);
+      setIdx(0);
+      setRecords([]);
+      setLessonOpen(false);
+      setActiveTerm(null);
+      setScreen("play");
+    };
     storage
       .getAttempts()
       .then((attempts) => {
@@ -140,16 +153,12 @@ export default function PlayPage() {
         QUESTIONS.forEach((_, qi) => {
           if (isAllPerfect(qi, getLatest)) perfect.add(qi);
         });
-        setPerfectAtStart(perfect);
-        setSessionItems(items);
-        setSessionSeq((n) => n + 1);
-        setIdx(0);
-        setRecords([]);
-        setLessonOpen(false);
-        setActiveTerm(null);
-        setScreen("play");
+        begin(perfect);
       })
-      .catch((e) => console.error("[storage] getAttempts に失敗しました", e));
+      .catch((e) => {
+        console.error("[storage] getAttempts に失敗しました", e);
+        begin(new Set());
+      });
     // マウント時に一度だけ。参照する QUESTIONS / 関数はモジュール定数
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
