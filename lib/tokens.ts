@@ -16,6 +16,14 @@ export const GREEN = "#3D7A55"; // 緑(正解)
 export const MUTED = "#7C857F"; // muted
 export const LINE = "#D8DAD2"; // 罫線
 
+/**
+ * ダッシュボード補助色(reference/design/dashboard-final.html 由来)。
+ * 墨地の召喚状カード・詳細パネルで使う、墨(INK)に載せる淡色と期限ラベル色。
+ */
+export const INK_SUB = "#9FB0BC"; // 墨地の上のラベル・補足テキスト
+export const INK_DOTTED = "#44535D"; // 墨地の点線罫
+export const DUE_URGENT = "#E4A9A4"; // 期限が本日・要復習の警告色
+
 /** フォント */
 export const SERIF =
   "'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif"; // 見出し: 明朝
