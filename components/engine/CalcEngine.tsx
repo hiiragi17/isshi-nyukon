@@ -10,6 +10,7 @@ import { LessonAccordion } from "../LessonAccordion";
 import { Eyebrow } from "../Eyebrow";
 import { Stamp } from "../Stamp";
 import { termify } from "../TermText";
+import { evaluateCalc } from "@/lib/calc";
 import type { EngineCommonProps } from "./types";
 
 export function CalcEngine({
@@ -33,40 +34,14 @@ export function CalcEngine({
   const handleCalcT = (i: number) => {
     if (calcT !== null || calcF === null) return;
     setCalcT(i);
-    const fOk = calc.build[0].options[calcF].correct;
-    const tOk = calc.build[1].options[i].correct;
-    const pts = (fOk ? 1 : 0) + (tOk ? 1 : 0);
+    const { pts } = evaluateCalc(calc, calcF, i);
     onComplete({ pts, max: 2 });
   };
 
-  const calcFmt = (v: number) => {
-    const r = Math.round(v * 100) / 100;
-    return r % 1 ? r.toFixed(1) : String(r);
-  };
-
-  const calcResult = () => {
-    // 選んだ式のまま計算した結果(誤った選択の帰結も見せる)
-    const base = calc.build[0].options[calcF!].value!;
-    const kind = calc.build[1].options[calcT!].kind;
-    const line1 = `${calc.build[0].options[calcF!].formula} = ${calcFmt(base)}万円`;
-    let val: number, line2: string;
-    if (kind === "taxAll") {
-      val = base * 1.1;
-      line2 = `${calcFmt(base)}万円 × 1.10 = ${calcFmt(val)}万円`;
-    } else if (kind === "taxNone") {
-      val = base;
-      line2 = `消費税なし → ${calcFmt(val)}万円`;
-    } else {
-      val = (base - 6) * 1.1 + 6;
-      line2 = `(${calcFmt(base)}万円 − 6万円) × 1.10 + 6万円 = ${calcFmt(val)}万円`;
-    }
-    return { line1, line2 };
-  };
-
-  const donePts = calcDone
-    ? (calc.build[0].options[calcF!].correct ? 1 : 0) +
-      (calc.build[1].options[calcT!].correct ? 1 : 0)
-    : 0;
+  // 判定結果(得点・表示行・メッセージ)は lib/calc に一元化。
+  // 税 calc(報酬)は従来どおり、汎用 calc(容積率など)は単位付きで表示する。
+  const verdict = calcDone ? evaluateCalc(calc, calcF!, calcT!) : null;
+  const donePts = verdict ? verdict.pts : 0;
 
   return (
     <>
@@ -213,21 +188,10 @@ export function CalcEngine({
         );
       })}
 
-      {calcDone &&
+      {verdict &&
         (() => {
-          const fOk = calc.build[0].options[calcF!].correct;
-          const tOk = calc.build[1].options[calcT!].correct;
-          const pts = (fOk ? 1 : 0) + (tOk ? 1 : 0);
+          const { pts, line1, line2, message: msg } = verdict;
           const accent = pts === 2 ? GREEN : pts === 1 ? AI_BLUE : SHU;
-          const msg =
-            pts === 2
-              ? "式も税も正解。決着。"
-              : pts === 0
-                ? "式も税も誤り。"
-                : !fOk
-                  ? "税は正解。速算式が誤り。"
-                  : "式は正解。消費税の扱いが誤り。";
-          const { line1, line2 } = calcResult();
           return (
             <div className="fade-up">
               <div style={{ ...card, borderLeft: `4px solid ${accent}`, marginBottom: 12 }}>
