@@ -38,6 +38,7 @@ import {
 } from "@/lib/tokens";
 import { page, col } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
+import { GrowthChart } from "@/components/GrowthChart";
 
 /* ---------- 肢(item)ユーティリティ。/play と同じ粒度・満点計算 ---------- */
 const itemCountOf = (q: Question) =>
@@ -676,6 +677,9 @@ export default function Home() {
                   </div>
                 );
               })()}
+
+            {/* 成長グラフ(集印の歩み) — 全件履歴で駆動 */}
+            <GrowthChart attempts={attempts ?? []} questions={QUESTIONS} />
 
             <p
               style={{
