@@ -11,8 +11,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { QUESTIONS } from "@/data/questions";
-import type { Question } from "@/types";
 import { storage, latestByItem, itemKey } from "@/lib/storage";
+import { itemCountOf } from "@/lib/items";
 import { INK, CARD, AI_BLUE, SHU, GREEN, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
 import { page, col, card } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
@@ -26,9 +26,6 @@ type Item = { qi: number; ci: number };
 // 組み込みの Record<K,V> ユーティリティ型を隠さないよう ItemRecord とする
 type ItemRecord = { qi: number; ci: number; pts: number; max: number };
 type Hist = { pts: number; max: number };
-
-const itemCountOf = (q: Question) =>
-  q.type === "calc" || q.type === "spot" ? 1 : q.choices!.length;
 
 const maxOf = (it: Item) => {
   const q = QUESTIONS[it.qi];

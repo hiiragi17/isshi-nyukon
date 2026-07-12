@@ -11,11 +11,7 @@
  */
 import type { Attempt, Question } from "@/types";
 import { itemKey } from "./storage";
-
-/** 論点(問題)1件が持つ肢数。calc / spot は1、zenshi は肢数 */
-function itemCountOf(q: Question): number {
-  return q.type === "calc" || q.type === "spot" ? 1 : q.choices!.length;
-}
+import { itemCountOf } from "./items";
 
 /** ローカル日付のキー(YYYY-M-D)。同じ暦日の Attempt をまとめる単位 */
 function dayKeyOf(iso: string): string {

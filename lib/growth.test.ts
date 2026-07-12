@@ -7,6 +7,15 @@ import { describe, it, expect } from "vitest";
 import type { Attempt, Question } from "@/types";
 import { buildGrowth } from "@/lib/growth";
 
+/**
+ * ローカル日付から ISO を作る。buildGrowth はローカル暦日で日をまとめる仕様なので、
+ * フィクスチャもローカル日付基準で作ってタイムゾーン非依存にする
+ * (UTC 真夜中の固定文字列だと UTC より東西のランナーで暦日がずれてテストが割れる)。
+ */
+function iso(y: number, m: number, d: number, hour = 12): string {
+  return new Date(y, m - 1, d, hour).toISOString();
+}
+
 /** テスト用 Attempt ヘルパー */
 function attempt(
   questionId: string,
@@ -70,8 +79,8 @@ describe("buildGrowth — 日ごとの集計", () => {
   it("同じ暦日の Attempt は1点にまとまり、審理数と得点率を持つ", () => {
     const g = buildGrowth(
       [
-        attempt("q1", 0, 2, 2, "2026-07-01T01:00:00.000Z"),
-        attempt("q1", 1, 0, 3, "2026-07-01T02:00:00.000Z"),
+        attempt("q1", 0, 2, 2, iso(2026, 7, 1, 9)),
+        attempt("q1", 1, 0, 3, iso(2026, 7, 1, 10)),
       ],
       [q2("q1")],
     );
@@ -86,8 +95,8 @@ describe("buildGrowth — 日ごとの集計", () => {
   it("別々の暦日は別の点になり、時系列順に並ぶ", () => {
     const g = buildGrowth(
       [
-        attempt("q1", 1, 3, 3, "2026-07-02T00:00:00.000Z"),
-        attempt("q1", 0, 2, 2, "2026-07-01T00:00:00.000Z"),
+        attempt("q1", 1, 3, 3, iso(2026, 7, 2)),
+        attempt("q1", 0, 2, 2, iso(2026, 7, 1)),
       ],
       [q2("q1")],
     );
@@ -99,8 +108,8 @@ describe("buildGrowth — 集印(完璧論点)の再生", () => {
   it("全肢を最新で正解した日に集印が立つ", () => {
     const g = buildGrowth(
       [
-        attempt("q1", 0, 2, 2, "2026-07-01T00:00:00.000Z"),
-        attempt("q1", 1, 3, 3, "2026-07-02T00:00:00.000Z"),
+        attempt("q1", 0, 2, 2, iso(2026, 7, 1)),
+        attempt("q1", 1, 3, 3, iso(2026, 7, 2)),
       ],
       [q2("q1")],
     );
@@ -114,10 +123,10 @@ describe("buildGrowth — 集印(完璧論点)の再生", () => {
   it("一度完璧にした論点を後日落とすと集印は減る(履歴に忠実)", () => {
     const g = buildGrowth(
       [
-        attempt("q1", 0, 2, 2, "2026-07-01T00:00:00.000Z"),
-        attempt("q1", 1, 3, 3, "2026-07-01T00:10:00.000Z"),
+        attempt("q1", 0, 2, 2, iso(2026, 7, 1, 9)),
+        attempt("q1", 1, 3, 3, iso(2026, 7, 1, 10)),
         // 後日、○肢を失点で上書き
-        attempt("q1", 0, 0, 2, "2026-07-03T00:00:00.000Z"),
+        attempt("q1", 0, 0, 2, iso(2026, 7, 3)),
       ],
       [q2("q1")],
     );
@@ -130,7 +139,7 @@ describe("buildGrowth — 集印(完璧論点)の再生", () => {
 
   it("calc は1肢で満点なら完璧になる", () => {
     const g = buildGrowth(
-      [attempt("qc", 0, 2, 2, "2026-07-01T00:00:00.000Z")],
+      [attempt("qc", 0, 2, 2, iso(2026, 7, 1))],
       [qCalc("qc")],
     );
     expect(g.currentSeal).toBe(1);
@@ -141,8 +150,8 @@ describe("buildGrowth — 全期間の平均得点率", () => {
   it("全 Attempt の pts 合計 / max 合計", () => {
     const g = buildGrowth(
       [
-        attempt("q1", 0, 2, 2, "2026-07-01T00:00:00.000Z"),
-        attempt("q1", 1, 0, 3, "2026-07-02T00:00:00.000Z"),
+        attempt("q1", 0, 2, 2, iso(2026, 7, 1)),
+        attempt("q1", 1, 0, 3, iso(2026, 7, 2)),
       ],
       [q2("q1")],
     );
