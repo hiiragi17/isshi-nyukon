@@ -81,7 +81,12 @@ export class LocalStorageAdapter implements StorageAdapter {
 
   private write(attempts: Attempt[]): void {
     if (!this.available()) return;
-    window.localStorage.setItem(this.key, JSON.stringify(attempts));
+    try {
+      window.localStorage.setItem(this.key, JSON.stringify(attempts));
+    } catch {
+      // 容量超過 / プライベートブラウジング等で setItem が例外を投げても、
+      // 保存を no-op に落として呼び出し側(セッション終了時の記録)を壊さない
+    }
   }
 
   async getAttempts(): Promise<Attempt[]> {
