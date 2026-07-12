@@ -11,11 +11,29 @@
  *
  * 得点はどちらも「第一式1点 + 第二式1点 = 最大2点」。
  */
-import type { CalcSpec } from "@/types";
+import type { CalcSpec, CalcBuildOption } from "@/types";
 
 /** 第二式が消費税変換(kind 付き)の税 calc かどうか */
 export function isTaxCalc(calc: CalcSpec): boolean {
   return calc.build[1].options.some((o) => o.kind !== undefined);
+}
+
+/**
+ * 汎用 calc の第二式の結果を、選んだ第一式の値 p(%)から導く。
+ * 誤った第一式を選んだときも、その値を反映した結果を表示するため
+ * 静的な value ではなく毎回計算する(op 未指定なら value にフォールバック)。
+ */
+function deriveSecond(opt: CalcBuildOption, first: number): number {
+  switch (opt.op) {
+    case "mul":
+      return ((opt.operand ?? 0) * first) / 100;
+    case "div":
+      return first === 0 ? 0 : (opt.operand ?? 0) / (first / 100);
+    case "identity":
+      return first;
+    default:
+      return opt.value ?? 0;
+  }
 }
 
 /** 小数は必要なときだけ1桁で表示(プロトタイプの calcFmt と同一) */
@@ -77,9 +95,9 @@ export function evaluateCalc(
     return { pts, fOk, tOk, line1, line2, message };
   }
 
-  // 汎用 calc: 選んだ式をそのまま並べ、第二式の value を答えとして示す。
+  // 汎用 calc: 選んだ第一式の値から第二式の結果を導く(誤答の帰結も反映)。
   const line1 = f.formula;
-  const line2 = `${t.formula} = ${calcFmt(t.value ?? 0)}${calc.unit}`;
+  const line2 = `${t.formula} = ${calcFmt(deriveSecond(t, f.value ?? 0))}${calc.unit}`;
   const message =
     pts === 2
       ? "第一式・第二式ともに正解。決着。"

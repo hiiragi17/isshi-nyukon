@@ -66,16 +66,19 @@ describe("汎用 calc(容積率 q10)", () => {
     expect(v.message).toBe("第一式・第二式ともに正解。決着。");
   });
 
-  it("第一式が誤り(指定容積率をそのまま, index 1)", () => {
+  it("第一式が誤り(指定300%をそのまま, index 1)でも、選んだ値を反映して 1200㎡", () => {
+    // 第一式=300%(誤)× 第二式=正しい掛け算 → 400 × 300% = 1200㎡(正解値 960 を出さない)
     const v = evaluateCalc(yosekiCalc.calc!, 1, 0);
     expect(v.pts).toBe(1);
+    expect(v.line2).toBe("敷地面積 400㎡ × 適用容積率 = 1200㎡");
     expect(v.message).toBe("第二式は正解。第一式が誤り。");
   });
 
-  it("第二式が誤り(割り算, index 1)", () => {
+  it("第二式が誤り(割り算, index 1)は選んだ 240% を反映", () => {
+    // 400 ÷ 240% = 166.67 → 166.7
     const v = evaluateCalc(yosekiCalc.calc!, 0, 1);
     expect(v.pts).toBe(1);
-    expect(v.line2).toBe("敷地面積 400㎡ ÷ 適用容積率 = 167㎡");
+    expect(v.line2).toBe("敷地面積 400㎡ ÷ 適用容積率 = 166.7㎡");
     expect(v.message).toBe("第一式は正解。第二式が誤り。");
   });
 

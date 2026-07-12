@@ -50,19 +50,21 @@ export const yosekiCalc: Question = {
         options: [
           {
             formula: "敷地面積 400㎡ × 適用容積率",
-            value: 960,
+            op: "mul",
+            operand: 400,
             correct: true,
             trap: "",
           },
           {
             formula: "敷地面積 400㎡ ÷ 適用容積率",
-            value: 167,
+            op: "div",
+            operand: 400,
             correct: false,
             trap: "延べ面積は「敷地面積 ÷ 容積率」ではなく「敷地面積 × 容積率」で求める",
           },
           {
             formula: "適用容積率をそのまま延べ面積とする",
-            value: 240,
+            op: "identity",
             correct: false,
             trap: "容積率は割合。延べ面積は敷地面積に容積率を掛けて求める",
           },
