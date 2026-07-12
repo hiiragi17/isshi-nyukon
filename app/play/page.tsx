@@ -9,6 +9,7 @@
  * マウント時に「肢ごとの最新結果」を復元する(弱点判定・成績表示に使用)。
  */
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { QUESTIONS } from "@/data/questions";
 import type { Question } from "@/types";
 import { storage, latestByItem, itemKey } from "@/lib/storage";
@@ -40,7 +41,48 @@ const allItems: Item[] = QUESTIONS.flatMap((q, i) =>
   Array.from({ length: itemCountOf(q) }, (_, j) => ({ qi: i, ci: j })),
 );
 
+/** questionId → QUESTIONS の添字。ダッシュボードから渡る itemKey の解決に使う */
+const idToIndex = new Map(QUESTIONS.map((q, i) => [q.id, i] as const));
+
+/**
+ * ダッシュボードから ?items= で渡される itemKey 列(`${questionId}-${ci}`)を
+ * セッションの Item[] に解決する。未知の id / 範囲外の ci は捨てる。
+ */
+const parseItemKeys = (raw: string): Item[] => {
+  const items: Item[] = [];
+  for (const key of raw.split(",")) {
+    const cut = key.lastIndexOf("-");
+    if (cut < 0) continue;
+    const qi = idToIndex.get(key.slice(0, cut));
+    const ci = Number(key.slice(cut + 1));
+    if (qi === undefined || !Number.isInteger(ci)) continue;
+    if (ci < 0 || ci >= itemCountOf(QUESTIONS[qi])) continue;
+    items.push({ qi, ci });
+  }
+  return items;
+};
+
+/**
+ * 論点(問題 qi)の全肢が「最新で満点」か。未着手(記録ゼロ)は false。
+ * get は肢ごとの最新結果を返す(履歴 state 由来 / 全件履歴由来のどちらでもよい)。
+ */
+const isAllPerfect = (
+  qi: number,
+  get: (qi: number, ci: number) => Hist | undefined,
+): boolean => {
+  const n = itemCountOf(QUESTIONS[qi]);
+  let present = 0;
+  for (let ci = 0; ci < n; ci++) {
+    const h = get(qi, ci);
+    if (!h) continue;
+    present++;
+    if (h.pts < h.max) return false;
+  }
+  return present === n;
+};
+
 export default function PlayPage() {
+  const router = useRouter();
   const [screen, setScreen] = useState<"start" | "play" | "result">("start");
   const [selected, setSelected] = useState<Set<number>>(
     () => new Set(QUESTIONS.map((_, i) => i)),
@@ -52,6 +94,8 @@ export default function PlayPage() {
   const [history, setHistory] = useState<{ [key: string]: Hist }>({});
   const [lessonOpen, setLessonOpen] = useState(false);
   const [activeTerm, setActiveTerm] = useState<string | null>(null);
+  // セッション開始時点で「完璧」だった論点。判決後に新規完璧到達を検出するのに使う
+  const [perfectAtStart, setPerfectAtStart] = useState<Set<number>>(new Set());
 
   // 保存済みの全件履歴から「肢ごとの最新結果」を復元する
   useEffect(() => {
@@ -75,6 +119,48 @@ export default function PlayPage() {
     return () => {
       alive = false;
     };
+  }, []);
+
+  // ダッシュボードから ?items= で来たら、その肢だけでセッションを自動開始する。
+  // 判決後の新規完璧判定のため、開始時点の完璧論点を全件履歴から取り込む。
+  useEffect(() => {
+    const raw = new URLSearchParams(window.location.search).get("items");
+    if (!raw) return;
+    const items = parseItemKeys(raw);
+    if (!items.length) return;
+    // 履歴の成否にかかわらずセッションは開始する。
+    // 履歴が読めた場合のみ perfectAtStart を埋め、失敗時は空集合で始める
+    // (ダッシュボードも同じストレージ失敗で空履歴に縮退するため挙動を揃える)。
+    const begin = (perfect: Set<number>) => {
+      setPerfectAtStart(perfect);
+      setSessionItems(items);
+      setSessionSeq((n) => n + 1);
+      setIdx(0);
+      setRecords([]);
+      setLessonOpen(false);
+      setActiveTerm(null);
+      setScreen("play");
+    };
+    storage
+      .getAttempts()
+      .then((attempts) => {
+        const latest = latestByItem(attempts);
+        const getLatest = (qi: number, ci: number): Hist | undefined => {
+          const a = latest.get(itemKey(QUESTIONS[qi].id, ci));
+          return a ? { pts: a.pts, max: a.max } : undefined;
+        };
+        const perfect = new Set<number>();
+        QUESTIONS.forEach((_, qi) => {
+          if (isAllPerfect(qi, getLatest)) perfect.add(qi);
+        });
+        begin(perfect);
+      })
+      .catch((e) => {
+        console.error("[storage] getAttempts に失敗しました", e);
+        begin(new Set());
+      });
+    // マウント時に一度だけ。参照する QUESTIONS / 関数はモジュール定数
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const item = sessionItems[idx];
@@ -128,6 +214,13 @@ export default function PlayPage() {
   };
 
   const startSession = (items: Item[]) => {
+    // 開始時点で完璧だった論点を控える(判決後に新規完璧到達を見分けるため)
+    const getHist = (qi: number, ci: number) => history[`${qi}-${ci}`];
+    const perfect = new Set<number>();
+    QUESTIONS.forEach((_, qi) => {
+      if (isAllPerfect(qi, getHist)) perfect.add(qi);
+    });
+    setPerfectAtStart(perfect);
     setSessionItems(items);
     setSessionSeq((n) => n + 1);
     setIdx(0);
@@ -187,7 +280,24 @@ export default function PlayPage() {
     return (
       <div style={page}>
         <div style={col}>
-          <div style={{ textAlign: "center", margin: "40px 0 32px" }}>
+          <button
+            onClick={() => router.push("/")}
+            style={{
+              padding: "6px 0",
+              marginTop: 8,
+              fontSize: 13,
+              fontWeight: 700,
+              fontFamily: SERIF,
+              letterSpacing: 2,
+              color: AI_BLUE,
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            ← 検地帳
+          </button>
+          <div style={{ textAlign: "center", margin: "24px 0 32px" }}>
             <Eyebrow>宅建・権利関係(民法)</Eyebrow>
             <h1
               style={{
@@ -434,6 +544,17 @@ export default function PlayPage() {
     const passed = pct >= 70;
     const misses = records.filter((r) => r.pts < r.max);
     const topicsInSession = [...new Set(records.map((r) => r.qi))];
+    // このセッションで新たに完璧到達した論点(検地帳で朱印を押させる)
+    const getHist = (qi: number, ci: number) => history[`${qi}-${ci}`];
+    const newlyPerfectIds = topicsInSession
+      .filter((i) => !perfectAtStart.has(i) && isAllPerfect(i, getHist))
+      .map((i) => QUESTIONS[i].id);
+    const toDashboard = () =>
+      router.push(
+        newlyPerfectIds.length
+          ? `/?stamped=${newlyPerfectIds.join(",")}`
+          : "/",
+      );
     return (
       <div style={page}>
         <div style={col}>
@@ -566,6 +687,24 @@ export default function PlayPage() {
             }}
           >
             出題範囲を選び直す
+          </button>
+          <button
+            onClick={toDashboard}
+            style={{
+              width: "100%",
+              padding: "12px 0",
+              marginTop: 10,
+              fontSize: 13.5,
+              fontWeight: 700,
+              fontFamily: SERIF,
+              letterSpacing: 3,
+              color: AI_BLUE,
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            検地帳へ戻る
           </button>
         </div>
       </div>
