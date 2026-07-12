@@ -204,7 +204,7 @@ export function SakuraAd({ found, pending, done, onTap }: SpotAdProps) {
           <span style={{ color: BLUE, fontSize: 24, fontWeight: 800, letterSpacing: 0.5 }}>
             6.8<span style={{ fontSize: 13 }}>万円/月</span>
           </span>
-          <span style={{ fontSize: 10, color: "#777" }}>(管理費別)</span>
+          <span style={{ fontSize: 10, color: "#777" }}>管理費 3,000円/月</span>
         </button>
 
         <div style={{ fontSize: 11.5, color: "#333" }}>

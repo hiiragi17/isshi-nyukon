@@ -47,8 +47,8 @@ export const chintaiKoukoku: Question = {
       {
         id: "safeRent",
         violation: false,
-        name: "家賃の表示",
-        note: "管理費別と明示した総額表示 — 適法です。",
+        name: "家賃・管理費の表示",
+        note: "家賃と管理費をともに月額で表示 — 適法です。",
       },
       {
         id: "safeDeposit",
