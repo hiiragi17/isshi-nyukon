@@ -1,0 +1,43 @@
+/*
+ * グローバルスタイル。
+ * 色・フォント・角丸は lib/tokens.ts の値をミラーした CSS 変数を参照する
+ * (値の正は lib/tokens.ts / プロトタイプ)。
+ */
+
+:root {
+  /* 色 */
+  --color-ink: #26333b; /* 墨(テキスト) */
+  --color-paper: #eceee9; /* 紙(背景) */
+  --color-card: #fbfaf7; /* カード */
+  --color-ai-blue: #33557e; /* 藍(操作) */
+  --color-shu: #bf3b33; /* 朱(判定・強調) */
+  --color-green: #3d7a55; /* 緑(正解) */
+  --color-muted: #7c857f; /* muted */
+  --color-line: #d8dad2; /* 罫線 */
+
+  /* フォント */
+  --font-serif: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
+  --font-sans: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP",
+    sans-serif;
+
+  /* 角丸 */
+  --radius: 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
