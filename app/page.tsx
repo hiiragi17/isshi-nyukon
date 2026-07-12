@@ -21,6 +21,7 @@ import { useRouter } from "next/navigation";
 import { QUESTIONS } from "@/data/questions";
 import type { Attempt, Question } from "@/types";
 import { storage, latestByItem, itemKey } from "@/lib/storage";
+import { itemCountOf } from "@/lib/items";
 import { buildSummonQueue, type SrsItemState } from "@/lib/srs";
 import {
   INK,
@@ -38,11 +39,9 @@ import {
 } from "@/lib/tokens";
 import { page, col } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
+import { GrowthChart } from "@/components/GrowthChart";
 
 /* ---------- 肢(item)ユーティリティ。/play と同じ粒度・満点計算 ---------- */
-const itemCountOf = (q: Question) =>
-  q.type === "calc" || q.type === "spot" ? 1 : q.choices!.length;
-
 const maxOf = (q: Question, ci: number) => {
   if (q.type === "calc") return 2;
   if (q.type === "spot") return q.spot!.errorCount;
@@ -676,6 +675,9 @@ export default function Home() {
                   </div>
                 );
               })()}
+
+            {/* 成長グラフ(集印の歩み) — 全件履歴で駆動 */}
+            <GrowthChart attempts={attempts ?? []} questions={QUESTIONS} />
 
             <p
               style={{
