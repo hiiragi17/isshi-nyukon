@@ -13,6 +13,7 @@ import { menkyo } from "./gyoho/menkyo";
 import { takkenshi } from "./gyoho/takkenshi";
 import { hachishuSeigen } from "./gyoho/hachishu-seigen";
 import { ishiHyouji } from "./kenri/ishi-hyouji";
+import { shakuchiShakka } from "./kenri/shakuchi-shakka";
 import { teitouken } from "./kenri/teitouken";
 import { youtoChiiki } from "./horei/youto-chiiki";
 import { kaihatsuKyoka } from "./horei/kaihatsu-kyoka";
@@ -42,5 +43,6 @@ export const QUESTIONS: Question[] = [
   takkenshi,
   hachishuSeigen,
   ishiHyouji,
+  shakuchiShakka,
   teitouken,
 ];
