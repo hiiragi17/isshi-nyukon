@@ -68,8 +68,12 @@ describe("itemCountOf — 論点1件の肢数", () => {
   it("実データの全問題で1以上の肢数が計算できる", () => {
     for (const q of QUESTIONS) {
       const n = itemCountOf(q);
-      expect(n).toBeGreaterThanOrEqual(1);
-      if (!q.type) expect(n).toBe(q.choices!.length);
+      expect(n, `${q.id}(${q.topic})の肢数が ${n}`).toBeGreaterThanOrEqual(1);
+      if (!q.type)
+        expect(
+          n,
+          `${q.id}(${q.topic})の肢数が choices の数と不一致`,
+        ).toBe(q.choices!.length);
     }
   });
 });
