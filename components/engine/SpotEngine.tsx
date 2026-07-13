@@ -89,7 +89,13 @@ export function SpotEngine({
         </span>
       </div>
 
-      <SpotAd found={spotFound} pending={spotPending} done={spotDone} onTap={handleSpotZone} />
+      <SpotAd
+        questionId={question.id}
+        found={spotFound}
+        pending={spotPending}
+        done={spotDone}
+        onTap={handleSpotZone}
+      />
 
       {spotPending && (
         <div

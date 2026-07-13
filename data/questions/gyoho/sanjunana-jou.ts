@@ -1,8 +1,8 @@
 import type { Question } from "@/types";
 
-/** q12 37条書面(宅建業法37条) */
+/** q13 37条書面(宅建業法37条) */
 export const sanjunanaJou: Question = {
-  id: "q12",
+  id: "q13",
   category: "宅建業法",
   topic: "37条書面",
   law: "宅建業法37条",
