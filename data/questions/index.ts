@@ -6,6 +6,8 @@ import { coolingOff } from "./gyoho/cooling-off";
 import { hoshu } from "./gyoho/hoshu";
 import { koukokuKisei } from "./gyoho/koukoku-kisei";
 import { chintaiKoukoku } from "./gyoho/chintai-koukoku";
+import { juuyouJikou } from "./gyoho/juuyou-jikou";
+import { sanjunanaJou } from "./gyoho/sanjunana-jou";
 import { youtoChiiki } from "./horei/youto-chiiki";
 import { kaihatsuKyoka } from "./horei/kaihatsu-kyoka";
 import { kenpeiYoseki } from "./horei/kenpei-yoseki";
@@ -27,4 +29,6 @@ export const QUESTIONS: Question[] = [
   kenpeiYoseki,
   yosekiCalc,
   chintaiKoukoku,
+  juuyouJikou,
+  sanjunanaJou,
 ];
