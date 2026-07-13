@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { QUESTIONS } from "@/data/questions";
 import { storage, latestByItem, itemKey } from "@/lib/storage";
 import { itemCountOf } from "@/lib/items";
+import { maxOf, questionMax } from "@/lib/scoring";
 import { INK, CARD, AI_BLUE, SHU, GREEN, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
 import { page, col, card } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
@@ -26,13 +27,6 @@ type Item = { qi: number; ci: number };
 // 組み込みの Record<K,V> ユーティリティ型を隠さないよう ItemRecord とする
 type ItemRecord = { qi: number; ci: number; pts: number; max: number };
 type Hist = { pts: number; max: number };
-
-const maxOf = (it: Item) => {
-  const q = QUESTIONS[it.qi];
-  if (q.type === "calc") return 2;
-  if (q.type === "spot") return q.spot!.errorCount;
-  return q.choices![it.ci].correct ? 2 : 3;
-};
 
 const allItems: Item[] = QUESTIONS.flatMap((q, i) =>
   Array.from({ length: itemCountOf(q) }, (_, j) => ({ qi: i, ci: j })),
@@ -169,7 +163,10 @@ export default function PlayPage() {
   const isZenshi = !isCalc && !isSpot;
 
   const score = records.reduce((s, r) => s + r.pts, 0);
-  const sessionMax = sessionItems.reduce((s, it) => s + maxOf(it), 0);
+  const sessionMax = sessionItems.reduce(
+    (s, it) => s + maxOf(QUESTIONS[it.qi], it.ci),
+    0,
+  );
 
   const weakItems = allItems.filter((it) => {
     const h = history[`${it.qi}-${it.ci}`];
@@ -184,10 +181,7 @@ export default function PlayPage() {
     if (tried.length === 0) return null;
     return {
       pts: tried.reduce((s, h) => s + h.pts, 0),
-      max: Array.from({ length: n }, (_, j) => maxOf({ qi: i, ci: j })).reduce(
-        (s, m) => s + m,
-        0,
-      ),
+      max: questionMax(qq),
       perfect: items.filter((h) => h && h.pts === h.max).length,
       total: n,
     };
