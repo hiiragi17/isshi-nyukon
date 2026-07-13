@@ -9,6 +9,7 @@ import { chintaiKoukoku } from "./gyoho/chintai-koukoku";
 import { juuyouJikou } from "./gyoho/juuyou-jikou";
 import { sanjunanaJou } from "./gyoho/sanjunana-jou";
 import { baikaiKeiyaku } from "./gyoho/baikai-keiyaku";
+import { menkyo } from "./gyoho/menkyo";
 import { youtoChiiki } from "./horei/youto-chiiki";
 import { kaihatsuKyoka } from "./horei/kaihatsu-kyoka";
 import { kenpeiYoseki } from "./horei/kenpei-yoseki";
@@ -33,4 +34,5 @@ export const QUESTIONS: Question[] = [
   juuyouJikou,
   sanjunanaJou,
   baikaiKeiyaku,
+  menkyo,
 ];
