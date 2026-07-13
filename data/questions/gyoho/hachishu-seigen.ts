@@ -5,7 +5,7 @@ export const hachishuSeigen: Question = {
   id: "q17",
   category: "宅建業法",
   topic: "8種制限(手付・保全措置)",
-  law: "宅建業法38条・39条・41条",
+  law: "宅建業法38条・39条・41条・41条の2",
   scenario:
     "宅建業者Aは、自ら売主として、宅建業者でない買主Bとの間で、代金4,000万円の宅地の売買契約を締結しようとしている。",
   lesson: [
