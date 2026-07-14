@@ -25,6 +25,10 @@ import { youtoChiiki } from "./horei/youto-chiiki";
 import { kaihatsuKyoka } from "./horei/kaihatsu-kyoka";
 import { kenpeiYoseki } from "./horei/kenpei-yoseki";
 import { yosekiCalc } from "./horei/yoseki-calc";
+import { fudousanShutokuzei } from "./zei/fudousan-shutokuzei";
+import { koteiShisanzei } from "./zei/kotei-shisanzei";
+import { inshizei } from "./zei/inshizei";
+import { chikaKoji } from "./zei/chika-koji";
 
 /**
  * 全問題。既存の順序(q1〜q6)は履歴キーやスコアリングが配列インデックスに
@@ -57,4 +61,8 @@ export const QUESTIONS: Question[] = [
   nochiHou,
   kokudoTodokede,
   moridoKisei,
+  fudousanShutokuzei,
+  koteiShisanzei,
+  inshizei,
+  chikaKoji,
 ];
