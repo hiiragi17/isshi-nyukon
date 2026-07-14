@@ -17,6 +17,7 @@ import { shakuchiShakka } from "./kenri/shakuchi-shakka";
 import { teitouken } from "./kenri/teitouken";
 import { bukkenHendo } from "./kenri/bukken-hendo";
 import { souzokuTouki } from "./kenri/souzoku-touki";
+import { souzokubun } from "./kenri/souzokubun";
 import { youtoChiiki } from "./horei/youto-chiiki";
 import { kaihatsuKyoka } from "./horei/kaihatsu-kyoka";
 import { kenpeiYoseki } from "./horei/kenpei-yoseki";
@@ -49,4 +50,5 @@ export const QUESTIONS: Question[] = [
   teitouken,
   bukkenHendo,
   souzokuTouki,
+  souzokubun,
 ];
