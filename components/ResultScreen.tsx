@@ -179,7 +179,7 @@ export function ResultScreen({
           onClick={toDashboard}
           style={{
             width: "100%",
-            padding: "12px 0",
+            padding: "14px 0",
             marginTop: 10,
             fontSize: 13.5,
             fontWeight: 700,
