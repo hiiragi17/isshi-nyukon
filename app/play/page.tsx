@@ -14,8 +14,13 @@ import { QUESTIONS } from "@/data/questions";
 import { storage, latestByItem, itemKey } from "@/lib/storage";
 import { itemCountOf } from "@/lib/items";
 import { maxOf, questionMax } from "@/lib/scoring";
+import {
+  buildQuickSession,
+  shuffleInPlace,
+  type QuickState,
+} from "@/lib/quickPick";
 import { INK, CARD, AI_BLUE, SHU, GREEN, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
-import { page, col, card } from "@/lib/gameStyles";
+import { page, col, card, outlineButton } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
 import { TermPopup } from "@/components/TermPopup";
 import { ResultScreen, type ItemRecord } from "@/components/ResultScreen";
@@ -230,32 +235,17 @@ export default function PlayPage() {
 
   /**
    * 少量モード: 選択中の範囲から n 肢だけ出題する。
-   * 弱点 → 未着手 → その他 の優先順で拾い、各層内はシャッフルして
-   * 毎回同じ並びにならない(通勤のスキマで「何肢か色々」やるための入口)。
+   * 並び順(弱点 → 未着手 → その他)の組み立ては lib/quickPick に切り出し、
+   * ここでは選択範囲の絞り込みと肢の分類だけを渡す。
    */
   const startQuick = (n: number) => {
-    const shuffle = (a: Item[]): Item[] => {
-      for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
-      }
-      return a;
-    };
-    const weak: Item[] = [];
-    const untried: Item[] = [];
-    const rest: Item[] = [];
-    for (const it of allItems) {
-      if (!selected.has(it.qi)) continue;
+    const pool = allItems.filter((it) => selected.has(it.qi));
+    const classify = (it: Item): QuickState => {
       const h = history[`${it.qi}-${it.ci}`];
-      if (!h) untried.push(it);
-      else if (h.pts < h.max) weak.push(it);
-      else rest.push(it);
-    }
-    const ordered = [
-      ...shuffle(weak),
-      ...shuffle(untried),
-      ...shuffle(rest),
-    ].slice(0, n);
+      if (!h) return "untried";
+      return h.pts < h.max ? "weak" : "other";
+    };
+    const ordered = buildQuickSession(pool, classify, n, shuffleInPlace);
     if (ordered.length) startSession(ordered);
   };
 
@@ -540,17 +530,12 @@ export default function PlayPage() {
                       key={s}
                       onClick={() => startQuick(s)}
                       style={{
+                        ...outlineButton,
                         flex: 1,
+                        minHeight: 44,
                         padding: "12px 0",
                         fontSize: 15,
-                        fontWeight: 700,
-                        fontFamily: SERIF,
                         letterSpacing: 2,
-                        color: AI_BLUE,
-                        background: CARD,
-                        border: `2px solid ${AI_BLUE}`,
-                        borderRadius: RADIUS,
-                        cursor: "pointer",
                       }}
                     >
                       {s}肢

@@ -37,7 +37,7 @@ import {
   INK_DOTTED,
   DUE_URGENT,
 } from "@/lib/tokens";
-import { page, col } from "@/lib/gameStyles";
+import { page, col, outlineButton } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
 import { GrowthChart } from "@/components/GrowthChart";
 import { BackupPanel } from "@/components/BackupPanel";
@@ -413,18 +413,12 @@ export default function Home() {
             <button
               onClick={() => router.push("/play")}
               style={{
+                ...outlineButton,
                 width: "100%",
                 minHeight: 48,
                 marginBottom: 12,
                 fontSize: 14,
-                fontWeight: 700,
-                fontFamily: SERIF,
                 letterSpacing: 3,
-                color: AI_BLUE,
-                background: CARD,
-                border: `2px solid ${AI_BLUE}`,
-                borderRadius: RADIUS,
-                cursor: "pointer",
               }}
             >
               範囲を選んで始める(少量モードも)
