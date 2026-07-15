@@ -14,8 +14,13 @@ import { QUESTIONS } from "@/data/questions";
 import { storage, latestByItem, itemKey } from "@/lib/storage";
 import { itemCountOf } from "@/lib/items";
 import { maxOf, questionMax } from "@/lib/scoring";
+import {
+  buildQuickSession,
+  shuffleInPlace,
+  type QuickState,
+} from "@/lib/quickPick";
 import { INK, CARD, AI_BLUE, SHU, GREEN, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
-import { page, col, card } from "@/lib/gameStyles";
+import { page, col, card, outlineButton } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
 import { TermPopup } from "@/components/TermPopup";
 import { ResultScreen, type ItemRecord } from "@/components/ResultScreen";
@@ -226,6 +231,22 @@ export default function PlayPage() {
 
   const startWeak = () => {
     if (weakItems.length) startSession(weakItems);
+  };
+
+  /**
+   * 少量モード: 選択中の範囲から n 肢だけ出題する。
+   * 並び順(弱点 → 未着手 → その他)の組み立ては lib/quickPick に切り出し、
+   * ここでは選択範囲の絞り込みと肢の分類だけを渡す。
+   */
+  const startQuick = (n: number) => {
+    const pool = allItems.filter((it) => selected.has(it.qi));
+    const classify = (it: Item): QuickState => {
+      const h = history[`${it.qi}-${it.ci}`];
+      if (!h) return "untried";
+      return h.pts < h.max ? "weak" : "other";
+    };
+    const ordered = buildQuickSession(pool, classify, n, shuffleInPlace);
+    if (ordered.length) startSession(ordered);
   };
 
   const startSessionMisses = () => {
@@ -478,6 +499,52 @@ export default function PlayPage() {
             </div>
           </div>
 
+          {totalItems >= 5 && (
+            <div style={{ ...card, marginBottom: 16 }}>
+              <Eyebrow>少量で始める</Eyebrow>
+              <div
+                style={{
+                  fontFamily: SERIF,
+                  fontWeight: 700,
+                  fontSize: 15,
+                  margin: "4px 0 4px",
+                }}
+              >
+                通勤のスキマに、数肢だけ
+              </div>
+              <p
+                style={{
+                  fontSize: 12.5,
+                  color: MUTED,
+                  margin: "0 0 12px",
+                  lineHeight: 1.8,
+                }}
+              >
+                選択中の範囲から、弱点・未着手を優先して出題します。
+              </p>
+              <div style={{ display: "flex", gap: 8 }}>
+                {[5, 10, 20]
+                  .filter((s) => s <= totalItems)
+                  .map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => startQuick(s)}
+                      style={{
+                        ...outlineButton,
+                        flex: 1,
+                        minHeight: 44,
+                        padding: "12px 0",
+                        fontSize: 15,
+                        letterSpacing: 2,
+                      }}
+                    >
+                      {s}肢
+                    </button>
+                  ))}
+              </div>
+            </div>
+          )}
+
           <button
             onClick={startNormal}
             disabled={selected.size === 0}
@@ -495,7 +562,7 @@ export default function PlayPage() {
               cursor: selected.size === 0 ? "not-allowed" : "pointer",
             }}
           >
-            開廷する{selected.size > 0 && `(${totalItems}肢)`}
+            開廷する{selected.size > 0 && `(全${totalItems}肢)`}
           </button>
 
           {weakItems.length > 0 && (

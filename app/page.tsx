@@ -37,7 +37,7 @@ import {
   INK_DOTTED,
   DUE_URGENT,
 } from "@/lib/tokens";
-import { page, col } from "@/lib/gameStyles";
+import { page, col, outlineButton } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
 import { GrowthChart } from "@/components/GrowthChart";
 import { BackupPanel } from "@/components/BackupPanel";
@@ -408,6 +408,21 @@ export default function Home() {
                 </button>
               </div>
             )}
+
+            {/* 範囲を選んで始める(分野・論点選択 / 少量モードの入口) */}
+            <button
+              onClick={() => router.push("/play")}
+              style={{
+                ...outlineButton,
+                width: "100%",
+                minHeight: 48,
+                marginBottom: 12,
+                fontSize: 14,
+                letterSpacing: 3,
+              }}
+            >
+              範囲を選んで始める(少量モードも)
+            </button>
 
             {/* 検地帳マトリクス(6列) */}
             <div
