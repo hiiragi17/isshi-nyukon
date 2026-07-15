@@ -17,15 +17,13 @@ import { maxOf, questionMax } from "@/lib/scoring";
 import { INK, CARD, AI_BLUE, SHU, GREEN, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
 import { page, col, card } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
-import { Stamp } from "@/components/Stamp";
 import { TermPopup } from "@/components/TermPopup";
+import { ResultScreen, type ItemRecord } from "@/components/ResultScreen";
 import { ZenshiEngine } from "@/components/engine/ZenshiEngine";
 import { CalcEngine } from "@/components/engine/CalcEngine";
 import { SpotEngine } from "@/components/engine/SpotEngine";
 
 type Item = { qi: number; ci: number };
-// 組み込みの Record<K,V> ユーティリティ型を隠さないよう ItemRecord とする
-type ItemRecord = { qi: number; ci: number; pts: number; max: number };
 type Hist = { pts: number; max: number };
 
 const allItems: Item[] = QUESTIONS.flatMap((q, i) =>
@@ -531,174 +529,20 @@ export default function PlayPage() {
 
   /* ================= RESULT ================= */
   if (screen === "result") {
-    const pct = sessionMax > 0 ? Math.round((score / sessionMax) * 100) : 0;
-    const passed = pct >= 70;
-    const misses = records.filter((r) => r.pts < r.max);
-    const topicsInSession = [...new Set(records.map((r) => r.qi))];
     // このセッションで新たに完璧到達した論点(検地帳で朱印を押させる)
     const getHist = (qi: number, ci: number) => history[`${qi}-${ci}`];
-    const newlyPerfectIds = topicsInSession
+    const newlyPerfectIds = [...new Set(records.map((r) => r.qi))]
       .filter((i) => !perfectAtStart.has(i) && isAllPerfect(i, getHist))
       .map((i) => QUESTIONS[i].id);
-    const toDashboard = () =>
-      router.push(
-        newlyPerfectIds.length
-          ? `/?stamped=${newlyPerfectIds.join(",")}`
-          : "/",
-      );
     return (
-      <div style={page}>
-        <div style={col}>
-          <div style={{ textAlign: "center", margin: "36px 0 20px" }}>
-            <Eyebrow>判決</Eyebrow>
-            <div style={{ display: "flex", justifyContent: "center", margin: "20px 0 16px" }}>
-              <Stamp text={passed ? "合格" : "追試"} color={passed ? SHU : AI_BLUE} />
-            </div>
-            <div style={{ fontFamily: SERIF, fontSize: 52, fontWeight: 800, lineHeight: 1 }}>
-              {score}
-            </div>
-            <div style={{ fontFamily: SERIF, fontSize: 12.5, color: MUTED, marginTop: 6 }}>
-              {sessionMax}点満点中({pct}%)
-            </div>
-            <p style={{ color: MUTED, fontSize: 13, marginTop: 10, lineHeight: 1.8 }}>
-              本試験の合格ラインもおおむね7割。
-              {passed ? "この調子です。" : "落とした肢を潰していきましょう。"}
-            </p>
-          </div>
-
-          <div style={{ ...card, padding: "16px 20px", marginBottom: 16 }}>
-            {topicsInSession.map((i, n) => {
-              const rs = records.filter((r) => r.qi === i);
-              const pts = rs.reduce((s, r) => s + r.pts, 0);
-              const max = rs.reduce((s, r) => s + r.max, 0);
-              return (
-                <div
-                  key={i}
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "baseline",
-                    padding: "12px 0",
-                    borderBottom:
-                      n < topicsInSession.length - 1 ? `1px solid ${LINE}` : "none",
-                    fontSize: 14.5,
-                  }}
-                >
-                  <div>
-                    <b>{QUESTIONS[i].topic}</b>
-                    <span style={{ color: MUTED, marginLeft: 8, fontSize: 11.5 }}>
-                      {QUESTIONS[i].law}({rs.length}肢)
-                    </span>
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: SERIF,
-                      fontWeight: 700,
-                      fontSize: 15,
-                      fontVariantNumeric: "tabular-nums",
-                      color: pts === max ? GREEN : pts >= max * 0.6 ? INK : SHU,
-                    }}
-                  >
-                    {pts} / {max}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {misses.length > 0 && (
-            <div style={{ ...card, marginBottom: 16, borderLeft: `4px solid ${SHU}` }}>
-              <Eyebrow>要再審理</Eyebrow>
-              <div style={{ fontFamily: SERIF, fontWeight: 700, fontSize: 15, margin: "4px 0 8px" }}>
-                取りこぼした肢({misses.length}肢)
-              </div>
-              <ul
-                style={{
-                  margin: 0,
-                  paddingLeft: 20,
-                  fontSize: 13,
-                  lineHeight: 1.9,
-                  color: MUTED,
-                }}
-              >
-                {misses.map((r, i) => (
-                  <li key={i}>
-                    <span style={{ color: INK }}>
-                      {QUESTIONS[r.qi].topic} —{" "}
-                      {QUESTIONS[r.qi].type === "calc"
-                        ? "計算"
-                        : QUESTIONS[r.qi].type === "spot"
-                          ? "広告"
-                          : `肢${r.ci + 1}`}
-                    </span>
-                    <span style={{ fontFamily: SERIF, marginLeft: 8, color: SHU }}>
-                      {r.pts}/{r.max}点
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {misses.length > 0 && (
-            <button
-              onClick={startSessionMisses}
-              style={{
-                width: "100%",
-                padding: "15px 0",
-                fontSize: 16,
-                fontWeight: 700,
-                fontFamily: SERIF,
-                letterSpacing: 4,
-                color: CARD,
-                background: SHU,
-                border: "none",
-                borderRadius: RADIUS,
-                cursor: "pointer",
-                marginBottom: 10,
-              }}
-            >
-              落とした{misses.length}肢だけ、すぐ再戦
-            </button>
-          )}
-          <button
-            onClick={toTop}
-            style={{
-              width: "100%",
-              padding: "15px 0",
-              fontSize: 16,
-              fontWeight: 700,
-              fontFamily: SERIF,
-              letterSpacing: 3,
-              color: misses.length > 0 ? INK : CARD,
-              background: misses.length > 0 ? CARD : INK,
-              border: misses.length > 0 ? `2px solid ${INK}` : "none",
-              borderRadius: RADIUS,
-              cursor: "pointer",
-            }}
-          >
-            出題範囲を選び直す
-          </button>
-          <button
-            onClick={toDashboard}
-            style={{
-              width: "100%",
-              padding: "12px 0",
-              marginTop: 10,
-              fontSize: 13.5,
-              fontWeight: 700,
-              fontFamily: SERIF,
-              letterSpacing: 3,
-              color: AI_BLUE,
-              background: "transparent",
-              border: "none",
-              cursor: "pointer",
-            }}
-          >
-            検地帳へ戻る
-          </button>
-        </div>
-      </div>
+      <ResultScreen
+        records={records}
+        score={score}
+        sessionMax={sessionMax}
+        newlyPerfectIds={newlyPerfectIds}
+        onRetryMisses={startSessionMisses}
+        onToTop={toTop}
+      />
     );
   }
 
