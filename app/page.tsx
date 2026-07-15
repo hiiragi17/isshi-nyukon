@@ -40,6 +40,7 @@ import {
 import { page, col } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
 import { GrowthChart } from "@/components/GrowthChart";
+import { BackupPanel } from "@/components/BackupPanel";
 
 /** SRS キューの対象 = 全問題の全肢 */
 const ALL_TARGETS = QUESTIONS.flatMap((q) =>
@@ -119,6 +120,16 @@ export default function Home() {
       alive = false;
     };
   }, []);
+
+  // 控えからの復元後に全件履歴を読み直して画面へ反映する
+  const reloadAttempts = () => {
+    storage
+      .getAttempts()
+      .then(setAttempts)
+      .catch((e) => {
+        console.error("[storage] getAttempts に失敗しました", e);
+      });
+  };
 
   // 直前のセッションで新たに完璧到達した論点(/play → ?stamped=)を受け取り、印を押す
   useEffect(() => {
@@ -682,6 +693,9 @@ export default function Home() {
             >
               ※ 成績はこの端末(ブラウザ)に保存されます
             </p>
+
+            {/* 記録の控え(書き出し・復元) — 端末依存のデータ消失に備える */}
+            <BackupPanel attempts={attempts ?? []} onImported={reloadAttempts} />
           </>
         )}
       </div>

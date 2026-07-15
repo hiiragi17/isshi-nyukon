@@ -145,4 +145,51 @@ describe("LocalStorageAdapter", () => {
     await a.saveAttempt(attempt("q1", 0, 2, 2, "2026-07-01T00:00:00.000Z"));
     await expect(b.getAttempts()).resolves.toEqual([]);
   });
+
+  it("replaceAttempts は既存の全件履歴を丸ごと差し替える(控えからの復元)", async () => {
+    const store = new Map<string, string>();
+    globals.window = fakeLocalStorage(store);
+    const adapter = new LocalStorageAdapter(KEY);
+    await adapter.saveAttempt(attempt("q1", 0, 0, 2, "2026-07-01T00:00:00.000Z"));
+    const restored = [
+      attempt("q2", 0, 2, 2, "2026-07-05T00:00:00.000Z"),
+      attempt("q2", 1, 3, 3, "2026-07-06T00:00:00.000Z"),
+    ];
+    await adapter.replaceAttempts(restored);
+    await expect(adapter.getAttempts()).resolves.toEqual(restored);
+  });
+
+  it("replaceAttempts は渡した配列の複製を保存する(後からの変更が波及しない)", async () => {
+    const store = new Map<string, string>();
+    globals.window = fakeLocalStorage(store);
+    const adapter = new LocalStorageAdapter(KEY);
+    const restored = [attempt("q2", 0, 2, 2, "2026-07-05T00:00:00.000Z")];
+    await adapter.replaceAttempts(restored);
+    restored.push(attempt("q9", 0, 0, 2, "2026-07-09T00:00:00.000Z"));
+    await expect(adapter.getAttempts()).resolves.toHaveLength(1);
+  });
+
+  it("replaceAttempts は保存できないとき失敗を伝播する(SSR / localStorage 不在)", async () => {
+    // 復元は「保存できたか」を呼び出し側へ返す必要があるため、
+    // 追記系(saveAttempt)と違って失敗を握りつぶさず reject する
+    const adapter = new LocalStorageAdapter(KEY);
+    await expect(adapter.replaceAttempts([])).rejects.toThrow();
+  });
+
+  it("replaceAttempts は setItem が例外を投げたら reject する(容量超過等)", async () => {
+    globals.window = {
+      localStorage: {
+        getItem: () => null,
+        setItem: () => {
+          throw new Error("QuotaExceededError");
+        },
+      },
+    };
+    const adapter = new LocalStorageAdapter(KEY);
+    await expect(
+      adapter.replaceAttempts([
+        attempt("q1", 0, 2, 2, "2026-07-01T00:00:00.000Z"),
+      ]),
+    ).rejects.toThrow();
+  });
 });
