@@ -42,7 +42,11 @@ function isAttempt(v: unknown): v is Attempt {
     typeof a.choiceIndex === "number" &&
     typeof a.pts === "number" &&
     typeof a.max === "number" &&
-    typeof a.answeredAt === "string"
+    // answeredAt は日時として解釈できる文字列に限る。壊れた値を復元すると
+    // SRS(nextReviewDate → dueAt の toISOString)が Invalid Date で
+    // 例外を投げ、ダッシュボードが描画できなくなるため、ここで弾く。
+    typeof a.answeredAt === "string" &&
+    !Number.isNaN(Date.parse(a.answeredAt))
   );
 }
 

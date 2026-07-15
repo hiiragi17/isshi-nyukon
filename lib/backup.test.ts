@@ -96,6 +96,26 @@ describe("parseBackup — 不正な控えは書き戻す前に弾く", () => {
     });
     expect(() => parseBackup(bad)).toThrow(BackupError);
   });
+
+  it("日時として解釈できない answeredAt は弾く(復元後の SRS 例外を防ぐ)", () => {
+    // 形は Attempt でも answeredAt が壊れていると、復元後に
+    // buildSummonQueue の dueAt.toISOString() が RangeError を投げるため、
+    // ここで弾いてダッシュボードの描画不能を防ぐ
+    const bad = JSON.stringify({
+      schema: BACKUP_SCHEMA,
+      exportedAt: "2026-07-15T00:00:00.000Z",
+      attempts: [
+        {
+          questionId: "q1",
+          choiceIndex: 0,
+          pts: 2,
+          max: 2,
+          answeredAt: "not-a-date",
+        },
+      ],
+    });
+    expect(() => parseBackup(bad)).toThrow(BackupError);
+  });
 });
 
 describe("backupFilename — 日付入りのファイル名", () => {

@@ -85,10 +85,20 @@ export class LocalStorageAdapter implements StorageAdapter {
     }
   }
 
+  /**
+   * localStorage へ実際に書き込む。書けない環境・容量超過等では例外を投げる。
+   * 「失敗を伝えたい経路(復元)」と「伝えたくない経路(追記)」を分けるための土台。
+   */
+  private persist(attempts: Attempt[]): void {
+    if (!this.available()) {
+      throw new Error("localStorage が利用できないため保存できません");
+    }
+    window.localStorage.setItem(this.key, JSON.stringify(attempts));
+  }
+
   private write(attempts: Attempt[]): void {
-    if (!this.available()) return;
     try {
-      window.localStorage.setItem(this.key, JSON.stringify(attempts));
+      this.persist(attempts);
     } catch {
       // 容量超過 / プライベートブラウジング等で setItem が例外を投げても、
       // 保存を no-op に落として呼び出し側(セッション終了時の記録)を壊さない
@@ -108,7 +118,10 @@ export class LocalStorageAdapter implements StorageAdapter {
   async replaceAttempts(attempts: Attempt[]): Promise<void> {
     // 追記ではなく丸ごと差し替え(控えからの復元)。渡された配列を複製して
     // 外部からの後続変更が保存内容に波及しないようにする。
-    this.write([...attempts]);
+    // 復元は「保存できなかった」ことを呼び出し側へ伝える必要があるため、
+    // write() の握りつぶしを使わず persist() の例外を伝播させる
+    // (BackupPanel が失敗をユーザーに表示できるようにする)。
+    this.persist([...attempts]);
   }
 }
 

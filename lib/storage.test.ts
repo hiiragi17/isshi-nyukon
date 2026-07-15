@@ -169,8 +169,27 @@ describe("LocalStorageAdapter", () => {
     await expect(adapter.getAttempts()).resolves.toHaveLength(1);
   });
 
-  it("SSR(window 不在)では replaceAttempts は no-op で例外を出さない", async () => {
+  it("replaceAttempts は保存できないとき失敗を伝播する(SSR / localStorage 不在)", async () => {
+    // 復元は「保存できたか」を呼び出し側へ返す必要があるため、
+    // 追記系(saveAttempt)と違って失敗を握りつぶさず reject する
     const adapter = new LocalStorageAdapter(KEY);
-    await expect(adapter.replaceAttempts([])).resolves.toBeUndefined();
+    await expect(adapter.replaceAttempts([])).rejects.toThrow();
+  });
+
+  it("replaceAttempts は setItem が例外を投げたら reject する(容量超過等)", async () => {
+    globals.window = {
+      localStorage: {
+        getItem: () => null,
+        setItem: () => {
+          throw new Error("QuotaExceededError");
+        },
+      },
+    };
+    const adapter = new LocalStorageAdapter(KEY);
+    await expect(
+      adapter.replaceAttempts([
+        attempt("q1", 0, 2, 2, "2026-07-01T00:00:00.000Z"),
+      ]),
+    ).rejects.toThrow();
   });
 });

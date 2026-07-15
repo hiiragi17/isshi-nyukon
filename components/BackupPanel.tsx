@@ -56,23 +56,41 @@ export function BackupPanel({
     // 同じファイルを続けて選べるよう input はここで必ずリセットする
     e.target.value = "";
     if (!file) return;
+
+    // 1. 読み込み・検証。不正・非対応ならここで終わり、storage は一切触らない
+    let restored: Attempt[];
     try {
       const text = await file.text();
-      const restored = parseBackup(text); // 不正ならここで例外 → storage は無傷
-      const ok = window.confirm(
-        `いまの記録を、控え(${restored.length}件)で置き換えます。\nこの端末の現在の成績は失われます。よろしいですか?`,
-      );
-      if (!ok) return;
-      await storage.replaceAttempts(restored);
-      setMsg({ kind: "ok", text: `控えから復元しました(${restored.length}件)。` });
-      onImported();
+      restored = parseBackup(text);
     } catch (err) {
-      const text =
-        err instanceof BackupError
-          ? err.message
-          : "控えの読み込みに失敗しました。";
-      setMsg({ kind: "error", text });
+      setMsg({
+        kind: "error",
+        text:
+          err instanceof BackupError
+            ? err.message
+            : "控えの読み込みに失敗しました。",
+      });
+      return;
     }
+
+    const ok = window.confirm(
+      `いまの記録を、控え(${restored.length}件)で置き換えます。\nこの端末の現在の成績は失われます。よろしいですか?`,
+    );
+    if (!ok) return;
+
+    // 2. 置換。保存が失敗したのに「復元しました」と誤表示しないよう、
+    //    replaceAttempts の例外(容量超過・プライベートモード等)を捕まえる
+    try {
+      await storage.replaceAttempts(restored);
+    } catch {
+      setMsg({
+        kind: "error",
+        text: "この端末に保存できませんでした(空き容量やプライベートモードをご確認ください)。",
+      });
+      return;
+    }
+    setMsg({ kind: "ok", text: `控えから復元しました(${restored.length}件)。` });
+    onImported();
   };
 
   return (
@@ -84,7 +102,8 @@ export function BackupPanel({
           color: MUTED,
           fontSize: 11.5,
           textAlign: "center",
-          padding: "6px 0",
+          // タップ領域を44px以上にする(モバイルファーストのガイドライン)
+          padding: "16px 0",
           userSelect: "none",
         }}
       >
@@ -101,6 +120,16 @@ export function BackupPanel({
         }}
       >
         <Eyebrow>記録の保全</Eyebrow>
+        <div
+          style={{
+            fontFamily: SERIF,
+            fontSize: 15,
+            fontWeight: 800,
+            margin: "4px 0 8px",
+          }}
+        >
+          記録の控え
+        </div>
         <p
           style={{
             fontSize: 12,
