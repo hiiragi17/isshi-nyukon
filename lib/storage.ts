@@ -19,6 +19,12 @@ export interface StorageAdapter {
   getAttempts(): Promise<Attempt[]>;
   /** Attempt を1件、履歴の末尾に追記する(既存は上書きしない) */
   saveAttempt(a: Attempt): Promise<void>;
+  /**
+   * 全件履歴を丸ごと置き換える(控えからの復元で使う)。
+   * 追記の saveAttempt と対になる一括書き込みで、Neon など将来の実装でも
+   * 「保存経路は Adapter だけ」の原則を保つために置く。
+   */
+  replaceAttempts(attempts: Attempt[]): Promise<void>;
 }
 
 /** localStorage 上の保存キー。バージョンを含めてスキーマ変更に備える */
@@ -97,6 +103,12 @@ export class LocalStorageAdapter implements StorageAdapter {
     const attempts = this.read();
     attempts.push(a);
     this.write(attempts);
+  }
+
+  async replaceAttempts(attempts: Attempt[]): Promise<void> {
+    // 追記ではなく丸ごと差し替え(控えからの復元)。渡された配列を複製して
+    // 外部からの後続変更が保存内容に波及しないようにする。
+    this.write([...attempts]);
   }
 }
 

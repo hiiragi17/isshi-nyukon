@@ -145,4 +145,32 @@ describe("LocalStorageAdapter", () => {
     await a.saveAttempt(attempt("q1", 0, 2, 2, "2026-07-01T00:00:00.000Z"));
     await expect(b.getAttempts()).resolves.toEqual([]);
   });
+
+  it("replaceAttempts は既存の全件履歴を丸ごと差し替える(控えからの復元)", async () => {
+    const store = new Map<string, string>();
+    globals.window = fakeLocalStorage(store);
+    const adapter = new LocalStorageAdapter(KEY);
+    await adapter.saveAttempt(attempt("q1", 0, 0, 2, "2026-07-01T00:00:00.000Z"));
+    const restored = [
+      attempt("q2", 0, 2, 2, "2026-07-05T00:00:00.000Z"),
+      attempt("q2", 1, 3, 3, "2026-07-06T00:00:00.000Z"),
+    ];
+    await adapter.replaceAttempts(restored);
+    await expect(adapter.getAttempts()).resolves.toEqual(restored);
+  });
+
+  it("replaceAttempts は渡した配列の複製を保存する(後からの変更が波及しない)", async () => {
+    const store = new Map<string, string>();
+    globals.window = fakeLocalStorage(store);
+    const adapter = new LocalStorageAdapter(KEY);
+    const restored = [attempt("q2", 0, 2, 2, "2026-07-05T00:00:00.000Z")];
+    await adapter.replaceAttempts(restored);
+    restored.push(attempt("q9", 0, 0, 2, "2026-07-09T00:00:00.000Z"));
+    await expect(adapter.getAttempts()).resolves.toHaveLength(1);
+  });
+
+  it("SSR(window 不在)では replaceAttempts は no-op で例外を出さない", async () => {
+    const adapter = new LocalStorageAdapter(KEY);
+    await expect(adapter.replaceAttempts([])).resolves.toBeUndefined();
+  });
 });
