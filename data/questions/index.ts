@@ -31,6 +31,7 @@ import { inshizei } from "./zei/inshizei";
 import { chikaKoji } from "./zei/chika-koji";
 import { eigyouHoshoukin } from "./gyoho/eigyou-hoshoukin";
 import { hoshouKyoukai } from "./gyoho/hoshou-kyoukai";
+import { jimushoAnnaijo } from "./gyoho/jimusho-annaijo";
 
 /**
  * 全問題。既存の順序(q1〜q6)は履歴キーやスコアリングが配列インデックスに
@@ -69,4 +70,5 @@ export const QUESTIONS: Question[] = [
   chikaKoji,
   eigyouHoshoukin,
   hoshouKyoukai,
+  jimushoAnnaijo,
 ];
