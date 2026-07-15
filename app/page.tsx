@@ -409,6 +409,27 @@ export default function Home() {
               </div>
             )}
 
+            {/* 範囲を選んで始める(分野・論点選択 / 少量モードの入口) */}
+            <button
+              onClick={() => router.push("/play")}
+              style={{
+                width: "100%",
+                minHeight: 48,
+                marginBottom: 12,
+                fontSize: 14,
+                fontWeight: 700,
+                fontFamily: SERIF,
+                letterSpacing: 3,
+                color: AI_BLUE,
+                background: CARD,
+                border: `2px solid ${AI_BLUE}`,
+                borderRadius: RADIUS,
+                cursor: "pointer",
+              }}
+            >
+              範囲を選んで始める(少量モードも)
+            </button>
+
             {/* 検地帳マトリクス(6列) */}
             <div
               style={{

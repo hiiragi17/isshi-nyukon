@@ -228,6 +228,37 @@ export default function PlayPage() {
     if (weakItems.length) startSession(weakItems);
   };
 
+  /**
+   * 少量モード: 選択中の範囲から n 肢だけ出題する。
+   * 弱点 → 未着手 → その他 の優先順で拾い、各層内はシャッフルして
+   * 毎回同じ並びにならない(通勤のスキマで「何肢か色々」やるための入口)。
+   */
+  const startQuick = (n: number) => {
+    const shuffle = (a: Item[]): Item[] => {
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    };
+    const weak: Item[] = [];
+    const untried: Item[] = [];
+    const rest: Item[] = [];
+    for (const it of allItems) {
+      if (!selected.has(it.qi)) continue;
+      const h = history[`${it.qi}-${it.ci}`];
+      if (!h) untried.push(it);
+      else if (h.pts < h.max) weak.push(it);
+      else rest.push(it);
+    }
+    const ordered = [
+      ...shuffle(weak),
+      ...shuffle(untried),
+      ...shuffle(rest),
+    ].slice(0, n);
+    if (ordered.length) startSession(ordered);
+  };
+
   const startSessionMisses = () => {
     const misses = records
       .filter((r) => r.pts < r.max)
@@ -478,6 +509,57 @@ export default function PlayPage() {
             </div>
           </div>
 
+          {totalItems >= 5 && (
+            <div style={{ ...card, marginBottom: 16 }}>
+              <Eyebrow>少量で始める</Eyebrow>
+              <div
+                style={{
+                  fontFamily: SERIF,
+                  fontWeight: 700,
+                  fontSize: 15,
+                  margin: "4px 0 4px",
+                }}
+              >
+                通勤のスキマに、数肢だけ
+              </div>
+              <p
+                style={{
+                  fontSize: 12.5,
+                  color: MUTED,
+                  margin: "0 0 12px",
+                  lineHeight: 1.8,
+                }}
+              >
+                選択中の範囲から、弱点・未着手を優先して出題します。
+              </p>
+              <div style={{ display: "flex", gap: 8 }}>
+                {[5, 10, 20]
+                  .filter((s) => s <= totalItems)
+                  .map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => startQuick(s)}
+                      style={{
+                        flex: 1,
+                        padding: "12px 0",
+                        fontSize: 15,
+                        fontWeight: 700,
+                        fontFamily: SERIF,
+                        letterSpacing: 2,
+                        color: AI_BLUE,
+                        background: CARD,
+                        border: `2px solid ${AI_BLUE}`,
+                        borderRadius: RADIUS,
+                        cursor: "pointer",
+                      }}
+                    >
+                      {s}肢
+                    </button>
+                  ))}
+              </div>
+            </div>
+          )}
+
           <button
             onClick={startNormal}
             disabled={selected.size === 0}
@@ -495,7 +577,7 @@ export default function PlayPage() {
               cursor: selected.size === 0 ? "not-allowed" : "pointer",
             }}
           >
-            開廷する{selected.size > 0 && `(${totalItems}肢)`}
+            開廷する{selected.size > 0 && `(全${totalItems}肢)`}
           </button>
 
           {weakItems.length > 0 && (
