@@ -281,12 +281,35 @@ export default function PlayPage() {
     });
   };
 
+  // 全論点の一括選択 / 解除
+  const selectAll = () => setSelected(new Set(QUESTIONS.map((_, i) => i)));
+  const clearAll = () => setSelected(new Set());
+
+  // 分野(カテゴリ)ごとの論点の添字
+  const categoryIndices = (cat: string) =>
+    QUESTIONS.reduce<number[]>((acc, q, i) => {
+      if (q.category === cat) acc.push(i);
+      return acc;
+    }, []);
+
+  // 分野ごとの一括トグル: その分野が全選択済みなら全解除、そうでなければ全選択
+  const toggleCategory = (cat: string) => {
+    setSelected((s) => {
+      const idx = categoryIndices(cat);
+      const allOn = idx.every((i) => s.has(i));
+      const nextSet = new Set(s);
+      idx.forEach((i) => (allOn ? nextSet.delete(i) : nextSet.add(i)));
+      return nextSet;
+    });
+  };
+
   /* ================= START ================= */
   if (screen === "start") {
     const totalItems = [...selected].reduce(
       (s, i) => s + itemCountOf(QUESTIONS[i]),
       0,
     );
+    const allSelected = selected.size === QUESTIONS.length;
     return (
       <div style={page}>
         <div style={col}>
@@ -366,22 +389,74 @@ export default function PlayPage() {
             <div style={{ fontFamily: SERIF, fontWeight: 700, fontSize: 15, margin: "4px 0 4px" }}>
               審理する論点を選ぶ
             </div>
-            <p style={{ fontSize: 12.5, color: MUTED, margin: "0 0 12px", lineHeight: 1.8 }}>
+            <p style={{ fontSize: 12.5, color: MUTED, margin: "0 0 10px", lineHeight: 1.8 }}>
               タップで選択 / 解除。挑戦済みの分野には成績が表示されます。
             </p>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 8,
+                marginBottom: 12,
+              }}
+            >
+              <span style={{ fontFamily: SANS, fontSize: 12, color: MUTED }}>
+                {selected.size}/{QUESTIONS.length} 論点を選択中
+              </span>
+              <button
+                onClick={allSelected ? clearAll : selectAll}
+                style={{
+                  ...outlineButton,
+                  minHeight: 44,
+                  padding: "10px 16px",
+                  fontSize: 13,
+                  letterSpacing: 1.5,
+                }}
+              >
+                {allSelected ? "全解除" : "全選択"}
+              </button>
+            </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {[...new Set(QUESTIONS.map((qq) => qq.category))].map((cat) => (
+              {[...new Set(QUESTIONS.map((qq) => qq.category))].map((cat) => {
+                const catAllOn = categoryIndices(cat).every((i) => selected.has(i));
+                return (
                 <div key={cat} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   <div
                     style={{
-                      fontFamily: SANS,
-                      fontSize: 11,
-                      letterSpacing: 2,
-                      color: MUTED,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
                       marginTop: 6,
                     }}
                   >
-                    {cat}
+                    <span
+                      style={{
+                        fontFamily: SANS,
+                        fontSize: 11,
+                        letterSpacing: 2,
+                        color: MUTED,
+                      }}
+                    >
+                      {cat}
+                    </span>
+                    <button
+                      onClick={() => toggleCategory(cat)}
+                      style={{
+                        fontFamily: SANS,
+                        fontSize: 11,
+                        letterSpacing: 1,
+                        fontWeight: 700,
+                        color: AI_BLUE,
+                        background: "transparent",
+                        border: "none",
+                        cursor: "pointer",
+                        padding: "10px 4px",
+                        minHeight: 44,
+                      }}
+                    >
+                      {catAllOn ? "この分野を全解除" : "この分野を全選択"}
+                    </button>
                   </div>
                   {QUESTIONS.map((qq, i) => {
                     if (qq.category !== cat) return null;
@@ -483,7 +558,8 @@ export default function PlayPage() {
                     );
                   })}
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
