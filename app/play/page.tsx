@@ -38,6 +38,20 @@ const allItems: Item[] = QUESTIONS.flatMap((q, i) =>
 /** questionId → QUESTIONS の添字。ダッシュボードから渡る itemKey の解決に使う */
 const idToIndex = new Map(QUESTIONS.map((q, i) => [q.id, i] as const));
 
+/** 表示順を保った分野(カテゴリ)一覧 */
+const CATEGORIES = [...new Set(QUESTIONS.map((q) => q.category))];
+
+/** 分野 → その分野に属する論点の添字。全選択/全解除トグルで使う(レンダリング毎の再計算を避ける) */
+const CATEGORY_INDICES = new Map<string, number[]>(
+  CATEGORIES.map((cat) => [
+    cat,
+    QUESTIONS.reduce<number[]>((acc, q, i) => {
+      if (q.category === cat) acc.push(i);
+      return acc;
+    }, []),
+  ]),
+);
+
 /**
  * ダッシュボードから ?items= で渡される itemKey 列(`${questionId}-${ci}`)を
  * セッションの Item[] に解決する。未知の id / 範囲外の ci は捨てる。
@@ -285,17 +299,10 @@ export default function PlayPage() {
   const selectAll = () => setSelected(new Set(QUESTIONS.map((_, i) => i)));
   const clearAll = () => setSelected(new Set());
 
-  // 分野(カテゴリ)ごとの論点の添字
-  const categoryIndices = (cat: string) =>
-    QUESTIONS.reduce<number[]>((acc, q, i) => {
-      if (q.category === cat) acc.push(i);
-      return acc;
-    }, []);
-
   // 分野ごとの一括トグル: その分野が全選択済みなら全解除、そうでなければ全選択
   const toggleCategory = (cat: string) => {
     setSelected((s) => {
-      const idx = categoryIndices(cat);
+      const idx = CATEGORY_INDICES.get(cat) ?? [];
       const allOn = idx.every((i) => s.has(i));
       const nextSet = new Set(s);
       idx.forEach((i) => (allOn ? nextSet.delete(i) : nextSet.add(i)));
@@ -405,7 +412,9 @@ export default function PlayPage() {
                 {selected.size}/{QUESTIONS.length} 論点を選択中
               </span>
               <button
+                type="button"
                 onClick={allSelected ? clearAll : selectAll}
+                aria-pressed={allSelected}
                 style={{
                   ...outlineButton,
                   minHeight: 44,
@@ -418,8 +427,10 @@ export default function PlayPage() {
               </button>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {[...new Set(QUESTIONS.map((qq) => qq.category))].map((cat) => {
-                const catAllOn = categoryIndices(cat).every((i) => selected.has(i));
+              {CATEGORIES.map((cat) => {
+                const catAllOn = (CATEGORY_INDICES.get(cat) ?? []).every((i) =>
+                  selected.has(i),
+                );
                 return (
                 <div key={cat} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   <div
@@ -441,7 +452,9 @@ export default function PlayPage() {
                       {cat}
                     </span>
                     <button
+                      type="button"
                       onClick={() => toggleCategory(cat)}
+                      aria-pressed={catAllOn}
                       style={{
                         fontFamily: SANS,
                         fontSize: 11,
