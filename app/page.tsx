@@ -41,6 +41,7 @@ import { page, col } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
 import { GrowthChart } from "@/components/GrowthChart";
 import { BackupPanel } from "@/components/BackupPanel";
+import { DisclaimerFooter } from "@/components/DisclaimerFooter";
 
 /** SRS キューの対象 = 全問題の全肢 */
 const ALL_TARGETS = QUESTIONS.flatMap((q) =>
@@ -698,6 +699,9 @@ export default function Home() {
             <BackupPanel attempts={attempts ?? []} onImported={reloadAttempts} />
           </>
         )}
+
+        {/* 免責(非公式・個人利用の明示) */}
+        <DisclaimerFooter />
       </div>
     </div>
   );
