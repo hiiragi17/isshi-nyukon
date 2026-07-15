@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { PAPER } from "@/lib/tokens";
 import "./globals.css";
 
 /**
@@ -37,7 +38,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#ECEEE9",
+  themeColor: PAPER,
 };
 
 export default function RootLayout({

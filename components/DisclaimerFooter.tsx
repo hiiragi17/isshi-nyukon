@@ -4,7 +4,7 @@
  * 世界観(法律文書×朱印)に馴染むよう「附則」の見出し文法で控えめに常設する。
  * 色・フォント・罫線は lib/tokens.ts を参照し、値をハードコードしない。
  */
-import { SANS, MUTED, LINE } from "@/lib/tokens";
+import { INK, SANS, SERIF, MUTED, LINE } from "@/lib/tokens";
 import { Eyebrow } from "@/components/Eyebrow";
 
 export function DisclaimerFooter() {
@@ -18,6 +18,16 @@ export function DisclaimerFooter() {
       }}
     >
       <Eyebrow>附則</Eyebrow>
+      <div
+        style={{
+          fontFamily: SERIF,
+          fontSize: 15,
+          color: INK,
+          margin: "4px 0 0",
+        }}
+      >
+        免責事項
+      </div>
       <p
         style={{
           fontFamily: SANS,
