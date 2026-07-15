@@ -38,6 +38,20 @@ const allItems: Item[] = QUESTIONS.flatMap((q, i) =>
 /** questionId → QUESTIONS の添字。ダッシュボードから渡る itemKey の解決に使う */
 const idToIndex = new Map(QUESTIONS.map((q, i) => [q.id, i] as const));
 
+/** 表示順を保った分野(カテゴリ)一覧 */
+const CATEGORIES = [...new Set(QUESTIONS.map((q) => q.category))];
+
+/** 分野 → その分野に属する論点の添字。全選択/全解除トグルで使う(レンダリング毎の再計算を避ける) */
+const CATEGORY_INDICES = new Map<string, number[]>(
+  CATEGORIES.map((cat) => [
+    cat,
+    QUESTIONS.reduce<number[]>((acc, q, i) => {
+      if (q.category === cat) acc.push(i);
+      return acc;
+    }, []),
+  ]),
+);
+
 /**
  * ダッシュボードから ?items= で渡される itemKey 列(`${questionId}-${ci}`)を
  * セッションの Item[] に解決する。未知の id / 範囲外の ci は捨てる。
@@ -281,12 +295,28 @@ export default function PlayPage() {
     });
   };
 
+  // 全論点の一括選択 / 解除
+  const selectAll = () => setSelected(new Set(QUESTIONS.map((_, i) => i)));
+  const clearAll = () => setSelected(new Set());
+
+  // 分野ごとの一括トグル: その分野が全選択済みなら全解除、そうでなければ全選択
+  const toggleCategory = (cat: string) => {
+    setSelected((s) => {
+      const idx = CATEGORY_INDICES.get(cat) ?? [];
+      const allOn = idx.every((i) => s.has(i));
+      const nextSet = new Set(s);
+      idx.forEach((i) => (allOn ? nextSet.delete(i) : nextSet.add(i)));
+      return nextSet;
+    });
+  };
+
   /* ================= START ================= */
   if (screen === "start") {
     const totalItems = [...selected].reduce(
       (s, i) => s + itemCountOf(QUESTIONS[i]),
       0,
     );
+    const allSelected = selected.size === QUESTIONS.length;
     return (
       <div style={page}>
         <div style={col}>
@@ -366,22 +396,80 @@ export default function PlayPage() {
             <div style={{ fontFamily: SERIF, fontWeight: 700, fontSize: 15, margin: "4px 0 4px" }}>
               審理する論点を選ぶ
             </div>
-            <p style={{ fontSize: 12.5, color: MUTED, margin: "0 0 12px", lineHeight: 1.8 }}>
+            <p style={{ fontSize: 12.5, color: MUTED, margin: "0 0 10px", lineHeight: 1.8 }}>
               タップで選択 / 解除。挑戦済みの分野には成績が表示されます。
             </p>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 8,
+                marginBottom: 12,
+              }}
+            >
+              <span style={{ fontFamily: SANS, fontSize: 12, color: MUTED }}>
+                {selected.size}/{QUESTIONS.length} 論点を選択中
+              </span>
+              <button
+                type="button"
+                onClick={allSelected ? clearAll : selectAll}
+                aria-pressed={allSelected}
+                style={{
+                  ...outlineButton,
+                  minHeight: 44,
+                  padding: "10px 16px",
+                  fontSize: 13,
+                  letterSpacing: 1.5,
+                }}
+              >
+                {allSelected ? "全解除" : "全選択"}
+              </button>
+            </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {[...new Set(QUESTIONS.map((qq) => qq.category))].map((cat) => (
+              {CATEGORIES.map((cat) => {
+                const catAllOn = (CATEGORY_INDICES.get(cat) ?? []).every((i) =>
+                  selected.has(i),
+                );
+                return (
                 <div key={cat} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   <div
                     style={{
-                      fontFamily: SANS,
-                      fontSize: 11,
-                      letterSpacing: 2,
-                      color: MUTED,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
                       marginTop: 6,
                     }}
                   >
-                    {cat}
+                    <span
+                      style={{
+                        fontFamily: SANS,
+                        fontSize: 11,
+                        letterSpacing: 2,
+                        color: MUTED,
+                      }}
+                    >
+                      {cat}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => toggleCategory(cat)}
+                      aria-pressed={catAllOn}
+                      style={{
+                        fontFamily: SANS,
+                        fontSize: 11,
+                        letterSpacing: 1,
+                        fontWeight: 700,
+                        color: AI_BLUE,
+                        background: "transparent",
+                        border: "none",
+                        cursor: "pointer",
+                        padding: "10px 4px",
+                        minHeight: 44,
+                      }}
+                    >
+                      {catAllOn ? "この分野を全解除" : "この分野を全選択"}
+                    </button>
                   </div>
                   {QUESTIONS.map((qq, i) => {
                     if (qq.category !== cat) return null;
@@ -483,7 +571,8 @@ export default function PlayPage() {
                     );
                   })}
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
