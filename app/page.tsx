@@ -318,6 +318,16 @@ export default function Home() {
                     忘却期限の近い順
                   </div>
                 </div>
+                <p
+                  style={{
+                    margin: "6px 0 0",
+                    fontSize: 11.5,
+                    color: INK_SUB,
+                    lineHeight: 1.8,
+                  }}
+                >
+                  前回失点した肢・忘れかけの肢・未着手の肢から、今日やるべき順に選んでいます。
+                </p>
                 <div
                   style={{
                     display: "flex",
