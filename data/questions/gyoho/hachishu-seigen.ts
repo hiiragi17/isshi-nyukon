@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q17 8種制限の残り(手付額制限・解約手付・損害賠償額の予定・手付金等の保全措置) */
 export const hachishuSeigen: Question = {
   id: "q17",
-  verified: false,
+  verified: true,
   category: "宅建業法",
   topic: "8種制限(手付・保全措置)",
   law: "宅建業法38条・39条・41条・41条の2",

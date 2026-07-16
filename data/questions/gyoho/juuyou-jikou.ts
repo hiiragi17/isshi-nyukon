@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q12 重要事項の説明(宅建業法35条) */
 export const juuyouJikou: Question = {
   id: "q12",
-  verified: false,
+  verified: true,
   category: "宅建業法",
   topic: "重要事項の説明(35条)",
   law: "宅建業法35条",

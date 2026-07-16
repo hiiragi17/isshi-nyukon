@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q15 宅建業の免許(基準・欠格事由・変更の届出) */
 export const menkyo: Question = {
   id: "q15",
-  verified: false,
+  verified: true,
   category: "宅建業法",
   topic: "免許(基準・欠格事由)",
   law: "宅建業法3条・5条・9条",

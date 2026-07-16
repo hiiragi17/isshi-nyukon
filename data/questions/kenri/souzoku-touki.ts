@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q22 相続と登記(共同相続・遺産分割・相続放棄)(民法177条・899条の2・939条) */
 export const souzokuTouki: Question = {
   id: "q22",
-  verified: false,
+  verified: true,
   category: "権利関係(民法)",
   topic: "相続と登記(共同相続・遺産分割・相続放棄)",
   law: "民法177条・899条の2・939条",

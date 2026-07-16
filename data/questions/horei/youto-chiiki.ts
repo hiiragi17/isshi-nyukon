@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q7 用途地域(都市計画法・建築基準法) */
 export const youtoChiiki: Question = {
   id: "q7",
-  verified: false,
+  verified: true,
   category: "法令上の制限",
   topic: "用途地域",
   law: "都市計画法・建築基準法",

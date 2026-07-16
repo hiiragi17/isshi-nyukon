@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q11 広告規制・賃貸マイソク(宅建業法32条・表示規約・spot) */
 export const chintaiKoukoku: Question = {
   id: "q11",
-  verified: false,
+  verified: true,
   category: "宅建業法",
   topic: "広告規制(賃貸)",
   law: "宅建業法32条・表示規約",

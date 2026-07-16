@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q33 事務所・案内所の規制(5点セット)(宅建業法31条の3・48条〜50条) */
 export const jimushoAnnaijo: Question = {
   id: "q33",
-  verified: false,
+  verified: true,
   category: "宅建業法",
   topic: "事務所・案内所の規制",
   law: "宅建業法31条の3・48条〜50条",

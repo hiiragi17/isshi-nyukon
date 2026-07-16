@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q14 媒介契約(宅建業法34条の2) */
 export const baikaiKeiyaku: Question = {
   id: "q14",
-  verified: false,
+  verified: true,
   category: "宅建業法",
   topic: "媒介契約(一般・専任・専属専任)",
   law: "宅建業法34条の2",

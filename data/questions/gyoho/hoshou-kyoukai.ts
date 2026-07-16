@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q32 保証協会(弁済業務保証金分担金・還付・供託・社員資格喪失) */
 export const hoshouKyoukai: Question = {
   id: "q32",
-  verified: false,
+  verified: true,
   category: "宅建業法",
   topic: "保証協会(弁済業務保証金)",
   law: "宅建業法64条の8〜64条の15",

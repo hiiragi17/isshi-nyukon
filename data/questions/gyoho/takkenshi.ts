@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q16 宅地建物取引士(登録・登録の移転・宅建士証) */
 export const takkenshi: Question = {
   id: "q16",
-  verified: false,
+  verified: true,
   category: "宅建業法",
   topic: "宅建士(登録・宅建士証)",
   law: "宅建業法18条〜22条の2・35条",

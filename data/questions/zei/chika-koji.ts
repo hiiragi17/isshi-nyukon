@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q30 地価公示法 */
 export const chikaKoji: Question = {
   id: "q30",
-  verified: false,
+  verified: true,
   category: "税・その他",
   topic: "地価公示",
   law: "地価公示法",
