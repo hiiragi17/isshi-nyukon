@@ -2,6 +2,17 @@
 import type { Diagram as DiagramData } from "@/types";
 import { INK, CARD, AI_BLUE, MUTED, SERIF, SANS } from "@/lib/tokens";
 
+/**
+ * 長い辺ラベルを2行に折り返す。横書きの長いラベルが斜めの辺の線を
+ * 横切って潰れるのを防ぐ。括弧付きなら括弧の前で分割する。
+ */
+function wrapLabel(label: string): string[] {
+  if (label.length <= 8) return [label];
+  const p = label.indexOf("(");
+  if (p > 0) return [label.slice(0, p), label.slice(p)];
+  return [label];
+}
+
 export function Diagram({ data }: { data: DiagramData }) {
   const R = 22;
   const nodeById = Object.fromEntries(data.nodes.map((n) => [n.id, n]));
@@ -54,6 +65,7 @@ export function Diagram({ data }: { data: DiagramData }) {
         const LABEL_OFFSET = 11;
         const lx = mx + px * LABEL_OFFSET,
           ly = my + py * LABEL_OFFSET;
+        const lines = wrapLabel(e.label);
         return (
           <g key={i}>
             <line
@@ -68,7 +80,7 @@ export function Diagram({ data }: { data: DiagramData }) {
             />
             <text
               x={lx}
-              y={ly}
+              y={ly - (lines.length - 1) * 6}
               textAnchor="middle"
               fontSize="11"
               fill={AI_BLUE}
@@ -80,7 +92,11 @@ export function Diagram({ data }: { data: DiagramData }) {
                 strokeLinejoin: "round",
               }}
             >
-              {e.label}
+              {lines.map((line, j) => (
+                <tspan key={j} x={lx} dy={j === 0 ? 0 : 12}>
+                  {line}
+                </tspan>
+              ))}
             </text>
           </g>
         );
