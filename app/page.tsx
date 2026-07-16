@@ -19,6 +19,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { QUESTIONS } from "@/data/questions";
+import { isActiveInMode, type StudyMode } from "@/lib/questions";
 import type { Attempt } from "@/types";
 import { storage, latestByItem, itemKey } from "@/lib/storage";
 import { itemCountOf } from "@/lib/items";
@@ -43,14 +44,6 @@ import { Eyebrow } from "@/components/Eyebrow";
 import { GrowthChart } from "@/components/GrowthChart";
 import { BackupPanel } from "@/components/BackupPanel";
 import { DisclaimerFooter } from "@/components/DisclaimerFooter";
-
-/** SRS キューの対象 = 全問題の全肢 */
-const ALL_TARGETS = QUESTIONS.flatMap((q) =>
-  Array.from({ length: itemCountOf(q) }, (_, ci) => ({
-    questionId: q.id,
-    choiceIndex: ci,
-  })),
-);
 
 /** questionId → QUESTIONS の添字 */
 const ID_TO_INDEX = new Map(QUESTIONS.map((q, i) => [q.id, i] as const));
@@ -94,6 +87,9 @@ export default function Home() {
   const [attempts, setAttempts] = useState<Attempt[] | null>(null);
   const [sel, setSel] = useState<string | null>(null);
   const [stampedIds, setStampedIds] = useState<Set<string>>(new Set());
+  // 学習モード。本番=検証済みのみ / 練習=全問。既定は練習(全問が見える側)。
+  // 永続化はまだ行わない(リロードで練習に戻る)。
+  const [mode, setMode] = useState<StudyMode>("renshu");
 
   // 全件履歴をロード
   useEffect(() => {
@@ -163,14 +159,27 @@ export default function Home() {
     return pick.map((ci) => itemKey(q.id, ci));
   };
 
+  const modeQuery = mode === "honban" ? "&mode=honban" : "";
   const goPlay = (keys: string[]) => {
-    if (keys.length) router.push(`/play?items=${keys.join(",")}`);
+    if (keys.length)
+      router.push(`/play?items=${keys.join(",")}${modeQuery}`);
   };
 
   /* ---------- 本日の召喚状(SRS キュー) ---------- */
+  // SRS キューの対象 = 現在のモードで出題対象になる問題の全肢
+  const targets = useMemo(
+    () =>
+      QUESTIONS.filter((q) => isActiveInMode(q, mode)).flatMap((q) =>
+        Array.from({ length: itemCountOf(q) }, (_, ci) => ({
+          questionId: q.id,
+          choiceIndex: ci,
+        })),
+      ),
+    [mode],
+  );
   const queue = useMemo(
-    () => buildSummonQueue(ALL_TARGETS, attempts ?? [], now),
-    [attempts, now],
+    () => buildSummonQueue(targets, attempts ?? [], now),
+    [targets, attempts, now],
   );
   // 本日やるべき肢 = later(まだ期限前の完璧)以外。無ければ全キューにフォールバック
   const summonList = useMemo(() => {
@@ -203,11 +212,21 @@ export default function Home() {
     return { text: `あと${days}日`, color: INK_SUB };
   };
 
-  /* ---------- 集印カウンタ ---------- */
-  const sealCount = QUESTIONS.reduce(
-    (n, _, qi) => n + (topicStat(qi).level === 2 ? 1 : 0),
+  /* ---------- 集印カウンタ(モードの出題対象が母数) ---------- */
+  const activeQIs = useMemo(
+    () =>
+      QUESTIONS.map((q, qi) => ({ q, qi }))
+        .filter((x) => isActiveInMode(x.q, mode))
+        .map((x) => x.qi),
+    [mode],
+  );
+  const sealCount = activeQIs.reduce(
+    (n, qi) => n + (topicStat(qi).level === 2 ? 1 : 0),
     0,
   );
+  const denom = activeQIs.length;
+  // 練習モードで含まれている未検証(本番では隠れる)問題の数
+  const unverifiedCount = QUESTIONS.filter((q) => !q.verified).length;
 
   const loaded = attempts !== null;
 
@@ -266,7 +285,7 @@ export default function Home() {
               <b style={{ fontFamily: SERIF, color: SHU, fontSize: 15 }}>
                 {loaded ? sealCount : "—"}
               </b>
-              /{QUESTIONS.length}
+              /{denom}
             </span>
             <span>
               試験まで{" "}
@@ -276,6 +295,72 @@ export default function Home() {
               日
             </span>
           </div>
+        </div>
+
+        {/* 学習モード切替(本番=検証済みのみ / 練習=全問+未検証バッジ) */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 10,
+            marginBottom: 12,
+            flexWrap: "wrap",
+          }}
+        >
+          <div
+            role="group"
+            aria-label="学習モード"
+            style={{
+              display: "inline-flex",
+              border: `1px solid ${LINE}`,
+              borderRadius: RADIUS,
+              overflow: "hidden",
+            }}
+          >
+            {([
+              ["renshu", "練習"],
+              ["honban", "本番"],
+            ] as const).map(([m, label]) => {
+              const on = mode === m;
+              return (
+                <button
+                  key={m}
+                  type="button"
+                  onClick={() => setMode(m)}
+                  aria-pressed={on}
+                  style={{
+                    minHeight: 40,
+                    padding: "8px 18px",
+                    fontFamily: SERIF,
+                    fontSize: 13,
+                    fontWeight: 700,
+                    letterSpacing: 2,
+                    cursor: "pointer",
+                    border: "none",
+                    background: on ? INK : CARD,
+                    color: on ? CARD : MUTED,
+                  }}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+          <span
+            style={{
+              fontSize: 11,
+              color: MUTED,
+              lineHeight: 1.7,
+              flex: 1,
+              minWidth: 180,
+              textAlign: "right",
+            }}
+          >
+            {mode === "honban"
+              ? "一次ソース照合済みの問題だけを出題中"
+              : `全問を出題中(未検証 ${unverifiedCount}問を含む)`}
+          </span>
         </div>
 
         {!loaded ? (
@@ -397,7 +482,9 @@ export default function Home() {
 
             {/* 範囲を選んで始める(分野・論点選択 / 少量モードの入口) */}
             <button
-              onClick={() => router.push("/play")}
+              onClick={() =>
+                router.push(mode === "honban" ? "/play?mode=honban" : "/play")
+              }
               style={{
                 ...outlineButton,
                 width: "100%",
@@ -452,6 +539,9 @@ export default function Home() {
                     border={LINE}
                     label="未着手"
                   />
+                  {mode === "renshu" && unverifiedCount > 0 && (
+                    <LegendDot shape="circle" color={INK} label="未検証" />
+                  )}
                 </div>
               </div>
 
@@ -459,7 +549,12 @@ export default function Home() {
                 style={{ display: "flex", flexDirection: "column", gap: 14 }}
               >
                 {FIELDS.map((fd) => {
-                  const stats = fd.questions.map((x) => topicStat(x.qi));
+                  // モードで出題対象になる論点だけを並べる(本番は検証済みのみ)
+                  const qs = fd.questions.filter((x) =>
+                    isActiveInMode(x.q, mode),
+                  );
+                  if (qs.length === 0) return null;
+                  const stats = qs.map((x) => topicStat(x.qi));
                   const done = stats.filter((s) => s.level === 2).length;
                   const learning = stats.filter((s) => s.level === 1).length;
                   return (
@@ -482,7 +577,7 @@ export default function Home() {
                           {fd.name}
                         </div>
                         <div style={{ fontSize: 11, color: MUTED }}>
-                          朱 {done} · 藍 {learning} / {fd.questions.length}
+                          朱 {done} · 藍 {learning} / {qs.length}
                         </div>
                       </div>
                       <div
@@ -492,10 +587,12 @@ export default function Home() {
                           gap: 6,
                         }}
                       >
-                        {fd.questions.map(({ q, qi }) => {
+                        {qs.map(({ q, qi }) => {
                           const st = topicStat(qi);
                           const isSel = sel === q.id;
                           const stamped = stampedIds.has(q.id);
+                          // 練習モードでは未検証の論点に印を付ける(本番では非表示)
+                          const showUnverified = !q.verified && mode === "renshu";
                           const bg =
                             st.level === 2
                               ? SHU
@@ -512,11 +609,12 @@ export default function Home() {
                                   : st.level === 1
                                     ? "学習中"
                                     : "未着手"
-                              })`}
+                              }${showUnverified ? "・未検証" : ""})`}
                               onClick={() =>
                                 setSel((cur) => (cur === q.id ? null : q.id))
                               }
                               style={{
+                                position: "relative",
                                 aspectRatio: "1",
                                 minWidth: 0,
                                 width: "100%",
@@ -534,6 +632,21 @@ export default function Home() {
                                 justifyContent: "center",
                               }}
                             >
+                              {showUnverified && (
+                                <span
+                                  aria-hidden="true"
+                                  style={{
+                                    position: "absolute",
+                                    top: 2,
+                                    right: 2,
+                                    width: 5,
+                                    height: 5,
+                                    borderRadius: "50%",
+                                    background: INK,
+                                    border: `0.5px solid ${CARD}`,
+                                  }}
+                                />
+                              )}
                               {stamped ? (
                                 <span
                                   className="stamp-in"
@@ -572,6 +685,8 @@ export default function Home() {
               (() => {
                 const qi = ID_TO_INDEX.get(sel)!;
                 const q = QUESTIONS[qi];
+                // 本番モードで隠れている(未検証)論点の詳細は出さない
+                if (!isActiveInMode(q, mode)) return null;
                 const st = topicStat(qi);
                 const ago = agoLabel(st.lastAt, now);
                 let detail: string;
@@ -623,9 +738,28 @@ export default function Home() {
                             fontSize: 16,
                             fontWeight: 800,
                             marginTop: 2,
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
                           }}
                         >
                           {q.topic}
+                          {!q.verified && (
+                            <span
+                              style={{
+                                fontFamily: SANS,
+                                fontSize: 10,
+                                fontWeight: 700,
+                                letterSpacing: 1,
+                                color: INK,
+                                background: CARD,
+                                borderRadius: 4,
+                                padding: "2px 6px",
+                              }}
+                            >
+                              未検証
+                            </span>
+                          )}
                         </div>
                         <div
                           style={{ fontSize: 12, color: INK_SUB, marginTop: 4 }}
@@ -682,8 +816,11 @@ export default function Home() {
                 );
               })()}
 
-            {/* 成長グラフ(集印の歩み) — 全件履歴で駆動 */}
-            <GrowthChart attempts={attempts ?? []} questions={QUESTIONS} />
+            {/* 成長グラフ(集印の歩み) — 全件履歴で駆動(モードの出題対象が母数) */}
+            <GrowthChart
+              attempts={attempts ?? []}
+              questions={QUESTIONS.filter((q) => isActiveInMode(q, mode))}
+            />
 
             <p
               style={{
