@@ -86,6 +86,9 @@ export default function PlayPage() {
   const [screen, setScreen] = useState<"start" | "play" | "result">("start");
   // 学習モード。ダッシュボードから ?mode=honban で受け取る(既定は練習)。
   const [mode, setMode] = useState<StudyMode>("renshu");
+  // 初回描画では ?mode= がまだ反映されていない。反映が済むまで範囲選択画面を
+  // 出さず、本番モードの未検証論点を一瞬でも見せない/開始させない(fail-closed)。
+  const [modeReady, setModeReady] = useState(false);
   const [selected, setSelected] = useState<Set<number>>(
     () => new Set(QUESTIONS.map((_, i) => i)),
   );
@@ -136,6 +139,7 @@ export default function PlayPage() {
         ),
       );
     }
+    setModeReady(true);
   }, []);
 
   // ダッシュボードから ?items= で来たら、その肢だけでセッションを自動開始する。
@@ -328,6 +332,25 @@ export default function PlayPage() {
 
   /* ================= START ================= */
   if (screen === "start") {
+    // モード(?mode=)反映前は範囲選択を出さない。本番の未検証論点を露出させない。
+    if (!modeReady) {
+      return (
+        <div style={page}>
+          <div style={col}>
+            <div
+              style={{
+                color: MUTED,
+                fontSize: 13,
+                textAlign: "center",
+                padding: "60px 0",
+              }}
+            >
+              読み込んでいます…
+            </div>
+          </div>
+        </div>
+      );
+    }
     const totalItems = [...selected].reduce(
       (s, i) => s + itemCountOf(QUESTIONS[i]),
       0,
