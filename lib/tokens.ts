@@ -15,6 +15,7 @@ export const SHU = "#BF3B33"; // 朱(判定・強調)
 export const GREEN = "#3D7A55"; // 緑(正解)
 export const MUTED = "#7C857F"; // muted
 export const LINE = "#D8DAD2"; // 罫線
+export const AI_BLUE_BG = "rgba(51,85,126,0.07)"; // 藍の淡い下地(選択中・サマリ背景)
 
 /**
  * ダッシュボード補助色(reference/design/dashboard-final.html 由来)。

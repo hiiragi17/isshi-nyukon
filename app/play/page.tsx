@@ -20,7 +20,7 @@ import {
   shuffleInPlace,
   type QuickState,
 } from "@/lib/quickPick";
-import { INK, CARD, AI_BLUE, SHU, GREEN, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
+import { INK, CARD, AI_BLUE, AI_BLUE_BG, SHU, GREEN, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
 import { page, col, card, outlineButton } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
 import { TermPopup } from "@/components/TermPopup";
@@ -391,7 +391,7 @@ export default function PlayPage() {
                 gap: 8,
                 padding: "10px 12px",
                 marginBottom: 12,
-                background: "rgba(51,85,126,0.07)",
+                background: AI_BLUE_BG,
                 borderRadius: RADIUS,
               }}
             >
@@ -529,7 +529,7 @@ export default function PlayPage() {
                           padding: 14,
                           borderRadius: RADIUS,
                           cursor: "pointer",
-                          background: on ? "rgba(51,85,126,0.07)" : CARD,
+                          background: on ? AI_BLUE_BG : CARD,
                           border: `2px solid ${on ? AI_BLUE : LINE}`,
                           fontFamily: SANS,
                           color: INK,
