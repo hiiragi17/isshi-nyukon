@@ -13,13 +13,14 @@ import { useRouter } from "next/navigation";
 import { QUESTIONS } from "@/data/questions";
 import { storage, latestByItem, itemKey } from "@/lib/storage";
 import { itemCountOf } from "@/lib/items";
-import { maxOf, questionMax } from "@/lib/scoring";
+import { maxOf } from "@/lib/scoring";
+import { topicProgress, summarizeProgress } from "@/lib/progress";
 import {
   buildQuickSession,
   shuffleInPlace,
   type QuickState,
 } from "@/lib/quickPick";
-import { INK, CARD, AI_BLUE, SHU, GREEN, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
+import { INK, CARD, AI_BLUE, AI_BLUE_BG, SHU, GREEN, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
 import { page, col, card, outlineButton } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
 import { TermPopup } from "@/components/TermPopup";
@@ -77,17 +78,7 @@ const parseItemKeys = (raw: string): Item[] => {
 const isAllPerfect = (
   qi: number,
   get: (qi: number, ci: number) => Hist | undefined,
-): boolean => {
-  const n = itemCountOf(QUESTIONS[qi]);
-  let present = 0;
-  for (let ci = 0; ci < n; ci++) {
-    const h = get(qi, ci);
-    if (!h) continue;
-    present++;
-    if (h.pts < h.max) return false;
-  }
-  return present === n;
-};
+): boolean => topicProgress(QUESTIONS[qi], (ci) => get(qi, ci)).level === 2;
 
 export default function PlayPage() {
   const router = useRouter();
@@ -190,19 +181,9 @@ export default function PlayPage() {
     return h && h.pts < h.max;
   });
 
-  const topicStats = (i: number) => {
-    const qq = QUESTIONS[i];
-    const n = itemCountOf(qq);
-    const items = Array.from({ length: n }, (_, j) => history[`${i}-${j}`]);
-    const tried = items.filter(Boolean) as Hist[];
-    if (tried.length === 0) return null;
-    return {
-      pts: tried.reduce((s, h) => s + h.pts, 0),
-      max: questionMax(qq),
-      perfect: items.filter((h) => h && h.pts === h.max).length,
-      total: n,
-    };
-  };
+  /** 論点1件の習熟統計(集計本体は lib/progress)。history=肢ごとの最新結果から導く */
+  const topicStats = (i: number) =>
+    topicProgress(QUESTIONS[i], (ci) => history[`${i}-${ci}`]);
 
   const openTerm = (w: string) => setActiveTerm((cur) => (cur === w ? null : w));
 
@@ -317,6 +298,9 @@ export default function PlayPage() {
       0,
     );
     const allSelected = selected.size === QUESTIONS.length;
+    // 進捗サマリ: 全論点の統計を1回だけ計算し、全体・分野の集計に使い回す
+    const allStats = QUESTIONS.map((_, i) => topicStats(i));
+    const overall = summarizeProgress(allStats);
     return (
       <div style={page}>
         <div style={col}>
@@ -402,6 +386,42 @@ export default function PlayPage() {
             <div
               style={{
                 display: "flex",
+                alignItems: "baseline",
+                justifyContent: "space-between",
+                gap: 8,
+                padding: "10px 12px",
+                marginBottom: 12,
+                background: AI_BLUE_BG,
+                borderRadius: RADIUS,
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: SANS,
+                  fontSize: 11,
+                  letterSpacing: 2,
+                  color: MUTED,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                全体の進捗
+              </span>
+              <span
+                style={{
+                  fontFamily: SERIF,
+                  fontSize: 13,
+                  fontWeight: 700,
+                  color:
+                    overall.perfectTopics === overall.topics ? GREEN : INK,
+                }}
+              >
+                完璧 {overall.perfectTopics}/{overall.topics}論点・獲得{" "}
+                {overall.pts}/{overall.max}点
+              </span>
+            </div>
+            <div
+              style={{
+                display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
                 gap: 8,
@@ -428,8 +448,10 @@ export default function PlayPage() {
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               {CATEGORIES.map((cat) => {
-                const catAllOn = (CATEGORY_INDICES.get(cat) ?? []).every((i) =>
-                  selected.has(i),
+                const catIndices = CATEGORY_INDICES.get(cat) ?? [];
+                const catAllOn = catIndices.every((i) => selected.has(i));
+                const catSummary = summarizeProgress(
+                  catIndices.map((i) => allStats[i]),
                 );
                 return (
                 <div key={cat} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -443,13 +465,35 @@ export default function PlayPage() {
                   >
                     <span
                       style={{
-                        fontFamily: SANS,
-                        fontSize: 11,
-                        letterSpacing: 2,
-                        color: MUTED,
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 2,
+                        minWidth: 0,
                       }}
                     >
-                      {cat}
+                      <span
+                        style={{
+                          fontFamily: SANS,
+                          fontSize: 11,
+                          letterSpacing: 2,
+                          color: MUTED,
+                        }}
+                      >
+                        {cat}
+                      </span>
+                      <span
+                        style={{
+                          fontFamily: SANS,
+                          fontSize: 11,
+                          color:
+                            catSummary.perfectTopics === catSummary.topics
+                              ? GREEN
+                              : MUTED,
+                        }}
+                      >
+                        完璧 {catSummary.perfectTopics}/{catSummary.topics}
+                        論点・{catSummary.pts}/{catSummary.max}点
+                      </span>
                     </span>
                     <button
                       type="button"
@@ -474,7 +518,7 @@ export default function PlayPage() {
                   {QUESTIONS.map((qq, i) => {
                     if (qq.category !== cat) return null;
                     const on = selected.has(i);
-                    const st = topicStats(i);
+                    const st = allStats[i];
                     return (
                       <button
                         key={qq.id}
@@ -485,7 +529,7 @@ export default function PlayPage() {
                           padding: 14,
                           borderRadius: RADIUS,
                           cursor: "pointer",
-                          background: on ? "rgba(51,85,126,0.07)" : CARD,
+                          background: on ? AI_BLUE_BG : CARD,
                           border: `2px solid ${on ? AI_BLUE : LINE}`,
                           fontFamily: SANS,
                           color: INK,
@@ -530,14 +574,14 @@ export default function PlayPage() {
                               {qq.law}
                             </span>
                           </span>
-                          {st ? (
+                          {st.tried > 0 ? (
                             <span
                               style={{
                                 fontFamily: SERIF,
                                 fontSize: 13,
                                 fontWeight: 700,
                                 color:
-                                  st.perfect === st.total
+                                  st.perfect === st.n
                                     ? GREEN
                                     : st.pts >= st.max * 0.6
                                       ? INK
@@ -545,7 +589,7 @@ export default function PlayPage() {
                                 whiteSpace: "nowrap",
                               }}
                             >
-                              {st.pts}/{st.max}点・完璧 {st.perfect}/{st.total}肢
+                              {st.pts}/{st.max}点・完璧 {st.perfect}/{st.n}肢
                             </span>
                           ) : (
                             <span style={{ fontSize: 12, color: MUTED, whiteSpace: "nowrap" }}>
@@ -553,7 +597,7 @@ export default function PlayPage() {
                             </span>
                           )}
                         </div>
-                        {st && (
+                        {st.tried > 0 && (
                           <div
                             style={{ height: 4, background: LINE, borderRadius: 2, marginTop: 10 }}
                           >
@@ -561,7 +605,7 @@ export default function PlayPage() {
                               style={{
                                 height: 4,
                                 width: `${Math.round((st.pts / st.max) * 100)}%`,
-                                background: st.perfect === st.total ? GREEN : SHU,
+                                background: st.perfect === st.n ? GREEN : SHU,
                                 borderRadius: 2,
                               }}
                             />
