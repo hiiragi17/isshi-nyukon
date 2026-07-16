@@ -363,10 +363,31 @@ export default function Home() {
             }}
           >
             {mode === "honban"
-              ? "一次ソース照合済みの問題だけを出題中"
+              ? "承認済み(verified)の問題だけを出題中"
               : `全問を出題中(未検証 ${unverifiedCount}問を含む)`}
           </span>
         </div>
+
+        {/* 本番モードに承認済みがまだ無いときの案内 */}
+        {mode === "honban" && denom === 0 && (
+          <div
+            style={{
+              background: CARD,
+              border: `1px solid ${LINE}`,
+              borderRadius: RADIUS,
+              padding: "16px 18px",
+              marginBottom: 12,
+              fontSize: 12.5,
+              color: MUTED,
+              lineHeight: 1.9,
+            }}
+          >
+            本番モードの問題はまだありません。照合シート(
+            <code>docs/verification/</code>)で承認した論点を{" "}
+            <code>verified: true</code>{" "}
+            に上げると、ここに出題対象として並びます。いまは「練習」で全問に取り組めます。
+          </div>
+        )}
 
         {!loaded ? (
           <div

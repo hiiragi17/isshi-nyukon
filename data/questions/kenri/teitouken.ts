@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q19 抵当権(法定地上権・物上代位・順位の変更・根抵当権)(民法372条・374条・388条・398条の4) */
 export const teitouken: Question = {
   id: "q19",
-  verified: true,
+  verified: false,
   category: "権利関係(民法)",
   topic: "抵当権(法定地上権・物上代位ほか)",
   law: "民法371条・372条・374条・388条・398条の4",

@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q31 営業保証金(供託額・供託手続・還付・不足供託) */
 export const eigyouHoshoukin: Question = {
   id: "q31",
-  verified: true,
+  verified: false,
   category: "宅建業法",
   topic: "営業保証金",
   law: "宅建業法25条〜28条",

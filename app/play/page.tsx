@@ -500,6 +500,19 @@ export default function PlayPage() {
                 {allSelected ? "全解除" : "全選択"}
               </button>
             </div>
+            {activeIndices.length === 0 && (
+              <div
+                style={{
+                  fontSize: 12.5,
+                  color: MUTED,
+                  lineHeight: 1.9,
+                  padding: "8px 0",
+                }}
+              >
+                本番モードに出題できる(承認済みの)論点がまだありません。「←
+                検地帳」から練習モードに切り替えると全問に取り組めます。
+              </div>
+            )}
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               {CATEGORIES.map((cat) => {
                 const catIdx = (CATEGORY_INDICES.get(cat) ?? []).filter((i) =>

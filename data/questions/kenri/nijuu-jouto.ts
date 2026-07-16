@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q1 二重譲渡(民法177条) */
 export const nijuuJouto: Question = {
   id: "q1",
-  verified: true,
+  verified: false,
   category: "権利関係(民法)",
   topic: "二重譲渡",
   law: "民法177条",

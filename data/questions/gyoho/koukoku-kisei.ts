@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q6 広告規制(宅建業法32条・表示規約・spot) */
 export const koukokuKisei: Question = {
   id: "q6",
-  verified: true,
+  verified: false,
   category: "宅建業法",
   topic: "広告規制",
   law: "宅建業法32条・表示規約",

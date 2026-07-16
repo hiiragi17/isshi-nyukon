@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q5 報酬額の制限(宅建業法46条・calc) */
 export const hoshu: Question = {
   id: "q5",
-  verified: true,
+  verified: false,
   category: "宅建業法",
   topic: "報酬額の制限",
   law: "宅建業法46条",

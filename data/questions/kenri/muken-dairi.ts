@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q3 無権代理(民法113〜117条・判例) */
 export const mukenDairi: Question = {
   id: "q3",
-  verified: true,
+  verified: false,
   category: "権利関係(民法)",
   topic: "無権代理",
   law: "民法113〜117条・判例",

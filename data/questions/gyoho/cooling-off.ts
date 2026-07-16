@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q4 クーリングオフ(宅建業法37条の2) */
 export const coolingOff: Question = {
   id: "q4",
-  verified: true,
+  verified: false,
   category: "宅建業法",
   topic: "クーリングオフ",
   law: "宅建業法37条の2",

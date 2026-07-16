@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q21 物権変動と登記(取消し・解除と第三者)(民法96条・121条・177条・545条) */
 export const bukkenHendo: Question = {
   id: "q21",
-  verified: true,
+  verified: false,
   category: "権利関係(民法)",
   topic: "物権変動と登記(取消し・解除と第三者)",
   law: "民法96条・121条・177条・545条",

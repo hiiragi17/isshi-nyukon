@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q27 不動産取得税(地方税・道府県税) */
 export const fudousanShutokuzei: Question = {
   id: "q27",
-  verified: true,
+  verified: false,
   category: "税・その他",
   topic: "不動産取得税",
   law: "地方税法",
