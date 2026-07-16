@@ -117,7 +117,7 @@ export function Diagram({ data }: { data: DiagramData }) {
           </text>
           <text
             x={n.x}
-            y={n.y < cy ? n.y - R - 6 : n.y + R + 15}
+            y={n.y < cy ? Math.max(n.y - R - 6, 12) : n.y + R + 15}
             textAnchor="middle"
             fontSize="10.5"
             fill={MUTED}
