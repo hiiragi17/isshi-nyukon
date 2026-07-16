@@ -15,9 +15,9 @@ export const teitouken: Question = {
   ],
   diagram: {
     nodes: [
-      { id: "A", x: 60, y: 95, label: "A", sub: "土地・建物所有" },
-      { id: "B", x: 170, y: 95, label: "B", sub: "抵当権者" },
-      { id: "C", x: 280, y: 95, label: "C", sub: "競落人" },
+      { id: "A", x: 170, y: 40, label: "A", sub: "土地・建物所有" },
+      { id: "B", x: 55, y: 135, label: "B", sub: "抵当権者" },
+      { id: "C", x: 285, y: 135, label: "C", sub: "競落人" },
     ],
     edges: [
       { from: "A", to: "B", label: "① 土地のみに抵当権設定" },
