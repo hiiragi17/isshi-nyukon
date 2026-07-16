@@ -141,9 +141,15 @@ export default function PlayPage() {
   // ダッシュボードから ?items= で来たら、その肢だけでセッションを自動開始する。
   // 判決後の新規完璧判定のため、開始時点の完璧論点を全件履歴から取り込む。
   useEffect(() => {
-    const raw = new URLSearchParams(window.location.search).get("items");
+    const params = new URLSearchParams(window.location.search);
+    const raw = params.get("items");
     if (!raw) return;
-    const items = parseItemKeys(raw);
+    // 本番モードのディープリンク(?mode=honban)では未検証の肢を落とす
+    // (fail-closed をブックマーク/共有URL経由の自動開始にも効かせる)。
+    const m = toStudyMode(params.get("mode"));
+    const items = parseItemKeys(raw).filter((it) =>
+      isActiveInMode(QUESTIONS[it.qi], m),
+    );
     if (!items.length) return;
     // 履歴の成否にかかわらずセッションは開始する。
     // 履歴が読めた場合のみ perfectAtStart を埋め、失敗時は空集合で始める

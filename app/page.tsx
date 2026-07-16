@@ -220,6 +220,11 @@ export default function Home() {
         .map((x) => x.qi),
     [mode],
   );
+  // 成長グラフ用: モードの出題対象になる問題の id 集合
+  const activeIdSet = useMemo(
+    () => new Set(activeQIs.map((qi) => QUESTIONS[qi].id)),
+    [activeQIs],
+  );
   const sealCount = activeQIs.reduce(
     (n, qi) => n + (topicStat(qi).level === 2 ? 1 : 0),
     0,
@@ -816,9 +821,12 @@ export default function Home() {
                 );
               })()}
 
-            {/* 成長グラフ(集印の歩み) — 全件履歴で駆動(モードの出題対象が母数) */}
+            {/* 成長グラフ(集印の歩み) — 全件履歴で駆動(モードの出題対象が母数)。
+                本番では未検証問題の履歴(審理数・日別・得点率も含め)を除外する。 */}
             <GrowthChart
-              attempts={attempts ?? []}
+              attempts={(attempts ?? []).filter((a) =>
+                activeIdSet.has(a.questionId),
+              )}
               questions={QUESTIONS.filter((q) => isActiveInMode(q, mode))}
             />
 

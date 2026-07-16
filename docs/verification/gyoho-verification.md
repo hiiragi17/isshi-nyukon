@@ -212,7 +212,13 @@
 - ⚠️ q5: 2024年報酬改正(800万以下30万上限)は本問に無関係だが将来のcalcで要注意。
 - ⚠️ q15: 「拘禁刑」表記は2025年刑法改正を反映済み(正しい)。
 
-## 出典(一次ソース)
+## 出典
+
+**一次ソース(条文)** — 判断の根拠は各エントリの「根拠原文」節と以下の条文
+
+- 宅地建物取引業法: [e-Gov法令検索(昭和27年法律第176号)](https://laws.e-gov.go.jp/law/327AC0000000176)
+
+**補足(解説サイト)** — 数字・要件の裏取りに使用
 
 - 報酬速算式・消費税: [報酬額の制限(宅建レトス)](https://takken-success.info/takkengyoho/e-30/)
 - 営業保証金・分担金の額: [営業保証金(office-tree)](https://office-tree.jp/blog/construction/takkengyo-eigyohoshokin-1000man-honten-shiten/)

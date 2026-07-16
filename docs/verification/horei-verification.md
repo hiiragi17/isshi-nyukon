@@ -115,12 +115,19 @@
 
 **7問すべて条文・数字と一致(明確な誤りなし)。** 面積(開発1,000㎡・国土法2,000/5,000/10,000㎡)・容積率(240%→960㎡)・用途地域13種、いずれも検算OK。要注意ゾーンの盛土規制法(2023)も正確。
 
-## 出典(一次ソース)
+## 出典
 
-- 用途地域13種・工業専用: [用途地域13種類(SUUMO)](https://suumo.jp/article/oyakudachi/oyaku/sumai_nyumon/other/youtochiiki/)
+**一次ソース(条文・官公庁)**
+
+- 用途地域13種・工業専用: [都市計画法(e-Gov 昭和43年法律第100号)](https://laws.e-gov.go.jp/law/343AC0000000100)
+- 建蔽率緩和・容積率: [建築基準法(e-Gov 昭和25年法律第201号)](https://laws.e-gov.go.jp/law/325AC0000000201)
 - 開発許可面積: [開発許可制度について(国交省PDF)](https://www.mlit.go.jp/tochi_fudousan_kensetsugyo/const/content/001706582.pdf)
-- 建蔽率緩和・容積率: [建蔽率(建築士試験対策)](https://kentikujuku.com/houki/kenpei-youseki-keisan/)
 - 農地法3・4・5条: [農地法(e-Gov法令検索)](https://laws.e-gov.go.jp/law/327AC0000000229)
 - 国土法事後届出の面積: [土地取引規制制度(国交省)](https://www.mlit.go.jp/totikensangyo/totikensangyo_tk2_000019.html)
 - 盛土規制法(2023): [盛土規制法について(国土交通省)](https://www.mlit.go.jp/toshi/web/morido.html)
+
+**補足(解説サイト)** — 一覧イメージ・計算例の裏取りに使用
+
+- 用途地域13種類の一覧: [用途地域13種類(SUUMO)](https://suumo.jp/article/oyakudachi/oyaku/sumai_nyumon/other/youtochiiki/)
+- 建蔽率・容積率の計算例: [建蔽率(建築士試験対策)](https://kentikujuku.com/houki/kenpei-youseki-keisan/)
 </content>
