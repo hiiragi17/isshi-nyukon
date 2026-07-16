@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q29 印紙税(国税) */
 export const inshizei: Question = {
   id: "q29",
+  verified: true,
   category: "税・その他",
   topic: "印紙税",
   law: "印紙税法",

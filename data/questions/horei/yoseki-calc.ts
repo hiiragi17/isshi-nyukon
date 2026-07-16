@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q10 容積率(延べ面積の上限・建築基準法52条・calc) */
 export const yosekiCalc: Question = {
   id: "q10",
+  verified: true,
   category: "法令上の制限",
   topic: "容積率",
   law: "建築基準法52条",

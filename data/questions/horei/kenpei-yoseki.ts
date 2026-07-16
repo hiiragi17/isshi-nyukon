@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q9 建蔽率・容積率(建築基準法53条・52条) */
 export const kenpeiYoseki: Question = {
   id: "q9",
+  verified: true,
   category: "法令上の制限",
   topic: "建蔽率・容積率",
   law: "建築基準法53条・52条",

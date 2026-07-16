@@ -1,4 +1,5 @@
 import type { Question } from "@/types";
+import { normalizeQuestion } from "@/lib/questions";
 import { nijuuJouto } from "./kenri/nijuu-jouto";
 import { sagiKyouhaku } from "./kenri/sagi-kyouhaku";
 import { mukenDairi } from "./kenri/muken-dairi";
@@ -34,10 +35,11 @@ import { hoshouKyoukai } from "./gyoho/hoshou-kyoukai";
 import { jimushoAnnaijo } from "./gyoho/jimusho-annaijo";
 
 /**
- * 全問題。既存の順序(q1〜q6)は履歴キーやスコアリングが配列インデックスに
- * 依存するため崩さない。新規問題は末尾に追記する(既存インデックスを動かさない)。
+ * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
+ * インデックスに依存するため崩さない。新規問題は末尾に追記する
+ * (既存インデックスを動かさない)。
  */
-export const QUESTIONS: Question[] = [
+const RAW_QUESTIONS: Question[] = [
   nijuuJouto,
   sagiKyouhaku,
   mukenDairi,
@@ -72,3 +74,9 @@ export const QUESTIONS: Question[] = [
   hoshouKyoukai,
   jimushoAnnaijo,
 ];
+
+/**
+ * アプリが参照する問題。読み込み境界で verified を正規化し、未指定は
+ * false(未検証=本番非表示)に倒す(fail-closed)。配列の順序は保つ。
+ */
+export const QUESTIONS: Question[] = RAW_QUESTIONS.map(normalizeQuestion);

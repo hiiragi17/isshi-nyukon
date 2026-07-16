@@ -28,6 +28,13 @@ export type Question = {
   /** 省略時は zenshi 扱い(プロトタイプの q1〜q4 は type を持たない) */
   type?: QuestionType;
   scenario?: string; // 事案文(省略可)
+  /**
+   * 一次ソース(e-Gov条文 or 公式過去問)で裏取り済みかどうか。
+   * 省略時は未検証として扱う(読み込み境界 `data/questions/index.ts` の
+   * `normalizeQuestion` で false に正規化 = fail-closed)。
+   * 本番モードは verified===true の問題だけを出題する。
+   */
+  verified?: boolean;
   lesson: string[]; // 30秒レッスン(3行程度)
   diagram?: Diagram; // 登場人物の関係図(省略可)
   choices?: Choice[]; // type 未指定(zenshi)のとき

@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q13 37条書面(宅建業法37条) */
 export const sanjunanaJou: Question = {
   id: "q13",
+  verified: true,
   category: "宅建業法",
   topic: "37条書面",
   law: "宅建業法37条",

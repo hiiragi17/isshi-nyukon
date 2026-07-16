@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q2 詐欺・強迫と第三者(民法96条) */
 export const sagiKyouhaku: Question = {
   id: "q2",
+  verified: true,
   category: "権利関係(民法)",
   topic: "詐欺・強迫と第三者",
   law: "民法96条",

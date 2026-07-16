@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q20 借地借家法(借地の存続期間・更新、借家の期間・定期建物賃貸借)(借地借家法3条・4条・29条・38条) */
 export const shakuchiShakka: Question = {
   id: "q20",
+  verified: true,
   category: "権利関係(民法)",
   topic: "借地借家法(存続期間・更新・定期借家)",
   law: "借地借家法3条・4条・29条・38条",
