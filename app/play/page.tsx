@@ -11,7 +11,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { QUESTIONS } from "@/data/questions";
-import { isActiveInMode, toStudyMode, type StudyMode } from "@/lib/questions";
 import { storage, latestByItem, itemKey } from "@/lib/storage";
 import { itemCountOf } from "@/lib/items";
 import { maxOf } from "@/lib/scoring";
@@ -84,11 +83,6 @@ const isAllPerfect = (
 export default function PlayPage() {
   const router = useRouter();
   const [screen, setScreen] = useState<"start" | "play" | "result">("start");
-  // 学習モード。ダッシュボードから ?mode=honban で受け取る(既定は練習)。
-  const [mode, setMode] = useState<StudyMode>("renshu");
-  // 初回描画では ?mode= がまだ反映されていない。反映が済むまで範囲選択画面を
-  // 出さず、本番モードの未検証論点を一瞬でも見せない/開始させない(fail-closed)。
-  const [modeReady, setModeReady] = useState(false);
   const [selected, setSelected] = useState<Set<number>>(
     () => new Set(QUESTIONS.map((_, i) => i)),
   );
@@ -126,34 +120,12 @@ export default function PlayPage() {
     };
   }, []);
 
-  // ダッシュボードから ?mode= を受け取る。本番なら初期選択を検証済みのみに絞る。
-  useEffect(() => {
-    const m = toStudyMode(
-      new URLSearchParams(window.location.search).get("mode"),
-    );
-    setMode(m);
-    if (m === "honban") {
-      setSelected(
-        new Set(
-          QUESTIONS.map((_, i) => i).filter((i) => QUESTIONS[i].verified),
-        ),
-      );
-    }
-    setModeReady(true);
-  }, []);
-
   // ダッシュボードから ?items= で来たら、その肢だけでセッションを自動開始する。
   // 判決後の新規完璧判定のため、開始時点の完璧論点を全件履歴から取り込む。
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const raw = params.get("items");
+    const raw = new URLSearchParams(window.location.search).get("items");
     if (!raw) return;
-    // 本番モードのディープリンク(?mode=honban)では未検証の肢を落とす
-    // (fail-closed をブックマーク/共有URL経由の自動開始にも効かせる)。
-    const m = toStudyMode(params.get("mode"));
-    const items = parseItemKeys(raw).filter((it) =>
-      isActiveInMode(QUESTIONS[it.qi], m),
-    );
+    const items = parseItemKeys(raw);
     if (!items.length) return;
     // 履歴の成否にかかわらずセッションは開始する。
     // 履歴が読めた場合のみ perfectAtStart を埋め、失敗時は空集合で始める
@@ -204,16 +176,7 @@ export default function PlayPage() {
     0,
   );
 
-  // モードで出題対象になる論点の添字 / 肢(本番は検証済みのみ)
-  const activeIndices = QUESTIONS.reduce<number[]>((acc, q, i) => {
-    if (isActiveInMode(q, mode)) acc.push(i);
-    return acc;
-  }, []);
-  const activeItems = allItems.filter((it) =>
-    isActiveInMode(QUESTIONS[it.qi], mode),
-  );
-
-  const weakItems = activeItems.filter((it) => {
+  const weakItems = allItems.filter((it) => {
     const h = history[`${it.qi}-${it.ci}`];
     return h && h.pts < h.max;
   });
@@ -257,7 +220,7 @@ export default function PlayPage() {
   };
 
   const startNormal = () => {
-    const items = activeItems.filter((it) => selected.has(it.qi));
+    const items = allItems.filter((it) => selected.has(it.qi));
     if (items.length) startSession(items);
   };
 
@@ -271,7 +234,7 @@ export default function PlayPage() {
    * ここでは選択範囲の絞り込みと肢の分類だけを渡す。
    */
   const startQuick = (n: number) => {
-    const pool = activeItems.filter((it) => selected.has(it.qi));
+    const pool = allItems.filter((it) => selected.has(it.qi));
     const classify = (it: Item): QuickState => {
       const h = history[`${it.qi}-${it.ci}`];
       if (!h) return "untried";
@@ -313,16 +276,14 @@ export default function PlayPage() {
     });
   };
 
-  // 全論点の一括選択 / 解除(本番では検証済みのみを対象にする)
-  const selectAll = () => setSelected(new Set(activeIndices));
+  // 全論点の一括選択 / 解除
+  const selectAll = () => setSelected(new Set(QUESTIONS.map((_, i) => i)));
   const clearAll = () => setSelected(new Set());
 
   // 分野ごとの一括トグル: その分野が全選択済みなら全解除、そうでなければ全選択
   const toggleCategory = (cat: string) => {
     setSelected((s) => {
-      const idx = (CATEGORY_INDICES.get(cat) ?? []).filter((i) =>
-        isActiveInMode(QUESTIONS[i], mode),
-      );
+      const idx = CATEGORY_INDICES.get(cat) ?? [];
       const allOn = idx.every((i) => s.has(i));
       const nextSet = new Set(s);
       idx.forEach((i) => (allOn ? nextSet.delete(i) : nextSet.add(i)));
@@ -332,35 +293,14 @@ export default function PlayPage() {
 
   /* ================= START ================= */
   if (screen === "start") {
-    // モード(?mode=)反映前は範囲選択を出さない。本番の未検証論点を露出させない。
-    if (!modeReady) {
-      return (
-        <div style={page}>
-          <div style={col}>
-            <div
-              style={{
-                color: MUTED,
-                fontSize: 13,
-                textAlign: "center",
-                padding: "60px 0",
-              }}
-            >
-              読み込んでいます…
-            </div>
-          </div>
-        </div>
-      );
-    }
     const totalItems = [...selected].reduce(
       (s, i) => s + itemCountOf(QUESTIONS[i]),
       0,
     );
-    const allSelected =
-      activeIndices.length > 0 && activeIndices.every((i) => selected.has(i));
-    // 進捗サマリ: 全論点の統計を1回だけ計算し(添字は QUESTIONS と対応)、
-    // 分野の集計に使い回す。全体はモードの出題対象だけを母数にする。
+    const allSelected = selected.size === QUESTIONS.length;
+    // 進捗サマリ: 全論点の統計を1回だけ計算し、全体・分野の集計に使い回す
     const allStats = QUESTIONS.map((_, i) => topicStats(i));
-    const overall = summarizeProgress(activeIndices.map((i) => allStats[i]));
+    const overall = summarizeProgress(allStats);
     return (
       <div style={page}>
         <div style={col}>
@@ -381,23 +321,6 @@ export default function PlayPage() {
           >
             ← 検地帳
           </button>
-          <div style={{ textAlign: "center", marginTop: 8 }}>
-            <span
-              style={{
-                fontFamily: SANS,
-                fontSize: 11,
-                letterSpacing: 1.5,
-                color: mode === "honban" ? SHU : MUTED,
-                border: `1px solid ${mode === "honban" ? SHU : LINE}`,
-                borderRadius: 999,
-                padding: "3px 12px",
-              }}
-            >
-              {mode === "honban"
-                ? "本番モード(検証済みのみ)"
-                : "練習モード(全問)"}
-            </span>
-          </div>
           <div style={{ textAlign: "center", margin: "24px 0 32px" }}>
             <Eyebrow>宅建・権利関係(民法)</Eyebrow>
             <h1
@@ -506,7 +429,7 @@ export default function PlayPage() {
               }}
             >
               <span style={{ fontFamily: SANS, fontSize: 12, color: MUTED }}>
-                {selected.size}/{activeIndices.length} 論点を選択中
+                {selected.size}/{QUESTIONS.length} 論点を選択中
               </span>
               <button
                 type="button"
@@ -523,29 +446,12 @@ export default function PlayPage() {
                 {allSelected ? "全解除" : "全選択"}
               </button>
             </div>
-            {activeIndices.length === 0 && (
-              <div
-                style={{
-                  fontSize: 12.5,
-                  color: MUTED,
-                  lineHeight: 1.9,
-                  padding: "8px 0",
-                }}
-              >
-                本番モードに出題できる(承認済みの)論点がまだありません。「←
-                検地帳」から練習モードに切り替えると全問に取り組めます。
-              </div>
-            )}
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               {CATEGORIES.map((cat) => {
-                const catIdx = (CATEGORY_INDICES.get(cat) ?? []).filter((i) =>
-                  isActiveInMode(QUESTIONS[i], mode),
-                );
-                // 本番モードで検証済みが0件の分野は丸ごと出さない
-                if (catIdx.length === 0) return null;
-                const catAllOn = catIdx.every((i) => selected.has(i));
+                const catIndices = CATEGORY_INDICES.get(cat) ?? [];
+                const catAllOn = catIndices.every((i) => selected.has(i));
                 const catSummary = summarizeProgress(
-                  catIdx.map((i) => allStats[i]),
+                  catIndices.map((i) => allStats[i]),
                 );
                 return (
                 <div key={cat} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -611,8 +517,6 @@ export default function PlayPage() {
                   </div>
                   {QUESTIONS.map((qq, i) => {
                     if (qq.category !== cat) return null;
-                    // 本番モードでは未検証の論点は選択肢に出さない
-                    if (!isActiveInMode(qq, mode)) return null;
                     const on = selected.has(i);
                     const st = allStats[i];
                     return (
@@ -665,23 +569,6 @@ export default function PlayPage() {
                           <span style={{ flex: 1, minWidth: 0 }}>
                             <span style={{ fontSize: 15, fontWeight: 700, display: "block" }}>
                               {qq.topic}
-                              {!qq.verified && (
-                                <span
-                                  style={{
-                                    marginLeft: 6,
-                                    fontSize: 10,
-                                    fontWeight: 700,
-                                    letterSpacing: 1,
-                                    color: SHU,
-                                    border: `1px solid ${SHU}`,
-                                    borderRadius: 4,
-                                    padding: "1px 5px",
-                                    verticalAlign: "middle",
-                                  }}
-                                >
-                                  未検証
-                                </span>
-                              )}
                             </span>
                             <span style={{ color: MUTED, fontWeight: 400, fontSize: 12 }}>
                               {qq.law}
