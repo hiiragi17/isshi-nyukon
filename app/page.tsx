@@ -22,6 +22,7 @@ import { QUESTIONS } from "@/data/questions";
 import type { Attempt } from "@/types";
 import { storage, latestByItem, itemKey } from "@/lib/storage";
 import { itemCountOf } from "@/lib/items";
+import { topicProgress, type TopicProgress } from "@/lib/progress";
 import { buildSummonQueue, type SrsItemState } from "@/lib/srs";
 import {
   INK,
@@ -87,17 +88,6 @@ function agoLabel(iso: string | null, now: Date): string {
   return `${days}日前`;
 }
 
-type TopicStat = {
-  n: number;
-  perfect: number;
-  tried: number;
-  weak: number;
-  untried: number;
-  lastAt: string | null;
-  /** 0=未着手 / 1=学習中 / 2=完璧 */
-  level: 0 | 1 | 2;
-};
-
 export default function Home() {
   const router = useRouter();
   // null = 未ロード(SSR / 初回)。ロード後に配列が入る(時刻依存の表示はロード後だけ)
@@ -146,25 +136,11 @@ export default function Home() {
     [attempts],
   );
 
-  /** 論点(問題)1件の習熟統計を実データから導く */
-  const topicStat = (qi: number): TopicStat => {
-    const q = QUESTIONS[qi];
-    const n = itemCountOf(q);
-    let perfect = 0;
-    let tried = 0;
-    let weak = 0;
-    let lastAt: string | null = null;
-    for (let ci = 0; ci < n; ci++) {
-      const a = latest.get(itemKey(q.id, ci));
-      if (!a) continue;
-      tried++;
-      if (a.pts >= a.max) perfect++;
-      else weak++;
-      if (!lastAt || a.answeredAt > lastAt) lastAt = a.answeredAt;
-    }
-    const level = tried === 0 ? 0 : perfect === n ? 2 : 1;
-    return { n, perfect, tried, weak, untried: n - tried, lastAt, level };
-  };
+  /** 論点(問題)1件の習熟統計を実データから導く(集計本体は lib/progress) */
+  const topicStat = (qi: number): TopicProgress =>
+    topicProgress(QUESTIONS[qi], (ci) =>
+      latest.get(itemKey(QUESTIONS[qi].id, ci)),
+    );
 
   /** 論点の再審理で出題する肢(itemKey)。弱点優先 → 未着手 → 全肢 */
   const topicSessionKeys = (qi: number): string[] => {
