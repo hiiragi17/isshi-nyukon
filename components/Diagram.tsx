@@ -5,6 +5,10 @@ import { INK, CARD, AI_BLUE, MUTED, SERIF, SANS } from "@/lib/tokens";
 export function Diagram({ data }: { data: DiagramData }) {
   const R = 22;
   const nodeById = Object.fromEntries(data.nodes.map((n) => [n.id, n]));
+  // 図の重心。頂点(上側)ノードのサブラベルは中央へ食い込まないよう
+  // ノードの上に出す(下に置くと枝やその中点ラベルと重なるため)
+  const cy =
+    data.nodes.reduce((acc, n) => acc + n.y, 0) / (data.nodes.length || 1);
   return (
     <svg
       viewBox="0 0 340 185"
@@ -30,7 +34,7 @@ export function Diagram({ data }: { data: DiagramData }) {
         const b = nodeById[e.to];
         const dx = b.x - a.x,
           dy = b.y - a.y;
-        const len = Math.sqrt(dx * dx + dy * dy);
+        const len = Math.sqrt(dx * dx + dy * dy) || 1;
         const ux = dx / len,
           uy = dy / len;
         const x1 = a.x + ux * (R + 4),
@@ -39,6 +43,17 @@ export function Diagram({ data }: { data: DiagramData }) {
           y2 = b.y - uy * (R + 8);
         const mx = (x1 + x2) / 2,
           my = (y1 + y2) / 2;
+        // ラベルは線分に対して垂直・上側(斜めの線では外側)へ逃がす。
+        // 頂点を共有する枝どうしでラベルが中央に寄って重なるのを防ぐ
+        let px = -uy,
+          py = ux;
+        if (py > 0) {
+          px = -px;
+          py = -py;
+        }
+        const LABEL_OFFSET = 11;
+        const lx = mx + px * LABEL_OFFSET,
+          ly = my + py * LABEL_OFFSET;
         return (
           <g key={i}>
             <line
@@ -52,8 +67,8 @@ export function Diagram({ data }: { data: DiagramData }) {
               strokeDasharray={e.dashed ? "5 4" : "none"}
             />
             <text
-              x={mx}
-              y={my - 7}
+              x={lx}
+              y={ly}
               textAnchor="middle"
               fontSize="11"
               fill={AI_BLUE}
@@ -86,7 +101,7 @@ export function Diagram({ data }: { data: DiagramData }) {
           </text>
           <text
             x={n.x}
-            y={n.y + R + 15}
+            y={n.y < cy ? n.y - R - 6 : n.y + R + 15}
             textAnchor="middle"
             fontSize="10.5"
             fill={MUTED}
