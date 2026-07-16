@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q25 国土利用計画法(事後届出) */
 export const kokudoTodokede: Question = {
   id: "q25",
+  verified: true,
   category: "法令上の制限",
   topic: "事後届出",
   law: "国土利用計画法23条",

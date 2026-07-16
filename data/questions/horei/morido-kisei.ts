@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q26 盛土規制法(宅地造成及び特定盛土等規制法・2023年改正) */
 export const moridoKisei: Question = {
   id: "q26",
+  verified: true,
   category: "法令上の制限",
   topic: "盛土規制",
   law: "盛土規制法(宅地造成及び特定盛土等規制法)",

@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q8 開発許可(都市計画法29条・37条) */
 export const kaihatsuKyoka: Question = {
   id: "q8",
+  verified: true,
   category: "法令上の制限",
   topic: "開発許可",
   law: "都市計画法29条",

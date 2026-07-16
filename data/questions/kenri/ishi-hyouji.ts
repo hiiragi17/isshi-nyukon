@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q18 意思表示(虚偽表示・錯誤・心裡留保)(民法93条〜95条) */
 export const ishiHyouji: Question = {
   id: "q18",
+  verified: true,
   category: "権利関係(民法)",
   topic: "意思表示(虚偽表示・錯誤・心裡留保)",
   law: "民法93条・94条・95条",

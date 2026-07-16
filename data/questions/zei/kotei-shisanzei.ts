@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q28 固定資産税(地方税・市町村税) */
 export const koteiShisanzei: Question = {
   id: "q28",
+  verified: true,
   category: "税・その他",
   topic: "固定資産税",
   law: "地方税法",

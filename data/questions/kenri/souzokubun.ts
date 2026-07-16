@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q23 法定相続分(配偶者と子の相続・民法900条・calc) */
 export const souzokubun: Question = {
   id: "q23",
+  verified: true,
   category: "権利関係(民法)",
   topic: "法定相続分",
   law: "民法900条",

@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q24 農地法(3条・4条・5条) */
 export const nochiHou: Question = {
   id: "q24",
+  verified: true,
   category: "法令上の制限",
   topic: "農地法",
   law: "農地法3条・4条・5条",
