@@ -33,6 +33,7 @@ import { chikaKoji } from "./zei/chika-koji";
 import { eigyouHoshoukin } from "./gyoho/eigyou-hoshoukin";
 import { hoshouKyoukai } from "./gyoho/hoshou-kyoukai";
 import { jimushoAnnaijo } from "./gyoho/jimusho-annaijo";
+import { kantokuShobun } from "./gyoho/kantoku-shobun";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -73,6 +74,7 @@ const RAW_QUESTIONS: Question[] = [
   eigyouHoshoukin,
   hoshouKyoukai,
   jimushoAnnaijo,
+  kantokuShobun,
 ];
 
 /**
