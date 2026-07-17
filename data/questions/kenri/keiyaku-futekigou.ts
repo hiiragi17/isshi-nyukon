@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q40 契約不適合責任(民法562条・563条・564条・415条・566条) */
 export const keiyakuFutekigou: Question = {
   id: "q40",
+  verified: true,
   category: "権利関係(民法)",
   topic: "契約不適合責任",
   law: "民法562条・563条・564条・415条・566条",
