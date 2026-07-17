@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q43 賃貸借(民法)(民法606条・612条・621条・622条の2) */
 export const chintaishaku: Question = {
   id: "q43",
+  verified: true,
   category: "権利関係(民法)",
   topic: "賃貸借(民法)",
   law: "民法606条・612条・621条・622条の2",

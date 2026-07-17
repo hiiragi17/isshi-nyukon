@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q41 債務不履行と解除(民法541条・542条・543条・415条) */
 export const saimuFurikou: Question = {
   id: "q41",
+  verified: true,
   category: "権利関係(民法)",
   topic: "債務不履行と解除",
   law: "民法541条・542条・543条・415条",

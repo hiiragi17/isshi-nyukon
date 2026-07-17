@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q42 保証・連帯保証(民法446条・448条・452条・453条・454条・465条の2) */
 export const hoshouRentai: Question = {
   id: "q42",
+  verified: true,
   category: "権利関係(民法)",
   topic: "保証・連帯保証",
   law: "民法446条・448条・452条・453条・454条・465条の2",
