@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q39 制限行為能力者(民法5条・9条・13条・20条・120条) */
 export const seigenKoui: Question = {
   id: "q39",
+  verified: true,
   category: "権利関係(民法)",
   topic: "制限行為能力者",
   law: "民法5条・9条・13条・20条・120条",
