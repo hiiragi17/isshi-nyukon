@@ -38,6 +38,7 @@ import { kashiTanpoRikou } from "./gyoho/kashi-tanpo-rikou";
 import { hachishuSonota } from "./gyoho/hachishu-sonota";
 import { kyoutakushoSetsumei } from "./gyoho/kyoutakusho-setsumei";
 import { juugyoushaHyoushiki } from "./gyoho/juugyousha-hyoushiki";
+import { seigenKoui } from "./kenri/seigen-koui";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -83,6 +84,7 @@ const RAW_QUESTIONS: Question[] = [
   hachishuSonota,
   kyoutakushoSetsumei,
   juugyoushaHyoushiki,
+  seigenKoui,
 ];
 
 /**
