@@ -45,6 +45,7 @@ import { hoshouRentai } from "./kenri/hoshou-rentai";
 import { chintaishaku } from "./kenri/chintaishaku";
 import { shoumetsuJikou } from "./kenri/shoumetsu-jikou";
 import { kyouyuu } from "./kenri/kyouyuu";
+import { fudousanTouki } from "./kenri/fudousan-touki";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -97,6 +98,7 @@ const RAW_QUESTIONS: Question[] = [
   chintaishaku,
   shoumetsuJikou,
   kyouyuu,
+  fudousanTouki,
 ];
 
 /**
