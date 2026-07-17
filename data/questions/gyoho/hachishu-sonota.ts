@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q36 8種制限(他人物売買・契約不適合特約・割賦販売)(宅建業法33条の2・40条・42条) */
 export const hachishuSonota: Question = {
   id: "q36",
+  verified: true,
   category: "宅建業法",
   topic: "8種制限(他人物売買・担保特約・割賦)",
   law: "宅建業法33条の2・40条・42条",

@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q37 供託所等に関する説明(35条とは別の説明義務)(宅建業法35条の2) */
 export const kyoutakushoSetsumei: Question = {
   id: "q37",
+  verified: true,
   category: "宅建業法",
   topic: "供託所等に関する説明",
   law: "宅建業法35条の2",

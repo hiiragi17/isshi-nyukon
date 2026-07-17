@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q38 従業者証明書・従業者名簿・帳簿・標識の細目(宅建業法48条〜50条) */
 export const juugyoushaHyoushiki: Question = {
   id: "q38",
+  verified: true,
   category: "宅建業法",
   topic: "従業者証明書・名簿・帳簿・標識",
   law: "宅建業法48条〜50条",

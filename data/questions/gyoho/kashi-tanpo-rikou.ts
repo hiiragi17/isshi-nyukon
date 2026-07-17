@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q35 住宅瑕疵担保履行法(資力確保義務・供託/保険・届出)(履行法2条・11条〜15条) */
 export const kashiTanpoRikou: Question = {
   id: "q35",
+  verified: true,
   category: "宅建業法",
   topic: "住宅瑕疵担保履行法",
   law: "住宅瑕疵担保履行法11条〜15条",

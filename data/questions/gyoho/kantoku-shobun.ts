@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q34 監督処分・罰則(指示・業務停止・免許取消し/宅建士への処分)(宅建業法65条〜68条の2) */
 export const kantokuShobun: Question = {
   id: "q34",
+  verified: true,
   category: "宅建業法",
   topic: "監督処分・罰則",
   law: "宅建業法65条〜68条の2",
