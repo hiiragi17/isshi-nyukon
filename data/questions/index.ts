@@ -41,6 +41,7 @@ import { juugyoushaHyoushiki } from "./gyoho/juugyousha-hyoushiki";
 import { seigenKoui } from "./kenri/seigen-koui";
 import { keiyakuFutekigou } from "./kenri/keiyaku-futekigou";
 import { saimuFurikou } from "./kenri/saimu-furikou";
+import { hoshouRentai } from "./kenri/hoshou-rentai";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -89,6 +90,7 @@ const RAW_QUESTIONS: Question[] = [
   seigenKoui,
   keiyakuFutekigou,
   saimuFurikou,
+  hoshouRentai,
 ];
 
 /**
