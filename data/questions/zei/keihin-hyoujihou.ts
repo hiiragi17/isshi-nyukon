@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q57 景品表示法・表示規約(5問免除科目・分譲マンション広告・spot) */
 export const keihinHyoujihou: Question = {
   id: "q57",
+  verified: true,
   category: "税・その他",
   topic: "景品表示法",
   law: "景品表示法5条・表示規約",

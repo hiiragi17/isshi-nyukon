@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q51 登録免許税(国税) */
 export const tourokuMenkyozei: Question = {
   id: "q51",
+  verified: true,
   category: "税・その他",
   topic: "登録免許税",
   law: "登録免許税法・租税特別措置法",

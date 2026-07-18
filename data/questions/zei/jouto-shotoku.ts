@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q52 譲渡所得の特例(所得税・租税特別措置法) */
 export const joutoShotoku: Question = {
   id: "q52",
+  verified: true,
   category: "税・その他",
   topic: "譲渡所得の特例",
   law: "租税特別措置法31条・31条の3・35条",

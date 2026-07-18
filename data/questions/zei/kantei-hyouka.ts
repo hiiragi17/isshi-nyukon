@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q53 不動産鑑定評価(不動産鑑定評価基準) */
 export const kanteiHyouka: Question = {
   id: "q53",
+  verified: true,
   category: "税・その他",
   topic: "不動産鑑定評価",
   law: "不動産鑑定評価基準",

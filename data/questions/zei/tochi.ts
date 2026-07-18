@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q55 土地(5問免除科目・地形と宅地の安全性) */
 export const tochi: Question = {
   id: "q55",
+  verified: true,
   category: "税・その他",
   topic: "土地",
   law: "5問免除・土地の知識",

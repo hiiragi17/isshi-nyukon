@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q56 建物(5問免除科目・構造と材料) */
 export const tatemono: Question = {
   id: "q56",
+  verified: true,
   category: "税・その他",
   topic: "建物",
   law: "5問免除・建物の知識",

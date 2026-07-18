@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q54 住宅金融支援機構(5問免除科目) */
 export const kikou: Question = {
   id: "q54",
+  verified: true,
   category: "税・その他",
   topic: "住宅金融支援機構",
   law: "住宅金融支援機構法13条",
