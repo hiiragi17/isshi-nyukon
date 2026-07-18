@@ -17,21 +17,34 @@
 // (通常のデプロイでは上げなくてよい。HTMLはネットワーク優先で常に更新される)
 const CACHE = "isshi-nyukon-sw-v1";
 
-// インストール時に控えておくページ(全ルート)とアプリアイコン。
-// ページ本体の JS/CSS は初回表示時に /_next/static/ 経路でキャッシュされる
-const PRECACHE = [
-  "/",
-  "/play",
-  "/icon-192.png",
-  "/icon-512.png",
-];
+// インストール時に控えておくページ(全ルート)とアプリアイコン
+const PRECACHE_PAGES = ["/", "/play"];
+const PRECACHE_ASSETS = ["/icon-192.png", "/icon-512.png"];
+
+/**
+ * ページ HTML と、そこから参照される /_next/static/ アセット(JS/CSS)を
+ * まとめてキャッシュする。HTML だけ控えても、ルート専用チャンクが無いと
+ * オフライン初回訪問でハイドレートできないため(例: トップだけ見て圏外に
+ * 入った人が /play を開くケース)、参照アセットまで拾っておく。
+ */
+async function precachePage(cache, path) {
+  const res = await fetch(path);
+  if (!res.ok) return;
+  const html = await res.clone().text();
+  await cache.put(path, res);
+  const assets = new Set(html.match(/\/_next\/static\/[^"'\s\\)]+/g) ?? []);
+  await Promise.allSettled([...assets].map((url) => cache.add(url)));
+}
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
     (async () => {
       const cache = await caches.open(CACHE);
       // 一部が取れなくても SW 自体は有効化する(ベストエフォート)
-      await Promise.allSettled(PRECACHE.map((path) => cache.add(path)));
+      await Promise.allSettled([
+        ...PRECACHE_PAGES.map((path) => precachePage(cache, path)),
+        ...PRECACHE_ASSETS.map((path) => cache.add(path)),
+      ]);
       await self.skipWaiting();
     })(),
   );
