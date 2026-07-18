@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q46 不動産登記法(不動産登記法60条・63条・105条・106条・109条) */
 export const fudousanTouki: Question = {
   id: "q46",
+  verified: true,
   category: "権利関係(民法)",
   topic: "不動産登記法",
   law: "不動産登記法60条・63条・105条・106条・109条",

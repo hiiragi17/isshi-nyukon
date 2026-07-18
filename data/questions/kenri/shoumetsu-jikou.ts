@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q44 消滅時効(民法145条・147条・152条・166条) */
 export const shoumetsuJikou: Question = {
   id: "q44",
+  verified: true,
   category: "権利関係(民法)",
   topic: "消滅時効",
   law: "民法145条・147条・152条・166条",

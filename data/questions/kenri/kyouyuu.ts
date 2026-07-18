@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q45 共有(民法249条・251条・252条・256条) */
 export const kyouyuu: Question = {
   id: "q45",
+  verified: true,
   category: "権利関係(民法)",
   topic: "共有",
   law: "民法249条・251条・252条・256条",
