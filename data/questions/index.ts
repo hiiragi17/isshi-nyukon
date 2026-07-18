@@ -56,6 +56,7 @@ import { kanteiHyouka } from "./zei/kantei-hyouka";
 import { kikou } from "./zei/kikou";
 import { tochi } from "./zei/tochi";
 import { tatemono } from "./zei/tatemono";
+import { keihinHyoujihou } from "./zei/keihin-hyoujihou";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -119,6 +120,7 @@ const RAW_QUESTIONS: Question[] = [
   kikou,
   tochi,
   tatemono,
+  keihinHyoujihou,
 ];
 
 /**
