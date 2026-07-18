@@ -109,7 +109,7 @@ docs/           # 設計資料(design-v1.md / tasks-v1.md)
 
 ## 既決事項(蒸し返さない)
 
-- **ストレージ抽象化**: `StorageAdapter` インターフェース(`getAttempts` / `saveAttempt`)。
+- **ストレージ抽象化**: `StorageAdapter` インターフェース(`getAttempts` / `saveAttempt` / `replaceAttempts`)。
   v1は `LocalStorageAdapter`。将来のNeon移行はAdapter差し替えのみで済む設計を守る
 - **成績データ**: `Attempt` を全件履歴で保存。弱点判定=最新結果 / SRS=最終挑戦日 / 成長グラフ=全履歴
 - **SRS**: SM-2簡易版(満点→間隔2倍、失点→リセット)。出題キューの優先度は

@@ -11,7 +11,7 @@
 import type { Attempt } from "@/types";
 
 /**
- * 成績ストア。実装は localStorage(v1)/ Neon(v2)で差し替える。
+ * 成績ストア。実装は localStorage(v1)/ Neon(v3)で差し替える。
  * メソッドは Promise を返す(Neon など非同期実装に備える)。
  */
 export interface StorageAdapter {
