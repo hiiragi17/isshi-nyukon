@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q49 建築基準法・集団規定(建築基準法42条・43条・55条・56条の2・65条) */
 export const shudanKitei: Question = {
   id: "q49",
-  verified: false,
+  verified: true,
   category: "法令上の制限",
   topic: "道路・防火・高さ制限",
   law: "建築基準法42条・43条・55条・56条の2・65条",

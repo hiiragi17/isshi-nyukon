@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q50 土地区画整理法(土地区画整理法76条・99条・104条) */
 export const kukakuSeiri: Question = {
   id: "q50",
-  verified: false,
+  verified: true,
   category: "法令上の制限",
   topic: "土地区画整理",
   law: "土地区画整理法76条・99条・104条",

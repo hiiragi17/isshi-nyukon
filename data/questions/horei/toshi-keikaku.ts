@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q48 都市計画法(都市計画法7条・12条の5・58条の2・65条) */
 export const toshiKeikaku: Question = {
   id: "q48",
-  verified: false,
+  verified: true,
   category: "法令上の制限",
   topic: "都市計画法",
   law: "都市計画法7条・12条の5・58条の2・65条",

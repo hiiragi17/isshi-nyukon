@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q47 建築確認(建築基準法6条・7条の6・87条) */
 export const kenchikuKakunin: Question = {
   id: "q47",
-  verified: false,
+  verified: true,
   category: "法令上の制限",
   topic: "建築確認",
   law: "建築基準法6条・7条の6・87条",
