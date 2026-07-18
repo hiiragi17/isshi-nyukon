@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { PAPER } from "@/lib/tokens";
+import { RegisterServiceWorker } from "@/components/RegisterServiceWorker";
 import "./globals.css";
 
 /**
@@ -21,6 +22,13 @@ export const metadata: Metadata = {
   title,
   description,
   applicationName: title,
+  // iOS でホーム画面に追加したとき standalone(ブラウザUIなし)で開くための指定。
+  // Android / デスクトップは app/manifest.ts の display: "standalone" が効く
+  appleWebApp: {
+    capable: true,
+    title,
+    statusBarStyle: "default",
+  },
   openGraph: {
     type: "website",
     locale: "ja_JP",
@@ -48,7 +56,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <body>{children}</body>
+      <body>
+        {children}
+        <RegisterServiceWorker />
+      </body>
     </html>
   );
 }
