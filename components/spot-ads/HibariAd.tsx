@@ -12,55 +12,61 @@ import type { SpotAdProps } from "./types";
 /** この広告の accent(分譲チラシは深緑にして q6 の朱・q11 の青と区別) */
 const DEEP_GREEN = "#2E6B4F";
 
+/** 認容済みゾーンの丸印+番号バッジ。モジュールスコープに置き、再レンダー時の
+ *  再マウント(fade-up アニメーション再発火)を避ける */
+function Mark({
+  id,
+  inset,
+  rot,
+  badge,
+  found,
+}: {
+  id: string;
+  inset: string;
+  rot: number;
+  badge: CSSProperties;
+  found: string[];
+}) {
+  if (!found.includes(id)) return null;
+  return (
+    <>
+      <span
+        className="fade-up"
+        style={{
+          position: "absolute",
+          inset,
+          border: "2.5px solid rgba(191,59,51,0.85)",
+          borderRadius: "50%",
+          transform: `rotate(${rot}deg)`,
+          pointerEvents: "none",
+        }}
+      />
+      <span
+        style={{
+          position: "absolute",
+          ...badge,
+          width: 20,
+          height: 20,
+          borderRadius: "50%",
+          background: SHU,
+          color: CARD,
+          fontSize: 11,
+          fontWeight: 800,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontFamily: SERIF,
+        }}
+      >
+        {found.indexOf(id) + 1}
+      </span>
+    </>
+  );
+}
+
 export function HibariAd({ found, pending, done, onTap }: SpotAdProps) {
   const zb = (id: string) =>
     `2px solid ${pending === id ? AI_BLUE : "transparent"}`;
-
-  const Mark = ({
-    id,
-    inset,
-    rot,
-    badge,
-  }: {
-    id: string;
-    inset: string;
-    rot: number;
-    badge: CSSProperties;
-  }) =>
-    found.includes(id) ? (
-      <>
-        <span
-          className="fade-up"
-          style={{
-            position: "absolute",
-            inset,
-            border: "2.5px solid rgba(191,59,51,0.85)",
-            borderRadius: "50%",
-            transform: `rotate(${rot}deg)`,
-            pointerEvents: "none",
-          }}
-        />
-        <span
-          style={{
-            position: "absolute",
-            ...badge,
-            width: 20,
-            height: 20,
-            borderRadius: "50%",
-            background: SHU,
-            color: CARD,
-            fontSize: 11,
-            fontWeight: 800,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontFamily: SERIF,
-          }}
-        >
-          {found.indexOf(id) + 1}
-        </span>
-      </>
-    ) : null;
 
   return (
     <div style={{ position: "relative", padding: "14px 10px 10px" }}>
@@ -160,7 +166,7 @@ export function HibariAd({ found, pending, done, onTap }: SpotAdProps) {
             <span style={{ color: DEEP_GREEN, fontSize: 22, fontWeight: 800 }}>
               2,980<span style={{ fontSize: 12 }}>万円!</span>
             </span>
-            <Mark id="nikaku" inset="-3px -5px" rot={-2} badge={{ top: -11, left: -11 }} />
+            <Mark id="nikaku" inset="-3px -5px" rot={-2} badge={{ top: -11, left: -11 }} found={found} />
           </button>
           <button
             onClick={() => onTap("loan")}
@@ -178,7 +184,7 @@ export function HibariAd({ found, pending, done, onTap }: SpotAdProps) {
             }}
           >
             頭金0円・月々わずか5.2万円!
-            <Mark id="loan" inset="-5px -7px" rot={3} badge={{ top: -13, right: -11 }} />
+            <Mark id="loan" inset="-5px -7px" rot={3} badge={{ top: -13, right: -11 }} found={found} />
           </button>
         </div>
 
@@ -245,7 +251,7 @@ export function HibariAd({ found, pending, done, onTap }: SpotAdProps) {
           >
             <span style={{ color: "#888" }}>新駅</span>
             <b>(仮称)ひばり新線新駅 徒歩3分 ※2028年開業構想</b>
-            <Mark id="shineki" inset="0 40px 0 44px" rot={-1} badge={{ top: -9, right: 34 }} />
+            <Mark id="shineki" inset="0 40px 0 44px" rot={-1} badge={{ top: -9, right: 34 }} found={found} />
           </button>
           <button
             onClick={() => onTap("school")}
@@ -269,7 +275,7 @@ export function HibariAd({ found, pending, done, onTap }: SpotAdProps) {
           >
             <span style={{ color: "#888" }}>周辺環境</span>
             <b>ひばり小学校 すぐそば!</b>
-            <Mark id="school" inset="0 6px 0 66px" rot={-1} badge={{ top: -9, right: 0 }} />
+            <Mark id="school" inset="0 6px 0 66px" rot={-1} badge={{ top: -9, right: 0 }} found={found} />
           </button>
           <button
             onClick={() => onTap("safeArea")}
