@@ -216,9 +216,10 @@ takken-game/
 interface StorageAdapter {
   getAttempts(): Promise<Attempt[]>;
   saveAttempt(a: Attempt): Promise<void>;
+  replaceAttempts(attempts: Attempt[]): Promise<void>; // バックアップ復元用の一括置き換え
 }
 // v1: LocalStorageAdapter(即日実装可・無料)
-// v2: NeonAdapter(複数端末同期・ランキングが欲しくなったら)
+// v3: NeonAdapter(複数端末同期・ランキングが欲しくなったら。着手条件は4章を参照)
 ```
 
 アプリ側は Adapter だけを見る。localStorage → Neon の移行はこの1ファイルの差し替えで完了。
@@ -236,10 +237,28 @@ SM-2 の簡易版で十分:
 | フェーズ | 内容 | ストレージ |
 |---|---|---|
 | v0(済) | プロトタイプ: zenshi エンジン、4テーマ16肢、弱点復習 | メモリ |
-| v1 | Next.js化、localStorage、業法+民法を各5テーマへ拡充 | localStorage |
-| v1.5 | 間隔反復、成長グラフ、法令上の制限追加 | localStorage |
-| v2 | 計算エンジン(報酬・建蔽率容積率)、間違い探しエンジン(マイソク) | localStorage |
-| v3 | Neon移行、公開、ランキング(任意) | Neon |
+| v1(済) | Next.js化、localStorage、業法+民法を各5テーマへ拡充 | localStorage |
+| v1.5(済) | 間隔反復、成長グラフ、法令上の制限追加 | localStorage |
+| v2(済) | 計算エンジン(報酬・建蔽率容積率)、間違い探しエンジン(マイソク) | localStorage |
+| v3(当面見送り) | Neon移行、公開、ランキング(任意)。着手条件は下記 | Neon |
+
+### v3(Neon移行)の前提条件 — 当面見送り
+
+当面はDBを分けず、localStorage を継続する(Issue #50 で決定)。
+
+理由:
+
+- `StorageAdapter` の抽象化(3.2節)により、Neon移行は将来 Adapter 1ファイルの差し替えで済む。前倒しする利益がない
+- DB化は認証・サーバー・運用・費用を連れてくる。単一端末・個人利用の現状には過剰
+- localStorage の主な実リスク(データ消失)は、バックアップ機能(エクスポート/インポート。実装済み)で対応済み
+
+以下の**いずれか**を満たしたら v3 に着手する:
+
+- 複数端末で成績を同期したくなった
+- アプリを公開し、他ユーザー/ランキングが必要になった
+- localStorage の容量超過・破損が現実に発生した
+
+それまでは、Adapter 差し替えで壊れないこと(アプリ側が localStorage を直接触らないこと)を保つことだけ意識する。
 
 ### 問題作成の運用メモ
 
