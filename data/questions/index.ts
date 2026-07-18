@@ -50,6 +50,13 @@ import { kenchikuKakunin } from "./horei/kenchiku-kakunin";
 import { toshiKeikaku } from "./horei/toshi-keikaku";
 import { shudanKitei } from "./horei/shudan-kitei";
 import { kukakuSeiri } from "./horei/kukaku-seiri";
+import { tourokuMenkyozei } from "./zei/touroku-menkyozei";
+import { joutoShotoku } from "./zei/jouto-shotoku";
+import { kanteiHyouka } from "./zei/kantei-hyouka";
+import { kikou } from "./zei/kikou";
+import { tochi } from "./zei/tochi";
+import { tatemono } from "./zei/tatemono";
+import { keihinHyoujihou } from "./zei/keihin-hyoujihou";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -107,6 +114,13 @@ const RAW_QUESTIONS: Question[] = [
   toshiKeikaku,
   shudanKitei,
   kukakuSeiri,
+  tourokuMenkyozei,
+  joutoShotoku,
+  kanteiHyouka,
+  kikou,
+  tochi,
+  tatemono,
+  keihinHyoujihou,
 ];
 
 /**

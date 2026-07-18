@@ -6,6 +6,7 @@
  * (既決事項「広告2枚目を作る時に判断」→ 忠実性優先でハードコード継続)。
  * SpotEngine 自体はゾーン駆動のまま汎用。
  */
+import { HibariAd } from "./spot-ads/HibariAd";
 import { MidoridaiAd } from "./spot-ads/MidoridaiAd";
 import { SakuraAd } from "./spot-ads/SakuraAd";
 import type { SpotAdProps } from "./spot-ads/types";
@@ -18,6 +19,8 @@ export function SpotAd({ questionId, ...rest }: Props) {
       return <SakuraAd {...rest} />;
     case "q6":
       return <MidoridaiAd {...rest} />;
+    case "q57":
+      return <HibariAd {...rest} />;
     default:
       if (process.env.NODE_ENV !== "production") {
         console.warn(`SpotAd: no ad registered for questionId "${questionId}"`);
