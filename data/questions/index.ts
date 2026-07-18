@@ -46,6 +46,10 @@ import { chintaishaku } from "./kenri/chintaishaku";
 import { shoumetsuJikou } from "./kenri/shoumetsu-jikou";
 import { kyouyuu } from "./kenri/kyouyuu";
 import { fudousanTouki } from "./kenri/fudousan-touki";
+import { kenchikuKakunin } from "./horei/kenchiku-kakunin";
+import { toshiKeikaku } from "./horei/toshi-keikaku";
+import { shudanKitei } from "./horei/shudan-kitei";
+import { kukakuSeiri } from "./horei/kukaku-seiri";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -99,6 +103,10 @@ const RAW_QUESTIONS: Question[] = [
   shoumetsuJikou,
   kyouyuu,
   fudousanTouki,
+  kenchikuKakunin,
+  toshiKeikaku,
+  shudanKitei,
+  kukakuSeiri,
 ];
 
 /**
