@@ -1,7 +1,7 @@
 import type { Question } from "@/types";
 
 /**
- * q47 区分所有法(区分所有法17条・31条・35条・39条・62条)
+ * q58 区分所有法(区分所有法17条・31条・35条・39条・62条)
  *
  * 根拠は令和7年法律第47号(老朽化マンション等改正法。区分所有法改正部分は
  * 令和8年4月1日施行)。作問時の一次ソースは法務省「新旧対照条文」PDF
@@ -9,7 +9,7 @@ import type { Question } from "@/types";
  * 旧法知識(全体ベース各3/4・招集期間の「伸縮」)がそのまま誤り肢になる改正またぎ論点。
  */
 export const kubunShoyuu: Question = {
-  id: "q47",
+  id: "q58",
   verified: false,
   category: "権利関係(民法)",
   topic: "区分所有法",
