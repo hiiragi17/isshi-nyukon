@@ -10,7 +10,7 @@ import type { Question } from "@/types";
  */
 export const kubunShoyuu: Question = {
   id: "q58",
-  verified: false,
+  verified: true,
   category: "権利関係(民法)",
   topic: "区分所有法",
   law: "区分所有法17条・31条・35条・39条・62条",
