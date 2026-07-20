@@ -13,6 +13,9 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          # 読み取り専用のワークフローのため認証情報を残さない
+          persist-credentials: false
 
       # pnpm のバージョンは package.json の packageManager フィールドから解決する
       - uses: pnpm/action-setup@v4
