@@ -100,9 +100,10 @@ describe("calc(計算)", () => {
     }
   });
 
-  it("build の各段に選択肢が2つ以上あり、正解がちょうど1つある", () => {
+  it("build がちょうど2段で、各段に選択肢が2つ以上・正解がちょうど1つある", () => {
     for (const q of calcQuestions) {
-      expect(q.calc!.build.length, `${q.id} の build 段数`).toBeGreaterThan(0);
+      // CalcEngine と lib/calc.ts は build を2段固定([0]=式 / [1]=仕上げ)として扱う
+      expect(q.calc!.build.length, `${q.id} の build 段数`).toBe(2);
       for (const [i, step] of q.calc!.build.entries()) {
         expect(step.options.length, `${q.id} 段${i + 1} の選択肢数`).toBeGreaterThan(1);
         const correctCount = step.options.filter((o) => o.correct).length;

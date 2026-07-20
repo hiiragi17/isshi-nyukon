@@ -7,6 +7,10 @@ on:
     branches: [main]
   pull_request:
 
+# 読み取り専用の検証ジョブのため、GITHUB_TOKEN の権限を最小化する
+permissions:
+  contents: read
+
 jobs:
   ci:
     runs-on: ubuntu-latest
