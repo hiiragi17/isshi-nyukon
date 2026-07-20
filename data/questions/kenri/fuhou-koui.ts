@@ -5,7 +5,7 @@ export const fuhouKoui: Question = {
   id: "q59",
   verified: false,
   category: "権利関係(民法)",
-  topic: "不法行為(使用者責任・工作物責任)",
+  topic: "不法行為(使用者責任・工作物責任・消滅時効)",
   law: "民法709条・715条・717条・724条",
   scenario:
     "宅建業者A社の従業員Bが、A社の事業の執行につき、過失によって顧客Cに損害を与えた。",
