@@ -1,0 +1,42 @@
+# PR と main への push で lint / test / build を自動実行する(Issue #92)。
+# 受け入れ条件(CLAUDE.md)の「pnpm lint / build / test が通る」を機械的に担保する。
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# 読み取り専用の検証ジョブのため、GITHUB_TOKEN の権限を最小化する
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # 読み取り専用のワークフローのため認証情報を残さない
+          persist-credentials: false
+
+      # pnpm のバージョンは package.json の packageManager フィールドから解決する
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
