@@ -58,6 +58,9 @@ import { tochi } from "./zei/tochi";
 import { tatemono } from "./zei/tatemono";
 import { keihinHyoujihou } from "./zei/keihin-hyoujihou";
 import { kubunShoyuu } from "./kenri/kubun-shoyuu";
+import { fuhouKoui } from "./kenri/fuhou-koui";
+import { saikenJouto } from "./kenri/saiken-jouto";
+import { kikenFutan } from "./kenri/kiken-futan";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -123,6 +126,9 @@ const RAW_QUESTIONS: Question[] = [
   tatemono,
   keihinHyoujihou,
   kubunShoyuu,
+  fuhouKoui,
+  saikenJouto,
+  kikenFutan,
 ];
 
 /**
