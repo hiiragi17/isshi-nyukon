@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q59 不法行為(使用者責任・工作物責任・消滅時効)(民法709条・715条・717条・724条) */
 export const fuhouKoui: Question = {
   id: "q59",
-  verified: false,
+  verified: true,
   category: "権利関係(民法)",
   topic: "不法行為(使用者責任・工作物責任・消滅時効)",
   law: "民法709条・715条・717条・724条",
