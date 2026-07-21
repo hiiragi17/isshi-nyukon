@@ -39,6 +39,8 @@ test("バックアップ: 控えの書き出し→復元の往復", async ({ pag
     page.getByRole("button", { name: "控えを書き出す" }).click(),
   ]);
   const downloadPath = await download.path();
+  // 書き出しに失敗するとパスが空になり得るため、読み込み前に存在を確かめる
+  expect(downloadPath).toBeTruthy();
   const content = fs.readFileSync(downloadPath, "utf-8");
   const parsed = JSON.parse(content) as { attempts: Array<{ questionId: string }> };
   expect(parsed.attempts.some((a) => a.questionId === "q1")).toBe(true);

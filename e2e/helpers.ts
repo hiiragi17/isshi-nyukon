@@ -33,14 +33,19 @@ export async function answerZenshiSessionToVerdict(page: Page): Promise<void> {
     // 判定ボタンが消える = フェーズが判定から次へ進んだ(再描画の確定待ち)
     await expect(judge).toHaveCount(0);
 
+    // 最後の肢だけ「判決を聞く」。それ以外は「次の肢へ / 次の問題へ」。
+    const nextName = i < total - 1 ? /次の肢へ|次の問題へ/ : /判決を聞く/;
+    const nextBtn = page.getByRole("button", { name: nextName });
+
     // 正しい肢なら理由ボタン(opt-btn)が出る。誤り肢は解説へ直行し出ない。
+    // count() は要素の出現を待たないため、理由ボタンか次へボタンの
+    // どちらかが見えるまで待ってからカウントを評価し、レースを避ける。
     const reasons = page.locator("button.opt-btn");
+    await expect(reasons.first().or(nextBtn)).toBeVisible();
     if ((await reasons.count()) > 0) {
       await reasons.first().click();
     }
 
-    // 最後の肢だけ「判決を聞く」。それ以外は「次の肢へ / 次の問題へ」。
-    const nextName = i < total - 1 ? /次の肢へ|次の問題へ/ : /判決を聞く/;
-    await page.getByRole("button", { name: nextName }).click();
+    await nextBtn.click();
   }
 }
