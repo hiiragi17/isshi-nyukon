@@ -20,6 +20,7 @@ import {
   shuffleInPlace,
   type QuickState,
 } from "@/lib/quickPick";
+import { buildMockSession, EXAM_DISTRIBUTION } from "@/lib/mock";
 import { INK, CARD, AI_BLUE, AI_BLUE_BG, SHU, GREEN, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
 import { page, col, card, outlineButton } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
@@ -35,6 +36,9 @@ type Hist = { pts: number; max: number };
 const allItems: Item[] = QUESTIONS.flatMap((q, i) =>
   Array.from({ length: itemCountOf(q) }, (_, j) => ({ qi: i, ci: j })),
 );
+
+/** ミニ模試で横断出題する論点数(本試験配分の縮小比。6〜8 論点の想定 / Issue #101) */
+const MOCK_TOPIC_COUNT = 7;
 
 /** questionId → QUESTIONS の添字。ダッシュボードから渡る itemKey の解決に使う */
 const idToIndex = new Map(QUESTIONS.map((q, i) => [q.id, i] as const));
@@ -242,6 +246,30 @@ export default function PlayPage() {
     };
     const ordered = buildQuickSession(pool, classify, n, shuffleInPlace);
     if (ordered.length) startSession(ordered);
+  };
+
+  /**
+   * ミニ模試: 選択範囲に関わらず全論点から、本試験配分(権利14:業法20:法令8:税8)に
+   * 寄せて MOCK_TOPIC_COUNT 論点を横断抽出する。抽出は lib/mock に切り出し、
+   * ここでは論点→肢の展開とセッション開始だけを行う。成績は通常どおり記録され、
+   * 弱点判定・SRS・成長グラフに反映される(=召喚状とは別入口・非競合)。
+   */
+  const startMock = () => {
+    const topics = QUESTIONS.map((_, i) => i);
+    const chosen = buildMockSession(
+      topics,
+      (i) => QUESTIONS[i].category,
+      MOCK_TOPIC_COUNT,
+      EXAM_DISTRIBUTION,
+      shuffleInPlace,
+    );
+    const items = chosen.flatMap((qi) =>
+      Array.from({ length: itemCountOf(QUESTIONS[qi]) }, (_, ci) => ({
+        qi,
+        ci,
+      })),
+    );
+    if (items.length) startSession(items);
   };
 
   const startSessionMisses = () => {
@@ -675,6 +703,52 @@ export default function PlayPage() {
                     </button>
                   ))}
               </div>
+            </div>
+          )}
+
+          {QUESTIONS.length >= MOCK_TOPIC_COUNT && (
+            <div style={{ ...card, marginBottom: 16 }}>
+              <Eyebrow>本試験形式</Eyebrow>
+              <div
+                style={{
+                  fontFamily: SERIF,
+                  fontWeight: 700,
+                  fontSize: 15,
+                  margin: "4px 0 4px",
+                }}
+              >
+                分野横断で予行演習
+              </div>
+              <p
+                style={{
+                  fontSize: 12.5,
+                  color: MUTED,
+                  margin: "0 0 12px",
+                  lineHeight: 1.8,
+                }}
+              >
+                本試験の分野配分(権利14 : 業法20 : 法令8 : 税8)に寄せて、全範囲から{" "}
+                {MOCK_TOPIC_COUNT}論点を回替わりで横断出題します。成績は通常どおり記録されます。
+              </p>
+              <button
+                onClick={startMock}
+                style={{
+                  width: "100%",
+                  minHeight: 44,
+                  padding: "12px 0",
+                  fontSize: 15,
+                  fontWeight: 700,
+                  fontFamily: SERIF,
+                  letterSpacing: 3,
+                  color: AI_BLUE,
+                  background: CARD,
+                  border: `2px solid ${AI_BLUE}`,
+                  borderRadius: RADIUS,
+                  cursor: "pointer",
+                }}
+              >
+                予行に臨む(約{MOCK_TOPIC_COUNT}論点)
+              </button>
             </div>
           )}
 
