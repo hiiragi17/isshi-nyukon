@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q64 請負・委任(民法559条・632条・634条・641条・644条・651条) */
 export const ukeoiInin: Question = {
   id: "q64",
-  verified: false,
+  verified: true,
   category: "権利関係(民法)",
   topic: "請負・委任",
   law: "民法559条・634条・641条・644条・651条",

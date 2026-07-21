@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q63 表見代理・復代理(民法104条〜106条・110条・112条) */
 export const hyokenDairi: Question = {
   id: "q63",
-  verified: false,
+  verified: true,
   category: "権利関係(民法)",
   topic: "表見代理・復代理",
   law: "民法104条〜106条・110条・112条",

@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q62 遺言・遺留分・配偶者居住権(民法961条・968条・1028条〜1036条・1042条・1046条) */
 export const igonIryubun: Question = {
   id: "q62",
-  verified: false,
+  verified: true,
   category: "権利関係(民法)",
   topic: "遺言・遺留分・配偶者居住権",
   law: "民法961条・968条・1028条・1042条・1046条",
