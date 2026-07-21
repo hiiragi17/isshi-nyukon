@@ -45,8 +45,13 @@ pnpm install       # 依存インストール
 pnpm dev           # 開発サーバ起動
 pnpm build         # 本番ビルド
 pnpm lint          # Lint
-pnpm test          # ユニットテスト
+pnpm test          # ユニットテスト(vitest)
+pnpm test:e2e      # E2E スモークテスト(Playwright / e2e 配下)
 ```
+
+E2E は `e2e/` 配下・Playwright で実行する(vitest の対象外)。ブラウザは
+`playwright install` で用意する。プリインストール済みの Chromium を使う環境では
+`PW_CHROMIUM_PATH` に実行ファイルパスを渡すと、その Chromium で実行できる。
 
 ## データ構成(v1: localStorage / 将来: Neon)
 
