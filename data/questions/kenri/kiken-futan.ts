@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q61 危険負担・同時履行の抗弁(契約総論)(民法533条・536条・567条) */
 export const kikenFutan: Question = {
   id: "q61",
-  verified: false,
+  verified: true,
   category: "権利関係(民法)",
   topic: "危険負担・同時履行の抗弁(契約総論)",
   law: "民法533条・536条・567条",

@@ -3,7 +3,7 @@ import type { Question } from "@/types";
 /** q60 債権譲渡・相殺(譲渡制限特約・対抗要件)(民法466条・467条・509条) */
 export const saikenJouto: Question = {
   id: "q60",
-  verified: false,
+  verified: true,
   category: "権利関係(民法)",
   topic: "債権譲渡・相殺(譲渡制限特約・対抗要件)",
   law: "民法466条・467条・509条",
