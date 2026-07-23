@@ -13,11 +13,16 @@ function wrapLabel(label: string): string[] {
   return [label];
 }
 
-/** ノード内に収まるよう、複数文字のラベルはフォントを縮める(1文字は従来どおり17) */
+/**
+ * ノード(直径 44px の円)内に収まるよう、複数文字のラベルはフォントを縮める。
+ * 1文字は従来どおり17。3文字以上はさらに文字数で縮め続け、任意の長さでも
+ * 円からはみ出さないようにする(全角文字幅 ≒ フォントサイズを前提)。
+ */
 function nodeFontSize(label: string): number {
   if (label.length <= 1) return 17;
   if (label.length === 2) return 13;
-  return 11;
+  if (label.length === 3) return 11;
+  return Math.max(8, Math.floor(34 / label.length));
 }
 
 export function Diagram({ data }: { data: DiagramData }) {
