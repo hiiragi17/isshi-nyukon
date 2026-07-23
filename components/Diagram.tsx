@@ -13,9 +13,24 @@ function wrapLabel(label: string): string[] {
   return [label];
 }
 
+/**
+ * ノード(直径 44px の円)内に収まるよう、複数文字のラベルはフォントを縮める。
+ * 1文字は従来どおり17。3文字以上はさらに文字数で縮め続け、任意の長さでも
+ * 円からはみ出さないようにする(全角文字幅 ≒ フォントサイズを前提)。
+ */
+function nodeFontSize(label: string): number {
+  if (label.length <= 1) return 17;
+  if (label.length === 2) return 13;
+  if (label.length === 3) return 11;
+  return Math.max(8, Math.floor(34 / label.length));
+}
+
 export function Diagram({ data }: { data: DiagramData }) {
   const R = 22;
   const nodeById = Object.fromEntries(data.nodes.map((n) => [n.id, n]));
+  // 同じ2ノード間を往復する辺(A→B と B→A)は、ラベルを線の反対側へ振り分けて重なりを防ぐ
+  const hasReverse = (from: string, to: string) =>
+    data.edges.some((o) => o.from === to && o.to === from);
   // 図の重心。頂点(上側)ノードのサブラベルは中央へ食い込まないよう
   // ノードの上に出す(下に置くと枝やその中点ラベルと重なるため)
   const cy =
@@ -58,7 +73,9 @@ export function Diagram({ data }: { data: DiagramData }) {
         // 頂点を共有する枝どうしでラベルが中央に寄って重なるのを防ぐ
         let px = -uy,
           py = ux;
-        if (py > 0) {
+        // 通常辺は上側へ寄せる。ただし往復する辺は自然な符号のまま
+        // (=線の反対側)に残し、対になるラベルどうしの重なりを避ける
+        if (!hasReverse(e.from, e.to) && py > 0) {
           px = -px;
           py = -py;
         }
@@ -108,7 +125,7 @@ export function Diagram({ data }: { data: DiagramData }) {
             x={n.x}
             y={n.y + 6}
             textAnchor="middle"
-            fontSize="17"
+            fontSize={nodeFontSize(n.label)}
             fontWeight="700"
             fill={INK}
             style={{ fontFamily: SERIF }}

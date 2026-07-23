@@ -838,10 +838,13 @@ export default function PlayPage() {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "baseline",
+            gap: 8,
             marginBottom: 10,
           }}
         >
-          <div style={{ fontFamily: SERIF, fontSize: 15 }}>
+          {/* 論点名が長いと右の通算スコアに食い込むため、左は minWidth:0 で折り返し、
+              右は flexShrink:0 + nowrap で 1 行に保って重なりを防ぐ */}
+          <div style={{ fontFamily: SERIF, fontSize: 15, minWidth: 0 }}>
             <b>第{idx + 1}肢</b>
             <span style={{ color: MUTED }}> / 全{sessionItems.length}肢</span>
             <span style={{ margin: "0 8px", color: LINE }}>|</span>
@@ -849,7 +852,7 @@ export default function PlayPage() {
               {q.topic}・{isCalc ? "計算" : isSpot ? "広告" : `肢${ci + 1}`}
             </span>
           </div>
-          <div style={{ fontFamily: SERIF, fontSize: 15 }}>
+          <div style={{ fontFamily: SERIF, fontSize: 15, flexShrink: 0, whiteSpace: "nowrap" }}>
             <span style={{ color: MUTED, fontSize: 12 }}>通算 </span>
             <b>
               {score}
