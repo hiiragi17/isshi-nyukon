@@ -64,6 +64,11 @@ import { kikenFutan } from "./kenri/kiken-futan";
 import { igonIryubun } from "./kenri/igon-iryubun";
 import { hyokenDairi } from "./kenri/hyoken-dairi";
 import { ukeoiInin } from "./kenri/ukeoi-inin";
+import { menkyoYohi } from "./gyoho/menkyo-yohi";
+import { shutokuJikou } from "./kenri/shutoku-jikou";
+import { shiyouTaishaku } from "./kenri/shiyou-taishaku";
+import { rentaiSaimu } from "./kenri/rentai-saimu";
+import { tantaiKitei } from "./horei/tantai-kitei";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -135,6 +140,11 @@ const RAW_QUESTIONS: Question[] = [
   igonIryubun,
   hyokenDairi,
   ukeoiInin,
+  menkyoYohi,
+  shutokuJikou,
+  shiyouTaishaku,
+  rentaiSaimu,
+  tantaiKitei,
 ];
 
 /**
