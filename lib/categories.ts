@@ -18,7 +18,10 @@ export const CATEGORY_ORDER: Category[] = [
   "権利関係(民法)",
 ];
 
-/** CATEGORY_ORDER 基準の比較関数。未知の分野は末尾に回す(登場順は保たない) */
+/**
+ * CATEGORY_ORDER 基準の比較関数。未知の分野はすべて同順(既知分野の後ろ)となり、
+ * 安定ソート(Array.prototype.sort)のもとでは元の登場順を保ったまま末尾にまとまる。
+ */
 export function byCategoryPriority(a: string, b: string): number {
   const rank = (c: string) => {
     const i = CATEGORY_ORDER.indexOf(c as Category);
