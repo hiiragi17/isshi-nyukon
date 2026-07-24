@@ -21,6 +21,7 @@ import {
   type QuickState,
 } from "@/lib/quickPick";
 import { buildMockSession, EXAM_DISTRIBUTION } from "@/lib/mock";
+import { byCategoryPriority } from "@/lib/categories";
 import { INK, CARD, AI_BLUE, AI_BLUE_BG, SHU, GREEN, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
 import { page, col, card, outlineButton } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
@@ -43,8 +44,10 @@ const MOCK_TOPIC_COUNT = 7;
 /** questionId → QUESTIONS の添字。ダッシュボードから渡る itemKey の解決に使う */
 const idToIndex = new Map(QUESTIONS.map((q, i) => [q.id, i] as const));
 
-/** 表示順を保った分野(カテゴリ)一覧 */
-const CATEGORIES = [...new Set(QUESTIONS.map((q) => q.category))];
+/** 分野(カテゴリ)一覧。優先度順(業法→法令→税→権利)で表示する */
+const CATEGORIES = [...new Set(QUESTIONS.map((q) => q.category))].sort(
+  byCategoryPriority,
+);
 
 /** 分野 → その分野に属する論点の添字。全選択/全解除トグルで使う(レンダリング毎の再計算を避ける) */
 const CATEGORY_INDICES = new Map<string, number[]>(

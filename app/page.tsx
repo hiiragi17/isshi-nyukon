@@ -24,6 +24,7 @@ import { storage, latestByItem, itemKey } from "@/lib/storage";
 import { itemCountOf } from "@/lib/items";
 import { topicProgress, type TopicProgress } from "@/lib/progress";
 import { buildSummonQueue, type SrsItemState } from "@/lib/srs";
+import { byCategoryPriority } from "@/lib/categories";
 import {
   INK,
   CARD,
@@ -55,8 +56,10 @@ const ALL_TARGETS = QUESTIONS.flatMap((q) =>
 /** questionId → QUESTIONS の添字 */
 const ID_TO_INDEX = new Map(QUESTIONS.map((q, i) => [q.id, i] as const));
 
-/** カテゴリ(分野)の登場順。マトリクスの行順に使う */
-const FIELDS = [...new Set(QUESTIONS.map((q) => q.category))].map((name) => ({
+/** カテゴリ(分野)の優先度順。マトリクスの行順に使う(QUESTIONS の添字順とは独立) */
+const FIELDS = [...new Set(QUESTIONS.map((q) => q.category))]
+  .sort(byCategoryPriority)
+  .map((name) => ({
   name,
   questions: QUESTIONS.map((q, qi) => ({ q, qi })).filter(
     (x) => x.q.category === name,
