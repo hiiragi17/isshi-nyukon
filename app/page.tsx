@@ -213,6 +213,116 @@ export default function Home() {
   );
 
   const loaded = attempts !== null;
+  /** 選択中のマスの QUESTIONS 添字(未選択なら null) */
+  const selQi = sel === null ? null : (ID_TO_INDEX.get(sel) ?? null);
+
+  /**
+   * 選択したマスの詳細(論点名・成績・審理ボタン)。
+   * マトリクスの一番下ではなく、タップした分野のグリッド直下に差し込む
+   * (先頭分野をタップしたとき、画面外まで下がって反応が見えなくなるのを避ける)。
+   */
+  const renderTopicDetail = (qi: number) => {
+    const q = QUESTIONS[qi];
+    const st = topicStat(qi);
+    const ago = agoLabel(st.lastAt, now);
+    let detail: string;
+    let action: string;
+    if (st.level === 0) {
+      detail = "未着手 — まだ一度も審理していません。";
+      action = `初審理する(${st.n}肢)`;
+    } else if (st.level === 2) {
+      detail = `完璧 — 全${st.n}肢を最新で正解。最終審理 ${ago}。`;
+      action = `確認審理する(${st.n}肢)`;
+    } else {
+      detail = `学習中 — 完璧 ${st.perfect}/${st.n}肢・最終審理 ${ago}。`;
+      action =
+        st.weak > 0 ? `弱点 ${st.weak}肢を再審理` : `残り ${st.untried}肢を審理`;
+    }
+    return (
+      <div
+        className="fade-up"
+        style={{
+          background: INK,
+          color: CARD,
+          borderRadius: RADIUS,
+          padding: "14px 16px",
+          marginTop: 10,
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+            gap: 12,
+          }}
+        >
+          <div>
+            <div style={{ fontSize: 11, letterSpacing: 2.5, color: INK_SUB }}>
+              {q.category} · {q.law}
+            </div>
+            <div
+              style={{
+                fontFamily: SERIF,
+                fontSize: 16,
+                fontWeight: 800,
+                marginTop: 2,
+              }}
+            >
+              {q.topic}
+            </div>
+            <div style={{ fontSize: 12, color: INK_SUB, marginTop: 4 }}>
+              {detail}
+            </div>
+          </div>
+          {st.level === 2 && (
+            <div
+              key={q.id}
+              className="stamp-in"
+              aria-hidden="true"
+              style={{
+                flexShrink: 0,
+                width: 44,
+                height: 44,
+                borderRadius: "50%",
+                border: `2.5px solid ${SHU}`,
+                color: SHU,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontFamily: SERIF,
+                fontWeight: 800,
+                fontSize: 16,
+                transform: "rotate(-12deg)",
+                background: "rgba(251,250,247,0.92)",
+              }}
+            >
+              完
+            </div>
+          )}
+        </div>
+        <button
+          onClick={() => goPlay(topicSessionKeys(qi))}
+          style={{
+            width: "100%",
+            minHeight: 44,
+            marginTop: 10,
+            fontSize: 13.5,
+            fontWeight: 700,
+            fontFamily: SERIF,
+            letterSpacing: 3,
+            color: CARD,
+            background: SHU,
+            border: "none",
+            borderRadius: RADIUS,
+            cursor: "pointer",
+          }}
+        >
+          {action}
+        </button>
+      </div>
+    );
+  };
 
   return (
     <div style={page}>
@@ -564,126 +674,15 @@ export default function Home() {
                           );
                         })}
                       </div>
+                      {/* 選択セル詳細は、そのマスが属する分野の直下に出す */}
+                      {selQi !== null &&
+                        fd.questions.some((x) => x.qi === selQi) &&
+                        renderTopicDetail(selQi)}
                     </div>
                   );
                 })}
               </div>
             </div>
-
-            {/* 選択セル詳細 */}
-            {sel !== null &&
-              (() => {
-                const qi = ID_TO_INDEX.get(sel)!;
-                const q = QUESTIONS[qi];
-                const st = topicStat(qi);
-                const ago = agoLabel(st.lastAt, now);
-                let detail: string;
-                let action: string;
-                if (st.level === 0) {
-                  detail = "未着手 — まだ一度も審理していません。";
-                  action = `初審理する(${st.n}肢)`;
-                } else if (st.level === 2) {
-                  detail = `完璧 — 全${st.n}肢を最新で正解。最終審理 ${ago}。`;
-                  action = `確認審理する(${st.n}肢)`;
-                } else {
-                  detail = `学習中 — 完璧 ${st.perfect}/${st.n}肢・最終審理 ${ago}。`;
-                  action =
-                    st.weak > 0
-                      ? `弱点 ${st.weak}肢を再審理`
-                      : `残り ${st.untried}肢を審理`;
-                }
-                return (
-                  <div
-                    className="fade-up"
-                    style={{
-                      background: INK,
-                      color: CARD,
-                      borderRadius: RADIUS,
-                      padding: "14px 18px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "flex-start",
-                        gap: 12,
-                      }}
-                    >
-                      <div>
-                        <div
-                          style={{
-                            fontSize: 11,
-                            letterSpacing: 2.5,
-                            color: INK_SUB,
-                          }}
-                        >
-                          {q.category} · {q.law}
-                        </div>
-                        <div
-                          style={{
-                            fontFamily: SERIF,
-                            fontSize: 16,
-                            fontWeight: 800,
-                            marginTop: 2,
-                          }}
-                        >
-                          {q.topic}
-                        </div>
-                        <div
-                          style={{ fontSize: 12, color: INK_SUB, marginTop: 4 }}
-                        >
-                          {detail}
-                        </div>
-                      </div>
-                      {st.level === 2 && (
-                        <div
-                          key={sel}
-                          className="stamp-in"
-                          aria-hidden="true"
-                          style={{
-                            flexShrink: 0,
-                            width: 44,
-                            height: 44,
-                            borderRadius: "50%",
-                            border: `2.5px solid ${SHU}`,
-                            color: SHU,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontFamily: SERIF,
-                            fontWeight: 800,
-                            fontSize: 16,
-                            transform: "rotate(-12deg)",
-                            background: "rgba(251,250,247,0.92)",
-                          }}
-                        >
-                          完
-                        </div>
-                      )}
-                    </div>
-                    <button
-                      onClick={() => goPlay(topicSessionKeys(qi))}
-                      style={{
-                        width: "100%",
-                        minHeight: 44,
-                        marginTop: 10,
-                        fontSize: 13.5,
-                        fontWeight: 700,
-                        fontFamily: SERIF,
-                        letterSpacing: 3,
-                        color: CARD,
-                        background: SHU,
-                        border: "none",
-                        borderRadius: RADIUS,
-                        cursor: "pointer",
-                      }}
-                    >
-                      {action}
-                    </button>
-                  </div>
-                );
-              })()}
 
             {/* 成長グラフ(集印の歩み) — 全件履歴で駆動 */}
             <GrowthChart attempts={attempts ?? []} questions={QUESTIONS} />

@@ -27,8 +27,9 @@ test("スモーク: 出題→解答→判決→ダッシュボード反映と永
   await page.getByRole("button", { name: /範囲を選んで始める/ }).click();
   await expect(page).toHaveURL(/\/play/);
 
-  // 全解除 → 二重譲渡だけ選ぶ
+  // 全解除 → 分野を開いて二重譲渡だけ選ぶ(分野は既定でたたまれている)
   await page.getByRole("button", { name: "全解除", exact: true }).click();
+  await page.getByRole("button", { name: /^権利関係\(民法\)/ }).click();
   await page.getByRole("button", { name: /二重譲渡/ }).click();
   await page.getByRole("button", { name: /開廷する/ }).click();
 
@@ -69,4 +70,30 @@ test("スモーク: 出題→解答→判決→ダッシュボード反映と永
   await expect(
     page.locator('button[aria-label="二重譲渡(未着手)"]'),
   ).toHaveCount(0);
+});
+
+/**
+ * 検地帳のマスをタップしたら、その分野の直下に詳細(論点名・審理ボタン)が出る。
+ * 詳細をマトリクスの一番下に置いていた頃は、先頭分野のマスをタップすると
+ * 画面外(約480px 下)に出てしまい、タップの反応が見えなかった。
+ */
+test("検地帳: 先頭分野のマスを選ぶと詳細が画面内に出る", async ({ page }) => {
+  await page.goto("/");
+  await waitDashboardReady(page);
+
+  // ユーザーがタップするときと同じく、マスを画面中央に置いた状態から始める
+  const firstCell = page.locator('button[aria-label*="("]').first();
+  await firstCell.evaluate((el) => el.scrollIntoView({ block: "center" }));
+  await firstCell.click();
+
+  const detail = page.locator("div.fade-up");
+  await expect(detail).toBeVisible();
+  // 論点名と審理ボタンがスクロールなしで見える
+  await expect(detail.getByRole("button", { name: /審理/ })).toBeInViewport();
+
+  // 詳細はタップしたマスの直下(同じ分野のグリッド直後)に出る
+  const cellBox = (await firstCell.boundingBox())!;
+  const detailBox = (await detail.boundingBox())!;
+  expect(detailBox.y).toBeGreaterThan(cellBox.y);
+  expect(detailBox.y - cellBox.y).toBeLessThan(300);
 });
