@@ -35,6 +35,12 @@ test("スモーク: 出題→解答→判決→ダッシュボード反映と永
 
   // zenshi を全肢解答して判決へ
   await expect(page.getByText(/第1肢/)).toBeVisible();
+
+  // 出題中は通算点だけを出し、セッション満点(分母)は出さない。
+  // ○肢=2点 / ×肢=3点 なので、満点を見せると残り肢の正誤が逆算できてしまう
+  await expect(page.getByText(/^通算 \d+点$/)).toBeVisible();
+  await expect(page.getByText(/^通算 \d+\/\d+点$/)).toHaveCount(0);
+
   await answerZenshiSessionToVerdict(page);
 
   // 判決(スタンプ)画面
@@ -70,6 +76,44 @@ test("スモーク: 出題→解答→判決→ダッシュボード反映と永
   await expect(
     page.locator('button[aria-label="二重譲渡(未着手)"]'),
   ).toHaveCount(0);
+});
+
+/**
+ * 範囲選択画面の「開廷する」は、論点一覧(64論点)を開いてスクロールしても
+ * 画面内に残る(sticky)。範囲を決めてから審理に入るまでが遠かった頃の回帰防止。
+ *
+ * 「見えている」だけの判定では、一覧が伸びてボタンの自然位置がたまたま画面内に
+ * 入っただけでも通ってしまう。そのため画面下端からボタン下辺までの距離を測り、
+ * スクロール位置が変わっても一定(=貼り付いている)ことを確かめる。
+ */
+test("範囲選択: 論点一覧を開いてスクロールしても開廷ボタンが画面下端に貼り付く", async ({
+  page,
+}) => {
+  await page.goto("/play");
+
+  const start = page.getByRole("button", { name: /開廷する/ });
+  /** 画面下端 − ボタン下辺(px)。貼り付いていれば sticky バーの下余白ぶんで一定 */
+  const gapFromBottom = () =>
+    start.evaluate(
+      (el) => window.innerHeight - el.getBoundingClientRect().bottom,
+    );
+
+  // 画面を開いた時点(最上部・一覧はたたんだ状態)から画面下端に見えている。
+  // このとき自然位置はページ末尾側にあるため、sticky でなければ画面内に入らない
+  await expect(start).toBeInViewport();
+  const atTop = await gapFromBottom();
+  expect(atTop).toBeGreaterThanOrEqual(0);
+  expect(atTop).toBeLessThanOrEqual(20);
+
+  // 分野を開くと選択カードが縦に伸びるが、どこまでスクロールしても位置は変わらない。
+  // 検証位置は一覧の途中(ボタンの自然位置がまだ画面より下)に採り、
+  // 「一覧が伸びて自然位置が画面に入っただけ」では通らないようにする
+  await page.getByRole("button", { name: /^宅建業法/ }).click();
+  for (const y of [300, 900]) {
+    await page.evaluate((to) => window.scrollTo(0, to), y);
+    await expect(start).toBeInViewport();
+    expect(Math.abs((await gapFromBottom()) - atTop)).toBeLessThanOrEqual(1);
+  }
 });
 
 /**

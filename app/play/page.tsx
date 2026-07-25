@@ -22,7 +22,7 @@ import {
 } from "@/lib/quickPick";
 import { buildMockSession, EXAM_DISTRIBUTION } from "@/lib/mock";
 import { byCategoryPriority } from "@/lib/categories";
-import { INK, CARD, AI_BLUE, AI_BLUE_BG, SHU, GREEN, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
+import { INK, PAPER, CARD, AI_BLUE, AI_BLUE_BG, SHU, GREEN, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
 import { page, col, card, outlineButton } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
 import { TermPopup } from "@/components/TermPopup";
@@ -385,40 +385,6 @@ export default function PlayPage() {
           </div>
 
           <div style={{ ...card, marginBottom: 16 }}>
-            <Eyebrow>遊び方</Eyebrow>
-            <div style={{ fontFamily: SERIF, fontWeight: 700, fontSize: 15, margin: "4px 0 12px" }}>
-              三段で決着をつける
-            </div>
-            <ol style={{ margin: 0, paddingLeft: 20, lineHeight: 2, fontSize: 14 }}>
-              <li>
-                肢(選択肢の文)を1つずつ読み、<b>正しい / 誤り</b> を判定する{" "}
-                <span style={{ color: SHU }}>… 1点</span>
-              </li>
-              <li>
-                「誤り」なら、文中の<b>誤っている箇所</b>をタップし{" "}
-                <span style={{ color: SHU }}>… 1点</span>、<b>なぜ誤りか</b>を選ぶ{" "}
-                <span style={{ color: SHU }}>… 1点</span>
-              </li>
-              <li>
-                「正しい」なら、<b>なぜ正しいと言えるのか根拠</b>を選ぶ{" "}
-                <span style={{ color: SHU }}>… 1点</span>
-              </li>
-            </ol>
-            <p
-              style={{
-                fontSize: 13,
-                color: MUTED,
-                margin: "14px 0 0",
-                paddingTop: 12,
-                borderTop: `1px solid ${LINE}`,
-                lineHeight: 1.9,
-              }}
-            >
-              勘で当たっても、根拠と理由が答えられなければ点は伸びません。本試験の「個数問題」対策と同じ頭の使い方です。
-            </p>
-          </div>
-
-          <div style={{ ...card, marginBottom: 16 }}>
             <Eyebrow>出題範囲</Eyebrow>
             <div style={{ fontFamily: SERIF, fontWeight: 700, fontSize: 15, margin: "4px 0 4px" }}>
               審理する論点を選ぶ
@@ -728,17 +694,64 @@ export default function PlayPage() {
             </div>
           </div>
 
-          <div style={{ ...card, marginBottom: 24 }}>
-            <div style={{ fontSize: 13, lineHeight: 1.8 }}>
-              <span style={{ color: MUTED }}>
-                知識ゼロでも大丈夫。
-                <span style={{ borderBottom: `2px dotted ${AI_BLUE}`, color: INK }}>
-                  点線のついた法律用語
-                </span>
-                はタップすると意味が表示されます。ルールを先に予習したいときは、各問の「30秒レッスン」をどうぞ。
-              </span>
-            </div>
+          {/*
+            範囲を決めたらすぐ審理に入れるよう、開廷ボタンは選択カードの直下に置く。
+            論点一覧を開くとカードが縦に伸びる(64論点)ため、sticky で画面下端に貼り付け、
+            一覧のどこを見ていてもワンタップで開廷できるようにする。
+          */}
+          <div
+            style={{
+              position: "sticky",
+              bottom: 0,
+              zIndex: 5,
+              padding: "12px 0 max(12px, env(safe-area-inset-bottom))",
+              marginBottom: 16,
+              background: PAPER,
+              borderTop: `1px solid ${LINE}`,
+            }}
+          >
+            <button
+              onClick={startNormal}
+              disabled={selected.size === 0}
+              style={{
+                width: "100%",
+                padding: "16px 0",
+                fontSize: 17,
+                fontWeight: 700,
+                fontFamily: SERIF,
+                letterSpacing: 5,
+                color: CARD,
+                background: selected.size === 0 ? MUTED : INK,
+                border: "none",
+                borderRadius: RADIUS,
+                cursor: selected.size === 0 ? "not-allowed" : "pointer",
+              }}
+            >
+              開廷する{selected.size > 0 && `(全${totalItems}肢)`}
+            </button>
           </div>
+
+          {weakItems.length > 0 && (
+            <button
+              onClick={startWeak}
+              style={{
+                width: "100%",
+                padding: "14px 0",
+                fontSize: 15,
+                fontWeight: 700,
+                marginBottom: 16,
+                fontFamily: SERIF,
+                letterSpacing: 3,
+                color: SHU,
+                background: CARD,
+                border: `2px solid ${SHU}`,
+                borderRadius: RADIUS,
+                cursor: "pointer",
+              }}
+            >
+              弱点だけ復習する({weakItems.length}肢)
+            </button>
+          )}
 
           {totalItems >= 5 && (
             <div style={{ ...card, marginBottom: 16 }}>
@@ -832,47 +845,53 @@ export default function PlayPage() {
             </div>
           )}
 
-          <button
-            onClick={startNormal}
-            disabled={selected.size === 0}
-            style={{
-              width: "100%",
-              padding: "16px 0",
-              fontSize: 17,
-              fontWeight: 700,
-              fontFamily: SERIF,
-              letterSpacing: 5,
-              color: CARD,
-              background: selected.size === 0 ? MUTED : INK,
-              border: "none",
-              borderRadius: RADIUS,
-              cursor: selected.size === 0 ? "not-allowed" : "pointer",
-            }}
-          >
-            開廷する{selected.size > 0 && `(全${totalItems}肢)`}
-          </button>
-
-          {weakItems.length > 0 && (
-            <button
-              onClick={startWeak}
+          {/* 遊び方・用語の案内は一度読めば足りる説明なので、開廷ボタンより下に置く */}
+          <div style={{ ...card, marginBottom: 16 }}>
+            <Eyebrow>遊び方</Eyebrow>
+            <div style={{ fontFamily: SERIF, fontWeight: 700, fontSize: 15, margin: "4px 0 12px" }}>
+              三段で決着をつける
+            </div>
+            <ol style={{ margin: 0, paddingLeft: 20, lineHeight: 2, fontSize: 14 }}>
+              <li>
+                肢(選択肢の文)を1つずつ読み、<b>正しい / 誤り</b> を判定する{" "}
+                <span style={{ color: SHU }}>… 1点</span>
+              </li>
+              <li>
+                「誤り」なら、文中の<b>誤っている箇所</b>をタップし{" "}
+                <span style={{ color: SHU }}>… 1点</span>、<b>なぜ誤りか</b>を選ぶ{" "}
+                <span style={{ color: SHU }}>… 1点</span>
+              </li>
+              <li>
+                「正しい」なら、<b>なぜ正しいと言えるのか根拠</b>を選ぶ{" "}
+                <span style={{ color: SHU }}>… 1点</span>
+              </li>
+            </ol>
+            <p
               style={{
-                width: "100%",
-                padding: "14px 0",
-                fontSize: 15,
-                fontWeight: 700,
-                marginTop: 10,
-                fontFamily: SERIF,
-                letterSpacing: 3,
-                color: SHU,
-                background: CARD,
-                border: `2px solid ${SHU}`,
-                borderRadius: RADIUS,
-                cursor: "pointer",
+                fontSize: 13,
+                color: MUTED,
+                margin: "14px 0 0",
+                paddingTop: 12,
+                borderTop: `1px solid ${LINE}`,
+                lineHeight: 1.9,
               }}
             >
-              弱点だけ復習する({weakItems.length}肢)
-            </button>
-          )}
+              勘で当たっても、根拠と理由が答えられなければ点は伸びません。本試験の「個数問題」対策と同じ頭の使い方です。
+            </p>
+          </div>
+
+          <div style={{ ...card }}>
+            <div style={{ fontSize: 13, lineHeight: 1.8 }}>
+              <span style={{ color: MUTED }}>
+                知識ゼロでも大丈夫。
+                <span style={{ borderBottom: `2px dotted ${AI_BLUE}`, color: INK }}>
+                  点線のついた法律用語
+                </span>
+                はタップすると意味が表示されます。ルールを先に予習したいときは、各問の「30秒レッスン」をどうぞ。
+              </span>
+            </div>
+          </div>
+
           <p style={{ fontSize: 11.5, color: MUTED, textAlign: "center", marginTop: 14 }}>
             ※ 成績はこの端末(ブラウザ)に保存されます
           </p>
@@ -932,11 +951,15 @@ export default function PlayPage() {
               {q.topic}・{isCalc ? "計算" : isSpot ? "広告" : `肢${ci + 1}`}
             </span>
           </div>
+          {/* 出題中はセッション満点(分母)を出さない。肢の満点は ○肢=2点 / ×肢=3点 と
+              決まっているため、満点を見せると解答済みの肢の得点との差から
+              残っている肢の正誤(とくに最終肢)が答える前に逆算できてしまう。
+              満点は判決画面(ResultScreen)で初めて示す。 */}
           <div style={{ fontFamily: SERIF, fontSize: 15, flexShrink: 0, whiteSpace: "nowrap" }}>
             <span style={{ color: MUTED, fontSize: 12 }}>通算 </span>
             <b>
               {score}
-              <span style={{ fontSize: 12, color: MUTED }}>/{sessionMax}点</span>
+              <span style={{ fontSize: 12, color: MUTED }}>点</span>
             </b>
           </div>
         </div>
