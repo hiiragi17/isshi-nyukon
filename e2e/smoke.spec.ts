@@ -35,6 +35,12 @@ test("スモーク: 出題→解答→判決→ダッシュボード反映と永
 
   // zenshi を全肢解答して判決へ
   await expect(page.getByText(/第1肢/)).toBeVisible();
+
+  // 出題中は通算点だけを出し、セッション満点(分母)は出さない。
+  // ○肢=2点 / ×肢=3点 なので、満点を見せると残り肢の正誤が逆算できてしまう
+  await expect(page.getByText(/^通算 \d+点$/)).toBeVisible();
+  await expect(page.getByText(/^通算 \d+\/\d+点$/)).toHaveCount(0);
+
   await answerZenshiSessionToVerdict(page);
 
   // 判決(スタンプ)画面

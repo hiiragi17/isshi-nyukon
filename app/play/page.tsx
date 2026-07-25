@@ -951,11 +951,15 @@ export default function PlayPage() {
               {q.topic}・{isCalc ? "計算" : isSpot ? "広告" : `肢${ci + 1}`}
             </span>
           </div>
+          {/* 出題中はセッション満点(分母)を出さない。肢の満点は ○肢=2点 / ×肢=3点 と
+              決まっているため、満点を見せると解答済みの肢の得点との差から
+              残っている肢の正誤(とくに最終肢)が答える前に逆算できてしまう。
+              満点は判決画面(ResultScreen)で初めて示す。 */}
           <div style={{ fontFamily: SERIF, fontSize: 15, flexShrink: 0, whiteSpace: "nowrap" }}>
             <span style={{ color: MUTED, fontSize: 12 }}>通算 </span>
             <b>
               {score}
-              <span style={{ fontSize: 12, color: MUTED }}>/{sessionMax}点</span>
+              <span style={{ fontSize: 12, color: MUTED }}>点</span>
             </b>
           </div>
         </div>
