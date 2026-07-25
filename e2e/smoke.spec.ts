@@ -27,8 +27,9 @@ test("スモーク: 出題→解答→判決→ダッシュボード反映と永
   await page.getByRole("button", { name: /範囲を選んで始める/ }).click();
   await expect(page).toHaveURL(/\/play/);
 
-  // 全解除 → 二重譲渡だけ選ぶ
+  // 全解除 → 分野を開いて二重譲渡だけ選ぶ(分野は既定でたたまれている)
   await page.getByRole("button", { name: "全解除", exact: true }).click();
+  await page.getByRole("button", { name: /^権利関係\(民法\)/ }).click();
   await page.getByRole("button", { name: /二重譲渡/ }).click();
   await page.getByRole("button", { name: /開廷する/ }).click();
 

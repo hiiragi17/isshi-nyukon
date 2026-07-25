@@ -99,6 +99,8 @@ export default function PlayPage() {
   const [records, setRecords] = useState<ItemRecord[]>([]);
   const [history, setHistory] = useState<{ [key: string]: Hist }>({});
   const [lessonOpen, setLessonOpen] = useState(false);
+  // 範囲選択で論点一覧を開いている分野。既定は全分野たたんだ状態(分野の頭出しを優先)
+  const [openCats, setOpenCats] = useState<Set<string>>(() => new Set());
   const [activeTerm, setActiveTerm] = useState<string | null>(null);
   // セッション開始時点で「完璧」だった論点。判決後に新規完璧到達を検出するのに使う
   const [perfectAtStart, setPerfectAtStart] = useState<Set<number>>(new Set());
@@ -311,6 +313,16 @@ export default function PlayPage() {
   const selectAll = () => setSelected(new Set(QUESTIONS.map((_, i) => i)));
   const clearAll = () => setSelected(new Set());
 
+  // 分野の論点一覧の開閉(選択状態には影響しない)
+  const toggleCatOpen = (cat: string) => {
+    setOpenCats((s) => {
+      const nextSet = new Set(s);
+      if (nextSet.has(cat)) nextSet.delete(cat);
+      else nextSet.add(cat);
+      return nextSet;
+    });
+  };
+
   // 分野ごとの一括トグル: その分野が全選択済みなら全解除、そうでなければ全選択
   const toggleCategory = (cat: string) => {
     setSelected((s) => {
@@ -412,7 +424,8 @@ export default function PlayPage() {
               審理する論点を選ぶ
             </div>
             <p style={{ fontSize: 12.5, color: MUTED, margin: "0 0 10px", lineHeight: 1.8 }}>
-              タップで選択 / 解除。挑戦済みの分野には成績が表示されます。
+              分野名をタップすると論点の一覧を開閉できます。論点はタップで選択 /
+              解除。挑戦済みの分野には成績が表示されます。
             </p>
             <div
               style={{
@@ -478,12 +491,17 @@ export default function PlayPage() {
               </button>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {CATEGORIES.map((cat) => {
+              {CATEGORIES.map((cat, catIdx) => {
                 const catIndices = CATEGORY_INDICES.get(cat) ?? [];
                 const catAllOn = catIndices.every((i) => selected.has(i));
+                const catSelected = catIndices.filter((i) =>
+                  selected.has(i),
+                ).length;
                 const catSummary = summarizeProgress(
                   catIndices.map((i) => allStats[i]),
                 );
+                const catOpen = openCats.has(cat);
+                const listId = `topic-list-${catIdx}`;
                 return (
                 <div key={cat} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   <div
@@ -491,46 +509,100 @@ export default function PlayPage() {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "space-between",
+                      gap: 8,
                       marginTop: 6,
                     }}
                   >
-                    <span
+                    <button
+                      type="button"
+                      onClick={() => toggleCatOpen(cat)}
+                      aria-expanded={catOpen}
+                      aria-controls={listId}
                       style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: 2,
+                        flex: 1,
                         minWidth: 0,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        textAlign: "left",
+                        background: "transparent",
+                        border: "none",
+                        cursor: "pointer",
+                        padding: "10px 0",
+                        minHeight: 44,
+                        color: INK,
                       }}
                     >
                       <span
+                        aria-hidden="true"
                         style={{
+                          flexShrink: 0,
+                          width: 16,
+                          textAlign: "center",
                           fontFamily: SANS,
-                          fontSize: 11,
-                          letterSpacing: 2,
-                          color: MUTED,
+                          fontSize: 14,
+                          fontWeight: 700,
+                          color: AI_BLUE,
                         }}
                       >
-                        {cat}
+                        {catOpen ? "−" : "+"}
                       </span>
                       <span
                         style={{
-                          fontFamily: SANS,
-                          fontSize: 11,
-                          color:
-                            catSummary.perfectTopics === catSummary.topics
-                              ? GREEN
-                              : MUTED,
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: 2,
+                          minWidth: 0,
                         }}
                       >
-                        完璧 {catSummary.perfectTopics}/{catSummary.topics}
-                        論点・{catSummary.pts}/{catSummary.max}点
+                        <span
+                          style={{
+                            fontFamily: SANS,
+                            fontSize: 11,
+                            letterSpacing: 2,
+                            color: MUTED,
+                          }}
+                        >
+                          {cat}
+                        </span>
+                        {/* 数字の途中で折り返らないよう、成績と選択数は語単位で並べる */}
+                        <span
+                          style={{
+                            display: "flex",
+                            flexWrap: "wrap",
+                            columnGap: 6,
+                            rowGap: 2,
+                            fontFamily: SANS,
+                            fontSize: 11,
+                          }}
+                        >
+                          <span
+                            style={{
+                              whiteSpace: "nowrap",
+                              color:
+                                catSummary.perfectTopics === catSummary.topics
+                                  ? GREEN
+                                  : MUTED,
+                            }}
+                          >
+                            完璧 {catSummary.perfectTopics}/{catSummary.topics}
+                            論点・{catSummary.pts}/{catSummary.max}点
+                          </span>
+                          {/* たたんでいる間はチェックが見えないので、選択数を出しておく */}
+                          {!catOpen && (
+                            <span style={{ whiteSpace: "nowrap", color: MUTED }}>
+                              選択 {catSelected}件
+                            </span>
+                          )}
+                        </span>
                       </span>
-                    </span>
+                    </button>
                     <button
                       type="button"
                       onClick={() => toggleCategory(cat)}
                       aria-pressed={catAllOn}
                       style={{
+                        flexShrink: 0,
                         fontFamily: SANS,
                         fontSize: 11,
                         letterSpacing: 1,
@@ -546,7 +618,11 @@ export default function PlayPage() {
                       {catAllOn ? "この分野を全解除" : "この分野を全選択"}
                     </button>
                   </div>
-                  {QUESTIONS.map((qq, i) => {
+                  <div
+                    id={listId}
+                    style={{ display: "flex", flexDirection: "column", gap: 8 }}
+                  >
+                  {catOpen && QUESTIONS.map((qq, i) => {
                     if (qq.category !== cat) return null;
                     const on = selected.has(i);
                     const st = allStats[i];
@@ -645,6 +721,7 @@ export default function PlayPage() {
                       </button>
                     );
                   })}
+                  </div>
                 </div>
                 );
               })}
