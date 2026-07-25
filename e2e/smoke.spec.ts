@@ -75,20 +75,39 @@ test("スモーク: 出題→解答→判決→ダッシュボード反映と永
 /**
  * 範囲選択画面の「開廷する」は、論点一覧(64論点)を開いてスクロールしても
  * 画面内に残る(sticky)。範囲を決めてから審理に入るまでが遠かった頃の回帰防止。
+ *
+ * 「見えている」だけの判定では、一覧が伸びてボタンの自然位置がたまたま画面内に
+ * 入っただけでも通ってしまう。そのため画面下端からボタン下辺までの距離を測り、
+ * スクロール位置が変わっても一定(=貼り付いている)ことを確かめる。
  */
-test("範囲選択: 論点一覧を開いてスクロールしても開廷ボタンが画面内に残る", async ({
+test("範囲選択: 論点一覧を開いてスクロールしても開廷ボタンが画面下端に貼り付く", async ({
   page,
 }) => {
   await page.goto("/play");
 
   const start = page.getByRole("button", { name: /開廷する/ });
-  // 画面を開いた時点(最上部)から見えている
-  await expect(start).toBeInViewport();
+  /** 画面下端 − ボタン下辺(px)。貼り付いていれば sticky バーの下余白ぶんで一定 */
+  const gapFromBottom = () =>
+    start.evaluate(
+      (el) => window.innerHeight - el.getBoundingClientRect().bottom,
+    );
 
-  // 分野を開くと選択カードが縦に伸びるが、開廷ボタンは画面下端に貼り付いたまま
-  await page.getByRole("button", { name: /^宅建業法/ }).click();
-  await page.evaluate(() => window.scrollBy(0, 1500));
+  // 画面を開いた時点(最上部・一覧はたたんだ状態)から画面下端に見えている。
+  // このとき自然位置はページ末尾側にあるため、sticky でなければ画面内に入らない
   await expect(start).toBeInViewport();
+  const atTop = await gapFromBottom();
+  expect(atTop).toBeGreaterThanOrEqual(0);
+  expect(atTop).toBeLessThanOrEqual(20);
+
+  // 分野を開くと選択カードが縦に伸びるが、どこまでスクロールしても位置は変わらない。
+  // 検証位置は一覧の途中(ボタンの自然位置がまだ画面より下)に採り、
+  // 「一覧が伸びて自然位置が画面に入っただけ」では通らないようにする
+  await page.getByRole("button", { name: /^宅建業法/ }).click();
+  for (const y of [300, 900]) {
+    await page.evaluate((to) => window.scrollTo(0, to), y);
+    await expect(start).toBeInViewport();
+    expect(Math.abs((await gapFromBottom()) - atTop)).toBeLessThanOrEqual(1);
+  }
 });
 
 /**
