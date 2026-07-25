@@ -73,6 +73,25 @@ test("スモーク: 出題→解答→判決→ダッシュボード反映と永
 });
 
 /**
+ * 範囲選択画面の「開廷する」は、論点一覧(64論点)を開いてスクロールしても
+ * 画面内に残る(sticky)。範囲を決めてから審理に入るまでが遠かった頃の回帰防止。
+ */
+test("範囲選択: 論点一覧を開いてスクロールしても開廷ボタンが画面内に残る", async ({
+  page,
+}) => {
+  await page.goto("/play");
+
+  const start = page.getByRole("button", { name: /開廷する/ });
+  // 画面を開いた時点(最上部)から見えている
+  await expect(start).toBeInViewport();
+
+  // 分野を開くと選択カードが縦に伸びるが、開廷ボタンは画面下端に貼り付いたまま
+  await page.getByRole("button", { name: /^宅建業法/ }).click();
+  await page.evaluate(() => window.scrollBy(0, 1500));
+  await expect(start).toBeInViewport();
+});
+
+/**
  * 検地帳のマスをタップしたら、その分野の直下に詳細(論点名・審理ボタン)が出る。
  * 詳細をマトリクスの一番下に置いていた頃は、先頭分野のマスをタップすると
  * 画面外(約480px 下)に出てしまい、タップの反応が見えなかった。
