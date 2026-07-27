@@ -74,6 +74,7 @@ import { shakka } from "./kenri/shakka";
 import { menkyoTodokede } from "./gyoho/menkyo-todokede";
 import { koukokuKaishi } from "./gyoho/koukoku-kaishi";
 import { gyoushaMeibo } from "./gyoho/gyousha-meibo";
+import { juugyoushaMeibo } from "./gyoho/juugyousha-meibo";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -155,6 +156,7 @@ const RAW_QUESTIONS: Question[] = [
   menkyoTodokede,
   koukokuKaishi,
   gyoushaMeibo,
+  juugyoushaMeibo,
 ];
 
 /**
