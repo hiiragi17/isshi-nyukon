@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q75 従業者名簿の記載事項・標識の様式(宅建業法48条・50条、施行規則17条の2・19条) */
 export const juugyoushaMeibo: Question = {
   id: "q75",
+  verified: true,
   category: "宅建業法",
   topic: "従業者名簿の記載事項・標識の様式",
   law: "宅建業法48条・50条、施行規則17条の2・19条",

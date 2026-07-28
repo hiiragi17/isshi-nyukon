@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q74 宅地建物取引業者名簿と変更の届出のねじれ(宅建業法4条・8条・9条・10条・11条、施行規則6条) */
 export const gyoushaMeibo: Question = {
   id: "q74",
+  verified: true,
   category: "宅建業法",
   topic: "宅建業者名簿と変更の届出",
   law: "宅建業法4条・8条・9条・10条・11条、施行規則6条",
