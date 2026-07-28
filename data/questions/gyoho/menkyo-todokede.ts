@@ -1,6 +1,6 @@
 import type { Question } from "@/types";
 
-/** q72 免許の届出・免許換え(宅建業法7条・9条・11条・76条) */
+/** q72 免許の届出・免許換え(宅建業法3条・4条・7条・9条・11条・76条) */
 export const menkyoTodokede: Question = {
   id: "q72",
   verified: true,
