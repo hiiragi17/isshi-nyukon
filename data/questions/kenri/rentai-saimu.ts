@@ -4,6 +4,7 @@ import type { Question } from "@/types";
 export const rentaiSaimu: Question = {
   id: "q68",
   verified: true,
+  source: { level: "mirrored", note: "条文・判例とも複数の独立した公開ソースで文言一致を確認(e-Gov に到達できず)" },
   category: "権利関係(民法)",
   topic: "連帯債務",
   law: "民法436条・438条・439条・440条・441条・442条・445条",

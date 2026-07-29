@@ -4,6 +4,7 @@ import type { Question } from "@/types";
 export const shiyouTaishaku: Question = {
   id: "q67",
   verified: true,
+  source: { level: "mirrored", note: "条文・判例とも複数の独立した公開ソースで文言一致を確認(e-Gov に到達できず)" },
   category: "権利関係(民法)",
   topic: "使用貸借",
   law: "民法593条・593条の2・594条・595条・597条",

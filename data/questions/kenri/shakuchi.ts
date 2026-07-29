@@ -4,6 +4,14 @@ import type { Question } from "@/types";
 export const shakuchi: Question = {
   id: "q70",
   verified: true,
+  source: { level: "primary", note: "承認者が借地借家法の条文原文を提示し突合せ" },
+  lawVersion: {
+    revisionId: "403AC0000000090_20260521",
+    verifiedAgainst: "2026-05-21",
+    examBasisDate: "2026-04-01",
+    driftChecked: "analysed",
+    note: "照合に用いた版は基準日より50日新しい。差分は第4章のみで本問に影響しないと判断したが、時点指定による機械的な差分取得は未実施",
+  },
   category: "権利関係(民法)",
   topic: "借地借家法(借地の対抗力・建物買取請求権・定期借地権)",
   law: "借地借家法10条・13条・16条・22条・23条・24条",

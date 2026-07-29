@@ -4,6 +4,14 @@ import type { Question } from "@/types";
 export const juugyoushaMeibo: Question = {
   id: "q75",
   verified: true,
+  source: { level: "primary", note: "承認者が宅建業法・同施行規則の条文原文を提示し突合せ。様式第9号ほか標識6種は primary、様式第8号の2 のみ mirrored" },
+  lawVersion: {
+    revisionId: "327AC1000000176_20260401_507AC0000000068",
+    verifiedAgainst: "2026-04-01",
+    examBasisDate: "2026-04-01",
+    driftChecked: "not_required",
+    note: "宅建業法・施行規則とも施行日が法令基準日と一致(施行規則 332M50004000012_20260401_507M60000802002)",
+  },
   category: "宅建業法",
   topic: "従業者名簿の記載事項・標識の様式",
   law: "宅建業法48条・50条、施行規則17条の2・19条",

@@ -35,11 +35,73 @@ export type Question = {
    * と対応する精度の証跡で、現状は出題フィルタには使っていない。
    */
   verified?: boolean;
+  /**
+   * 照合に使ったソースの強さ。`verified` が「裏取りしたか」を記録するのに対し、
+   * こちらは「**何で**裏取りしたか」を記録する。省略時は `unverified` に
+   * 正規化される(fail-closed)。
+   */
+  source?: SourceRef;
+  /**
+   * 照合に用いた法令の版と、試験の法令基準日との関係。省略時は
+   * `driftChecked: "unchecked"` の既定値に正規化される(fail-closed)。
+   */
+  lawVersion?: LawVersion;
   lesson: string[]; // 30秒レッスン(3行程度)
   diagram?: Diagram; // 登場人物の関係図(省略可)
   choices?: Choice[]; // type 未指定(zenshi)のとき
   calc?: CalcSpec; // type="calc" のとき
   spot?: SpotSpec; // type="spot" のとき
+};
+
+/* ---------- 照合の証跡(source / lawVersion) ---------- */
+
+/**
+ * 照合に使ったソースの強さ。強い順に並べている。
+ *
+ * - `primary`     — 条文・告示・官公庁の公式発出文書の**原文**に当てた
+ * - `mirrored`    — 原文を直接取得できず、独立した複数の公開法令DBの
+ *                   文言一致で代用した(法令は著作権の対象外なので、
+ *                   複数ソースの一致は原文の強い裏取りになる)
+ * - `secondary`   — 解説サイト・用語集など二次資料のみ
+ * - `unverified`  — 記録が無い。**省略時の既定値**
+ *
+ * 横断ルール F8: **数値そのものが答えになる肢を含む問題は `primary` を必須**とする。
+ */
+export type SourceLevel = "primary" | "mirrored" | "secondary" | "unverified";
+
+export type SourceRef = {
+  level: SourceLevel;
+  /** 様式など、法令本体とは別にファイル単位で管理されるものの識別子 */
+  fileId?: string;
+  /** 補足(どの資料に当てたか。照合シートの該当節を指す短い記述) */
+  note?: string;
+};
+
+/**
+ * `driftChecked` の値。
+ *
+ * 施行日が試験の法令基準日より前であることは「基準日**までに**効力を生じた」
+ * ことしか示さず、「基準日**時点でも**その内容のまま」であることは示さない。
+ * 両者を取り違えないよう、確認の状態を明示的に持つ。
+ *
+ * - `not_required` — 照合に使った版の施行日が基準日と**一致**しており、
+ *                    差分が生じ得ない
+ * - `checked`      — 基準日時点の版と突き合わせ、差分が無いことを確認した
+ * - `analysed`     — 差分はあるが、本問に影響しないと判断した(理由を note に)
+ * - `unchecked`    — 未確認。**省略時の既定値**
+ */
+export type DriftChecked = "not_required" | "checked" | "analysed" | "unchecked";
+
+export type LawVersion = {
+  /** 照合に用いた版(e-Gov の Law RevisionID など) */
+  revisionId?: string;
+  /** 照合に用いた版の施行日(YYYY-MM-DD) */
+  verifiedAgainst?: string;
+  /** その年度の試験の法令基準日(YYYY-MM-DD) */
+  examBasisDate?: string;
+  driftChecked?: DriftChecked;
+  /** `analysed` の判断理由、未確認なら何を確認すべきか */
+  note?: string;
 };
 
 /* ---------- zenshi: 全肢判定 ---------- */

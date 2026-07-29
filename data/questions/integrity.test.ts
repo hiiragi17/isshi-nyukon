@@ -153,3 +153,55 @@ describe("spot(間違い探し)", () => {
     }
   });
 });
+
+describe("照合の証跡(source / lawVersion)", () => {
+  it("読み込み境界で source が必ず埋まっている(未指定は unverified)", () => {
+    for (const q of QUESTIONS) {
+      expect(q.source?.level, `${q.id} の source.level`).toBeDefined();
+    }
+  });
+
+  it("読み込み境界で driftChecked が必ず埋まっている(未指定は unchecked)", () => {
+    for (const q of QUESTIONS) {
+      expect(q.lawVersion?.driftChecked, `${q.id} の driftChecked`).toBeDefined();
+    }
+  });
+
+  it("source.level が primary の問題は照合に用いた版を記録している", () => {
+    // 原文に当てたと主張する以上、どの版に当てたかを残していないと再現できない。
+    for (const q of QUESTIONS.filter((x) => x.source?.level === "primary")) {
+      const lv = q.lawVersion ?? {};
+      expect(
+        lv.revisionId ?? lv.verifiedAgainst,
+        `${q.id} は primary だが版の記録が無い`,
+      ).toBeTruthy();
+    }
+  });
+
+  it("driftChecked が not_required なら照合した版と法令基準日が一致している", () => {
+    // 「施行日が基準日より前」は not_required の根拠にならない。
+    // 差分が生じ得ないのは両者が一致する場合だけ。
+    for (const q of QUESTIONS) {
+      const lv = q.lawVersion;
+      if (lv?.driftChecked !== "not_required") continue;
+      expect(lv.verifiedAgainst, `${q.id} の verifiedAgainst`).toBeTruthy();
+      expect(lv.examBasisDate, `${q.id} の examBasisDate`).toBeTruthy();
+      expect(lv.verifiedAgainst, `${q.id} は not_required だが版と基準日が不一致`).toBe(
+        lv.examBasisDate,
+      );
+    }
+  });
+
+  it("現状の内訳を可視化する(埋まっていないものが常に見える状態を保つ)", () => {
+    const byLevel = new Map<string, string[]>();
+    for (const q of QUESTIONS) {
+      const lvl = q.source?.level ?? "unverified";
+      byLevel.set(lvl, [...(byLevel.get(lvl) ?? []), q.id]);
+    }
+    // 記録がまだ無い問題は「unverified」に集まる。埋めるたびにここが減る。
+    const unverified = byLevel.get("unverified") ?? [];
+    expect(unverified.length + (byLevel.get("primary")?.length ?? 0) +
+      (byLevel.get("mirrored")?.length ?? 0) +
+      (byLevel.get("secondary")?.length ?? 0)).toBe(QUESTIONS.length);
+  });
+});

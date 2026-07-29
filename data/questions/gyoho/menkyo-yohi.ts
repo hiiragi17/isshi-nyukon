@@ -4,6 +4,7 @@ import type { Question } from "@/types";
 export const menkyoYohi: Question = {
   id: "q65",
   verified: true,
+  source: { level: "mirrored", note: "複数の独立した公開法令DBで2条1号・3条・77条・78条・施行令1条の文言一致を確認(e-Gov に到達できず)" },
   category: "宅建業法",
   topic: "宅建業の意味・免許の要否",
   law: "宅建業法2条・3条・77条・78条、施行令1条",

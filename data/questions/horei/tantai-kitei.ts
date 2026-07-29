@@ -4,6 +4,13 @@ import type { Question } from "@/types";
 export const tantaiKitei: Question = {
   id: "q69",
   verified: true,
+  source: { level: "mirrored", note: "採光(法28条1項・施行令19条3項・令和5年告示86号・国住指533号)は primary で照合済み。天井高・避雷設備・非常用昇降機の数字は複数の公開ソースの文言一致にとどまるため、問題全体としては弱い側に倒す" },
+  lawVersion: {
+    verifiedAgainst: "2023-04-01",
+    examBasisDate: "2026-04-01",
+    driftChecked: "unchecked",
+    note: "採光は令和5年改正告示まで遡って照合したが、令和5年2月7日〜令和8年4月1日の間の更なる改正の有無は未確認(告示1800号・施行令19条3項・法28条)",
+  },
   category: "法令上の制限",
   topic: "建築基準法(単体規定)",
   law: "建築基準法28条・28条の2・33条・34条・41条の2、施行令19条・20条の5・21条",
