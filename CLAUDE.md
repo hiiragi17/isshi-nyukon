@@ -10,7 +10,7 @@
 
 Next.js 本実装は完了済み。3エンジン(`zenshi` / `calc` / `spot`)・ダッシュボード・
 SRS(本日の召喚状)・成長グラフ・バックアップ(エクスポート/インポート)・PWA(オフライン対応)
-まで実装され、問題データは4分野・57論点ある。ロードマップの v0〜v2 は実質完了し、
+まで実装され、問題データは4分野・約75論点ある(1論点1ファイル。正確な数は `data/questions/**/*.ts` の実ファイル数)。ロードマップの v0〜v2 は実質完了し、
 v3(Neon移行・公開)は**着手判断基準を満たすまで見送り**(Issue #50 / `docs/design-v1.md` 4章)。
 
 現在の主な作業は、問題拡充(残イシューで管理)と精度担保(`verified` 運用)。
@@ -74,6 +74,9 @@ v1 にRDBは無い。データは「静的な問題データ(バンドル)」+�
 
 - `Question.verified`(`types/index.ts`)= 「**一次ソースで裏取り済みか**」の機械可読な記録。読み込み境界 `data/questions/index.ts` の `normalizeQuestion` で未指定は `false` に正規化される(現状 `verified` は出題フィルタには使わず、精度の証跡として持つ)
 - **AIの下書き照合だけを根拠に `verified: true` にしない。** 最終判断は人が原文を見て行う
+- `Question.source`(`SourceRef`)= 「**何で**裏取りしたか」。`verified` が「裏取りしたか」を記録するのに対し、こちらは根拠の強さを記録する。**未指定は `unverified` に正規化**(fail-closed)。**数値そのものが答えになる肢を含む問題は `primary` を必須**とする
+- `Question.lawVersion`(`LawVersion`)= 照合に用いた版と試験の法令基準日の関係。**未指定は `driftChecked: "unchecked"` に正規化**(fail-closed)。
+  - `driftChecked: "not_required"` にできるのは**版と基準日が一致する**場合だけ。**施行日が基準日より前であることは根拠にならない**——それは「基準日までに効力を生じた」ことしか示さず、「基準日時点でもその内容のまま」であることを示さないため
 - 法的文言(30秒レッスン・肢・理由・解説・罠ラベル)は、照合で誤りが見つかったときだけ原文に合わせて最小限で直す
 
 ### 型(`types/`。`reference/prototype/types-draft.ts` が出発点)
@@ -87,6 +90,8 @@ v1 にRDBは無い。データは「静的な問題データ(バンドル)」+�
 | `SpotSpec` / `AdElement` | マイソク間違い探し。layout / errors / errorCount |
 | `Term` | 用語辞書エントリ(word / aliases / def / category) |
 | `Attempt` | 成績1件(questionId / choiceIndex / pts / max / answeredAt) |
+| `SourceRef` | 照合に使ったソースの強さ(`level`: primary / mirrored / secondary / unverified)。様式なら `fileId` も |
+| `LawVersion` | 照合に用いた法令の版と試験の法令基準日の関係(`revisionId` / `verifiedAgainst` / `examBasisDate` / `driftChecked`) |
 | `MasteryState` | `perfect` / `learning` / `untouched` |
 
 問題形式は3種: `zenshi`(全肢判定)/ `calc`(途中式ビルダー)/ `spot`(間違い探し)。いずれも実装済み。
