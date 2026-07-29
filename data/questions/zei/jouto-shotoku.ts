@@ -4,6 +4,18 @@ import type { Question } from "@/types";
 export const joutoShotoku: Question = {
   id: "q52",
   verified: true,
+  source: {
+    // level を上げられないのは lesson の「直系血族」だけが理由。肢の正誤はすべて法本文で確定している。
+    level: "unverified",
+    answerLevel: "primary",
+    note: "4肢の正誤はいずれも租税特別措置法の法本文(35条1項柱書・2項1号、31条1項・2項、31条の3第1項)の逐語原文で確定(2026-07-29)。level を上げないのは、lesson の「直系血族」が35条2項1号の委任先(措置法施行令の特別関係者の範囲)の内容で、その原文が未取得のため",
+  },
+  lawVersion: {
+    revisionId: "332AC0000000026_20260625_508AC0000000012",
+    verifiedAgainst: "2026-06-25",
+    driftChecked: "unchecked",
+    note: "所得税法等の一部を改正する法律(令和8年法律第12号)による改正後の版。試験の法令基準日(令和8年4月1日想定・未確認)より新しいため、基準日時点の版との差分は未確認",
+  },
   category: "税・その他",
   topic: "譲渡所得の特例",
   law: "租税特別措置法31条・31条の3・35条",

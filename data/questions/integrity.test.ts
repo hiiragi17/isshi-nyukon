@@ -179,13 +179,17 @@ describe("照合の証跡(source / lawVersion)", () => {
     }
   });
 
-  it("source.level が primary の問題は照合に用いた版を記録している", () => {
+  it("primary を主張する問題は照合に用いた版を記録している", () => {
     // 原文に当てたと主張する以上、どの版に当てたかを残していないと再現できない。
-    for (const q of QUESTIONS.filter((x) => x.source?.level === "primary")) {
+    // level だけでなく answerLevel も対象にする——lesson の一部が弱いせいで level を
+    // 下げていても、肢の根拠が primary なら「どの版の原文に当てたか」は必要(q52)。
+    const claimsPrimary = (q: Question) =>
+      q.source?.level === "primary" || q.source?.answerLevel === "primary";
+    for (const q of QUESTIONS.filter(claimsPrimary)) {
       const lv = q.lawVersion ?? {};
       expect(
         lv.revisionId ?? lv.verifiedAgainst,
-        `${q.id} は primary だが版の記録が無い`,
+        `${q.id} は primary を主張しているが版の記録が無い`,
       ).toBeTruthy();
     }
   });
@@ -263,12 +267,17 @@ describe("照合の証跡(source / lawVersion)", () => {
   });
 
   it("数値そのものが答えになる肢を含む問題は answerLevel が primary である(F8)", () => {
-    // 根拠の強さをまだ記録していない問題(level: unverified)は対象外。
-    // それらは下の内訳テストで unverified として可視化され続ける。ここで一律に落とすと
-    // 「記録を埋める作業」自体が進められなくなるため、F8 は
-    // 「数値肢を持つ問題を弱い水準で記録できない」という形で効かせる。
+    // 根拠の強さをまだ何も記録していない問題は対象外。それらは下の内訳テストで
+    // unverified として可視化され続ける。ここで一律に落とすと「記録を埋める作業」自体が
+    // 進められなくなるため、F8 は「数値肢を持つ問題を弱い水準で記録できない」形で効かせる。
+    //
+    // 判定は level と answerLevel の両方を見る。q52 のように lesson の一部が弱いせいで
+    // level を下げていても、answerLevel を記録しているなら F8 の対象になる。
     for (const q of QUESTIONS) {
-      if (q.source?.level === "unverified") continue;
+      const unrecorded =
+        (q.source?.level ?? "unverified") === "unverified" &&
+        (q.source?.answerLevel ?? "unverified") === "unverified";
+      if (unrecorded) continue;
       const numeric = numericAnswerChoices(q);
       if (numeric.length === 0) continue;
       if (F8_EXCEPTIONS[q.id]) continue;
