@@ -22,15 +22,28 @@ const HEADERS = [
   ["ゾーン", "違反/適法"],
 ] as const;
 
+/**
+ * calc(計算)の表は肢の表とは別様式。1列目の見出しで見分ける。
+ * 根拠(条文)を書く問題は3列目に `根拠` を挟む——肢の表で `🚩数字` が任意列なのと同じ扱い。
+ */
+const CALC_HEADERS = [
+  ["段", "計算", "検算"],
+  ["段", "計算", "根拠", "検算"],
+];
+const CALC_FIRST = "段";
+
 /** 2列目に書いてよい値。これ以外の限定(「30年になる」等)は `根拠` に回す */
 const VERDICTS: Record<string, string[]> = {
   肢の正誤: ["○", "×(誤り)"],
   "違反/適法": ["違反", "適法"],
 };
 
+/** `照合結果` / `検算` に書いてよい記号(4シート共通) */
+const STATUS = ["✅", "⚠️", "⏳"];
+
 type Row = { sheet: string; line: number; cells: string[]; header: string[] };
 
-/** 照合表(肢 / ゾーンの表)だけを拾う。calc の `段 / 計算 / 検算` は別様式なので対象外 */
+/** 照合表(肢 / ゾーン)と calc 表(段)の両方を拾う。様式は違うがどちらも F2 の対象 */
 function parseTables(sheet: { name: string; text: string }) {
   const lines = sheet.text.split("\n");
   const tables: { header: string[]; rows: Row[] }[] = [];
@@ -38,7 +51,8 @@ function parseTables(sheet: { name: string; text: string }) {
     if (!lines[i].startsWith("|")) continue;
     if (!/^\|[\s:|-]+$/.test(lines[i + 1] ?? "")) continue;
     const header = cellsOf(lines[i]);
-    if (!HEADERS.some(([first]) => header[0] === first)) continue;
+    const isChoice = HEADERS.some(([first]) => header[0] === first);
+    if (!isChoice && header[0] !== CALC_FIRST) continue;
     const rows: Row[] = [];
     let j = i + 2;
     for (; j < lines.length && lines[j].startsWith("|"); j++) {
@@ -58,6 +72,8 @@ const cellsOf = (line: string) =>
     .map((c) => c.trim());
 
 const allTables = sheets.flatMap(parseTables);
+const choiceTables = allTables.filter((t) => t.header[0] !== CALC_FIRST);
+const calcTables = allTables.filter((t) => t.header[0] === CALC_FIRST);
 const allRows = allTables.flatMap((t) => t.rows);
 
 describe("照合シートの表フォーマット(F2)", () => {
@@ -71,12 +87,23 @@ describe("照合シートの表フォーマット(F2)", () => {
     expect(allRows.length).toBeGreaterThan(0);
   });
 
-  it("見出しが `肢 / 肢の正誤 / 根拠 / 照合結果`(+ `🚩数字`)である", () => {
-    for (const { header } of allTables) {
+  it("肢・ゾーンの表の見出しが `… / … / 根拠 / 照合結果`(+ `🚩数字`)である", () => {
+    for (const { header } of choiceTables) {
       const [first, second] = HEADERS.find(([f]) => header[0] === f)!;
       const expected = [first, second, "根拠", "照合結果"];
       if (header.length === 5) expected.push("🚩数字");
       expect(header, `${first} の表の見出し`).toEqual(expected);
+    }
+  });
+
+  it("calc の表の見出しが `段 / 計算 / 検算`(+ `根拠`)である", () => {
+    // calc は肢の表とは別様式だが、様式が崩れれば検算の記録が読めなくなる点は同じ。
+    expect(calcTables.length, "calc 表が1つも見つからない").toBeGreaterThan(0);
+    for (const { header } of calcTables) {
+      expect(
+        CALC_HEADERS.some((h) => h.length === header.length && h.every((c, i) => c === header[i])),
+        `calc 表の見出し「${header.join(" / ")}」が想定の様式でない`,
+      ).toBe(true);
     }
   });
 
@@ -92,23 +119,44 @@ describe("照合シートの表フォーマット(F2)", () => {
   it("`肢の正誤` / `違反/適法` には決められた値しか入らない", () => {
     // 「×(誤り、30年になる)」のように限定を混ぜると、この列を機械的にも目視でも
     // 一貫して扱えなくなる。限定は `根拠` 側に書く。
-    for (const row of allRows) {
-      const allowed = VERDICTS[row.header[1]];
-      expect(allowed, `${row.sheet}:${row.line} の見出し`).toBeDefined();
-      expect(allowed).toContain(row.cells[1]);
+    for (const { rows } of choiceTables) {
+      for (const row of rows) {
+        const allowed = VERDICTS[row.header[1]];
+        expect(allowed, `${row.sheet}:${row.line} の見出し`).toBeDefined();
+        expect(allowed).toContain(row.cells[1]);
+      }
     }
   });
 
-  it("`照合結果` は ✅ / ⚠️ で始まり、他の列の情報を持ち込まない", () => {
-    for (const row of allRows) {
-      const result = row.cells[3];
-      expect(result, `${row.sheet}:${row.line} の照合結果`).toMatch(/^(✅|⚠️)/);
-      // 数字の検算は `🚩数字` 列、根拠の強さは問題データの `source.level` が持つ。
-      expect(result, `${row.sheet}:${row.line} に 🚩 が混ざっている`).not.toContain("🚩");
-      expect(
-        result,
-        `${row.sheet}:${row.line} に source.level が混ざっている`,
-      ).not.toMatch(/primary|mirrored|secondary|unverified/);
+  it("`照合結果` は共通の記号で始まり、他の列の情報を持ち込まない", () => {
+    for (const { rows } of choiceTables) {
+      for (const row of rows) {
+        const result = row.cells[3];
+        expect(
+          STATUS.some((s) => result.startsWith(s)),
+          `${row.sheet}:${row.line} の照合結果「${result}」は ${STATUS.join(" / ")} で始まらない`,
+        ).toBe(true);
+        // 数字の検算は `🚩数字` 列、根拠の強さは問題データの `source.level` が持つ。
+        expect(result, `${row.sheet}:${row.line} に 🚩 が混ざっている`).not.toContain("🚩");
+        expect(
+          result,
+          `${row.sheet}:${row.line} に source.level が混ざっている`,
+        ).not.toMatch(/primary|mirrored|secondary|unverified/);
+      }
+    }
+  });
+
+  it("calc の `検算` 欄に共通の記号がある", () => {
+    // calc には `🚩数字` 列が無く、`検算` 欄が数字の検算そのものを担う。
+    // したがってここは 🚩 の混在を禁じない。
+    for (const { rows } of calcTables) {
+      for (const row of rows) {
+        const check = row.cells[row.header.length - 1];
+        expect(
+          STATUS.some((s) => check.includes(s)),
+          `${row.sheet}:${row.line} の検算「${check}」に ${STATUS.join(" / ")} が無い`,
+        ).toBe(true);
+      }
     }
   });
 });
