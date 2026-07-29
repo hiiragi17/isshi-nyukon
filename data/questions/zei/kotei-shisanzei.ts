@@ -4,9 +4,20 @@ import type { Question } from "@/types";
 export const koteiShisanzei: Question = {
   id: "q28",
   verified: true,
+  source: {
+    level: "primary",
+    answerLevel: "primary",
+    note: "承認者が地方税法342条・343条・349条の3の2・350条・359条の原文を提示し突合せ(2026-07-29)。4肢すべての正誤が逐語原文で確定",
+  },
+  lawVersion: {
+    revisionId: "325AC0000000226_20260605_508AC0000000031",
+    verifiedAgainst: "2026-06-05",
+    driftChecked: "unchecked",
+    note: "健康保険法等の一部を改正する法律(令和8年法律第31号)による改正後の版。試験の法令基準日(令和8年4月1日想定・未確認)より新しいため、基準日時点の版との差分は未確認",
+  },
   category: "税・その他",
   topic: "固定資産税",
-  law: "地方税法",
+  law: "地方税法342条・343条・349条の3の2・350条・359条",
   scenario:
     "毎年1月1日を賦課期日として課される固定資産税について、課税主体・納税義務者・住宅用地の特例・税率の各記述の正誤を判定する。",
   lesson: [
