@@ -69,7 +69,7 @@ v1 にRDBは無い。データは「静的な問題データ(バンドル)」+�
 新規問題はまず `verified: false`(または未指定)で追加し、次の手順で検証する:
 
 1. 各肢の判定・理由・数字を、一次ソース(e-Gov法令検索 / 国税庁 / 国土交通省 / REINS / 公式過去問など)の**原文**と突き合わせる
-2. 照合結果を分野別シート `docs/verification/{kenri|gyoho|horei|zei}-verification.md` に記録(条文原文＋肢ごとの照合表＋承認欄。**1論点=1エントリ**)
+2. 照合結果を分野別シート `docs/verification/{kenri|gyoho|horei|zei}-verification.md` に記録(条文原文＋肢ごとの照合表＋承認欄。**1論点=1エントリ**)。照合表の列は **`肢` / `肢の正誤` / `根拠` / `照合結果`**(数字がある問題は `🚩数字` を追加)で4シート共通。`spot` は `ゾーン` / `違反/適法` に読み替え、`calc` は `段` / `計算` / `検算` の別様式。**正誤・根拠・突合せ結果を1つの列に混ぜない**
 3. 人が原文を確認して承認できたら、その問題ファイルの `verified` を `true` にする
 
 - `Question.verified`(`types/index.ts`)= 「**一次ソースで裏取り済みか**」の機械可読な記録。読み込み境界 `data/questions/index.ts` の `normalizeQuestion` で未指定は `false` に正規化される(現状 `verified` は出題フィルタには使わず、精度の証跡として持つ)
