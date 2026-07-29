@@ -4,6 +4,14 @@ import type { Question } from "@/types";
 export const menkyoTodokede: Question = {
   id: "q72",
   verified: true,
+  source: { level: "primary", note: "承認者が宅建業法の条文原文を提示し突合せ" },
+  lawVersion: {
+    revisionId: "327AC1000000176_20260401_507AC0000000068",
+    verifiedAgainst: "2026-04-01",
+    examBasisDate: "2026-04-01",
+    driftChecked: "not_required",
+    note: "照合に用いた版の施行日が試験の法令基準日と一致するため、差分は生じない",
+  },
   category: "宅建業法",
   topic: "免許の届出・免許換え(変更・廃業・取引結了)",
   law: "宅建業法3条・4条・7条・9条・11条・76条",
