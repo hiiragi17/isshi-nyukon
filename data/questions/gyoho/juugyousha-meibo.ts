@@ -6,6 +6,7 @@ export const juugyoushaMeibo: Question = {
   verified: true,
   source: {
     level: "mirrored",
+    answerLevel: "primary",
     note: "4肢の根拠(法48条・50条、規則17条の2・19条)と標識6種の様式は primary で照合済み。ただし lesson の従業者名簿の運用2点(一時的従事者も記載 / 事由発生から2週間以内)は自治体配布版の様式第8号の2 に依拠しており mirrored。問題単位では弱い側に倒す",
   },
   lawVersion: {

@@ -35,7 +35,10 @@ describe("normalizeQuestion", () => {
 
   describe("source(照合に使ったソースの強さ)", () => {
     it("未指定は unverified に正規化する(fail-closed)", () => {
-      expect(normalizeQuestion(base).source).toEqual({ level: "unverified" });
+      expect(normalizeQuestion(base).source).toEqual({
+        level: "unverified",
+        answerLevel: "unverified",
+      });
     });
 
     it("指定された level はそのまま保持する", () => {
@@ -50,9 +53,48 @@ describe("normalizeQuestion", () => {
       });
       expect(out.source).toEqual({
         level: "primary",
+        answerLevel: "primary",
         fileId: "2FH00000081050",
         note: "様式第9号",
       });
+    });
+
+    it("answerLevel 未指定は level と同じ値になる", () => {
+      const out = normalizeQuestion({ ...base, source: { level: "mirrored" } });
+      expect(out.source?.answerLevel).toBe("mirrored");
+    });
+
+    it("answerLevel は level より強くできる(肢は原文・lesson だけが弱いケース)", () => {
+      // F8(数値そのものが答えになる肢は primary 必須)は answerLevel で判定する。
+      // level を弱い側に倒すと答えの根拠の強さまで見えなくなるため分けて持つ。
+      const out = normalizeQuestion({
+        ...base,
+        source: { level: "mirrored", answerLevel: "primary" },
+      });
+      expect(out.source?.level).toBe("mirrored");
+      expect(out.source?.answerLevel).toBe("primary");
+    });
+
+    it("返り値の source を書き換えても入力や既定値を汚染しない", () => {
+      const input: Question = { ...base };
+      const a = normalizeQuestion(input);
+      a.source!.level = "primary";
+      expect(input.source).toBeUndefined();
+      expect(normalizeQuestion({ ...base }).source?.level).toBe("unverified");
+    });
+
+    it("返り値の lawVersion を書き換えても既定値を汚染しない", () => {
+      const a = normalizeQuestion({ ...base });
+      a.lawVersion!.driftChecked = "checked";
+      expect(normalizeQuestion({ ...base }).lawVersion?.driftChecked).toBe(
+        "unchecked",
+      );
+    });
+
+    it("渡した source オブジェクトを破壊しない(コピーを返す)", () => {
+      const src = { level: "primary" as const };
+      normalizeQuestion({ ...base, source: src });
+      expect(src).toEqual({ level: "primary" });
     });
 
     it("verified: true でも source 未指定なら unverified のまま(独立に扱う)", () => {

@@ -7,6 +7,7 @@
  */
 import { describe, expect, it } from "vitest";
 import { QUESTIONS } from "./index";
+import { SOURCE_LEVEL_RANK } from "@/types";
 import type { Question } from "@/types";
 
 /** type 未指定は zenshi 扱い(types/index.ts の Question.type 参照) */
@@ -164,6 +165,17 @@ describe("照合の証跡(source / lawVersion)", () => {
   it("読み込み境界で driftChecked が必ず埋まっている(未指定は unchecked)", () => {
     for (const q of QUESTIONS) {
       expect(q.lawVersion?.driftChecked, `${q.id} の driftChecked`).toBeDefined();
+    }
+  });
+
+  it("answerLevel が level より弱いことはない(答えの根拠が全体より弱いのは矛盾)", () => {
+    for (const q of QUESTIONS) {
+      const lvl = q.source?.level ?? "unverified";
+      const ans = q.source?.answerLevel ?? lvl;
+      expect(
+        SOURCE_LEVEL_RANK[ans],
+        `${q.id} の answerLevel(${ans})が level(${lvl})より弱い`,
+      ).toBeGreaterThanOrEqual(SOURCE_LEVEL_RANK[lvl]);
     }
   });
 

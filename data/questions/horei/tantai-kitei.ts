@@ -4,7 +4,10 @@ import type { Question } from "@/types";
 export const tantaiKitei: Question = {
   id: "q69",
   verified: true,
-  source: { level: "mirrored", note: "採光(法28条1項・施行令19条3項・令和5年告示86号・国住指533号)は primary で照合済み。天井高・避雷設備・非常用昇降機の数字は複数の公開ソースの文言一致にとどまるため、問題全体としては弱い側に倒す" },
+  source: {
+    level: "mirrored",
+    answerLevel: "primary",
+    note: "採光(法28条1項・施行令19条3項・令和5年告示86号・国住指533号)は primary で照合済み。天井高・避雷設備・非常用昇降機の数字は複数の公開ソースの文言一致にとどまるため、問題全体としては弱い側に倒す" },
   lawVersion: {
     verifiedAgainst: "2023-04-01",
     examBasisDate: "2026-04-01",

@@ -70,11 +70,32 @@ export type Question = {
 export type SourceLevel = "primary" | "mirrored" | "secondary" | "unverified";
 
 export type SourceRef = {
+  /**
+   * 問題**全体**(肢・理由・解説に加えて lesson も含む)の中で、
+   * **最も弱い**根拠の水準。「記録が無い / 弱い記録がある」を埋もれさせないため、
+   * 混在する場合は弱い側に倒す。#125 の網羅状況はこの値で集計する。
+   */
   level: SourceLevel;
+  /**
+   * **肢の正誤を決める根拠**の水準。lesson の補足だけが弱いケースで、
+   * `level` を弱い側に倒すと答えの根拠の強さまで見えなくなるため分けて持つ。
+   *
+   * 横断ルール **F8(数値そのものが答えになる肢を含む問題は `primary` 必須)は
+   * こちらで判定する**。省略時は `level` と同じとみなす。
+   */
+  answerLevel?: SourceLevel;
   /** 様式など、法令本体とは別にファイル単位で管理されるものの識別子 */
   fileId?: string;
   /** 補足(どの資料に当てたか。照合シートの該当節を指す短い記述) */
   note?: string;
+};
+
+/** 強い順の序列。比較に使う(大きいほど強い) */
+export const SOURCE_LEVEL_RANK: Record<SourceLevel, number> = {
+  primary: 3,
+  mirrored: 2,
+  secondary: 1,
+  unverified: 0,
 };
 
 /**
