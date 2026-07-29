@@ -204,6 +204,60 @@ describe("照合の証跡(source / lawVersion)", () => {
     }
   });
 
+  // F8(Issue #125): 数値そのものが答えになる肢を含む問題は answerLevel: primary を要する。
+  //
+  // 「答えになる数値」は、×肢の誤り箇所(wrongIndex が指す segment)に数値が含まれるかで拾う。
+  // 誤り箇所そのものが数値なら、その数値が肢の正誤を決めている。
+  //
+  // これは**下限**の検査であることに注意する。○肢の中の数値や reasons 側の数値は拾えないし、
+  // 「3条の許可」のような条番号を数値と誤認することもある(誤認は primary を要求する側に
+  // 倒れるので fail-closed)。人が原文を見る手順(CLAUDE.md「問題の精度担保」)の代わりにはならない。
+  const NUMERIC =
+    /[0-9０-９]|[一二三四五六七八九十百千万]+分の|[一二三四五六七八九十百千]+(?:年|月|日|週間|人|階|倍|割)|[%％]|㎡|平方メートル|パーセント/;
+
+  /** 誤り箇所が数値になっている×肢の一覧(空なら数値が答えを決めていない) */
+  const numericAnswerChoices = (q: Question) =>
+    (q.choices ?? [])
+      .map((c, i) => ({ c, i }))
+      .filter(({ c }) => !c.correct && c.wrongIndex !== undefined)
+      .filter(({ c }) => NUMERIC.test(c.segments[c.wrongIndex!]))
+      .map(({ i }) => i + 1);
+
+  /**
+   * 機械検査で数値肢と判定されるが primary を要しないと人が判断した問題。
+   * 追加するときは理由を書く(CLAUDE.md「AIの下書き照合だけを根拠にしない」)。
+   */
+  const F8_EXCEPTIONS: Record<string, string> = {};
+
+  it("数値そのものが答えになる肢を含む問題は answerLevel が primary である(F8)", () => {
+    // 根拠の強さをまだ記録していない問題(level: unverified)は対象外。
+    // それらは下の内訳テストで unverified として可視化され続ける。ここで一律に落とすと
+    // 「記録を埋める作業」自体が進められなくなるため、F8 は
+    // 「数値肢を持つ問題を弱い水準で記録できない」という形で効かせる。
+    for (const q of QUESTIONS) {
+      if (q.source?.level === "unverified") continue;
+      const numeric = numericAnswerChoices(q);
+      if (numeric.length === 0) continue;
+      if (F8_EXCEPTIONS[q.id]) continue;
+      expect(
+        q.source?.answerLevel,
+        `${q.id} は誤り箇所が数値の肢(肢${numeric.join("・")})を持つので answerLevel: primary が要る`,
+      ).toBe("primary");
+    }
+  });
+
+  it("F8 の除外リストに、もう数値肢を持たない問題が残っていない", () => {
+    // 肢を書き換えて数値でなくなった問題の除外理由が残り続けると、記録が実態とずれる。
+    for (const [id, reason] of Object.entries(F8_EXCEPTIONS)) {
+      const q = QUESTIONS.find((x) => x.id === id);
+      expect(q, `F8 除外リストの ${id} が存在しない`).toBeDefined();
+      expect(
+        numericAnswerChoices(q!).length,
+        `${id} は数値肢を持たないので除外(${reason})は不要`,
+      ).toBeGreaterThan(0);
+    }
+  });
+
   it("現状の内訳を可視化する(埋まっていないものが常に見える状態を保つ)", () => {
     const byLevel = new Map<string, string[]>();
     for (const q of QUESTIONS) {
