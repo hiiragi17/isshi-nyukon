@@ -352,12 +352,21 @@ describe("照合の証跡(source / lawVersion)", () => {
     );
   });
 
-  it("examBasisDate の除外リストに、もうズレていない問題が残っていない", () => {
+  it("examBasisDate の除外リストが監査可能な状態を保っている", () => {
     for (const [id, reason] of Object.entries(EXAM_BASIS_DATE_EXCEPTIONS)) {
       const q = QUESTIONS.find((x) => x.id === id);
       expect(q, `examBasisDate 除外リストの ${id} が存在しない`).toBeDefined();
+      // 理由が空だと「なぜ古い基準日を残しているか」が記録から消える。
+      expect(reason.trim(), `examBasisDate 除外リストの ${id} に理由が書かれていない`).not.toBe(
+        "",
+      );
+      // examBasisDate を持たない問題は上の検査の対象外なので、除外する意味がない。
       expect(
         q!.lawVersion?.examBasisDate,
+        `${id} は examBasisDate を記録していないので除外(${reason})は不要`,
+      ).toBeDefined();
+      expect(
+        q!.lawVersion!.examBasisDate,
         `${id} は現在の基準日と一致しているので除外(${reason})は不要`,
       ).not.toBe(currentBasisDate);
     }
