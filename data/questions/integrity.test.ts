@@ -9,6 +9,7 @@ import { describe, expect, it } from "vitest";
 import { QUESTIONS } from "./index";
 import { SOURCE_LEVEL_RANK } from "@/types";
 import type { Question } from "@/types";
+import { examBasisDateFor, examYearFor } from "@/lib/exam-basis";
 
 /** type 未指定は zenshi 扱い(types/index.ts の Question.type 参照) */
 const typeOf = (q: Question) => q.type ?? "zenshi";
@@ -292,6 +293,73 @@ describe("照合の証跡(source / lawVersion)", () => {
         numericAnswerChoices(q!).length,
         `${id} は数値肢を持たないので除外(${reason})は不要`,
       ).toBeGreaterThan(0);
+    }
+  });
+
+  // #133: examBasisDate は「試験を実施する年度の4月1日」という規則からの**導出値**で、
+  // 年度が変われば動く。値を固定で持っている以上、年度をまたいだ更新忘れは
+  // 機械的に検出しないと気づけない(F8 を機械検査にしたのと同じ理由)。
+  const currentBasisDate = examBasisDateFor(new Date());
+
+  /** 期待する基準日と食い違う examBasisDate を持つ問題の一覧 */
+  const examBasisDrift = (questions: Question[], expected: string) =>
+    questions
+      .filter((q) => q.lawVersion?.examBasisDate)
+      .filter((q) => q.lawVersion!.examBasisDate !== expected)
+      .map((q) => q.id);
+
+  /**
+   * 意図的に古い基準日を残す問題。追加するときは理由を書く
+   * (例: 特定年度の出題を再現する問題を、当時の基準日のまま保持する場合)。
+   * 通常の年度更新でここに逃がしてはならない——逃がすと更新漏れが見えなくなる。
+   */
+  const EXAM_BASIS_DATE_EXCEPTIONS: Record<string, string> = {};
+
+  it("examBasisDate が現在の年度の法令基準日と一致する(#133)", () => {
+    const drifted = examBasisDrift(QUESTIONS, currentBasisDate).filter(
+      (id) => !EXAM_BASIS_DATE_EXCEPTIONS[id],
+    );
+    expect(
+      drifted,
+      [
+        `examBasisDate が現在の年度の基準日(${currentBasisDate})と食い違っている: ${drifted.join("・")}`,
+        "",
+        "年度が変わったときにすべきこと:",
+        `1. 基準日を再導出する。一次ソース(不動産適正取引推進機構「宅建試験の概要」)は`,
+        `   「試験を実施する年度の4月1日現在施行されているもの」と相対的に定めているので、`,
+        `   今年度なら ${currentBasisDate} になる`,
+        `2. 該当問題の lawVersion.examBasisDate を ${currentBasisDate} に更新する`,
+        "3. **driftChecked を再確認する。** 基準日が動くと、照合に使った版と基準日時点の版の",
+        "   関係も変わる。verifiedAgainst と新しい基準日が一致しない限り not_required は使えない",
+        "   (施行日が基準日より前であることは根拠にならない)。checked / analysed も、",
+        "   新しい基準日の版に当て直すまでは unchecked に戻す",
+        "4. 照合シート(docs/verification/*.md)の基準日の記述も併せて直す",
+        "",
+        "特定年度の基準日を意図的に残す場合だけ、EXAM_BASIS_DATE_EXCEPTIONS に理由を書いて登録する",
+      ].join("\n"),
+    ).toEqual([]);
+  });
+
+  it("年度をまたぐと examBasisDate のズレを検出する(#133 の検査自体の確認)", () => {
+    // 記録済みの問題が現在の基準日を持っていることを前提に、翌年度の時点を与えると
+    // すべてズレとして挙がる——つまり更新を忘れれば上のテストが落ちる。
+    const recorded = QUESTIONS.filter((q) => q.lawVersion?.examBasisDate);
+    expect(recorded.length, "examBasisDate 記録済みの問題").toBeGreaterThan(0);
+
+    const nextYear = new Date(`${examYearFor(new Date()) + 1}-04-01T00:00:00+09:00`);
+    expect(examBasisDrift(recorded, examBasisDateFor(nextYear))).toEqual(
+      recorded.map((q) => q.id),
+    );
+  });
+
+  it("examBasisDate の除外リストに、もうズレていない問題が残っていない", () => {
+    for (const [id, reason] of Object.entries(EXAM_BASIS_DATE_EXCEPTIONS)) {
+      const q = QUESTIONS.find((x) => x.id === id);
+      expect(q, `examBasisDate 除外リストの ${id} が存在しない`).toBeDefined();
+      expect(
+        q!.lawVersion?.examBasisDate,
+        `${id} は現在の基準日と一致しているので除外(${reason})は不要`,
+      ).not.toBe(currentBasisDate);
     }
   });
 
