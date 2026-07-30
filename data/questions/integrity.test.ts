@@ -179,13 +179,17 @@ describe("照合の証跡(source / lawVersion)", () => {
     }
   });
 
-  it("source.level が primary の問題は照合に用いた版を記録している", () => {
+  it("primary を主張する問題は照合に用いた版を記録している", () => {
     // 原文に当てたと主張する以上、どの版に当てたかを残していないと再現できない。
-    for (const q of QUESTIONS.filter((x) => x.source?.level === "primary")) {
+    // level だけでなく answerLevel も対象にする——lesson の一部が弱いせいで level を
+    // 下げていても、肢の根拠が primary なら「どの版の原文に当てたか」は必要(q52)。
+    const claimsPrimary = (q: Question) =>
+      q.source?.level === "primary" || q.source?.answerLevel === "primary";
+    for (const q of QUESTIONS.filter(claimsPrimary)) {
       const lv = q.lawVersion ?? {};
       expect(
         lv.revisionId ?? lv.verifiedAgainst,
-        `${q.id} は primary だが版の記録が無い`,
+        `${q.id} は primary を主張しているが版の記録が無い`,
       ).toBeTruthy();
     }
   });
@@ -201,6 +205,93 @@ describe("照合の証跡(source / lawVersion)", () => {
       expect(lv.verifiedAgainst, `${q.id} は not_required だが版と基準日が不一致`).toBe(
         lv.examBasisDate,
       );
+    }
+  });
+
+  // F8(Issue #125): 数値そのものが答えになる肢を含む問題は answerLevel: primary を要する。
+  //
+  // 「答えになる数値」は、×肢の誤り箇所(wrongIndex が指す segment)に数値が含まれるかで拾う。
+  // 誤り箇所そのものが数値なら、その数値が肢の正誤を決めている。
+  //
+  // これは**下限**の検査であることに注意する。○肢の中の数値や reasons 側の数値は拾えないし、
+  // 「3条の許可」のような条番号を数値と誤認することもある(誤認は primary を要求する側に
+  // 倒れるので fail-closed)。人が原文を見る手順(CLAUDE.md「問題の精度担保」)の代わりにはならない。
+  // 和数字にも効かせる。現データの金額は「3,000万円」のようにアラビア数字併用だが、
+  // 条文の文言をそのまま肢にすると「三千万円」の形が入りうるため(CodeRabbit 指摘・PR #128)。
+  // 単位(㎡・平方メートル・パーセント等)は**数詞に続くときだけ**数値とみなす。
+  // 単独で拾うと「面積は平方メートルで表示する」のような非数値の誤り箇所まで
+  // primary を要求してしまう(CodeRabbit 指摘・PR #128)。
+  const NUMERIC =
+    /[0-9０-９]|[〇零一二三四五六七八九十百千万億兆]+(?:分の|年|月|日|週間|人|階|倍|割|円|[%％]|㎡|平方メートル|パーセント)/;
+
+  /** 誤り箇所が数値になっている×肢の一覧(空なら数値が答えを決めていない) */
+  const numericAnswerChoices = (q: Question) =>
+    (q.choices ?? [])
+      .map((c, i) => ({ c, i }))
+      .filter(({ c }) => !c.correct && c.wrongIndex !== undefined)
+      .filter(({ c }) => NUMERIC.test(c.segments[c.wrongIndex!]))
+      .map(({ i }) => i + 1);
+
+  /**
+   * 機械検査で数値肢と判定されるが primary を要しないと人が判断した問題。
+   * 追加するときは理由を書く(CLAUDE.md「AIの下書き照合だけを根拠にしない」)。
+   */
+  const F8_EXCEPTIONS: Record<string, string> = {};
+
+  it("数値の検出が和数字・アラビア数字の双方に効く(F8 の検出漏れ防止)", () => {
+    for (const hit of [
+      "三千万円特別控除の適用を受けることができる。",
+      "100分の3(3%)と定められている。",
+      "20分の1以上でなければならない。",
+      "五分の一から十分の一までの間において",
+      "その業務を開始した日から10日以内に、",
+      "二百平方メートル以下であるもの",
+      "存続期間を四十年とし、",
+    ]) {
+      expect(NUMERIC.test(hit), `「${hit}」は数値として拾われるべき`).toBe(true);
+    }
+    for (const miss of [
+      "面積は平方メートルで表示する。",
+      "割合はパーセントで示す。",
+      "課税標準を軽減する特例は設けられていない。",
+      "登記地の都道府県が課する地方税である。",
+      "それぞれの地域の用途制限が、敷地の面積の割合に応じて適用される。",
+    ]) {
+      expect(NUMERIC.test(miss), `「${miss}」は数値ではない`).toBe(false);
+    }
+  });
+
+  it("数値そのものが答えになる肢を含む問題は answerLevel が primary である(F8)", () => {
+    // 根拠の強さをまだ何も記録していない問題は対象外。それらは下の内訳テストで
+    // unverified として可視化され続ける。ここで一律に落とすと「記録を埋める作業」自体が
+    // 進められなくなるため、F8 は「数値肢を持つ問題を弱い水準で記録できない」形で効かせる。
+    //
+    // 判定は level と answerLevel の両方を見る。q52 のように lesson の一部が弱いせいで
+    // level を下げていても、answerLevel を記録しているなら F8 の対象になる。
+    for (const q of QUESTIONS) {
+      const unrecorded =
+        (q.source?.level ?? "unverified") === "unverified" &&
+        (q.source?.answerLevel ?? "unverified") === "unverified";
+      if (unrecorded) continue;
+      const numeric = numericAnswerChoices(q);
+      if (numeric.length === 0) continue;
+      if (F8_EXCEPTIONS[q.id]) continue;
+      expect(
+        q.source?.answerLevel,
+        `${q.id} は誤り箇所が数値の肢(肢${numeric.join("・")})を持つので answerLevel: primary が要る`,
+      ).toBe("primary");
+    }
+  });
+
+  it("F8 の除外リストに、もう数値肢を持たない問題が残っていない", () => {
+    // 肢を書き換えて数値でなくなった問題の除外理由が残り続けると、記録が実態とずれる。
+    for (const [id, reason] of Object.entries(F8_EXCEPTIONS)) {
+      const q = QUESTIONS.find((x) => x.id === id);
+      expect(q, `F8 除外リストの ${id} が存在しない`).toBeDefined();
+      expect(
+        numericAnswerChoices(q!).length,
+        `${id} は数値肢を持たないので除外(${reason})は不要`,
+      ).toBeGreaterThan(0);
     }
   });
 
