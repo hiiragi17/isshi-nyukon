@@ -77,6 +77,8 @@ v1 にRDBは無い。データは「静的な問題データ(バンドル)」+�
 - `Question.source`(`SourceRef`)= 「**何で**裏取りしたか」。`verified` が「裏取りしたか」を記録するのに対し、こちらは根拠の強さを記録する。**未指定は `unverified` に正規化**(fail-closed)。`level` は問題全体(lesson を含む)の**最も弱い**水準、`answerLevel` は**肢の正誤を決める根拠**の水準(未指定は `level` と同じ)。**数値そのものが答えになる肢を含む問題は `answerLevel: primary` を必須**とする——lesson の補足だけが弱いケースで `level` を弱い側に倒しても、答えの根拠の強さが埋もれないようにするため
 - `Question.lawVersion`(`LawVersion`)= 照合に用いた版と試験の法令基準日の関係。**未指定は `driftChecked: "unchecked"` に正規化**(fail-closed)。
   - `driftChecked: "not_required"` にできるのは**版と基準日が一致する**場合だけ。**施行日が基準日より前であることは根拠にならない**——それは「基準日までに効力を生じた」ことしか示さず、「基準日時点でもその内容のまま」であることを示さないため
+  - `examBasisDate` は**導出値**。一次ソース(不動産適正取引推進機構「宅建試験の概要」)が「試験を実施する年度の4月1日現在施行されているもの」と**相対的に**定めているため、年度が変われば動く。導出は `lib/exam-basis.ts` の `examBasisDateFor()`(年度の境目は4月1日。1〜3月は前年度。判定は JST 基準)
+- **年度が変わったら `examBasisDate` を更新する。** 更新漏れは `data/questions/integrity.test.ts` が機械的に検出する(記録済みの `examBasisDate` が現在の年度の基準日と一致するかを検査。落ちるとやるべきことがメッセージに出る)。**併せて `driftChecked` を再確認する**——基準日が動くと照合に使った版との関係も変わるため、`verifiedAgainst` が新しい基準日と一致しない限り `not_required` は使えず、`checked` / `analysed` も当て直すまでは `unchecked` に戻す。照合シートの基準日の記述も直す。特定年度の基準日を意図的に残す場合だけ、テスト内の `EXAM_BASIS_DATE_EXCEPTIONS` に理由を書いて登録する(通常の年度更新をここに逃がさない)
 - 「数値肢は `answerLevel: primary`」は `data/questions/integrity.test.ts` で機械的に検査する。判定は **×肢の誤り箇所(`wrongIndex` の segment)に数値が含まれるか**で行い、`source.level` を記録済みの問題だけを対象にする(未記録の問題は `unverified` として内訳テストに残り続ける)。○肢の中の数値や理由文の数値は拾えないので**この検査は下限**であり、人が原文を見る手順を置き換えない。機械判定を人が覆す場合は、テスト内の `F8_EXCEPTIONS` に理由を書いて記録する
 - 法的文言(30秒レッスン・肢・理由・解説・罠ラベル)は、照合で誤りが見つかったときだけ原文に合わせて最小限で直す
 
