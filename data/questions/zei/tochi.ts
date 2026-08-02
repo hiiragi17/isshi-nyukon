@@ -4,6 +4,15 @@ import type { Question } from "@/types";
 export const tochi: Question = {
   id: "q55",
   verified: true,
+  source: {
+    level: "secondary",
+    answerLevel: "secondary",
+    note: "5問免除科目(土地)の一般常識で、肢の正誤を決める根拠となる法令(条文)は存在しない。台地・低地・液状化の宅地安全性は国土交通省の土地に関する知識および公式過去問の出題傾向で確認できる二次資料どまり。#130 で secondary と決定(案A)。照合シート zei-verification.md の q55 節を参照",
+  },
+  lawVersion: {
+    driftChecked: "unchecked",
+    note: "照合すべき法令(版)が存在しない一般常識分野のため、版ドリフト・examBasisDate の概念は適用されない。unchecked は fail-closed の既定値であって『未確認』の意ではない",
+  },
   category: "税・その他",
   topic: "土地",
   law: "5問免除・土地の知識",
