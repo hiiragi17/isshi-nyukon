@@ -4,6 +4,18 @@ import type { Question } from "@/types";
 export const menkyo: Question = {
   id: "q15",
   verified: true,
+  source: {
+    level: "primary",
+    answerLevel: "primary",
+    note: "肢1=3条1項/肢2=5条1項1号(破産・復権)/肢3=5条1項6号(罰金刑欠格の罪の範囲)/肢4=9条を条文原文で確認。lesson の執行猶予の効果は刑法27条(猶予期間満了で刑の言渡しが失効)による標準的帰結。gyoho-verification.md #138 塊A 参照",
+  },
+  lawVersion: {
+    revisionId: "327AC1000000176_20260401_507AC0000000068",
+    verifiedAgainst: "2026-04-01",
+    examBasisDate: "2026-04-01",
+    driftChecked: "not_required",
+    note: "照合に用いた版の施行日が試験の法令基準日(令和8年4月1日)と一致するため差分は生じない",
+  },
   category: "宅建業法",
   topic: "免許(基準・欠格事由)",
   law: "宅建業法3条・5条・9条",
