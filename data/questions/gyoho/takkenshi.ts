@@ -4,6 +4,18 @@ import type { Question } from "@/types";
 export const takkenshi: Question = {
   id: "q16",
   verified: true,
+  source: {
+    level: "primary",
+    answerLevel: "primary",
+    note: "肢1=19条の2(登録の移転は「できる」任意)/肢2=22条の2第3項(有効期間5年)・同2項(交付申請前6月以内の指定講習)/肢3=35条4項(重説時は請求がなくても宅建士証を提示)/肢4=21条柱書・1号(死亡は相続人が知った日から30日)、lesson の登録先=18条1項を条文原文で確認。gyoho-verification.md #138 塊A 参照",
+  },
+  lawVersion: {
+    revisionId: "327AC1000000176_20260401_507AC0000000068",
+    verifiedAgainst: "2026-04-01",
+    examBasisDate: "2026-04-01",
+    driftChecked: "not_required",
+    note: "照合に用いた版の施行日が試験の法令基準日(令和8年4月1日)と一致するため差分は生じない",
+  },
   category: "宅建業法",
   topic: "宅建士(登録・宅建士証)",
   law: "宅建業法18条〜22条の2・35条",

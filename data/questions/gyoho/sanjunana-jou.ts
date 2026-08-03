@@ -4,6 +4,18 @@ import type { Question } from "@/types";
 export const sanjunanaJou: Question = {
   id: "q13",
   verified: true,
+  source: {
+    level: "primary",
+    answerLevel: "primary",
+    note: "肢1=37条3項(宅建士の記名のみ。37条に説明義務の定めなし)/肢2=37条1項4号(宅地又は建物の引渡しの時期は定めの有無にかかわらない必要的記載)/肢3=37条2項が1項5号(移転登記の申請の時期)を列挙に含まないため貸借では記載不要/肢4=37条1項8号(損害賠償額の予定・違約金は「定めがあるときは」記載する任意的記載)を条文原文で確認。gyoho-verification.md #138 塊C 参照",
+  },
+  lawVersion: {
+    revisionId: "327AC1000000176_20260401_507AC0000000068",
+    verifiedAgainst: "2026-04-01",
+    examBasisDate: "2026-04-01",
+    driftChecked: "not_required",
+    note: "照合に用いた版の施行日が試験の法令基準日(令和8年4月1日)と一致するため差分は生じない",
+  },
   category: "宅建業法",
   topic: "37条書面",
   law: "宅建業法37条",
