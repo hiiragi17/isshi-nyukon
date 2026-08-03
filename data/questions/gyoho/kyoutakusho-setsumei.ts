@@ -4,6 +4,18 @@ import type { Question } from "@/types";
 export const kyoutakushoSetsumei: Question = {
   id: "q37",
   verified: true,
+  source: {
+    level: "primary",
+    answerLevel: "primary",
+    note: "肢1=35条の2(説明者の限定がない=宅建士不要・書面交付も不要)/肢2=同柱書(当該売買…の契約が成立するまでの間に説明をするようにしなければならない)/肢3=同2号(社員は「社員である旨・協会の名称/住所/事務所所在地・第64条の7第2項の供託所〔=弁済業務保証金の供託所〕とその所在地」であり、営業保証金の供託所〔1号〕ではない)/肢4=同柱書かっこ書(相手方等から「宅地建物取引業者に該当する者を除く」)を条文原文で確認。35条の2 は #138 塊C で受領済み。gyoho-verification.md #139 参照",
+  },
+  lawVersion: {
+    revisionId: "327AC1000000176_20260401_507AC0000000068",
+    verifiedAgainst: "2026-04-01",
+    examBasisDate: "2026-04-01",
+    driftChecked: "not_required",
+    note: "照合に用いた版の施行日が試験の法令基準日(令和8年4月1日)と一致するため差分は生じない",
+  },
   category: "宅建業法",
   topic: "供託所等に関する説明",
   law: "宅建業法35条の2",
