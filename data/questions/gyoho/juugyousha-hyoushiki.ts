@@ -18,7 +18,7 @@ export const juugyoushaHyoushiki: Question = {
   },
   category: "宅建業法",
   topic: "従業者証明書・名簿・帳簿・標識",
-  law: "宅建業法48条〜50条・施行規則18条",
+  law: "宅建業法48条〜50条・施行規則17条の2・18条・19条",
   scenario:
     "宅建業者Aは、事務所のほか、一団の宅地の分譲のため現地に案内所を設置して業務を行っている。",
   lesson: [
