@@ -5,9 +5,9 @@ export const menkyo: Question = {
   id: "q15",
   verified: true,
   source: {
-    level: "primary",
+    level: "secondary",
     answerLevel: "primary",
-    note: "肢1=3条1項/肢2=5条1項1号(破産・復権)/肢3=5条1項6号(罰金刑欠格の罪の範囲)/肢4=9条を条文原文で確認。lesson の執行猶予の効果は刑法27条(猶予期間満了で刑の言渡しが失効)による標準的帰結。gyoho-verification.md #138 塊A 参照",
+    note: "肢の正誤(answerLevel=primary)は肢1=3条1項/肢2=5条1項1号(破産・復権)/肢3=5条1項6号(罰金刑欠格の罪の範囲)/肢4=9条を条文原文で確認。ただし level は問題全体の最弱点をとる規則により secondary: lesson の『執行猶予付きは猶予期間満了で直ちに欠格解消』は刑法27条(猶予期間経過で刑の言渡しが失効)に依拠するが、その原文は当セッション未取得(標準的帰結・二次資料水準)。刑法27条の原文を取得すれば level を primary に戻せる。gyoho-verification.md #138 塊A 参照",
   },
   lawVersion: {
     revisionId: "327AC1000000176_20260401_507AC0000000068",
