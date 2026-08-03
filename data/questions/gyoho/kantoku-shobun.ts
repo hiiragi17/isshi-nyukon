@@ -4,6 +4,21 @@ import type { Question } from "@/types";
 export const kantokuShobun: Question = {
   id: "q34",
   verified: true,
+  source: {
+    // 4肢とも本則(65〜68条の2)の原文で確認=肢の正誤は primary。level は最弱点をとる規則により
+    // secondary: lesson の「監督処分をしようとするときは公開による聴聞が必要」は69条(聴聞の特例)に
+    // 依拠するが当セッションで原文を取得していない。69条を取得すれば level を primary に戻せる。
+    level: "secondary",
+    answerLevel: "primary",
+    note: "肢1=65条3項(業務地〔乙県〕の知事も指示可)/肢2=66条・67条(免許取消しは『その免許を受けた』=免許権者のみ。65条と異なり業務地知事の規定なし)/肢3=66条1項9号(業務停止処分違反→柱書『取り消さなければならない』=必要的)/肢4=68条の2第1項4号(事務禁止処分違反→柱書『消除しなければならない』=必要的)を条文原文で確認。業務停止・事務禁止の『1年以内』は65条2項・68条2項。lesson の『公開による聴聞』は宅建業法69条(未取得)のため level を secondary に(69条取得で primary に戻せる)。gyoho-verification.md #139 塊F 参照",
+  },
+  lawVersion: {
+    revisionId: "327AC1000000176_20260401_507AC0000000068",
+    verifiedAgainst: "2026-04-01",
+    examBasisDate: "2026-04-01",
+    driftChecked: "not_required",
+    note: "本則(65〜68条の2)の版は基準日一致。lesson の公開聴聞に対応する69条は未取得(source を参照)",
+  },
   category: "宅建業法",
   topic: "監督処分・罰則",
   law: "宅建業法65条〜68条の2",
