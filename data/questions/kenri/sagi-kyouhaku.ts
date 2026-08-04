@@ -4,6 +4,18 @@ import type { Question } from "@/types";
 export const sagiKyouhaku: Question = {
   id: "q2",
   verified: true,
+  source: {
+    level: "primary",
+    answerLevel: "primary",
+    note: "肢1=96条1項(詐欺又は強迫による意思表示は取り消すことができる)/肢2=96条3項(前二項の規定による詐欺による意思表示の取消しは、善意でかつ過失がない第三者に対抗することができない)/肢3=96条3項が『詐欺による意思表示の取消し』に限られること=強迫には第三者保護規定がない/肢4=96条3項(取消し前の第三者保護は善意無過失に限り、悪意者は登記があっても不保護)を承認者提示の e-Gov 原文で確認。数値そのものが答えになる肢は無いため F8 非該当。kenri-verification.md q2 参照",
+  },
+  lawVersion: {
+    revisionId: "129AC0000000089_20260401_506AC0000000033",
+    verifiedAgainst: "2026-04-01",
+    examBasisDate: "2026-04-01",
+    driftChecked: "not_required",
+    note: "民法2020改正(96条3項に『善意でかつ過失がない』を明記)後の版。照合に用いた版の施行日が基準日(2026-04-01)と一致するため差分は生じ得ない",
+  },
   category: "権利関係(民法)",
   topic: "詐欺・強迫と第三者",
   law: "民法96条",
