@@ -4,6 +4,18 @@ import type { Question } from "@/types";
 export const souzokubun: Question = {
   id: "q23",
   verified: true,
+  source: {
+    level: "primary",
+    answerLevel: "primary",
+    note: "calc様式。第一式=民法900条1号(子及び配偶者が相続人のとき、子の相続分・配偶者の相続分は各2分の1)・4号(子が数人あるとき各自の相続分は相等しい)により子C=1/2×1/2=1/4。第二式=取得額は相続財産×相続割合(6,000万円×1/4=1,500万円)。distractorのtrapは900条2号(配偶者2/3・直系尊属1/3)・3号(配偶者3/4・兄弟姉妹1/4)との取り違えを承認者提示の e-Gov 原文で確認。答えの数値(1,500万円)は900条の割合が根拠のため answerLevel: primary(F8はcalc様式のため機械検査の対象外だが、数値そのものが答えになるため人の判断で primary)。kenri-verification.md q23 参照",
+  },
+  lawVersion: {
+    revisionId: "129AC0000000089_20260401_506AC0000000033",
+    verifiedAgainst: "2026-04-01",
+    examBasisDate: "2026-04-01",
+    driftChecked: "not_required",
+    note: "900条(法定相続分)は現行の相続分規定(非嫡出子の相続分を嫡出子と同等とした2013年改正後)。照合に用いた版の施行日が基準日(2026-04-01)と一致するため差分は生じ得ない",
+  },
   category: "権利関係(民法)",
   topic: "法定相続分",
   law: "民法900条",
