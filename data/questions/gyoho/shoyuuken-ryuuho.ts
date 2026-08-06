@@ -3,16 +3,18 @@ import type { Question } from "@/types";
 /** q76 8種制限・所有権留保等の禁止(宅建業法43条・78条2項) */
 export const shoyuukenRyuuho: Question = {
   id: "q76",
-  verified: false,
+  verified: true,
   source: {
-    level: "secondary",
-    answerLevel: "secondary",
-    note: "本来は e-Gov 法令検索(宅建業法 327AC1000000176)の43条1項・2項および78条2項の原文に当てるべきだが、本作業環境では e-Gov・法令DB(hourei.net・国交省ミラー等)への直接アクセスが組織の egress ポリシーで遮断され、原文を取得できなかった。肢の内容は WebSearch 経由の法令ミラー要約(国交省 thr.mlit.go.jp・hourei.net)で下書き照合したのみで、逐語の原文突合せは未了。verified: false のまま、人が e-Gov 原文で照合・承認するまで primary に上げない(fail-closed)。gyoho-verification.md #115 参照",
+    level: "primary",
+    answerLevel: "primary",
+    note: "肢1・肢2=43条1項(引渡しまでに代金の額の10分の3を超える額の支払を受けたら登記その他引渡し以外の売主の義務を履行。引渡しまでに超えていない=10分の3以下なら『超えるまで』に履行すればよく所有権留保が可能)/肢4=43条2項(引渡し後に10分の3を超える額の支払を受けた後は担保の目的で譲り受け禁止)/肢3=78条2項(33条の2・37条の2〜43条は業者相互間の取引に適用しない=43条も業者間は適用除外)を、承認者提示の e-Gov 原文(基準日版 327AC1000000176_20260401_507AC0000000068)で確認。F8: 答えの10分の3は43条1項・2項の原文で確定。gyoho-verification.md #115 参照",
   },
   lawVersion: {
+    revisionId: "327AC1000000176_20260401_507AC0000000068",
+    verifiedAgainst: "2026-04-01",
     examBasisDate: "2026-04-01",
-    driftChecked: "unchecked",
-    note: "原文未取得のため版(基準日=令和8年4月1日 施行時点)との突合せが未了。承認時に e-Gov で版を確認して driftChecked を当て直す",
+    driftChecked: "not_required",
+    note: "照合に用いた版(令和8年4月1日施行 327AC1000000176_20260401_507AC0000000068)の施行日が基準日(令和8年4月1日)と一致するため差分は生じ得ない",
   },
   category: "宅建業法",
   topic: "8種制限(所有権留保・譲渡担保の禁止)",
