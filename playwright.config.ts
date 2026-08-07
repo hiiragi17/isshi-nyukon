@@ -26,7 +26,8 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: "list",
+  // CI では失敗時にアーティファクト保存できるよう HTML レポートも出す(Issue #148)
+  reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : "list",
   timeout: 90_000,
   expect: { timeout: 15_000 },
   use: {
