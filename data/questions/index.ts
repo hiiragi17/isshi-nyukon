@@ -76,6 +76,7 @@ import { koukokuKaishi } from "./gyoho/koukoku-kaishi";
 import { gyoushaMeibo } from "./gyoho/gyousha-meibo";
 import { juugyoushaMeibo } from "./gyoho/juugyousha-meibo";
 import { shoyuukenRyuuho } from "./gyoho/shoyuuken-ryuuho";
+import { zoyozei } from "./zei/zoyozei";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -159,6 +160,7 @@ const RAW_QUESTIONS: Question[] = [
   gyoushaMeibo,
   juugyoushaMeibo,
   shoyuukenRyuuho,
+  zoyozei,
 ];
 
 /**
