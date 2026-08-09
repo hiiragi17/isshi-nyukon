@@ -80,6 +80,7 @@ import { zoyozei } from "./zei/zoyozei";
 import { coolingOffHyoushiki } from "./gyoho/cooling-off-hyoushiki";
 import { bensai } from "./kenri/bensai";
 import { juuyouJikou2 } from "./gyoho/juuyou-jikou-2";
+import { sanjunanaJou2 } from "./gyoho/sanjunana-jou-2";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -167,6 +168,7 @@ const RAW_QUESTIONS: Question[] = [
   coolingOffHyoushiki,
   bensai,
   juuyouJikou2,
+  sanjunanaJou2,
 ];
 
 /**
