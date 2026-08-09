@@ -25,23 +25,42 @@ function labelOf(dayKey: string): string {
   return `${m}/${d}`;
 }
 
-/** 最新結果マップから、完璧論点(全肢を最新で正解)の数を数える */
+/** 論点(topicId)ごとに問題をまとめる。省略時は自分の id が既定値(normalizeQuestion 済みなら常に有値) */
+function groupByTopic(questions: Question[]): Map<string, Question[]> {
+  const groups = new Map<string, Question[]>();
+  for (const q of questions) {
+    const tid = q.topicId ?? q.id;
+    const g = groups.get(tid);
+    if (g) g.push(q);
+    else groups.set(tid, [q]);
+  }
+  return groups;
+}
+
+/**
+ * 最新結果マップから、完璧論点(全肢を最新で正解)の数を数える。
+ * 同じ topicId の2周目がある論点は、**全バリアントが完璧**でその論点が完璧になる
+ * (どちらか一方の型を覚えただけでは集印が立たないようにするため。Issue #165)。
+ */
 function sealFrom(
   latest: Map<string, Attempt>,
   questions: Question[],
 ): number {
   let seal = 0;
-  for (const q of questions) {
-    const n = itemCountOf(q);
-    let perfect = 0;
-    let tried = 0;
-    for (let ci = 0; ci < n; ci++) {
-      const a = latest.get(itemKey(q.id, ci));
-      if (!a) continue;
-      tried++;
-      if (a.pts >= a.max) perfect++;
-    }
-    if (tried === n && perfect === n) seal++;
+  for (const group of groupByTopic(questions).values()) {
+    const allPerfect = group.every((q) => {
+      const n = itemCountOf(q);
+      let perfect = 0;
+      let tried = 0;
+      for (let ci = 0; ci < n; ci++) {
+        const a = latest.get(itemKey(q.id, ci));
+        if (!a) continue;
+        tried++;
+        if (a.pts >= a.max) perfect++;
+      }
+      return tried === n && perfect === n;
+    });
+    if (allPerfect) seal++;
   }
   return seal;
 }
@@ -89,7 +108,7 @@ export function buildGrowth(
   attempts: Attempt[],
   questions: Question[],
 ): GrowthSummary {
-  const totalTopics = questions.length;
+  const totalTopics = groupByTopic(questions).size;
   const sorted = [...attempts].sort((a, b) =>
     a.answeredAt < b.answeredAt ? -1 : a.answeredAt > b.answeredAt ? 1 : 0,
   );

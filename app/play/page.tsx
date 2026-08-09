@@ -20,7 +20,7 @@ import {
   shuffleInPlace,
   type QuickState,
 } from "@/lib/quickPick";
-import { buildMockSession, EXAM_DISTRIBUTION } from "@/lib/mock";
+import { buildMockSession, dedupeByTopic, EXAM_DISTRIBUTION } from "@/lib/mock";
 import { byCategoryPriority } from "@/lib/categories";
 import { INK, PAPER, CARD, AI_BLUE, AI_BLUE_BG, SHU, GREEN, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
 import { page, col, card, outlineButton } from "@/lib/gameStyles";
@@ -258,9 +258,16 @@ export default function PlayPage() {
    * 寄せて MOCK_TOPIC_COUNT 論点を横断抽出する。抽出は lib/mock に切り出し、
    * ここでは論点→肢の展開とセッション開始だけを行う。成績は通常どおり記録され、
    * 弱点判定・SRS・成長グラフに反映される(=召喚状とは別入口・非競合)。
+   *
+   * 頻出論点の2周目(同じ topicId)は、抽出前に1件へ間引く(Issue #165)。
+   * 間引かないと同じ論点が同一模試に二重に出題されうるため。
    */
   const startMock = () => {
-    const topics = QUESTIONS.map((_, i) => i);
+    const topics = dedupeByTopic(
+      QUESTIONS.map((_, i) => i),
+      (i) => QUESTIONS[i].topicId ?? QUESTIONS[i].id,
+      shuffleInPlace,
+    );
     const chosen = buildMockSession(
       topics,
       (i) => QUESTIONS[i].category,

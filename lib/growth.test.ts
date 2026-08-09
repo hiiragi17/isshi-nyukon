@@ -146,6 +146,46 @@ describe("buildGrowth — 集印(完璧論点)の再生", () => {
   });
 });
 
+describe("buildGrowth — 頻出論点の2周目(topicId グルーピング。Issue #165)", () => {
+  /** q1 と同じ topicId を持つ2周目バリアント */
+  function q2variant(id: string, topicId: string): Question {
+    return { ...q2(id), id, topicId };
+  }
+
+  it("同じ topicId のバリアントは totalTopics で1論点として数える", () => {
+    const g = buildGrowth(
+      [],
+      [q2variant("q1", "q1"), q2variant("q1-2", "q1"), q2("q2")],
+    );
+    expect(g.totalTopics).toBe(2);
+  });
+
+  it("片方のバリアントだけ完璧では集印が立たない(全バリアント完璧が必要)", () => {
+    const g = buildGrowth(
+      [
+        attempt("q1", 0, 2, 2, iso(2026, 7, 1)),
+        attempt("q1", 1, 3, 3, iso(2026, 7, 1)),
+        // q1-2(2周目)は未着手のまま
+      ],
+      [q2variant("q1", "q1"), q2variant("q1-2", "q1")],
+    );
+    expect(g.currentSeal).toBe(0);
+  });
+
+  it("全バリアントが完璧なら1論点として集印が立つ", () => {
+    const g = buildGrowth(
+      [
+        attempt("q1", 0, 2, 2, iso(2026, 7, 1)),
+        attempt("q1", 1, 3, 3, iso(2026, 7, 1)),
+        attempt("q1-2", 0, 2, 2, iso(2026, 7, 1)),
+        attempt("q1-2", 1, 3, 3, iso(2026, 7, 1)),
+      ],
+      [q2variant("q1", "q1"), q2variant("q1-2", "q1")],
+    );
+    expect(g.currentSeal).toBe(1);
+  });
+});
+
 describe("buildGrowth — 全期間の平均得点率", () => {
   it("全 Attempt の pts 合計 / max 合計", () => {
     const g = buildGrowth(

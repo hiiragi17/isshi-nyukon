@@ -22,7 +22,11 @@ import { QUESTIONS } from "@/data/questions";
 import type { Attempt } from "@/types";
 import { storage, latestByItem, itemKey } from "@/lib/storage";
 import { itemCountOf } from "@/lib/items";
-import { topicProgress, type TopicProgress } from "@/lib/progress";
+import {
+  topicProgress,
+  groupTopicProgress,
+  type TopicProgress,
+} from "@/lib/progress";
 import { buildSummonQueue, type SrsItemState } from "@/lib/srs";
 import { byCategoryPriority } from "@/lib/categories";
 import {
@@ -56,15 +60,33 @@ const ALL_TARGETS = QUESTIONS.flatMap((q) =>
 /** questionId → QUESTIONS の添字 */
 const ID_TO_INDEX = new Map(QUESTIONS.map((q, i) => [q.id, i] as const));
 
+/**
+ * 論点(topicId)ごとの QUESTIONS 添字グループ。頻出論点の2周目(同じ topicId)は
+ * 検地帳マトリクスで1マスにまとめる(Issue #165)。同じ topicId のバリアントは
+ * 同じ category を持つ前提(2周目は同じ分野フォルダに追加する運用のため)。
+ * キーの並びは QUESTIONS の出現順(= topicId の初出順)。
+ */
+const TOPIC_ID_TO_QIS = new Map<string, number[]>();
+QUESTIONS.forEach((q, qi) => {
+  const tid = q.topicId ?? q.id;
+  const g = TOPIC_ID_TO_QIS.get(tid);
+  if (g) g.push(qi);
+  else TOPIC_ID_TO_QIS.set(tid, [qi]);
+});
+const TOPIC_IDS = [...TOPIC_ID_TO_QIS.keys()];
+
+/** 全論点数(topicId のユニーク数)。集印カウンタの分母に使う */
+const TOTAL_TOPICS = TOPIC_IDS.length;
+
 /** カテゴリ(分野)の優先度順。マトリクスの行順に使う(QUESTIONS の添字順とは独立) */
 const FIELDS = [...new Set(QUESTIONS.map((q) => q.category))]
   .sort(byCategoryPriority)
   .map((name) => ({
-  name,
-  questions: QUESTIONS.map((q, qi) => ({ q, qi })).filter(
-    (x) => x.q.category === name,
-  ),
-}));
+    name,
+    topics: TOPIC_IDS.filter(
+      (tid) => QUESTIONS[TOPIC_ID_TO_QIS.get(tid)![0]].category === name,
+    ).map((topicId) => ({ topicId, qis: TOPIC_ID_TO_QIS.get(topicId)! })),
+  }));
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -145,6 +167,14 @@ export default function Home() {
       latest.get(itemKey(QUESTIONS[qi].id, ci)),
     );
 
+  /**
+   * 論点グループ(topicId が同じ QUESTIONS 添字の集まり)の習熟統計。
+   * 頻出論点の2周目があるマスは、両バリアントの統計を畳み込んで1マス分にする
+   * (Issue #165)。
+   */
+  const groupStat = (qis: number[]): TopicProgress =>
+    groupTopicProgress(qis.map(topicStat));
+
   /** 論点の再審理で出題する肢(itemKey)。弱点優先 → 未着手 → 全肢 */
   const topicSessionKeys = (qi: number): string[] => {
     const q = QUESTIONS[qi];
@@ -165,6 +195,10 @@ export default function Home() {
     }
     return pick.map((ci) => itemKey(q.id, ci));
   };
+
+  /** 論点グループの再審理で出題する肢(itemKey)。バリアントごとの選定を連結する */
+  const groupSessionKeys = (qis: number[]): string[] =>
+    qis.flatMap(topicSessionKeys);
 
   const goPlay = (keys: string[]) => {
     if (keys.length) router.push(`/play?items=${keys.join(",")}`);
@@ -207,23 +241,24 @@ export default function Home() {
   };
 
   /* ---------- 集印カウンタ ---------- */
-  const sealCount = QUESTIONS.reduce(
-    (n, _, qi) => n + (topicStat(qi).level === 2 ? 1 : 0),
+  const sealCount = TOPIC_IDS.reduce(
+    (n, tid) => n + (groupStat(TOPIC_ID_TO_QIS.get(tid)!).level === 2 ? 1 : 0),
     0,
   );
 
   const loaded = attempts !== null;
-  /** 選択中のマスの QUESTIONS 添字(未選択なら null) */
-  const selQi = sel === null ? null : (ID_TO_INDEX.get(sel) ?? null);
+  /** 選択中のマス(topicId)に属する QUESTIONS 添字群(未選択なら null) */
+  const selQis = sel === null ? null : (TOPIC_ID_TO_QIS.get(sel) ?? null);
 
   /**
    * 選択したマスの詳細(論点名・成績・審理ボタン)。
    * マトリクスの一番下ではなく、タップした分野のグリッド直下に差し込む
    * (先頭分野をタップしたとき、画面外まで下がって反応が見えなくなるのを避ける)。
+   * qis は同じ topicId のバリアント(頻出論点の2周目)をすべて含む。
    */
-  const renderTopicDetail = (qi: number) => {
-    const q = QUESTIONS[qi];
-    const st = topicStat(qi);
+  const renderTopicDetail = (qis: number[]) => {
+    const q = QUESTIONS[qis[0]];
+    const st = groupStat(qis);
     const ago = agoLabel(st.lastAt, now);
     let detail: string;
     let action: string;
@@ -302,7 +337,7 @@ export default function Home() {
           )}
         </div>
         <button
-          onClick={() => goPlay(topicSessionKeys(qi))}
+          onClick={() => goPlay(groupSessionKeys(qis))}
           style={{
             width: "100%",
             minHeight: 44,
@@ -379,7 +414,7 @@ export default function Home() {
               <b style={{ fontFamily: SERIF, color: SHU, fontSize: 15 }}>
                 {loaded ? sealCount : "—"}
               </b>
-              /{QUESTIONS.length}
+              /{TOTAL_TOPICS}
             </span>
             <span>
               試験まで{" "}
@@ -572,7 +607,7 @@ export default function Home() {
                 style={{ display: "flex", flexDirection: "column", gap: 14 }}
               >
                 {FIELDS.map((fd) => {
-                  const stats = fd.questions.map((x) => topicStat(x.qi));
+                  const stats = fd.topics.map((t) => groupStat(t.qis));
                   const done = stats.filter((s) => s.level === 2).length;
                   const learning = stats.filter((s) => s.level === 1).length;
                   return (
@@ -595,7 +630,7 @@ export default function Home() {
                           {fd.name}
                         </div>
                         <div style={{ fontSize: 11, color: MUTED }}>
-                          朱 {done} · 藍 {learning} / {fd.questions.length}
+                          朱 {done} · 藍 {learning} / {fd.topics.length}
                         </div>
                       </div>
                       <div
@@ -605,10 +640,13 @@ export default function Home() {
                           gap: 6,
                         }}
                       >
-                        {fd.questions.map(({ q, qi }) => {
-                          const st = topicStat(qi);
-                          const isSel = sel === q.id;
-                          const stamped = stampedIds.has(q.id);
+                        {fd.topics.map(({ topicId, qis }) => {
+                          const q = QUESTIONS[qis[0]];
+                          const st = groupStat(qis);
+                          const isSel = sel === topicId;
+                          const stamped = qis.some((qi) =>
+                            stampedIds.has(QUESTIONS[qi].id),
+                          );
                           const bg =
                             st.level === 2
                               ? SHU
@@ -617,7 +655,7 @@ export default function Home() {
                                 : CARD;
                           return (
                             <button
-                              key={q.id}
+                              key={topicId}
                               title={q.topic}
                               aria-label={`${q.topic}(${
                                 st.level === 2
@@ -627,7 +665,9 @@ export default function Home() {
                                     : "未着手"
                               })`}
                               onClick={() =>
-                                setSel((cur) => (cur === q.id ? null : q.id))
+                                setSel((cur) =>
+                                  cur === topicId ? null : topicId,
+                                )
                               }
                               style={{
                                 aspectRatio: "1",
@@ -675,9 +715,9 @@ export default function Home() {
                         })}
                       </div>
                       {/* 選択セル詳細は、そのマスが属する分野の直下に出す */}
-                      {selQi !== null &&
-                        fd.questions.some((x) => x.qi === selQi) &&
-                        renderTopicDetail(selQi)}
+                      {selQis !== null &&
+                        fd.topics.some((t) => t.topicId === sel) &&
+                        renderTopicDetail(selQis)}
                     </div>
                   );
                 })}

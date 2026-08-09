@@ -6,6 +6,7 @@ import { describe, it, expect } from "vitest";
 import {
   allocateByWeight,
   buildMockSession,
+  dedupeByTopic,
   EXAM_DISTRIBUTION,
   type CategoryWeight,
 } from "@/lib/mock";
@@ -143,5 +144,60 @@ describe("buildMockSession", () => {
     ];
     const out = buildMockSession(ample, categoryOf, 2, dist);
     expect(out.map((t) => t.category)).toEqual(["宅建業法", "権利関係(民法)"]);
+  });
+});
+
+describe("dedupeByTopic — 頻出論点の2周目を1件へ間引く(Issue #165)", () => {
+  type Variant = { id: string; topicId: string };
+  const topicIdOf = (v: Variant): string => v.topicId;
+
+  it("同じ topicId の item は1件だけ残す", () => {
+    const items: Variant[] = [
+      { id: "q1", topicId: "q1" },
+      { id: "q1-2", topicId: "q1" },
+      { id: "q2", topicId: "q2" },
+    ];
+    const out = dedupeByTopic(items, topicIdOf);
+    expect(out.map((v) => v.topicId)).toEqual(["q1", "q2"]);
+  });
+
+  it("既定(恒等 shuffle)はグループの先頭を残す(決定的)", () => {
+    const items: Variant[] = [
+      { id: "q1", topicId: "q1" },
+      { id: "q1-2", topicId: "q1" },
+    ];
+    expect(dedupeByTopic(items, topicIdOf).map((v) => v.id)).toEqual(["q1"]);
+  });
+
+  it("shuffle を渡すとグループ内のどれを残すかに反映される", () => {
+    const items: Variant[] = [
+      { id: "q1", topicId: "q1" },
+      { id: "q1-2", topicId: "q1" },
+    ];
+    const reverse = <T,>(xs: T[]): T[] => [...xs].reverse();
+    expect(dedupeByTopic(items, topicIdOf, reverse).map((v) => v.id)).toEqual([
+      "q1-2",
+    ]);
+  });
+
+  it("topicId が全て異なれば何も間引かない", () => {
+    const items: Variant[] = [
+      { id: "q1", topicId: "q1" },
+      { id: "q2", topicId: "q2" },
+      { id: "q3", topicId: "q3" },
+    ];
+    expect(dedupeByTopic(items, topicIdOf)).toHaveLength(3);
+  });
+
+  it("topicId の初出順を保つ", () => {
+    const items: Variant[] = [
+      { id: "b1", topicId: "b" },
+      { id: "a1", topicId: "a" },
+      { id: "b2", topicId: "b" },
+    ];
+    expect(dedupeByTopic(items, topicIdOf).map((v) => v.topicId)).toEqual([
+      "b",
+      "a",
+    ]);
   });
 });

@@ -75,6 +75,28 @@ export function topicProgress(
   };
 }
 
+/**
+ * 同じ論点(topicId)を持つ複数バリアント(頻出論点の2周目)の TopicProgress を
+ * 1件の論点統計に畳み込む(Issue #165)。件数・得点は合算し、`level` は
+ * **全バリアントが完璧のときだけ 2**(どちらか一方の型を覚えただけでは
+ * 完璧扱いにしない。lib/growth.ts の sealFrom と同じ考え方)。
+ * `stats` は空でないこと(呼び出し側で1論点=1件以上を保証する)。
+ */
+export function groupTopicProgress(stats: TopicProgress[]): TopicProgress {
+  const n = stats.reduce((a, s) => a + s.n, 0);
+  const tried = stats.reduce((a, s) => a + s.tried, 0);
+  const perfect = stats.reduce((a, s) => a + s.perfect, 0);
+  const weak = stats.reduce((a, s) => a + s.weak, 0);
+  const pts = stats.reduce((a, s) => a + s.pts, 0);
+  const max = stats.reduce((a, s) => a + s.max, 0);
+  const lastAt = stats.reduce<string | null>(
+    (acc, s) => (s.lastAt && (!acc || s.lastAt > acc) ? s.lastAt : acc),
+    null,
+  );
+  const level = tried === 0 ? 0 : stats.every((s) => s.level === 2) ? 2 : 1;
+  return { n, tried, perfect, weak, untried: n - tried, pts, max, lastAt, level };
+}
+
 /** 複数論点のサマリ。分野単位にも全体にも同じ形で使う */
 export type ProgressSummary = {
   /** 論点数 */
