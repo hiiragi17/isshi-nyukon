@@ -14,7 +14,11 @@ import { QUESTIONS } from "@/data/questions";
 import { storage, latestByItem, itemKey } from "@/lib/storage";
 import { itemCountOf } from "@/lib/items";
 import { maxOf } from "@/lib/scoring";
-import { topicProgress, summarizeProgress } from "@/lib/progress";
+import {
+  topicProgress,
+  summarizeProgress,
+  groupTopicProgress,
+} from "@/lib/progress";
 import {
   buildQuickSession,
   shuffleInPlace,
@@ -65,6 +69,29 @@ const CATEGORY_INDICES = new Map<string, number[]>(
       if (q.category === cat) acc.push(i);
       return acc;
     }, []),
+  ]),
+);
+
+/**
+ * 論点(topicId)ごとの QUESTIONS 添字グループ。進捗サマリ(完璧 X/Y論点)は
+ * QUESTIONS のエントリ単位ではなく、これで論点単位に数える(Issue #165)。
+ * 頻出論点の2周目(同じ topicId)は検地帳マトリクスと同じく1論点として扱う。
+ */
+const TOPIC_ID_TO_QIS = new Map<string, number[]>();
+QUESTIONS.forEach((q, i) => {
+  const tid = q.topicId ?? q.id;
+  const g = TOPIC_ID_TO_QIS.get(tid);
+  if (g) g.push(i);
+  else TOPIC_ID_TO_QIS.set(tid, [i]);
+});
+
+/** 分野 → その分野に属する論点(topicId)一覧。分野別の進捗サマリで使う */
+const CATEGORY_TOPIC_IDS = new Map<string, string[]>(
+  CATEGORIES.map((cat) => [
+    cat,
+    [...TOPIC_ID_TO_QIS.keys()].filter(
+      (tid) => QUESTIONS[TOPIC_ID_TO_QIS.get(tid)![0]].category === cat,
+    ),
   ]),
 );
 
@@ -358,7 +385,12 @@ export default function PlayPage() {
     const allSelected = selected.size === QUESTIONS.length;
     // 進捗サマリ: 全論点の統計を1回だけ計算し、全体・分野の集計に使い回す
     const allStats = QUESTIONS.map((_, i) => topicStats(i));
-    const overall = summarizeProgress(allStats);
+    // 全体・分野の集計は topicId 単位(頻出論点の2周目は1論点として数える)
+    const groupStat = (tid: string): ReturnType<typeof groupTopicProgress> =>
+      groupTopicProgress(TOPIC_ID_TO_QIS.get(tid)!.map((i) => allStats[i]));
+    const overall = summarizeProgress(
+      [...TOPIC_ID_TO_QIS.keys()].map(groupStat),
+    );
     return (
       <div style={page}>
         <div style={col}>
@@ -479,7 +511,7 @@ export default function PlayPage() {
                   selected.has(i),
                 ).length;
                 const catSummary = summarizeProgress(
-                  catIndices.map((i) => allStats[i]),
+                  (CATEGORY_TOPIC_IDS.get(cat) ?? []).map(groupStat),
                 );
                 const catOpen = openCats.has(cat);
                 const listId = `topic-list-${catIdx}`;
