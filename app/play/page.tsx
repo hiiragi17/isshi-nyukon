@@ -20,7 +20,7 @@ import {
   shuffleInPlace,
   type QuickState,
 } from "@/lib/quickPick";
-import { buildMockSession, EXAM_DISTRIBUTION } from "@/lib/mock";
+import { buildMockSession, dedupeByTopic, EXAM_DISTRIBUTION } from "@/lib/mock";
 import { byCategoryPriority } from "@/lib/categories";
 import { INK, PAPER, CARD, AI_BLUE, AI_BLUE_BG, SHU, GREEN, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
 import { page, col, card, outlineButton } from "@/lib/gameStyles";
@@ -40,6 +40,14 @@ const allItems: Item[] = QUESTIONS.flatMap((q, i) =>
 
 /** ミニ模試で横断出題する論点数(本試験配分の縮小比。6〜8 論点の想定 / Issue #101) */
 const MOCK_TOPIC_COUNT = 7;
+
+/**
+ * 論点(topicId)のユニーク数。頻出論点の2周目があると QUESTIONS.length は
+ * 実際の論点数より大きくなるため、ミニ模試の可否判定はこちらを使う(Issue #165)。
+ */
+const UNIQUE_TOPIC_COUNT = new Set(
+  QUESTIONS.map((q) => q.topicId ?? q.id),
+).size;
 
 /** questionId → QUESTIONS の添字。ダッシュボードから渡る itemKey の解決に使う */
 const idToIndex = new Map(QUESTIONS.map((q, i) => [q.id, i] as const));
@@ -258,9 +266,16 @@ export default function PlayPage() {
    * 寄せて MOCK_TOPIC_COUNT 論点を横断抽出する。抽出は lib/mock に切り出し、
    * ここでは論点→肢の展開とセッション開始だけを行う。成績は通常どおり記録され、
    * 弱点判定・SRS・成長グラフに反映される(=召喚状とは別入口・非競合)。
+   *
+   * 頻出論点の2周目(同じ topicId)は、抽出前に1件へ間引く(Issue #165)。
+   * 間引かないと同じ論点が同一模試に二重に出題されうるため。
    */
   const startMock = () => {
-    const topics = QUESTIONS.map((_, i) => i);
+    const topics = dedupeByTopic(
+      QUESTIONS.map((_, i) => i),
+      (i) => QUESTIONS[i].topicId ?? QUESTIONS[i].id,
+      shuffleInPlace,
+    );
     const chosen = buildMockSession(
       topics,
       (i) => QUESTIONS[i].category,
@@ -799,7 +814,7 @@ export default function PlayPage() {
             </div>
           )}
 
-          {QUESTIONS.length >= MOCK_TOPIC_COUNT && (
+          {UNIQUE_TOPIC_COUNT >= MOCK_TOPIC_COUNT && (
             <div style={{ ...card, marginBottom: 16 }}>
               <Eyebrow>本試験形式</Eyebrow>
               <div

@@ -104,6 +104,17 @@ describe("normalizeQuestion", () => {
     });
   });
 
+  describe("topicId(論点グルーピング)", () => {
+    it("未指定は自分の id に正規化する(既定値)", () => {
+      expect(normalizeQuestion(base).topicId).toBe("qtest");
+    });
+
+    it("指定された topicId はそのまま保持する(2周目が1周目に合わせる)", () => {
+      const out = normalizeQuestion({ ...base, topicId: "q1" });
+      expect(out.topicId).toBe("q1");
+    });
+  });
+
   describe("lawVersion(版と法令基準日の関係)", () => {
     it("未指定は driftChecked: unchecked に正規化する(fail-closed)", () => {
       expect(normalizeQuestion(base).lawVersion).toEqual({

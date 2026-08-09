@@ -101,3 +101,30 @@ export function buildMockSession<T>(
   });
   return selected;
 }
+
+/**
+ * 同じ論点(topicId)を持つ item 群から1件だけを残す(Issue #165)。
+ *
+ * 「頻出論点の2周目」で同じ topicId の item が複数存在しても、ミニ模試の
+ * 抽出母集団としては1論点として扱う(2周目が同一模試に重複出題されるのを防ぐ)。
+ * グループ内のどれを残すかは shuffle に委ねる(既定は先頭=決定的)。
+ * 返り値は topicId の初出順を保つ。
+ */
+export function dedupeByTopic<T>(
+  items: T[],
+  topicIdOf: (item: T) => string,
+  shuffle: Shuffle<T> = (a) => a,
+): T[] {
+  const groups = new Map<string, T[]>();
+  const order: string[] = [];
+  for (const item of items) {
+    const tid = topicIdOf(item);
+    const g = groups.get(tid);
+    if (g) g.push(item);
+    else {
+      groups.set(tid, [item]);
+      order.push(tid);
+    }
+  }
+  return order.map((tid) => shuffle([...groups.get(tid)!])[0]);
+}

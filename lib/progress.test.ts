@@ -8,6 +8,7 @@ import type { Question } from "@/types";
 import {
   topicProgress,
   summarizeProgress,
+  groupTopicProgress,
   type ItemResult,
   type TopicProgress,
 } from "@/lib/progress";
@@ -114,6 +115,67 @@ describe("topicProgress — 論点1件の習熟統計", () => {
     );
     expect(st.lastAt).toBeNull();
     expect(st.tried).toBe(2);
+  });
+});
+
+describe("groupTopicProgress — 頻出論点の2周目を1論点に畳み込む(Issue #165)", () => {
+  const q = zenshi([true, false, true]); // 満点 7点
+
+  it("1バリアントのみなら topicProgress と同じ結果になる", () => {
+    const st = topicProgress(
+      q,
+      from({ 0: { pts: 2, max: 2 }, 1: { pts: 3, max: 3 }, 2: { pts: 2, max: 2 } }),
+    );
+    expect(groupTopicProgress([st])).toEqual(st);
+  });
+
+  it("件数・得点は合算する", () => {
+    const v1 = topicProgress(q, from({ 0: { pts: 2, max: 2 } }));
+    const v2 = topicProgress(q, from({ 0: { pts: 2, max: 2 }, 1: { pts: 1, max: 3 } }));
+    const g = groupTopicProgress([v1, v2]);
+    expect(g.n).toBe(6);
+    expect(g.tried).toBe(3);
+    expect(g.perfect).toBe(2);
+    expect(g.weak).toBe(1);
+    expect(g.untried).toBe(3);
+    expect(g.pts).toBe(5);
+    expect(g.max).toBe(14);
+  });
+
+  it("片方だけ完璧では level=2 にならない(全バリアント完璧が必要)", () => {
+    const perfect = topicProgress(
+      q,
+      from({ 0: { pts: 2, max: 2 }, 1: { pts: 3, max: 3 }, 2: { pts: 2, max: 2 } }),
+    );
+    const untried = topicProgress(q, from({}));
+    expect(groupTopicProgress([perfect, untried]).level).toBe(1);
+  });
+
+  it("両方とも完璧なら level=2", () => {
+    const perfect = topicProgress(
+      q,
+      from({ 0: { pts: 2, max: 2 }, 1: { pts: 3, max: 3 }, 2: { pts: 2, max: 2 } }),
+    );
+    expect(groupTopicProgress([perfect, perfect]).level).toBe(2);
+  });
+
+  it("どちらも未挑戦なら level=0", () => {
+    const untried = topicProgress(q, from({}));
+    expect(groupTopicProgress([untried, untried]).level).toBe(0);
+  });
+
+  it("lastAt はバリアント間の最大値", () => {
+    const early = topicProgress(
+      q,
+      from({ 0: { pts: 2, max: 2, answeredAt: "2026-07-01T00:00:00.000Z" } }),
+    );
+    const late = topicProgress(
+      q,
+      from({ 0: { pts: 2, max: 2, answeredAt: "2026-07-10T00:00:00.000Z" } }),
+    );
+    expect(groupTopicProgress([early, late]).lastAt).toBe(
+      "2026-07-10T00:00:00.000Z",
+    );
   });
 });
 

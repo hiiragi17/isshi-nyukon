@@ -25,6 +25,13 @@ export type Question = {
   category: Category;
   topic: string; // 例: "二重譲渡"
   law: string; // 例: "民法177条"
+  /**
+   * 論点のグルーピングキー。同じ論点の「2周目」(別シナリオの2問目)は、
+   * 1周目と同じ topicId を持たせる。省略時は自分の id が既定値になる
+   * (読み込み境界 `data/questions/index.ts` の `normalizeQuestion` で正規化)。
+   * ミニ模試の抽出・成長グラフの分母・検地帳マトリクスは、この値でユニークに数える。
+   */
+  topicId?: string;
   /** 省略時は zenshi 扱い(プロトタイプの q1〜q4 は type を持たない) */
   type?: QuestionType;
   scenario?: string; // 事案文(省略可)
