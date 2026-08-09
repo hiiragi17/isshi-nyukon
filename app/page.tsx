@@ -175,11 +175,16 @@ export default function Home() {
   const groupStat = (qis: number[]): TopicProgress =>
     groupTopicProgress(qis.map(topicStat));
 
-  /** 論点の再審理で出題する肢(itemKey)。弱点優先 → 未着手 → 全肢 */
-  const topicSessionKeys = (qi: number): string[] => {
+  /**
+   * 問題1件ぶんの肢(itemKey)から、st(習熟統計)の水準に応じて出題対象を選ぶ。
+   * 弱点優先 → 未着手 → 全肢。st は呼び出し側が渡す(単体論点なら topicStat、
+   * 論点グループなら groupStat)ことで、グループの再審理を「グループ全体の水準」で
+   * 統一的に判定できるようにする(Issue #165 レビュー指摘: 個々のバリアントの水準で
+   * 判定すると、片方が完璧なだけで既に完璧な肢まで再出題に混ざってしまう)。
+   */
+  const pickSessionKeys = (qi: number, st: TopicProgress): string[] => {
     const q = QUESTIONS[qi];
     const n = itemCountOf(q);
-    const st = topicStat(qi);
     const pick: number[] = [];
     for (let ci = 0; ci < n; ci++) {
       const a = latest.get(itemKey(q.id, ci));
@@ -196,9 +201,14 @@ export default function Home() {
     return pick.map((ci) => itemKey(q.id, ci));
   };
 
-  /** 論点グループの再審理で出題する肢(itemKey)。バリアントごとの選定を連結する */
-  const groupSessionKeys = (qis: number[]): string[] =>
-    qis.flatMap(topicSessionKeys);
+  /**
+   * 論点グループの再審理で出題する肢(itemKey)。グループ全体の水準(groupStat)で
+   * 判定し、バリアントごとに連結する(個々のバリアントの水準では判定しない)。
+   */
+  const groupSessionKeys = (qis: number[]): string[] => {
+    const st = groupStat(qis);
+    return qis.flatMap((qi) => pickSessionKeys(qi, st));
+  };
 
   const goPlay = (keys: string[]) => {
     if (keys.length) router.push(`/play?items=${keys.join(",")}`);
@@ -644,9 +654,12 @@ export default function Home() {
                           const q = QUESTIONS[qis[0]];
                           const st = groupStat(qis);
                           const isSel = sel === topicId;
-                          const stamped = qis.some((qi) =>
-                            stampedIds.has(QUESTIONS[qi].id),
-                          );
+                          // 論点グループの完璧は全バリアント完璧が条件(groupStat)。
+                          // 今回のセッションでどれか1バリアントが新規に完璧化しても、
+                          // 他のバリアントが未完なら論点全体としては未完のまま。
+                          const stamped =
+                            st.level === 2 &&
+                            qis.some((qi) => stampedIds.has(QUESTIONS[qi].id));
                           const bg =
                             st.level === 2
                               ? SHU

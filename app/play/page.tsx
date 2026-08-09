@@ -41,6 +41,14 @@ const allItems: Item[] = QUESTIONS.flatMap((q, i) =>
 /** ミニ模試で横断出題する論点数(本試験配分の縮小比。6〜8 論点の想定 / Issue #101) */
 const MOCK_TOPIC_COUNT = 7;
 
+/**
+ * 論点(topicId)のユニーク数。頻出論点の2周目があると QUESTIONS.length は
+ * 実際の論点数より大きくなるため、ミニ模試の可否判定はこちらを使う(Issue #165)。
+ */
+const UNIQUE_TOPIC_COUNT = new Set(
+  QUESTIONS.map((q) => q.topicId ?? q.id),
+).size;
+
 /** questionId → QUESTIONS の添字。ダッシュボードから渡る itemKey の解決に使う */
 const idToIndex = new Map(QUESTIONS.map((q, i) => [q.id, i] as const));
 
@@ -806,7 +814,7 @@ export default function PlayPage() {
             </div>
           )}
 
-          {QUESTIONS.length >= MOCK_TOPIC_COUNT && (
+          {UNIQUE_TOPIC_COUNT >= MOCK_TOPIC_COUNT && (
             <div style={{ ...card, marginBottom: 16 }}>
               <Eyebrow>本試験形式</Eyebrow>
               <div
