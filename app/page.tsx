@@ -671,6 +671,9 @@ export default function Home() {
                           const variantLevels = qis.map(
                             (qi) => topicStat(qi).level,
                           );
+                          const hasUntriedVariant = variantLevels.some(
+                            (lvl) => lvl === 0,
+                          );
                           const variantColors = variantLevels.map(levelColor);
                           const bg =
                             variantColors.length > 1
@@ -712,7 +715,7 @@ export default function Home() {
                                 background: bg,
                                 border: isSel
                                   ? `2px solid ${INK}`
-                                  : st.level === 0
+                                  : hasUntriedVariant
                                     ? `1px solid ${LINE}`
                                     : "1px solid transparent",
                                 cursor: "pointer",
