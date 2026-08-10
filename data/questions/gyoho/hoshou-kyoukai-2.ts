@@ -4,7 +4,19 @@ import type { Question } from "@/types";
 export const hoshouKyoukai2: Question = {
   id: "q88",
   topicId: "q32",
-  verified: false,
+  verified: true,
+  source: {
+    level: "primary",
+    answerLevel: "primary",
+    note: "肢1・肢2=64条の9第2項(社員が新たに事務所を設置〔増設含む〕したときは、その日から2週間以内に政令で定める額の分担金を納付)・第3項(前項に規定する期間内に納付しないときは、その地位を失う。督促・猶予の定めなし)/肢3=26条1項(新設事務所につき前条2項の政令で定める額の営業保証金を供託しなければならない。日数の期限規定なし)・2項(前条〔25条〕1項・3項〜5項を準用。25条5項の『供託し届出をした後でなければ事業を開始できない』はq31 eigyou-hoshoukin.tsで既にprimary確認済み)/肢4=施行令7条(主60万・その他の事務所ごと30万)はq32 hoshou-kyoukai.tsで既にprimary確認済みの金額を新シナリオ〔支店3か所〕に適用。hiiragi17提示の64条の9(全4項)・26条(全2項)の原文全文(2026-08-10)で確認済み。",
+  },
+  lawVersion: {
+    revisionId: "327AC1000000176_20260401_507AC0000000068",
+    verifiedAgainst: "2026-04-01",
+    examBasisDate: "2026-04-01",
+    driftChecked: "not_required",
+    note: "64条の9・26条はいずれも宅建業法本則の版(327AC1000000176_20260401_507AC0000000068。menkyo.ts等で確認済みの版と同じ)。施行日が試験の法令基準日(令和8年4月1日)と一致するため driftChecked: not_required。",
+  },
   category: "宅建業法",
   topic: "保証協会(弁済業務保証金)",
   law: "宅建業法64条の9・26条・施行令7条",
