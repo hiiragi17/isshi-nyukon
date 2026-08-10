@@ -69,8 +69,7 @@ export const takkenshi2: Question = {
     {
       segments: [
         "宅建士Eが事務禁止処分を受けた場合、",
-        "Eは、その宅建士証を自ら保管しておけばよく、",
-        "交付を受けた知事に提出する必要はない。",
+        "Eは、その宅建士証を自ら保管しておけばよく、交付を受けた知事に提出する必要はない。",
       ],
       correct: false,
       wrongIndex: 1,
