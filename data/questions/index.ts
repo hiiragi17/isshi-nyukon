@@ -84,6 +84,7 @@ import { sanjunanaJou2 } from "./gyoho/sanjunana-jou-2";
 import { hachishuSeigen2 } from "./gyoho/hachishu-seigen-2";
 import { baikaiKeiyaku2 } from "./gyoho/baikai-keiyaku-2";
 import { hoshu2 } from "./gyoho/hoshu-2";
+import { coolingOff2 } from "./gyoho/cooling-off-2";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -175,6 +176,7 @@ const RAW_QUESTIONS: Question[] = [
   hachishuSeigen2,
   baikaiKeiyaku2,
   hoshu2,
+  coolingOff2,
 ];
 
 /**
