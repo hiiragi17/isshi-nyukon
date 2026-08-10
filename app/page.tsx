@@ -660,23 +660,48 @@ export default function Home() {
                           const stamped =
                             st.level === 2 &&
                             qis.some((qi) => stampedIds.has(QUESTIONS[qi].id));
+                          // 2周目があるマスは、バリアントごとの実際の水準を対角線で
+                          // 塗り分ける(グループの水準だけだと「学習中」に丸められ、
+                          // 2周目の存在自体が見えなくなるため)。1バリアントなら
+                          // 従来どおりの単色。
+                          const levelText = (lvl: 0 | 1 | 2) =>
+                            lvl === 2 ? "完璧" : lvl === 1 ? "学習中" : "未着手";
+                          const levelColor = (lvl: 0 | 1 | 2) =>
+                            lvl === 2 ? SHU : lvl === 1 ? AI_BLUE : CARD;
+                          const variantLevels = qis.map(
+                            (qi) => topicStat(qi).level,
+                          );
+                          const hasUntriedVariant = variantLevels.some(
+                            (lvl) => lvl === 0,
+                          );
+                          const variantColors = variantLevels.map(levelColor);
                           const bg =
-                            st.level === 2
-                              ? SHU
-                              : st.level === 1
-                                ? AI_BLUE
-                                : CARD;
+                            variantColors.length > 1
+                              ? `linear-gradient(135deg, ${variantColors
+                                  .map((c, i) => {
+                                    const from = (i * 100) / variantColors.length;
+                                    const to = ((i + 1) * 100) / variantColors.length;
+                                    return `${c} ${from}%, ${c} ${to}%`;
+                                  })
+                                  .join(", ")})`
+                              : variantColors[0];
+                          // 画面リーダーには色の対角線が伝わらないため、周ごとの
+                          // 状態を読み上げテキストにも明示する(集約後の1語に
+                          // 丸めない)。
+                          const statusText =
+                            variantLevels.length > 1
+                              ? variantLevels
+                                  .map(
+                                    (lvl, i) =>
+                                      `${i + 1}周目: ${levelText(lvl)}`,
+                                  )
+                                  .join("、")
+                              : levelText(st.level);
                           return (
                             <button
                               key={topicId}
-                              title={q.topic}
-                              aria-label={`${q.topic}(${
-                                st.level === 2
-                                  ? "完璧"
-                                  : st.level === 1
-                                    ? "学習中"
-                                    : "未着手"
-                              })`}
+                              title={`${q.topic}(${statusText})`}
+                              aria-label={`${q.topic}(${statusText})`}
                               onClick={() =>
                                 setSel((cur) =>
                                   cur === topicId ? null : topicId,
@@ -690,7 +715,7 @@ export default function Home() {
                                 background: bg,
                                 border: isSel
                                   ? `2px solid ${INK}`
-                                  : st.level === 0
+                                  : hasUntriedVariant
                                     ? `1px solid ${LINE}`
                                     : "1px solid transparent",
                                 cursor: "pointer",
