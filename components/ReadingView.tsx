@@ -7,7 +7,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Reading } from "@/types";
-import { INK, AI_BLUE, MUTED, SERIF, SANS } from "@/lib/tokens";
+import { INK, AI_BLUE, AI_BLUE_BG, MUTED, SERIF, SANS } from "@/lib/tokens";
 import { page, col, card, outlineButton } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
 import { TermPopup } from "@/components/TermPopup";
@@ -25,6 +25,7 @@ export function ReadingView({ reading }: { reading: Reading }) {
           onClick={() => router.push("/")}
           style={{
             ...outlineButton,
+            minHeight: 44,
             padding: "8px 16px",
             fontSize: 12.5,
             marginBottom: 16,
@@ -38,10 +39,9 @@ export function ReadingView({ reading }: { reading: Reading }) {
           <h1
             style={{
               fontFamily: SERIF,
-              fontSize: 26,
-              fontWeight: 800,
-              margin: "8px 0 4px",
-              letterSpacing: 2,
+              fontSize: 15,
+              fontWeight: 700,
+              margin: "4px 0 4px",
             }}
           >
             {reading.title}
@@ -84,7 +84,7 @@ export function ReadingView({ reading }: { reading: Reading }) {
                   style={{
                     marginTop: 12,
                     padding: "12px 14px",
-                    background: "rgba(51,85,126,0.06)",
+                    background: AI_BLUE_BG,
                     borderLeft: `3px solid ${AI_BLUE}`,
                     borderRadius: 4,
                   }}

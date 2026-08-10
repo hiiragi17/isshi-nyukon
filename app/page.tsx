@@ -371,7 +371,7 @@ export default function Home() {
             onClick={() => router.push(`/learn/${q.topicId ?? q.id}`)}
             style={{
               width: "100%",
-              minHeight: 40,
+              minHeight: 44,
               marginTop: 8,
               fontSize: 12.5,
               fontWeight: 700,

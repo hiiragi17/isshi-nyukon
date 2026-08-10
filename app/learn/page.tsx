@@ -25,6 +25,7 @@ export default function LearnIndexPage() {
           onClick={() => router.push("/")}
           style={{
             ...outlineButton,
+            minHeight: 44,
             padding: "8px 16px",
             fontSize: 12.5,
             marginBottom: 16,
@@ -38,10 +39,9 @@ export default function LearnIndexPage() {
           <h1
             style={{
               fontFamily: SERIF,
-              fontSize: 26,
-              fontWeight: 800,
-              margin: "8px 0 4px",
-              letterSpacing: 2,
+              fontSize: 15,
+              fontWeight: 700,
+              margin: "4px 0 4px",
             }}
           >
             論点を読む
