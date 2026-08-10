@@ -88,6 +88,7 @@ import { coolingOff2 } from "./gyoho/cooling-off-2";
 import { menkyo2 } from "./gyoho/menkyo-2";
 import { takkenshi2 } from "./gyoho/takkenshi-2";
 import { hoshouKyoukai2 } from "./gyoho/hoshou-kyoukai-2";
+import { kantokuShobun2 } from "./gyoho/kantoku-shobun-2";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -183,6 +184,7 @@ const RAW_QUESTIONS: Question[] = [
   menkyo2,
   takkenshi2,
   hoshouKyoukai2,
+  kantokuShobun2,
 ];
 
 /**
