@@ -19,6 +19,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { QUESTIONS } from "@/data/questions";
+import { READINGS } from "@/data/readings";
 import type { Attempt } from "@/types";
 import { storage, latestByItem, itemKey } from "@/lib/storage";
 import { itemCountOf } from "@/lib/items";
@@ -365,6 +366,27 @@ export default function Home() {
         >
           {action}
         </button>
+        {READINGS.has(q.topicId ?? q.id) && (
+          <button
+            onClick={() => router.push(`/learn/${q.topicId ?? q.id}`)}
+            style={{
+              width: "100%",
+              minHeight: 40,
+              marginTop: 8,
+              fontSize: 12.5,
+              fontWeight: 700,
+              fontFamily: SERIF,
+              letterSpacing: 2,
+              color: CARD,
+              background: "transparent",
+              border: `1px solid ${INK_DOTTED}`,
+              borderRadius: RADIUS,
+              cursor: "pointer",
+            }}
+          >
+            この分野を読む(参考書モード)
+          </button>
+        )}
       </div>
     );
   };
