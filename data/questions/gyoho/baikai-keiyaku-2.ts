@@ -6,9 +6,8 @@ export const baikaiKeiyaku2: Question = {
   topicId: "q14",
   verified: false,
   source: {
-    level: "primary",
-    answerLevel: "primary",
-    note: "34条の2第1項(記名押印)・第3項(有効期間3か月、専任媒介契約が主語)・第9項(報告頻度)、施行規則15条の10第1項(登録日数)・第2項(休業日不算入)は、いずれも q14(baikai-keiyaku.ts)で承認済み(2026-08-02、gyoho-verification.md #q14)の原文引用と同一条文・同一原文。本問(q83)はその原文を専属専任の登録日数(5日)・専任の報告頻度(2週間)・3項の適用範囲(専任媒介契約のみ、一般媒介には適用されない)という別の切り口で再構成した新シナリオ。新たな条文取得はしていないため、原文自体の再照合は不要だが、本問固有の論点選択・記述の妥当性は未承認(verified: false)。docs/verification/gyoho-verification.md に追加照合記録あり。",
+    level: "unverified",
+    note: "34条の2第1項・第3項・第9項、施行規則15条の10第1項・第2項の完全な逐語全文を本PR時点で取得できていない(セッション内でe-Gov等の一次ソースにネットワークアクセスできなかった)ため、primary は主張しない。q14(baikai-keiyaku.ts)で承認済みの引用(略を含む抜粋)と同一条文からの再構成であり結論に誤りはないと考えているが、CLAUDE.mdの『原文と書くなら省略記号を使わない』の要件を満たす形での再確認が必要。docs/verification/gyoho-verification.md #q83 に詳細あり。",
   },
   lawVersion: {
     revisionId: "327AC1000000176_20260401_507AC0000000068",
