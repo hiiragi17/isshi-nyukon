@@ -4,10 +4,11 @@ import type { Question } from "@/types";
 export const baikaiKeiyaku2: Question = {
   id: "q83",
   topicId: "q14",
-  verified: false,
+  verified: true,
   source: {
-    level: "unverified",
-    note: "34条の2第1項・第3項・第9項、施行規則15条の10第1項・第2項の完全な逐語全文を本PR時点で取得できていない(セッション内でe-Gov等の一次ソースにネットワークアクセスできなかった)ため、primary は主張しない。q14(baikai-keiyaku.ts)で承認済みの引用(略を含む抜粋)と同一条文からの再構成であり結論に誤りはないと考えているが、CLAUDE.mdの『原文と書くなら省略記号を使わない』の要件を満たす形での再確認が必要。docs/verification/gyoho-verification.md #q83 に詳細あり。",
+    level: "primary",
+    answerLevel: "primary",
+    note: "34条の2第1項・第3項・第9項(全12項)、施行規則15条の10第1項・第2項の完全な逐語全文をhiiragi17が提示(2026-08-10)。省略記号なしで全肢を突合せ済み。docs/verification/gyoho-verification.md #q83 に依拠条文の全文と照合表あり。",
   },
   lawVersion: {
     revisionId: "327AC1000000176_20260401_507AC0000000068",
