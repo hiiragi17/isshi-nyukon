@@ -1200,7 +1200,7 @@ Issue #124(クーリング・オフ告知文言の有無が場所ごとに分か
 - **`source`**: `level: primary` / `answerLevel: primary`。告示第2(既承認)・第3(今回原文全文で確認)の両方に当たった。
 - **`lawVersion`**: q5 と同じ版(最終改正 令和6年6月21日国土交通省告示第949号、施行 令和6年7月1日)。`verifiedAgainst`(2024-07-01)は施行日、`examBasisDate`(2026-04-01)との間に改正が無いことを告示原文の最終改正欄で確認したため `driftChecked: checked`。
 
-承認: ☐ verified(hiiragi17の原文提示・突合せ済み。verified: true への切替えは最終承認待ち) / ☐ 要修正
+承認: ☑ verified(hiiragi17 2026-08-10。告示第3〔代理〕の原文全文提示のうえ突合せ済み。verified: true に更新) / ☐ 要修正
 
 ---
 
