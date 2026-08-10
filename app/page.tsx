@@ -660,17 +660,36 @@ export default function Home() {
                           const stamped =
                             st.level === 2 &&
                             qis.some((qi) => stampedIds.has(QUESTIONS[qi].id));
+                          // 2周目があるマスは、バリアントごとの実際の水準を対角線で
+                          // 塗り分ける(グループの水準だけだと「学習中」に丸められ、
+                          // 2周目の存在自体が見えなくなるため)。1バリアントなら
+                          // 従来どおりの単色。
+                          const levelColor = (lvl: 0 | 1 | 2) =>
+                            lvl === 2 ? SHU : lvl === 1 ? AI_BLUE : CARD;
+                          const variantColors = qis.map((qi) =>
+                            levelColor(topicStat(qi).level),
+                          );
                           const bg =
-                            st.level === 2
-                              ? SHU
-                              : st.level === 1
-                                ? AI_BLUE
-                                : CARD;
+                            variantColors.length > 1
+                              ? `linear-gradient(135deg, ${variantColors
+                                  .map((c, i) => {
+                                    const from = (i * 100) / variantColors.length;
+                                    const to = ((i + 1) * 100) / variantColors.length;
+                                    return `${c} ${from}%, ${c} ${to}%`;
+                                  })
+                                  .join(", ")})`
+                              : variantColors[0];
                           return (
                             <button
                               key={topicId}
-                              title={q.topic}
-                              aria-label={`${q.topic}(${
+                              title={
+                                qis.length > 1
+                                  ? `${q.topic}(2周目あり)`
+                                  : q.topic
+                              }
+                              aria-label={`${q.topic}${
+                                qis.length > 1 ? "(2周目あり)" : ""
+                              }(${
                                 st.level === 2
                                   ? "完璧"
                                   : st.level === 1
