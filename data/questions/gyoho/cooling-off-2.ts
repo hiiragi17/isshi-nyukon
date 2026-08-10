@@ -15,7 +15,7 @@ export const coolingOff2: Question = {
     verifiedAgainst: "2026-04-01",
     examBasisDate: "2026-04-01",
     driftChecked: "not_required",
-    note: "q4(cooling-off.ts)と同じ宅建業法本則の版。hiiragi17提示の原文に個別のRevisionID表記は無かったが、37条の2の文言(1項・1項2号・2項)がq4の照合済み文言と一致しており、同じ版として扱う。施行日が基準日(令和8年4月1日)と一致するため driftChecked: not_required。",
+    note: "本則(37条の2・78条)は q4(cooling-off.ts)と同じ宅建業法本則の版(327AC1000000176_20260401_507AC0000000068)。hiiragi17提示の原文に個別のRevisionID表記は無かったが、37条の2の文言(1項・1項2号・2項)がq4の照合済み文言と一致しており、同じ版として扱う。肢1が根拠とする施行規則16条の5第2号は、q78(cooling-off-hyoushiki.ts)で承認者が全号・全文を提示済みの施行規則の版(332M50004000012_20260401_507M60000802002)に含まれる文言と一致するため、同じ版として扱う。いずれも施行日が試験の法令基準日(令和8年4月1日)と一致するため driftChecked: not_required。",
   },
   category: "宅建業法",
   topic: "クーリングオフ",
