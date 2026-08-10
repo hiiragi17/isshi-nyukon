@@ -664,11 +664,14 @@ export default function Home() {
                           // 塗り分ける(グループの水準だけだと「学習中」に丸められ、
                           // 2周目の存在自体が見えなくなるため)。1バリアントなら
                           // 従来どおりの単色。
+                          const levelText = (lvl: 0 | 1 | 2) =>
+                            lvl === 2 ? "完璧" : lvl === 1 ? "学習中" : "未着手";
                           const levelColor = (lvl: 0 | 1 | 2) =>
                             lvl === 2 ? SHU : lvl === 1 ? AI_BLUE : CARD;
-                          const variantColors = qis.map((qi) =>
-                            levelColor(topicStat(qi).level),
+                          const variantLevels = qis.map(
+                            (qi) => topicStat(qi).level,
                           );
+                          const variantColors = variantLevels.map(levelColor);
                           const bg =
                             variantColors.length > 1
                               ? `linear-gradient(135deg, ${variantColors
@@ -679,23 +682,23 @@ export default function Home() {
                                   })
                                   .join(", ")})`
                               : variantColors[0];
+                          // 画面リーダーには色の対角線が伝わらないため、周ごとの
+                          // 状態を読み上げテキストにも明示する(集約後の1語に
+                          // 丸めない)。
+                          const statusText =
+                            variantLevels.length > 1
+                              ? variantLevels
+                                  .map(
+                                    (lvl, i) =>
+                                      `${i + 1}周目: ${levelText(lvl)}`,
+                                  )
+                                  .join("、")
+                              : levelText(st.level);
                           return (
                             <button
                               key={topicId}
-                              title={
-                                qis.length > 1
-                                  ? `${q.topic}(2周目あり)`
-                                  : q.topic
-                              }
-                              aria-label={`${q.topic}${
-                                qis.length > 1 ? "(2周目あり)" : ""
-                              }(${
-                                st.level === 2
-                                  ? "完璧"
-                                  : st.level === 1
-                                    ? "学習中"
-                                    : "未着手"
-                              })`}
+                              title={`${q.topic}(${statusText})`}
+                              aria-label={`${q.topic}(${statusText})`}
                               onClick={() =>
                                 setSel((cur) =>
                                   cur === topicId ? null : topicId,
