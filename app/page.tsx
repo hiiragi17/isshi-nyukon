@@ -590,6 +590,23 @@ export default function Home() {
               範囲を選んで始める(少量モードも)
             </button>
 
+            {/* 参考書モード(論点の読み物一覧)の入口。検地帳の論点詳細を経由しなくても入れる */}
+            {READINGS.size > 0 && (
+              <button
+                onClick={() => router.push("/learn")}
+                style={{
+                  ...outlineButton,
+                  width: "100%",
+                  minHeight: 48,
+                  marginBottom: 12,
+                  fontSize: 14,
+                  letterSpacing: 3,
+                }}
+              >
+                参考書を読む
+              </button>
+            )}
+
             {/* 検地帳マトリクス(6列) */}
             <div
               style={{

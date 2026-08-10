@@ -218,11 +218,19 @@ export type Term = {
 
 /* ---------- 参考書モード: 論点ごとの読み物 ---------- */
 /**
- * 条文原文の引用ブロック。CLAUDE.md の照合の書き方に合わせ、`text` は
- * 条文文言そのまま(委任先を推測して書かない・省略は(略)で明示)を入れる。
- * `cite` は条番号(施行日を併記する場合はそこに含める)。
+ * 条文原文の引用1行(号・イロハニホ単位)。CLAUDE.md の照合の書き方に合わせ、
+ * `text` は条文文言そのまま(委任先を推測して書かない・省略は(略)で明示)を
+ * 入れる。項・号ごとに分けて表示することで、長文の条文を読みやすくする
+ * (壁のような1段落の引用は読みにくいというフィードバックへの対応)。
  */
-export type ReadingQuote = { text: string; cite: string };
+export type ReadingQuoteLine = {
+  label?: string; // 見出し(例: "1項", "一号", "ロ")
+  text: string;
+  indent?: boolean; // イ〜ホ等、号の下位区分は字下げして表示する
+};
+
+/** 条文原文の引用ブロック。`cite` は条番号(施行日を併記する場合はそこに含める) */
+export type ReadingQuote = { lines: ReadingQuoteLine[]; cite: string };
 
 /** 読み物1論点ぶんのセクション(見出し+段落+条文原文の引用は任意) */
 export type ReadingSection = {

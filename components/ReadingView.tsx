@@ -89,18 +89,50 @@ export function ReadingView({ reading }: { reading: Reading }) {
                     borderRadius: 4,
                   }}
                 >
-                  <p
+                  <div
                     style={{
-                      margin: 0,
-                      fontFamily: SANS,
-                      fontSize: 12.5,
-                      lineHeight: 1.9,
-                      color: INK,
-                      whiteSpace: "pre-wrap",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 6,
                     }}
                   >
-                    {section.quote.text}
-                  </p>
+                    {section.quote.lines.map((line, k) => (
+                      <div
+                        key={k}
+                        style={{
+                          display: "flex",
+                          gap: 8,
+                          paddingLeft: line.indent ? 16 : 0,
+                        }}
+                      >
+                        {line.label && (
+                          <span
+                            style={{
+                              flexShrink: 0,
+                              fontFamily: SANS,
+                              fontSize: 11,
+                              fontWeight: 700,
+                              color: AI_BLUE,
+                              minWidth: line.indent ? 16 : 40,
+                            }}
+                          >
+                            {line.label}
+                          </span>
+                        )}
+                        <p
+                          style={{
+                            margin: 0,
+                            fontFamily: SANS,
+                            fontSize: 12.5,
+                            lineHeight: 1.9,
+                            color: INK,
+                          }}
+                        >
+                          {line.text}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                   <p
                     style={{
                       margin: "8px 0 0",
