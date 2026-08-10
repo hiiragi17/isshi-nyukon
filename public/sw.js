@@ -17,8 +17,10 @@
 // (通常のデプロイでは上げなくてよい。HTMLはネットワーク優先で常に更新される)
 const CACHE = "isshi-nyukon-sw-v1";
 
-// インストール時に控えておくページ(全ルート)とアプリアイコン
-const PRECACHE_PAGES = ["/", "/play"];
+// インストール時に控えておくページ(全ルート)とアプリアイコン。
+// /learn/[topicId] は動的ルートなので、data/readings に論点を追加するたびに
+// ここへもパスを追記する(data/questions/index.ts への手動登録と同じ運用)。
+const PRECACHE_PAGES = ["/", "/play", "/learn", "/learn/q4"];
 const PRECACHE_ASSETS = ["/icon-192.png", "/icon-512.png"];
 
 /**
