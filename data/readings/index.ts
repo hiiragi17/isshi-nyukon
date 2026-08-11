@@ -2,9 +2,10 @@ import type { Reading } from "@/types";
 import { normalizeReading } from "@/lib/readings";
 import { coolingOffReading } from "./gyoho/cooling-off";
 import { menkyoReading } from "./gyoho/menkyo";
+import { takkenshiReading } from "./gyoho/takkenshi";
 
 /** 全読み物(生データ)。新規論点は末尾に追記する */
-const RAW_READINGS: Reading[] = [coolingOffReading, menkyoReading];
+const RAW_READINGS: Reading[] = [coolingOffReading, menkyoReading, takkenshiReading];
 
 /**
  * アプリが参照する読み物。読み込み境界で verified 等を正規化する
