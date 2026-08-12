@@ -281,7 +281,7 @@ export const takkenshiReading: Reading = {
     },
     {
       heading: "原文を読む — 宅建業法35条4項(重要事項説明時の宅建士証提示)",
-      body: ["承認済みの引用(gyoho-verification.md q16エントリ)をそのまま転記。"],
+      body: [],
       quote: {
         lines: [
           {
