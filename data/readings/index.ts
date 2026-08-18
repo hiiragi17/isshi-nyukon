@@ -4,6 +4,7 @@ import { coolingOffReading } from "./gyoho/cooling-off";
 import { hoshouKyoukaiReading } from "./gyoho/hoshou-kyoukai";
 import { juuyouJikouReading } from "./gyoho/juuyou-jikou";
 import { menkyoReading } from "./gyoho/menkyo";
+import { sanjunanaJouReading } from "./gyoho/sanjunana-jou";
 import { takkenshiReading } from "./gyoho/takkenshi";
 
 /** 全読み物(生データ)。新規論点は末尾に追記する */
@@ -13,6 +14,7 @@ const RAW_READINGS: Reading[] = [
   takkenshiReading,
   hoshouKyoukaiReading,
   juuyouJikouReading,
+  sanjunanaJouReading,
 ];
 
 /**
