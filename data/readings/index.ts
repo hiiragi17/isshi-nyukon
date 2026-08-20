@@ -6,6 +6,7 @@ import { hachishuSeigenReading } from "./gyoho/hachishu-seigen";
 import { hoshouKyoukaiReading } from "./gyoho/hoshou-kyoukai";
 import { hoshuReading } from "./gyoho/hoshu";
 import { juuyouJikouReading } from "./gyoho/juuyou-jikou";
+import { kantokuShobunReading } from "./gyoho/kantoku-shobun";
 import { menkyoReading } from "./gyoho/menkyo";
 import { sanjunanaJouReading } from "./gyoho/sanjunana-jou";
 import { takkenshiReading } from "./gyoho/takkenshi";
@@ -21,6 +22,7 @@ const RAW_READINGS: Reading[] = [
   hachishuSeigenReading,
   baikaiKeiyakuReading,
   hoshuReading,
+  kantokuShobunReading,
 ];
 
 /**
