@@ -4,6 +4,7 @@ import type { Question } from "@/types";
 export const kokudoTodokede2: Question = {
   id: "q93",
   topicId: "q25",
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
