@@ -115,6 +115,7 @@ export const hoshuReading: Reading = {
             text: "宅地建物取引業者は、その事務所ごとに、公衆の見やすい場所に、第一項の規定により国土交通大臣が定めた報酬の額を掲示しなければならない。",
           },
         ],
+        article: "宅建業法46条",
         cite: "宅建業法46条(全文。hiiragi17提示・2026-08-19)",
       },
     },
@@ -168,6 +169,7 @@ export const hoshuReading: Reading = {
       heading: "原文を読む — 報酬告示 第11(第2〜第10によらない報酬受領の禁止・免税事業者の計算方法)",
       body: ["省略なしの全文(令和6年6月21日改正版)。"],
       quote: {
+        article: "第11",
         lines: [
           {
             label: "①",

@@ -229,8 +229,23 @@ export type ReadingQuoteLine = {
   indent?: boolean; // イ〜ホ等、号の下位区分は字下げして表示する
 };
 
-/** 条文原文の引用ブロック。`cite` は条番号(施行日を併記する場合はそこに含める) */
-export type ReadingQuote = { lines: ReadingQuoteLine[]; cite: string };
+/**
+ * 条文原文の引用ブロック。`cite` は条番号(施行日を併記する場合はそこに含める)。
+ *
+ * `article` は任意。本文中の条文参照(例:「65条2項」)をタップでポップアップ表示する
+ * ための索引キーの生成に使う(`lib/citations.ts`)。単一条文のブロックでは
+ * 「65条」のような素の条名を入れると、各 `line.label`(例: "2項")と連結して
+ * 「65条2項」という索引キーを作る。複数条文にまたがるブロック(例: 69条+行政手続法13条)は
+ * 代わりに `line.label` 自体を「69条1項」のように自己完結させておけばよく、
+ * その場合は `article` を省略してよい(索引は label 自体をキーとして拾う)。
+ * 未指定・索引に当たらない表記は、参照ポップアップにならず素の文字列のまま表示される
+ * (fail-safe)。
+ */
+export type ReadingQuote = {
+  lines: ReadingQuoteLine[];
+  cite: string;
+  article?: string;
+};
 
 /** 読み物1論点ぶんのセクション(見出し+段落+条文原文の引用は任意) */
 export type ReadingSection = {
