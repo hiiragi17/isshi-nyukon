@@ -270,6 +270,12 @@ export type Reading = {
   verified?: boolean;
   source?: SourceRef;
   lawVersion?: LawVersion;
+  /**
+   * 冒頭に置く要点(3〜4行を想定。Issue #216)。本文に既にある記述の要約に
+   * 留め、新しい法的主張・数字・条番号は足さない(照合の証跡フィールドでは
+   * ないため normalizeReading の fail-closed 正規化の対象外)。
+   */
+  summary?: string[];
   sections: ReadingSection[];
 };
 

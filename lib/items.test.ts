@@ -5,7 +5,7 @@
  */
 import { describe, it, expect } from "vitest";
 import type { Question } from "@/types";
-import { itemCountOf } from "@/lib/items";
+import { itemCountOf, itemKeysForTopic } from "@/lib/items";
 import { QUESTIONS } from "@/data/questions";
 
 /** テスト用の最小 zenshi 問題(肢数だけ指定して作る) */
@@ -75,5 +75,30 @@ describe("itemCountOf — 論点1件の肢数", () => {
           `${q.id}(${q.topic})の肢数が choices の数と不一致`,
         ).toBe(q.choices!.length);
     }
+  });
+});
+
+describe("itemKeysForTopic — 論点(topicId)に属する全肢の itemKey", () => {
+  it("topicId ?? id が一致する問題を QUESTIONS の出現順ですべて拾う(2周目のバリアントも含む)", () => {
+    const questions: Question[] = [
+      { ...zenshi(2), id: "a1", topicId: "t" },
+      { ...zenshi(3), id: "b1" }, // 別論点(topicId未指定・idで一致しない)
+      { ...zenshi(1), id: "a2", topicId: "t" }, // 2周目の別ファイル(同じ topicId)
+    ];
+    expect(itemKeysForTopic("t", questions)).toEqual([
+      "a1-0",
+      "a1-1",
+      "a2-0",
+    ]);
+  });
+
+  it("topicId 未指定の問題は id 自体で一致させる", () => {
+    const questions: Question[] = [zenshi(2)]; // id: "t1", topicId 未指定
+    expect(itemKeysForTopic("t1", questions)).toEqual(["t1-0", "t1-1"]);
+  });
+
+  it("該当する問題が無い topicId には空配列を返す", () => {
+    const questions: Question[] = [zenshi(2)];
+    expect(itemKeysForTopic("no-such-topic", questions)).toEqual([]);
   });
 });

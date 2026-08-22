@@ -9,7 +9,7 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import type { Reading } from "@/types";
-import { INK, AI_BLUE, AI_BLUE_BG, MUTED, SERIF, SANS } from "@/lib/tokens";
+import { INK, CARD, AI_BLUE, AI_BLUE_BG, MUTED, SERIF, SANS, RADIUS } from "@/lib/tokens";
 import { page, col, card, outlineButton } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
 import { TermPopup } from "@/components/TermPopup";
@@ -68,7 +68,18 @@ function QuoteToggle({
   );
 }
 
-export function ReadingView({ reading }: { reading: Reading }) {
+/**
+ * `solveKeys` はページ側(サーバーコンポーネント。app/learn/[topicId]/page.tsx)で
+ * 計算して渡す。全問題データ(QUESTIONS)をこのクライアントコンポーネントの
+ * バンドルに含めないため(CodeRabbit/Codexレビュー対応。PR #222)。
+ */
+export function ReadingView({
+  reading,
+  solveKeys,
+}: {
+  reading: Reading;
+  solveKeys: string[];
+}) {
   const router = useRouter();
   const [activeTerm, setActiveTerm] = useState<string | null>(null);
   const [activeCitation, setActiveCitation] = useState<CitationEntry | null>(null);
@@ -132,6 +143,36 @@ export function ReadingView({ reading }: { reading: Reading }) {
           </h1>
           <p style={{ color: MUTED, fontSize: 12, margin: 0 }}>{reading.law}</p>
         </div>
+
+        {reading.summary && reading.summary.length > 0 && (
+          <div
+            style={{
+              ...card,
+              background: AI_BLUE_BG,
+              borderColor: AI_BLUE,
+              marginBottom: 14,
+            }}
+          >
+            <Eyebrow>この論点の要点</Eyebrow>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 6,
+                marginTop: 8,
+                fontSize: 13.5,
+                lineHeight: 1.85,
+                color: INK,
+              }}
+            >
+              {reading.summary.map((line, i) => (
+                <p key={i} style={{ margin: 0 }}>
+                  {renderBody(line)}
+                </p>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           {reading.sections.map((section, i) => {
@@ -248,6 +289,28 @@ export function ReadingView({ reading }: { reading: Reading }) {
           })}
         </div>
 
+        {solveKeys.length > 0 && (
+          <button
+            onClick={() => router.push(`/play?items=${solveKeys.join(",")}`)}
+            style={{
+              width: "100%",
+              minHeight: 48,
+              marginTop: 16,
+              fontSize: 14,
+              fontWeight: 700,
+              fontFamily: SERIF,
+              letterSpacing: 3,
+              color: CARD,
+              background: AI_BLUE,
+              border: "none",
+              borderRadius: RADIUS,
+              cursor: "pointer",
+            }}
+          >
+            この論点を解く — {solveKeys.length}肢
+          </button>
+        )}
+
         <p
           style={{
             fontSize: 11,
@@ -258,7 +321,11 @@ export function ReadingView({ reading }: { reading: Reading }) {
           }}
         >
           {reading.verified
-            ? "一次ソースで裏取り済みの読み物です。"
+            ? reading.source?.level === "primary"
+              ? "一次ソースで裏取り済みの読み物です。"
+              : reading.source?.level === "secondary"
+                ? "一次ソースで裏取り済みの読み物ですが、一部に二次資料に基づく記述を含みます。"
+                : "この読み物のソース種別は記録されていません。"
             : "この読み物は下書き段階です(一次ソースの原文照合は未確認)。誤りに気づいたら差分を報告してください。"}
         </p>
 
