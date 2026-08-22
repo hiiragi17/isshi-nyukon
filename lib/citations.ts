@@ -61,6 +61,49 @@ function isSelfQualified(label: string): boolean {
   return /\d+条|第\d+/.test(label);
 }
 
+/** 漢数字(一〜九・十の組み合わせ、1〜99)を算用数字に変換する。変換できなければ null */
+function kanjiDigitsToArabic(kanji: string): number | null {
+  const digits: Record<string, number> = {
+    一: 1,
+    二: 2,
+    三: 3,
+    四: 4,
+    五: 5,
+    六: 6,
+    七: 7,
+    八: 8,
+    九: 9,
+  };
+  if (kanji === "十") return 10;
+  if (kanji.length === 1) return digits[kanji] ?? null;
+  const tenIndex = kanji.indexOf("十");
+  if (tenIndex === -1) return null;
+  const tensPart = kanji.slice(0, tenIndex);
+  const onesPart = kanji.slice(tenIndex + 1);
+  const tens = tensPart === "" ? 1 : digits[tensPart];
+  const ones = onesPart === "" ? 0 : digits[onesPart];
+  if (tens === undefined || ones === undefined) return null;
+  return tens * 10 + ones;
+}
+
+/**
+ * キー中の「漢数字+号」(例: "四号"・"十一号")を算用数字表記(例: "4号"・"11号")に
+ * 変換した表記を返す。本文は号の番号を算用数字で書くことが多いため
+ * (例: "68条の2第1項4号"・"79条2号")、label 由来の漢数字表記だけでは
+ * ヒットしないケースを補う。変換対象が無ければ null
+ */
+function withArabicGou(key: string): string | null {
+  const re = /[一二三四五六七八九十]+号/g;
+  let changed = false;
+  const converted = key.replace(re, (m) => {
+    const n = kanjiDigitsToArabic(m.slice(0, -1));
+    if (n === null) return m;
+    changed = true;
+    return `${n}号`;
+  });
+  return changed ? converted : null;
+}
+
 /** Reading 1本ぶんの条文参照索引を作る(キー → 該当行)。同じキーは先勝ち */
 export function buildCitationIndex(reading: Reading): Map<string, CitationEntry> {
   const index = new Map<string, CitationEntry>();
@@ -112,15 +155,36 @@ export function buildCitationIndex(reading: Reading): Map<string, CitationEntry>
       }
     }
   }
+
+  // 漢数字の号を算用数字に変換した表記も登録する(本文は算用数字で書くことが多いため。
+  // 例: label 由来の "68条の2第1項四号" に対し "68条の2第1項4号" も拾えるようにする)
+  for (const [key, entry] of [...index.entries()]) {
+    const arabic = withArabicGou(key);
+    if (arabic) register(arabic, { ...entry, key: arabic });
+  }
+
   return index;
 }
 
+/**
+ * 索引のキーが、本文中でより長い(索引に無い)表記の先頭部分でしかないときは
+ * マッチさせない境界。番号の続き(算用数字・漢数字)や「号」「項」「条」、
+ * 「柱書」「ただし書」等の続きが直後に来る場合はマッチを不成立にする(fail-safe。
+ * 索引に無い、より具体的な参照を、粗い参照として誤って開かないため)。
+ * 「の」は境界に含めない — 「1項の規定により」のような正当な言い回しを
+ * 塞いでしまうため(「37条」が「37条の2」に食われる懸念は、同じ Reading 内で
+ * 両方が無ラベル行として登録されない限り起きない)
+ */
+const NON_BOUNDARY_FOLLOW = "(?![0-9一二三四五六七八九十号項条]|柱書|ただし書|本文|前段|後段)";
+
 /** 索引の全キーを長い順に並べた選言パターン(最長一致のため。TERM_PATTERN と同じ考え方) */
 export function citationPattern(index: Map<string, CitationEntry>): string {
-  return [...index.keys()]
+  if (index.size === 0) return "";
+  const alternation = [...index.keys()]
     .sort((a, b) => b.length - a.length)
     .map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
     .join("|");
+  return `(?:${alternation})${NON_BOUNDARY_FOLLOW}`;
 }
 
 /** タップされた表記から該当行を引く(未登録なら undefined) */

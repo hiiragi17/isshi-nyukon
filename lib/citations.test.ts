@@ -232,7 +232,10 @@ describe("citationPattern / resolveCitation — 表記の解決と未ヒット�
       },
     });
     const index = buildCitationIndex(reading);
-    const parts = citationPattern(index).split("|");
+    // citationPattern は "(?:alt1|alt2|...)(?!境界)" の形にラップされるため、
+    // 中の選言部分だけを取り出して長さ順を確認する
+    const inner = citationPattern(index).replace(/^\(\?:/, "").replace(/\)\(\?!.*\)$/, "");
+    const parts = inner.split("|");
     for (let i = 1; i < parts.length; i++) {
       expect(parts[i - 1].length).toBeGreaterThanOrEqual(parts[i].length);
     }
@@ -314,6 +317,71 @@ describe("citationPattern / resolveCitation — 表記の解決と未ヒット�
   });
 });
 
+describe("号の漢数字/算用数字の表記ゆれと、より長い(索引に無い)参照への誤爆防止", () => {
+  it("漢数字の号(label由来)は算用数字表記でも解決できる(79条二号 → 79条2号)", () => {
+    const reading = makeReading({
+      sections: [
+        {
+          heading: "h",
+          body: [],
+          quote: {
+            cite: "c",
+            lines: [{ label: "79条二号", text: "無免許事業の罰則。" }],
+          },
+        },
+      ],
+    });
+    const index = buildCitationIndex(reading);
+    expect(resolveCitation(index, "79条二号")!.line.text).toBe("無免許事業の罰則。");
+    expect(resolveCitation(index, "79条2号")!.line.text).toBe("無免許事業の罰則。");
+  });
+
+  it("article+label 連結で作った漢数字キーも算用数字で解決できる(68条の2第1項四号 → 68条の2第1項4号)", () => {
+    const reading = makeReading({
+      sections: [
+        {
+          heading: "h",
+          body: [],
+          quote: {
+            article: "宅建業法68条の2",
+            cite: "c",
+            lines: [{ label: "1項", text: "登録消除しなければならない。" }, { label: "1項四号", text: "必要的消除の号。" }],
+          },
+        },
+      ],
+    });
+    const index = buildCitationIndex(reading);
+    const re = new RegExp(citationPattern(index));
+    // 索引には漢数字由来の "68条の2第1項四号" と、その親paragraphの "68条の2第1項" の
+    // 両方が登録されるが、本文が算用数字で "68条の2第1項4号" と書いても、
+    // 短い方の "68条の2第1項" に食われず、4号の行まで正しく解決できる
+    const match = "68条の2第1項4号は必要的消除の号。".match(re);
+    expect(match![0]).toBe("68条の2第1項4号");
+    expect(resolveCitation(index, match![0])!.line.text).toBe("必要的消除の号。");
+  });
+
+  it("索引のキーが、無関係な長い表記の先頭部分に一致するだけのときはマッチしない(第3号 が 第3 に食われない)", () => {
+    const reading = makeReading({
+      sections: [
+        {
+          heading: "h",
+          body: [],
+          quote: {
+            cite: "c",
+            lines: [{ label: "第3", text: "代理の報酬額。" }],
+          },
+        },
+      ],
+    });
+    const index = buildCitationIndex(reading);
+    const re = new RegExp(citationPattern(index));
+    // 「平成13年国総動第3号」は無関係な告示番号で、報酬告示 第3 への参照ではない
+    expect("平成13年国総動第3号を参照する。".match(re)).toBeNull();
+    // 一方、素の「告示第3により」は正しくヒットする
+    expect("告示第3により算出する。".match(re)![0]).toBe("第3");
+  });
+});
+
 describe("実データ(READINGS)との整合", () => {
   it("既存の読み物すべてで、有効な正規表現の索引が作れる", () => {
     for (const [topicId, reading] of READINGS) {
@@ -337,5 +405,30 @@ describe("実データ(READINGS)との整合", () => {
     const entry = resolveCitation(index, "65条2項");
     expect(entry).toBeDefined();
     expect(entry!.line.text).toContain("一年以内の期間を定めて");
+  });
+
+  it("q34 本文の「68条の2第1項4号」(算用数字)は 1項四号 の行(必要的消除)に解決される", () => {
+    const reading = READINGS.get("q34")!;
+    const index = buildCitationIndex(reading);
+    const re = new RegExp(citationPattern(index), "g");
+    const body = reading.sections.flatMap((s) => s.body).join("\n");
+    expect(body).toContain("68条の2第1項4号");
+    const matches = [...body.matchAll(re)].map((m) => m[0]);
+    expect(matches).toContain("68条の2第1項4号");
+    const entry = resolveCitation(index, "68条の2第1項4号")!;
+    expect(entry.line.text).toContain("情状が特に重いとき");
+  });
+
+  it("報酬額の制限(q5)本文の「国総動第3号」は無関係な告示番号なので、報酬告示 第3 として誤爆しない", () => {
+    const reading = READINGS.get("q5")!;
+    const index = buildCitationIndex(reading);
+    const re = new RegExp(citationPattern(index), "g");
+    const body = reading.sections.flatMap((s) => s.body).join("\n");
+    expect(body).toContain("国総動第3号");
+    const idx = body.indexOf("国総動第3号");
+    const around = body.slice(idx, idx + "国総動第3号".length + 2);
+    re.lastIndex = 0;
+    const matches = [...around.matchAll(new RegExp(citationPattern(index), "g"))].map((m) => m[0]);
+    expect(matches).not.toContain("第3");
   });
 });
