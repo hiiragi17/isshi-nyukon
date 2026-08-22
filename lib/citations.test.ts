@@ -122,6 +122,45 @@ describe("buildCitationIndex — 索引の作成", () => {
     expect(index.get("施行規則3条")?.line.text).toBe("免許の更新の申請期間の規定。");
   });
 
+  it("自己完結表記1行に「ただし、」で始まるただし書が含まれる場合、「ただし書」を付けた表記でも同じ行に解決できる", () => {
+    const reading = makeReading({
+      sections: [
+        {
+          heading: "h",
+          body: [],
+          quote: {
+            cite: "c",
+            lines: [
+              {
+                label: "19条の2",
+                text: "登録の移転の申請をすることができる。ただし、禁止の期間が満了していないときは、この限りでない。",
+              },
+            ],
+          },
+        },
+      ],
+    });
+    const index = buildCitationIndex(reading);
+    expect(index.get("19条の2ただし書")?.line.text).toContain("登録の移転の申請");
+  });
+
+  it("自己完結表記1行に「ただし、」が含まれない場合、「ただし書」を付けた表記は登録しない", () => {
+    const reading = makeReading({
+      sections: [
+        {
+          heading: "h",
+          body: [],
+          quote: {
+            cite: "c",
+            lines: [{ label: "9条", text: "変更の届出義務を定める。" }],
+          },
+        },
+      ],
+    });
+    const index = buildCitationIndex(reading);
+    expect(index.has("9条ただし書")).toBe(false);
+  });
+
   it("label 自体が条番号を含む(自己完結する)ときは article なしでもそのままキーになる", () => {
     const reading = makeReading({
       sections: [
@@ -535,6 +574,8 @@ describe("実データ(READINGS)との整合", () => {
     ["q5", "第7", "低廉な空家等"],
     ["q5", "第8", "低廉な空家等の売買又は交換の代理"],
     ["q17", "施行令3条の5", "政令で定める額は、千万円"],
+    ["q16", "19条の2ただし書", "登録を受けている者は"],
+    ["q5", "第3ただし書", "代理に関して依頼者から受ける"],
   ])("%s 本文の「%s」が該当行に解決される", (topicId, surface, expectedSubstring) => {
     const reading = READINGS.get(topicId)!;
     const index = buildCitationIndex(reading);

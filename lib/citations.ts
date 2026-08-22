@@ -236,18 +236,22 @@ export function buildCitationIndex(reading: Reading): Map<string, CitationEntry>
       if (isHeadingLabel(label)) continue;
 
       if (isSelfQualified(label)) {
-        register(label, { ...entry, key: label });
-        for (const stripped of stripLawNamePrefixes(label)) {
-          register(stripped, { ...entry, key: stripped });
-        }
         // 表示用の注記「(媒介)」等が付いた自己完結表記は、注記を外した表記でも拾えるようにする
         // (例: "第7(媒介)" → "第7")
         const bare = label.replace(/[(（][^)）]*[)）]$/, "");
+        const surfaces = new Set([label, ...stripLawNamePrefixes(label)]);
         if (bare !== label) {
-          register(bare, { ...entry, key: bare });
-          for (const strippedBare of stripLawNamePrefixes(bare)) {
-            register(strippedBare, { ...entry, key: strippedBare });
-          }
+          surfaces.add(bare);
+          for (const s of stripLawNamePrefixes(bare)) surfaces.add(s);
+        }
+        for (const s of surfaces) register(s, { ...entry, key: s });
+        // 1行に条文全体をまとめて引用しているとき(自己完結 label で、他に号等の
+        // 下位区分が無い)、その行の本文中に「ただし、」で始まるただし書が
+        // 含まれているなら、「ただし書」を付けた表記でも同じ行に解決できるように
+        // する(例: "19条の2ただし書" → 19条の2 の唯一の行。本文はただし書だけを
+        // 引用しているわけではないが、該当行を示せば読者は原文中で見つけられる)
+        if (line.text.includes("ただし、")) {
+          for (const s of [...surfaces]) register(`${s}ただし書`, { ...entry, key: `${s}ただし書` });
         }
         continue;
       }
