@@ -72,6 +72,17 @@ const CATEGORY_INDICES = new Map<string, number[]>(
   ]),
 );
 
+/** 分野 → その分野の肢数。「分野をしぼって少量で」の出題数ボタン(5/10/20)の出し分けに使う */
+const CATEGORY_ITEM_COUNTS = new Map<string, number>(
+  CATEGORIES.map((cat) => [
+    cat,
+    (CATEGORY_INDICES.get(cat) ?? []).reduce(
+      (s, i) => s + itemCountOf(QUESTIONS[i]),
+      0,
+    ),
+  ]),
+);
+
 /**
  * 論点(topicId)ごとの QUESTIONS 添字グループ。進捗サマリ(完璧 X/Y論点)は
  * QUESTIONS のエントリ単位ではなく、これで論点単位に数える(Issue #165)。
@@ -279,6 +290,23 @@ export default function PlayPage() {
    */
   const startQuick = (n: number) => {
     const pool = allItems.filter((it) => selected.has(it.qi));
+    const classify = (it: Item): QuickState => {
+      const h = history[`${it.qi}-${it.ci}`];
+      if (!h) return "untried";
+      return h.pts < h.max ? "weak" : "other";
+    };
+    const ordered = buildQuickSession(pool, classify, n, shuffleInPlace);
+    if (ordered.length) startSession(ordered);
+  };
+
+  /**
+   * 分野をしぼった少量モード: 出題範囲の選択(selected)には関わらず、
+   * 指定した1分野だけから n 肢を弱点 → 未着手 → その他の順で抽出する。
+   * 「分野を選ぶには論点を1つずつ選ぶしかない」を避けるための直行入口。
+   */
+  const startCategoryQuick = (cat: string, n: number) => {
+    const catIndices = new Set(CATEGORY_INDICES.get(cat) ?? []);
+    const pool = allItems.filter((it) => catIndices.has(it.qi));
     const classify = (it: Item): QuickState => {
       const h = history[`${it.qi}-${it.ci}`];
       if (!h) return "untried";
@@ -842,6 +870,80 @@ export default function PlayPage() {
                       {s}肢
                     </button>
                   ))}
+              </div>
+            </div>
+          )}
+
+          {CATEGORIES.some((cat) => (CATEGORY_ITEM_COUNTS.get(cat) ?? 0) >= 5) && (
+            <div style={{ ...card, marginBottom: 16 }}>
+              <Eyebrow>分野をしぼって少量で</Eyebrow>
+              <div
+                style={{
+                  fontFamily: SERIF,
+                  fontWeight: 700,
+                  fontSize: 15,
+                  margin: "4px 0 4px",
+                }}
+              >
+                この分野だけ、数肢だけ
+              </div>
+              <p
+                style={{
+                  fontSize: 12.5,
+                  color: MUTED,
+                  margin: "0 0 12px",
+                  lineHeight: 1.8,
+                }}
+              >
+                上の「審理する論点を選ぶ」の選択状態とは関係なく、選んだ分野の中から弱点・未着手を優先して出題します。
+              </p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {CATEGORIES.map((cat) => {
+                  const catTotal = CATEGORY_ITEM_COUNTS.get(cat) ?? 0;
+                  const sizes = [5, 10, 20].filter((s) => s <= catTotal);
+                  if (!sizes.length) return null;
+                  return (
+                    <div
+                      key={cat}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        flexWrap: "wrap",
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontFamily: SANS,
+                          fontSize: 12,
+                          color: INK,
+                          flexShrink: 0,
+                          minWidth: 84,
+                        }}
+                      >
+                        {cat}
+                      </span>
+                      {sizes.map((s) => (
+                        <button
+                          key={s}
+                          type="button"
+                          onClick={() => startCategoryQuick(cat, s)}
+                          aria-label={`${cat}から${s}肢`}
+                          style={{
+                            ...outlineButton,
+                            flex: 1,
+                            minHeight: 44,
+                            padding: "8px 0",
+                            fontSize: 13,
+                            letterSpacing: 1,
+                          }}
+                        >
+                          {s}肢
+                        </button>
+                      ))}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
