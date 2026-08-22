@@ -407,6 +407,39 @@ describe("実データ(READINGS)との整合", () => {
     expect(entry!.line.text).toContain("一年以内の期間を定めて");
   });
 
+  // レビュー(PR #221)で実在が確認された、階層的な項/号の参照が本文にあるケース。
+  // 「柱書」「N項柱書」「漢数字の号」等、label だけでは項の文脈が失われる表記を、
+  // 本文の書き方(例: 34条の2第1項・64条の9第1項1号)でも解決できることを確認する
+  it.each([
+    ["q4", "37条の2第1項本文", "宅地建物取引業者が自ら売主となる"],
+    ["q4", "16条の5第1号ロ", "分譲を案内所"],
+    ["q32", "64条の9第1項1号", "加入しようとする者"],
+    ["q12", "35条1項柱書", "宅地若しくは建物の売買"],
+    ["q12", "35条9号", "損害賠償額の予定"],
+    ["q15", "5条1項", "免許を受けようとする者が次の各号"],
+    ["q14", "34条の2第1項", "媒介の契約"],
+    ["q5", "第7", "低廉な空家等"],
+    ["q5", "第8", "低廉な空家等の売買又は交換の代理"],
+  ])("%s 本文の「%s」が該当行に解決される", (topicId, surface, expectedSubstring) => {
+    const reading = READINGS.get(topicId)!;
+    const index = buildCitationIndex(reading);
+    const entry = resolveCitation(index, surface);
+    expect(entry, `${topicId}: ${surface}`).toBeDefined();
+    expect(entry!.line.text).toContain(expectedSubstring);
+  });
+
+  it("報酬額の制限(q5)本文の「告示第11条2項」(丸数字②を指す)が該当行に解決される", () => {
+    const reading = READINGS.get("q5")!;
+    const index = buildCitationIndex(reading);
+    const re = new RegExp(citationPattern(index), "g");
+    const body = reading.sections.flatMap((s) => s.body).join("\n");
+    expect(body).toContain("告示第11条2項");
+    const matches = [...body.matchAll(re)].map((m) => m[0]);
+    expect(matches).toContain("第11条2項");
+    const entry = resolveCitation(index, "第11条2項")!;
+    expect(entry.line.text).toContain("消費税を納める義務を免除される");
+  });
+
   it("q34 本文の「68条の2第1項4号」(算用数字)は 1項四号 の行(必要的消除)に解決される", () => {
     const reading = READINGS.get("q34")!;
     const index = buildCitationIndex(reading);

@@ -104,6 +104,42 @@ function withArabicGou(key: string): string | null {
   return changed ? converted : null;
 }
 
+/** 純粋な「N項」だけの表記(「1項」「23項」等)か */
+function isBareProjection(label: string): boolean {
+  return /^\d+項$/.test(label);
+}
+
+/** 「N項柱書」の表記から、項の部分(「N項」)だけを取り出す。当たらなければ null */
+function projectionPrefixOf(label: string): string | null {
+  const m = /^(\d+項)柱書$/.exec(label);
+  return m ? m[1] : null;
+}
+
+/** 純粋な「漢数字+号」だけの表記(「一号」「十一号」等。柱書・下位区分は含まない)か */
+function isBareGou(label: string): boolean {
+  return /^[一二三四五六七八九十]+号$/.test(label);
+}
+
+/** 「漢数字+号+柱書」の表記から、号の部分(「一号」等)だけを取り出す。当たらなければ null */
+function gouPrefixOf(label: string): string | null {
+  const m = /^([一二三四五六七八九十]+号)柱書$/.exec(label);
+  return m ? m[1] : null;
+}
+
+/** イ〜ホ等、号の下位区分の表記(1文字のカタカナ)か */
+function isKanaSubItem(label: string): boolean {
+  return /^[イロハニホヘトチリヌル]$/.test(label);
+}
+
+/** 報酬告示のように丸数字で項を表す様式(①=1項・②=2項…)の対応表 */
+const CIRCLED_DIGIT_PROJECTION: Record<string, string> = {
+  "①": "1項",
+  "②": "2項",
+  "③": "3項",
+  "④": "4項",
+  "⑤": "5項",
+};
+
 /** Reading 1本ぶんの条文参照索引を作る(キー → 該当行)。同じキーは先勝ち */
 export function buildCitationIndex(reading: Reading): Map<string, CitationEntry> {
   const index = new Map<string, CitationEntry>();
@@ -122,10 +158,35 @@ export function buildCitationIndex(reading: Reading): Map<string, CitationEntry>
   // 例: "64条の7第1項" と "65条2項" のどちらの書き方も本文に出てくる)
   const withDaiVariants = (suffix: string): string[] =>
     suffix.startsWith("第") ? [suffix] : [suffix, `第${suffix}`];
+  const registerWithArticle = (article: string, suffix: string, entry: CitationEntry) => {
+    for (const a of articleVariants(article)) {
+      for (const s of withDaiVariants(suffix)) {
+        const key = a + s;
+        register(key, { ...entry, key });
+      }
+    }
+  };
+
+  // 「柱書」だけの bare な表記(項番号を伴わない)を暗黙の「1項」とみなしてよい条文かどうか。
+  // 同じ article を持つ他の quote ブロックのどこかに明示的な「N項」表記があれば、
+  // その条文には項の区分があると判断する(例: juuyou-jikou.ts は 35条1項 と
+  // 35条4項 が別ブロックに分かれているため、35条1項 側の「柱書」は「1項」を暗黙に持つ)
+  const articlesWithExplicitProjection = new Set<string>();
+  for (const section of reading.sections) {
+    const quote = section.quote;
+    if (!quote?.article) continue;
+    if (quote.lines.some((l) => l.label && /\d+項/.test(l.label))) {
+      articlesWithExplicitProjection.add(quote.article);
+    }
+  }
 
   for (const section of reading.sections) {
     const quote = section.quote;
     if (!quote) continue;
+    // このブロックを上から見ていくときの「今どの項/号の中にいるか」(表示ラベルは変えない。
+    // 索引キーを補うためだけの内部状態)
+    let currentProjection: string | null = null;
+    let currentGou: string | null = null;
     for (const line of quote.lines) {
       const entry: CitationEntry = {
         key: "",
@@ -141,18 +202,99 @@ export function buildCitationIndex(reading: Reading): Map<string, CitationEntry>
         continue;
       }
       if (isHeadingLabel(label)) continue;
+
       if (isSelfQualified(label)) {
         register(label, { ...entry, key: label });
         const stripped = stripLawNamePrefix(label);
         if (stripped) register(stripped, { ...entry, key: stripped });
-      } else if (quote.article) {
+        // 表示用の注記「(媒介)」等が付いた自己完結表記は、注記を外した表記でも拾えるようにする
+        // (例: "第7(媒介)" → "第7")
+        const bare = label.replace(/[(（][^)）]*[)）]$/, "");
+        if (bare !== label) {
+          register(bare, { ...entry, key: bare });
+          const strippedBare = stripLawNamePrefix(bare);
+          if (strippedBare) register(strippedBare, { ...entry, key: strippedBare });
+        }
+        continue;
+      }
+
+      if (!quote.article) continue;
+
+      // 報酬告示のように「①」「②」で項を表す様式は、本文の「N項」表記でも
+      // 拾えるようにする。本文が「告示第11条2項」のように「条」を挟んで書くことも
+      // あるため、その表記も別キーとして登録する
+      const circledProjection = CIRCLED_DIGIT_PROJECTION[label];
+      if (circledProjection) {
+        registerWithArticle(quote.article, circledProjection, entry);
         for (const a of articleVariants(quote.article)) {
-          for (const suffix of withDaiVariants(label)) {
-            const key = a + suffix;
+          if (/^第\d+$/.test(a)) {
+            const key = `${a}条${circledProjection}`;
             register(key, { ...entry, key });
           }
         }
+        continue;
       }
+
+      if (isBareProjection(label)) {
+        currentProjection = label;
+        currentGou = null;
+        registerWithArticle(quote.article, label, entry);
+        continue;
+      }
+
+      const projFromChapeau = projectionPrefixOf(label);
+      if (projFromChapeau) {
+        currentProjection = projFromChapeau;
+        currentGou = null;
+        registerWithArticle(quote.article, label, entry);
+        // 柱書を除いた「N項」だけの表記でも、その項全体への参照として拾えるようにする
+        registerWithArticle(quote.article, projFromChapeau, entry);
+        continue;
+      }
+
+      if (label === "柱書") {
+        if (articlesWithExplicitProjection.has(quote.article)) {
+          currentProjection = "1項";
+          currentGou = null;
+          registerWithArticle(quote.article, "1項柱書", entry);
+          registerWithArticle(quote.article, "1項", entry);
+        } else {
+          registerWithArticle(quote.article, label, entry);
+        }
+        continue;
+      }
+
+      const gouFromChapeau = gouPrefixOf(label);
+      if (gouFromChapeau) {
+        currentGou = gouFromChapeau;
+        registerWithArticle(quote.article, label, entry);
+        const withProjection = (currentProjection ?? "") + gouFromChapeau;
+        registerWithArticle(quote.article, withProjection, entry);
+        continue;
+      }
+
+      if (isBareGou(label)) {
+        currentGou = label;
+        registerWithArticle(quote.article, label, entry);
+        if (currentProjection) registerWithArticle(quote.article, currentProjection + label, entry);
+        continue;
+      }
+
+      if (isKanaSubItem(label) && currentGou) {
+        registerWithArticle(quote.article, currentGou + label, entry);
+        if (currentProjection) {
+          registerWithArticle(quote.article, currentProjection + currentGou + label, entry);
+        }
+        continue;
+      }
+
+      // 「1項前段」のような表記は「1項本文」でも拾えるようにする(同じ項の主文を指す
+      // 言い回しの揺れ。「後段」「ただし書」は別内容を指すため対象にしない)
+      if (label.endsWith("前段")) {
+        registerWithArticle(quote.article, label.replace(/前段$/, "本文"), entry);
+      }
+
+      registerWithArticle(quote.article, label, entry);
     }
   }
 

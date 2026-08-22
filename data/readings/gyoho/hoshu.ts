@@ -169,6 +169,7 @@ export const hoshuReading: Reading = {
       heading: "原文を読む — 報酬告示 第11(第2〜第10によらない報酬受領の禁止・免税事業者の計算方法)",
       body: ["省略なしの全文(令和6年6月21日改正版)。"],
       quote: {
+        article: "第11",
         lines: [
           {
             label: "①",
