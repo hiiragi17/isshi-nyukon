@@ -78,6 +78,50 @@ describe("buildCitationIndex — 索引の作成", () => {
     expect(index.has("64条の71項")).toBe(true);
   });
 
+  it("法令名の接頭辞は、複数の剥がし方を試す(施行令つきの略称も、条名のみの表記も)", () => {
+    const reading = makeReading({
+      sections: [
+        {
+          heading: "h",
+          body: [],
+          quote: {
+            article: "宅地建物取引業法施行令3条の5",
+            cite: "c",
+            lines: [{ label: "本文", text: "政令で定める額は、千万円とする。" }],
+          },
+        },
+      ],
+    });
+    const index = buildCitationIndex(reading);
+    // 「宅地建物取引業法」だけを剥がした「施行令3条の5」(本文が使う書き方)
+    expect(index.get("施行令3条の5")?.line.text).toBe("政令で定める額は、千万円とする。");
+    // 法令名を全部剥がした「3条の5」
+    expect(index.get("3条の5")?.line.text).toBe("政令で定める額は、千万円とする。");
+    // フルの表記もそのまま解決できる
+    expect(index.get("宅地建物取引業法施行令3条の5")?.line.text).toBe("政令で定める額は、千万円とする。");
+  });
+
+  it("条文が1文だけで、唯一の行に label:'本文' が付く場合、無ラベル行と同様に条名だけでも解決できる", () => {
+    const reading = makeReading({
+      sections: [
+        {
+          heading: "h",
+          body: [],
+          quote: {
+            article: "宅建業法施行規則3条",
+            cite: "c",
+            lines: [
+              { label: "条見出し", text: "(見出し)" },
+              { label: "本文", text: "免許の更新の申請期間の規定。" },
+            ],
+          },
+        },
+      ],
+    });
+    const index = buildCitationIndex(reading);
+    expect(index.get("施行規則3条")?.line.text).toBe("免許の更新の申請期間の規定。");
+  });
+
   it("label 自体が条番号を含む(自己完結する)ときは article なしでもそのままキーになる", () => {
     const reading = makeReading({
       sections: [
@@ -490,6 +534,7 @@ describe("実データ(READINGS)との整合", () => {
     ["q14", "34条の2第1項", "媒介の契約"],
     ["q5", "第7", "低廉な空家等"],
     ["q5", "第8", "低廉な空家等の売買又は交換の代理"],
+    ["q17", "施行令3条の5", "政令で定める額は、千万円"],
   ])("%s 本文の「%s」が該当行に解決される", (topicId, surface, expectedSubstring) => {
     const reading = READINGS.get(topicId)!;
     const index = buildCitationIndex(reading);

@@ -39,13 +39,20 @@ const LAW_NAME_PREFIXES = [
   "民法",
 ];
 
-function stripLawNamePrefix(label: string): string | null {
+/**
+ * 表記から法令名の接頭辞を剥がした表記を、当てはまる分だけすべて返す
+ * (最初に当たったものだけで打ち切らない)。例えば「宅地建物取引業法施行令3条の5」は
+ * 「宅地建物取引業法施行令」を剥がした「3条の5」だけでなく、「宅地建物取引業法」を
+ * 剥がした「施行令3条の5」でも本文に出てくるため、両方を候補として返す
+ */
+function stripLawNamePrefixes(label: string): string[] {
+  const results: string[] = [];
   for (const prefix of LAW_NAME_PREFIXES) {
     if (label.startsWith(prefix) && label.length > prefix.length) {
-      return label.slice(prefix.length);
+      results.push(label.slice(prefix.length));
     }
   }
-  return null;
+  return results;
 }
 
 /** 見出し行(「条見出し」「19条の2見出し」等)は条文参照として拾わない */
@@ -150,10 +157,10 @@ export function buildCitationIndex(reading: Reading): Map<string, CitationEntry>
 
   // 条名(article)の候補: フルの表記(法令名つき)と、法令名を剥がした表記の両方を試す
   // (本文は確立済みの法令名を省略して書くことが多いため)
-  const articleVariants = (article: string): string[] => {
-    const stripped = stripLawNamePrefix(article);
-    return stripped ? [article, stripped] : [article];
-  };
+  const articleVariants = (article: string): string[] => [
+    article,
+    ...stripLawNamePrefixes(article),
+  ];
   // 号・項の番号の前に「第」を補った表記も試す(本文の書き方が条文ごとに揺れるため。
   // 例: "64条の7第1項" と "65条2項" のどちらの書き方も本文に出てくる)
   const withDaiVariants = (suffix: string): string[] =>
@@ -230,15 +237,17 @@ export function buildCitationIndex(reading: Reading): Map<string, CitationEntry>
 
       if (isSelfQualified(label)) {
         register(label, { ...entry, key: label });
-        const stripped = stripLawNamePrefix(label);
-        if (stripped) register(stripped, { ...entry, key: stripped });
+        for (const stripped of stripLawNamePrefixes(label)) {
+          register(stripped, { ...entry, key: stripped });
+        }
         // 表示用の注記「(媒介)」等が付いた自己完結表記は、注記を外した表記でも拾えるようにする
         // (例: "第7(媒介)" → "第7")
         const bare = label.replace(/[(（][^)）]*[)）]$/, "");
         if (bare !== label) {
           register(bare, { ...entry, key: bare });
-          const strippedBare = stripLawNamePrefix(bare);
-          if (strippedBare) register(strippedBare, { ...entry, key: strippedBare });
+          for (const strippedBare of stripLawNamePrefixes(bare)) {
+            register(strippedBare, { ...entry, key: strippedBare });
+          }
         }
         continue;
       }
@@ -323,6 +332,14 @@ export function buildCitationIndex(reading: Reading): Map<string, CitationEntry>
       // 言い回しの揺れ。「後段」「ただし書」は別内容を指すため対象にしない)
       if (label.endsWith("前段")) {
         registerWithArticle(quote.article, label.replace(/前段$/, "本文"), entry);
+      }
+
+      // 条文全体が1文だけの条(施行令3条の5等)は、唯一の実質行に「本文」という
+      // label が付くことがある。この場合は無ラベル行と同じく、条名そのものでも
+      // 拾えるようにする(例: 本文が「施行令3条の5により」と、号や項を付けずに
+      // 条名だけで参照するため)
+      if (label === "本文") {
+        for (const a of articleVariants(quote.article)) register(a, { ...entry, key: a });
       }
 
       registerWithArticle(quote.article, label, entry);
