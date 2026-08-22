@@ -932,7 +932,7 @@ export default function PlayPage() {
                           style={{
                             ...outlineButton,
                             flex: 1,
-                            minHeight: 40,
+                            minHeight: 44,
                             padding: "8px 0",
                             fontSize: 13,
                             letterSpacing: 1,
