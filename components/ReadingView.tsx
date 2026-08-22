@@ -9,8 +9,6 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import type { Reading } from "@/types";
-import { QUESTIONS } from "@/data/questions";
-import { itemKeysForTopic } from "@/lib/items";
 import { INK, CARD, AI_BLUE, AI_BLUE_BG, MUTED, SERIF, SANS, RADIUS } from "@/lib/tokens";
 import { page, col, card, outlineButton } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
@@ -70,7 +68,18 @@ function QuoteToggle({
   );
 }
 
-export function ReadingView({ reading }: { reading: Reading }) {
+/**
+ * `solveKeys` はページ側(サーバーコンポーネント。app/learn/[topicId]/page.tsx)で
+ * 計算して渡す。全問題データ(QUESTIONS)をこのクライアントコンポーネントの
+ * バンドルに含めないため(CodeRabbit/Codexレビュー対応。PR #222)。
+ */
+export function ReadingView({
+  reading,
+  solveKeys,
+}: {
+  reading: Reading;
+  solveKeys: string[];
+}) {
   const router = useRouter();
   const [activeTerm, setActiveTerm] = useState<string | null>(null);
   const [activeCitation, setActiveCitation] = useState<CitationEntry | null>(null);
@@ -78,10 +87,6 @@ export function ReadingView({ reading }: { reading: Reading }) {
 
   const citationIndex = useMemo(() => buildCitationIndex(reading), [reading]);
   const pattern = useMemo(() => citationPattern(citationIndex), [citationIndex]);
-  const solveKeys = useMemo(
-    () => itemKeysForTopic(reading.topicId, QUESTIONS),
-    [reading],
-  );
 
   const openTerm = (word: string) => {
     setActiveCitation(null);
