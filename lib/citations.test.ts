@@ -533,6 +533,27 @@ describe("号の漢数字/算用数字の表記ゆれと、より長い(索引�
     // 一方、素の「告示第3により」は正しくヒットする
     expect("告示第3により算出する。".match(re)![0]).toBe("第3");
   });
+
+  it("範囲を表す「〜」が続くときはマッチしない(第2〜第10 の 第2 だけを開いてしまわない)", () => {
+    const reading = makeReading({
+      sections: [
+        {
+          heading: "h",
+          body: [],
+          quote: {
+            cite: "c",
+            lines: [{ label: "第2", text: "媒介の報酬額の計算方法。" }],
+          },
+        },
+      ],
+    });
+    const index = buildCitationIndex(reading);
+    const re = new RegExp(citationPattern(index));
+    // 「第2」は範囲の始点にすぎず、「第2〜第10」全体を指す表記なので開かない
+    expect("第2〜第10の規定による".match(re)).toBeNull();
+    // 単独の「第2」は正しくヒットする
+    expect("第2の計算方法により".match(re)![0]).toBe("第2");
+  });
 });
 
 describe("実データ(READINGS)との整合", () => {
@@ -668,4 +689,23 @@ describe("実データ(READINGS)との整合", () => {
     const matches = [...around.matchAll(new RegExp(citationPattern(index), "g"))].map((m) => m[0]);
     expect(matches).toEqual([]);
   });
+
+  it.each([
+    ["q5", "第2〜第10"],
+    ["q5", "第7〜第10"],
+    ["q16", "18条1項1号〜8号"],
+    ["q16", "9号〜11号"],
+  ])(
+    "%s 本文の範囲表記「%s」は、範囲の始点だけを単体の参照として開かない",
+    (topicId, rangeText) => {
+      const reading = READINGS.get(topicId)!;
+      const index = buildCitationIndex(reading);
+      const body = reading.sections.flatMap((s) => s.body).join("\n");
+      expect(body, `${topicId} に "${rangeText}" が無い`).toContain(rangeText);
+      const idx = body.indexOf(rangeText);
+      const around = body.slice(idx, idx + rangeText.length);
+      const matches = [...around.matchAll(new RegExp(citationPattern(index), "g"))].map((m) => m[0]);
+      expect(matches).toEqual([]);
+    },
+  );
 });
