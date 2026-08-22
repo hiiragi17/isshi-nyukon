@@ -133,6 +133,15 @@ function gouPrefixOf(label: string): string | null {
   return m ? m[1] : null;
 }
 
+/**
+ * 行の本文が2文以上からなる(末尾の句点を除いても内部に句点がある)か。
+ * 前段・後段の2文構成を検出するための簡易な合図(構文解析はしない)。
+ * 誤検出しても、当たる先は同じ行(段全体)なので誤ったリンクにはならない
+ */
+function hasTrailingSentence(text: string): boolean {
+  return text.replace(/。\s*$/, "").includes("。");
+}
+
 /** イ〜ホ等、号の下位区分の表記(1文字のカタカナ)か */
 function isKanaSubItem(label: string): boolean {
   return /^[イロハニホヘトチリヌル]$/.test(label);
@@ -283,6 +292,17 @@ export function buildCitationIndex(reading: Reading): Map<string, CitationEntry>
         currentProjection = label;
         currentGou = null;
         registerWithArticle(quote.article, label, entry);
+        // この項が2文以上からなるとき(「〜できない。これより長い期間を…、三月とする。」の
+        // ような前段・後段の構成)、本文が「N項後段」と参照することがある。行を分割せず
+        // 段全体を指すポップアップになるが(ただし書の扱いと同じ)、無関係な条文には
+        // 広がらないよう素の表記の衝突判定(bareProjectionOccurrences)にも乗せる
+        if (hasTrailingSentence(line.text)) {
+          const alias = `${label}後段`;
+          registerWithArticle(quote.article, alias, entry);
+          const occurrences = bareProjectionOccurrences.get(alias) ?? [];
+          occurrences.push(entry);
+          bareProjectionOccurrences.set(alias, occurrences);
+        }
         continue;
       }
 
@@ -320,7 +340,16 @@ export function buildCitationIndex(reading: Reading): Map<string, CitationEntry>
       if (isBareGou(label)) {
         currentGou = label;
         registerWithArticle(quote.article, label, entry);
-        if (currentProjection) registerWithArticle(quote.article, currentProjection + label, entry);
+        if (currentProjection) {
+          const combined = currentProjection + label;
+          registerWithArticle(quote.article, combined, entry);
+          // 「1項4号」のように項+号を条名なしでそのまま参照する書き方も本文にはある
+          // (例: 37条書面の「宅地又は建物の引渡しの時期(1項4号)」)。素の「N項」表記と
+          // 同じく、この Reading の中で衝突しないときだけ条名なしでも登録できるようにする
+          const occurrences = bareProjectionOccurrences.get(combined) ?? [];
+          occurrences.push(entry);
+          bareProjectionOccurrences.set(combined, occurrences);
+        }
         continue;
       }
 
@@ -393,6 +422,14 @@ const NON_BOUNDARY_FOLLOW = "(?![0-9一二三四五六七八九十号項条〜�
  */
 const NON_BOUNDARY_PRECEDE = "(?<![0-9条第])";
 
+/**
+ * 「〜」「～」(範囲を表す波ダッシュ)の直後には、キーの種類を問わずマッチさせない境界。
+ * 「64条の7〜64条の15」のように自己完結表記(64条の15)が範囲の終点として使われている
+ * ときも、その終点だけを指す参照として開いてしまうと範囲全体を指す本文の趣旨とずれる
+ * ため、NON_BOUNDARY_FOLLOW(直後の境界)と対になる直前側の境界として全キーに適用する
+ */
+const NON_BOUNDARY_PRECEDE_RANGE = "(?<![〜～])";
+
 /** 条名を伴わない「N項」始まりのキーか(境界ガードが必要かどうかの判定) */
 function isBareProjectionKey(key: string): boolean {
   return /^\d+項/.test(key);
@@ -405,7 +442,8 @@ export function citationPattern(index: Map<string, CitationEntry>): string {
     .sort((a, b) => b.length - a.length)
     .map((k) => {
       const escaped = k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      return isBareProjectionKey(k) ? `${NON_BOUNDARY_PRECEDE}${escaped}` : escaped;
+      const precede = NON_BOUNDARY_PRECEDE_RANGE + (isBareProjectionKey(k) ? NON_BOUNDARY_PRECEDE : "");
+      return `${precede}${escaped}`;
     })
     .join("|");
   return `(?:${alternation})${NON_BOUNDARY_FOLLOW}`;

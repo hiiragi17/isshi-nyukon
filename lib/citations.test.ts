@@ -704,4 +704,46 @@ describe("実データ(READINGS)との整合", () => {
       expect(matches).toEqual([]);
     },
   );
+
+  // Codex レビュー(PR #221)指摘: 37条書面(q13)は「四号」「五号」「八号」が
+  // 柱書(暗黙の1項)の下にぶら下がる号で、この Reading では 1項四号/五号/八号 の
+  // 組み合わせが他条文と衝突しないため、条名なしの「1項4号」等でも解決できるはず
+  it.each([
+    ["1項4号", "宅地又は建物の引渡しの時期"],
+    ["1項5号", "移転登記の申請の時期"],
+    ["1項8号", "損害賠償額の予定又は違約金"],
+  ])("37条書面(q13)本文の条名なし表記「%s」が解決される", (surface, expectedSubstring) => {
+    const reading = READINGS.get("q13")!;
+    const index = buildCitationIndex(reading);
+    const entry = resolveCitation(index, surface);
+    expect(entry, surface).toBeDefined();
+    expect(entry!.line.text).toContain(expectedSubstring);
+  });
+
+  // Codex レビュー(PR #221)指摘: 保証協会(q32)本文の「一連の流れ(64条の7〜64条の15)」は
+  // 64条の7から64条の15までの範囲を指すので、範囲の終点(自己完結表記の64条の15)だけを
+  // 単体の参照として開いてはいけない(NON_BOUNDARY_PRECEDE_RANGE は素の項キーだけでなく
+  // 自己完結表記にも適用する)
+  it("保証協会(q32)本文の範囲表記「64条の7〜64条の15」は、終点の64条の15だけを単体の参照として開かない", () => {
+    const reading = READINGS.get("q32")!;
+    const index = buildCitationIndex(reading);
+    const body = reading.sections.flatMap((s) => s.body).join("\n");
+    const rangeText = "64条の7〜64条の15";
+    expect(body).toContain(rangeText);
+    const idx = body.indexOf(rangeText);
+    const around = body.slice(idx, idx + rangeText.length);
+    const matches = [...around.matchAll(new RegExp(citationPattern(index), "g"))].map((m) => m[0]);
+    expect(matches).toEqual([]);
+  });
+
+  // Codex レビュー(PR #221)指摘: 媒介契約(q14)本文の「(3項後段)」は、3項の2文目
+  // (「これより長い期間を定めたときは、その期間は、三月とする。」)を指す。ただし書と
+  // 同様、行を分割せず段全体(3項)への参照として解決できればよい
+  it("媒介契約(q14)本文の「3項後段」が3項の行(段全体)に解決される", () => {
+    const reading = READINGS.get("q14")!;
+    const index = buildCitationIndex(reading);
+    const entry = resolveCitation(index, "3項後段");
+    expect(entry).toBeDefined();
+    expect(entry!.line.text).toContain("その期間は、三月とする");
+  });
 });
