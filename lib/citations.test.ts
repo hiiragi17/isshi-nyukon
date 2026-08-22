@@ -632,12 +632,10 @@ describe("実データ(READINGS)との整合", () => {
   it("報酬額の制限(q5)本文の「国総動第3号」は無関係な告示番号なので、報酬告示 第3 として誤爆しない", () => {
     const reading = READINGS.get("q5")!;
     const index = buildCitationIndex(reading);
-    const re = new RegExp(citationPattern(index), "g");
     const body = reading.sections.flatMap((s) => s.body).join("\n");
     expect(body).toContain("国総動第3号");
     const idx = body.indexOf("国総動第3号");
     const around = body.slice(idx, idx + "国総動第3号".length + 2);
-    re.lastIndex = 0;
     const matches = [...around.matchAll(new RegExp(citationPattern(index), "g"))].map((m) => m[0]);
     expect(matches).not.toContain("第3");
   });
@@ -669,12 +667,10 @@ describe("実データ(READINGS)との整合", () => {
   it("監督処分・罰則(q34)本文の「16条の15第3項から第5項まで」は、無関係な条文の範囲参照なので誤って「5項」に解決しない", () => {
     const reading = READINGS.get("q34")!;
     const index = buildCitationIndex(reading);
-    const re = new RegExp(citationPattern(index), "g");
     const body = reading.sections.flatMap((s) => s.body).join("\n");
     expect(body).toContain("16条の15第3項から第5項まで");
     const idx = body.indexOf("16条の15第3項から第5項まで");
     const around = body.slice(idx, idx + "16条の15第3項から第5項まで".length);
-    re.lastIndex = 0;
     const matches = [...around.matchAll(new RegExp(citationPattern(index), "g"))].map((m) => m[0]);
     expect(matches).toEqual([]);
   });
