@@ -928,6 +928,7 @@ export default function PlayPage() {
                           key={s}
                           type="button"
                           onClick={() => startCategoryQuick(cat, s)}
+                          aria-label={`${cat}から${s}肢`}
                           style={{
                             ...outlineButton,
                             flex: 1,
