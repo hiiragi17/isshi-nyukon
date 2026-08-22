@@ -180,6 +180,31 @@ export function buildCitationIndex(reading: Reading): Map<string, CitationEntry>
     }
   }
 
+  // 条名を付けない「素の項」表記(例: 「3項」「1項後段」)は、本来なら他の条文の
+  // 同じ項と衝突しうるので登録しない。ただし、この Reading の中でその表記が
+  // ただ1箇所にしか出てこないなら、衝突の心配がないので素のまま登録してよい
+  // (例: cooling-off.ts は 37条の2 だけを扱うため、本文の「(3項)」は
+  // 曖昧さなく 37条の2第3項 を指すと判断できる)。
+  // 「N項」という表記だけでなく「N項柱書」「N項ただし書」等も同じ項を指すので、
+  // 項番号(先頭の「N項」)を単位に、どの article がその項に触れているかを見る
+  // (例: baikai-keiyaku.ts は 34条の2 が「1項柱書」を、施行規則15条の10 が
+  // 素の「1項」を持つため、表記としては「1項」が1回しか出てこなくても、
+  // 実際には2つの条文にまたがる項番号なので、素の「1項」は登録しない)
+  const projectionNumberToArticles = new Map<string, Set<string>>();
+  for (const section of reading.sections) {
+    const quote = section.quote;
+    if (!quote?.article) continue;
+    for (const line of quote.lines) {
+      const m = line.label && /^(\d+項)/.exec(line.label);
+      if (!m) continue;
+      const articles = projectionNumberToArticles.get(m[1]) ?? new Set<string>();
+      articles.add(quote.article);
+      projectionNumberToArticles.set(m[1], articles);
+    }
+  }
+
+  const bareProjectionOccurrences = new Map<string, CitationEntry[]>();
+
   for (const section of reading.sections) {
     const quote = section.quote;
     if (!quote) continue;
@@ -219,6 +244,12 @@ export function buildCitationIndex(reading: Reading): Map<string, CitationEntry>
       }
 
       if (!quote.article) continue;
+
+      if (/^\d+項/.test(label)) {
+        const occurrences = bareProjectionOccurrences.get(label) ?? [];
+        occurrences.push(entry);
+        bareProjectionOccurrences.set(label, occurrences);
+      }
 
       // 報酬告示のように「①」「②」で項を表す様式は、本文の「N項」表記でも
       // 拾えるようにする。本文が「告示第11条2項」のように「条」を挟んで書くことも
@@ -298,6 +329,15 @@ export function buildCitationIndex(reading: Reading): Map<string, CitationEntry>
     }
   }
 
+  // この Reading の中で衝突しない「素の項」表記は、条名なしでも登録する
+  for (const [label, occurrences] of bareProjectionOccurrences) {
+    if (occurrences.length !== 1) continue;
+    const m = /^(\d+項)/.exec(label);
+    const articles = m ? projectionNumberToArticles.get(m[1]) : undefined;
+    if (articles && articles.size > 1) continue;
+    register(label, { ...occurrences[0], key: label });
+  }
+
   // 漢数字の号を算用数字に変換した表記も登録する(本文は算用数字で書くことが多いため。
   // 例: label 由来の "68条の2第1項四号" に対し "68条の2第1項4号" も拾えるようにする)
   for (const [key, entry] of [...index.entries()]) {
@@ -319,12 +359,30 @@ export function buildCitationIndex(reading: Reading): Map<string, CitationEntry>
  */
 const NON_BOUNDARY_FOLLOW = "(?![0-9一二三四五六七八九十号項条]|柱書|ただし書|本文|前段|後段)";
 
+/**
+ * 条名を伴わない「N項」から始まるキー(例: 「3項」「1項後段」)の手前に付ける境界。
+ * 「条」や数字、「第」が直前にあると、そのキーは実は「35条5項」や
+ * 「16条の15第3項から第5項まで」のような別条文への参照の末尾を切り取っただけの
+ * 可能性があるため、マッチさせない(fail-safe。本来は同じ項を指す「第3項」という
+ * 言い回しも同様に塞がれるが、無関係な条文の範囲参照に誤爆するほうが害が大きいため
+ * 安全側に倒す)
+ */
+const NON_BOUNDARY_PRECEDE = "(?<![0-9条第])";
+
+/** 条名を伴わない「N項」始まりのキーか(境界ガードが必要かどうかの判定) */
+function isBareProjectionKey(key: string): boolean {
+  return /^\d+項/.test(key);
+}
+
 /** 索引の全キーを長い順に並べた選言パターン(最長一致のため。TERM_PATTERN と同じ考え方) */
 export function citationPattern(index: Map<string, CitationEntry>): string {
   if (index.size === 0) return "";
   const alternation = [...index.keys()]
     .sort((a, b) => b.length - a.length)
-    .map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+    .map((k) => {
+      const escaped = k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return isBareProjectionKey(k) ? `${NON_BOUNDARY_PRECEDE}${escaped}` : escaped;
+    })
     .join("|");
   return `(?:${alternation})${NON_BOUNDARY_FOLLOW}`;
 }

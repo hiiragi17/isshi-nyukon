@@ -270,6 +270,76 @@ describe("citationPattern / resolveCitation — 表記の解決と未ヒット�
     expect(match![0]).toBe("68条の2第1項");
   });
 
+  it("条名なしの「N項」表記は、同じ Reading 内で唯一の条文しか使っていなければ登録する", () => {
+    const reading = makeReading({
+      sections: [
+        {
+          heading: "h",
+          body: [],
+          quote: {
+            article: "テスト法1条",
+            cite: "c",
+            lines: [{ label: "3項", text: "唯一の3項。" }],
+          },
+        },
+      ],
+    });
+    const index = buildCitationIndex(reading);
+    expect(resolveCitation(index, "3項")?.line.text).toBe("唯一の3項。");
+  });
+
+  it("条名なしの「N項」表記は、複数の条文が同じ項番号を持つときは登録しない(曖昧な解決を避ける)", () => {
+    const reading = makeReading({
+      sections: [
+        {
+          heading: "h1",
+          body: [],
+          quote: {
+            article: "テスト法1条",
+            cite: "c1",
+            lines: [{ label: "1項柱書", text: "テスト法1条の1項。" }],
+          },
+        },
+        {
+          heading: "h2",
+          body: [],
+          quote: {
+            article: "テスト法施行規則1条",
+            cite: "c2",
+            lines: [{ label: "1項", text: "施行規則1条の1項。" }],
+          },
+        },
+      ],
+    });
+    const index = buildCitationIndex(reading);
+    // ラベルの表記としては「1項」は1回しか出てこないが、実際には2つの条文にまたがる
+    // 項番号なので、素の「1項」は登録しない。条名つきなら解決できる
+    expect(index.has("1項")).toBe(false);
+    expect(resolveCitation(index, "テスト法1条1項")?.line.text).toBe("テスト法1条の1項。");
+    expect(resolveCitation(index, "テスト法施行規則1条1項")?.line.text).toBe("施行規則1条の1項。");
+  });
+
+  it("条名なしの「N項」表記は、直前に「条」「第」や数字があると別条文の一部として扱いマッチしない", () => {
+    const reading = makeReading({
+      sections: [
+        {
+          heading: "h",
+          body: [],
+          quote: {
+            article: "テスト法1条",
+            cite: "c",
+            lines: [{ label: "5項", text: "唯一の5項。" }],
+          },
+        },
+      ],
+    });
+    const index = buildCitationIndex(reading);
+    const re = new RegExp(citationPattern(index), "g");
+    expect("(5項)を見よ".match(re)?.[0]).toBe("5項");
+    expect("35条5項を見よ".match(re)).toBeNull();
+    expect("第5項までを見よ".match(re)).toBeNull();
+  });
+
   it("索引にヒットした表記は該当行を返す", () => {
     const reading = makeReading({
       sections: [
@@ -463,5 +533,53 @@ describe("実データ(READINGS)との整合", () => {
     re.lastIndex = 0;
     const matches = [...around.matchAll(new RegExp(citationPattern(index), "g"))].map((m) => m[0]);
     expect(matches).not.toContain("第3");
+  });
+
+  // Codex レビュー(PR #221)指摘: cooling-off.ts は 37条の2 だけを扱うため、
+  // 本文の「(3項)」「(4項)」「(1項後段)」のような条名なしの参照も
+  // 曖昧さなく解決できるはず、という指摘への対応
+  it.each([
+    ["q4", "1項後段", "損害賠償又は違約金の支払"],
+    ["q4", "3項", "手付金その他の金銭を返還"],
+    ["q4", "4項", "特約で申込者等に不利なもの"],
+  ])("クーリングオフ(q4)本文の条名なし表記「%s」が解決される", (_topicId, surface, expectedSubstring) => {
+    const reading = READINGS.get("q4")!;
+    const index = buildCitationIndex(reading);
+    const entry = resolveCitation(index, surface);
+    expect(entry, surface).toBeDefined();
+    expect(entry!.line.text).toContain(expectedSubstring);
+  });
+
+  it("媒介契約(q14)は 34条の2 と施行規則15条の10 の両方が「1項」を持つため、素の「1項」は登録しない(曖昧な参照を誤って解決しない)", () => {
+    const reading = READINGS.get("q14")!;
+    const index = buildCitationIndex(reading);
+    expect(index.has("1項")).toBe(false);
+    expect(index.has("2項")).toBe(false);
+    // 34条の2 にしか無い項は、素のままでも一意に解決できる
+    expect(resolveCitation(index, "3項")?.line.text).toContain("専任媒介契約");
+  });
+
+  it("監督処分・罰則(q34)本文の「16条の15第3項から第5項まで」は、無関係な条文の範囲参照なので誤って「5項」に解決しない", () => {
+    const reading = READINGS.get("q34")!;
+    const index = buildCitationIndex(reading);
+    const re = new RegExp(citationPattern(index), "g");
+    const body = reading.sections.flatMap((s) => s.body).join("\n");
+    expect(body).toContain("16条の15第3項から第5項まで");
+    const idx = body.indexOf("16条の15第3項から第5項まで");
+    const around = body.slice(idx, idx + "16条の15第3項から第5項まで".length);
+    re.lastIndex = 0;
+    const matches = [...around.matchAll(new RegExp(citationPattern(index), "g"))].map((m) => m[0]);
+    expect(matches).toEqual([]);
+  });
+
+  it("媒介契約(q14)本文の「35条5項・37条3項」は、別条文への参照なので誤って q14 自身の 5項/3項 に解決しない", () => {
+    const reading = READINGS.get("q14")!;
+    const index = buildCitationIndex(reading);
+    const body = reading.sections.flatMap((s) => s.body).join("\n");
+    expect(body).toContain("35条5項・37条3項");
+    const idx = body.indexOf("35条5項・37条3項");
+    const around = body.slice(idx, idx + "35条5項・37条3項".length);
+    const matches = [...around.matchAll(new RegExp(citationPattern(index), "g"))].map((m) => m[0]);
+    expect(matches).toEqual([]);
   });
 });
