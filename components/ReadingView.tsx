@@ -3,8 +3,10 @@
 /**
  * 参考書モード: 論点の読み物ページ本体(プロトタイプ・Issue #178)。
  * 30秒レッスンより深掘りした読み物+条文原文を表示する。
+ *
+ * 条文原文セクションは既定で畳む・本文の条文参照はタップでポップアップ(Issue #215)。
  */
-import { useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import type { Reading } from "@/types";
 import { INK, AI_BLUE, AI_BLUE_BG, MUTED, SERIF, SANS } from "@/lib/tokens";
@@ -12,11 +14,93 @@ import { page, col, card, outlineButton } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
 import { TermPopup } from "@/components/TermPopup";
 import { termify } from "@/components/TermText";
+import { citify } from "@/components/CitationText";
+import { CitationPopup } from "@/components/CitationPopup";
+import { buildCitationIndex, citationPattern, resolveCitation, type CitationEntry } from "@/lib/citations";
+
+/** セクション見出しから「原文を読む — 」の接頭辞を外す(畳みボタン側にラベルを寄せるため) */
+const QUOTE_HEADING_PREFIX = "原文を読む — ";
+function stripQuoteHeadingPrefix(heading: string): string {
+  return heading.startsWith(QUOTE_HEADING_PREFIX)
+    ? heading.slice(QUOTE_HEADING_PREFIX.length)
+    : heading;
+}
+
+function QuoteToggle({
+  label,
+  open,
+  onToggle,
+}: {
+  label: string;
+  open: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      onClick={onToggle}
+      aria-expanded={open}
+      style={{
+        width: "100%",
+        minHeight: 44,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 8,
+        marginTop: 12,
+        padding: "10px 14px",
+        background: AI_BLUE_BG,
+        border: "none",
+        borderLeft: `3px solid ${AI_BLUE}`,
+        borderRadius: 4,
+        cursor: "pointer",
+        textAlign: "left",
+        fontFamily: SANS,
+        fontSize: 12.5,
+        fontWeight: 700,
+        color: AI_BLUE,
+      }}
+    >
+      <span>条文を読む — {label}</span>
+      <span aria-hidden style={{ flexShrink: 0 }}>
+        {open ? "▲" : "▼"}
+      </span>
+    </button>
+  );
+}
 
 export function ReadingView({ reading }: { reading: Reading }) {
   const router = useRouter();
   const [activeTerm, setActiveTerm] = useState<string | null>(null);
-  const openTerm = (word: string) => setActiveTerm(word);
+  const [activeCitation, setActiveCitation] = useState<CitationEntry | null>(null);
+  const [openQuotes, setOpenQuotes] = useState<Record<number, boolean>>({});
+
+  const citationIndex = useMemo(() => buildCitationIndex(reading), [reading]);
+  const pattern = useMemo(() => citationPattern(citationIndex), [citationIndex]);
+
+  const openTerm = (word: string) => {
+    setActiveCitation(null);
+    setActiveTerm(word);
+  };
+  const openCitation = (surface: string) => {
+    const entry = resolveCitation(citationIndex, surface);
+    if (!entry) return;
+    setActiveTerm(null);
+    setActiveCitation(entry);
+  };
+  const toggleQuote = (i: number) =>
+    setOpenQuotes((prev) => ({ ...prev, [i]: !prev[i] }));
+
+  const renderBody = (text: string): ReactNode => {
+    const parts = citify(text, citationIndex, pattern, openCitation);
+    if (typeof parts === "string") return termify(parts, openTerm);
+    return (parts as ReactNode[]).map((part, i) =>
+      typeof part === "string" ? (
+        <span key={i}>{termify(part, openTerm)}</span>
+      ) : (
+        part
+      ),
+    );
+  };
 
   return (
     <div style={page}>
@@ -50,103 +134,118 @@ export function ReadingView({ reading }: { reading: Reading }) {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-          {reading.sections.map((section, i) => (
-            <div key={i} style={card}>
-              <div
-                style={{
-                  fontFamily: SERIF,
-                  fontSize: 15,
-                  fontWeight: 800,
-                  color: AI_BLUE,
-                  marginBottom: 8,
-                }}
-              >
-                {section.heading}
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 8,
-                  fontSize: 13.5,
-                  lineHeight: 1.85,
-                  color: INK,
-                }}
-              >
-                {section.body.map((p, j) => (
-                  <p key={j} style={{ margin: 0 }}>
-                    {termify(p, openTerm)}
-                  </p>
-                ))}
-              </div>
-              {section.quote && (
+          {reading.sections.map((section, i) => {
+            const quoteOpen = !!openQuotes[i];
+            const heading = section.quote
+              ? stripQuoteHeadingPrefix(section.heading)
+              : section.heading;
+            return (
+              <div key={i} style={card}>
                 <div
                   style={{
-                    marginTop: 12,
-                    padding: "12px 14px",
-                    background: AI_BLUE_BG,
-                    borderLeft: `3px solid ${AI_BLUE}`,
-                    borderRadius: 4,
+                    fontFamily: SERIF,
+                    fontSize: 15,
+                    fontWeight: 800,
+                    color: AI_BLUE,
+                    marginBottom: 8,
                   }}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 6,
-                    }}
-                  >
-                    {section.quote.lines.map((line, k) => (
+                  {heading}
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 8,
+                    fontSize: 13.5,
+                    lineHeight: 1.85,
+                    color: INK,
+                  }}
+                >
+                  {section.body.map((p, j) => (
+                    <p key={j} style={{ margin: 0 }}>
+                      {renderBody(p)}
+                    </p>
+                  ))}
+                </div>
+                {section.quote && (
+                  <>
+                    <QuoteToggle
+                      label={heading}
+                      open={quoteOpen}
+                      onToggle={() => toggleQuote(i)}
+                    />
+                    {quoteOpen && (
                       <div
-                        key={k}
                         style={{
-                          display: "flex",
-                          gap: 8,
-                          paddingLeft: line.indent ? 16 : 0,
+                          marginTop: 8,
+                          padding: "12px 14px",
+                          background: AI_BLUE_BG,
+                          borderLeft: `3px solid ${AI_BLUE}`,
+                          borderRadius: 4,
                         }}
                       >
-                        {line.label && (
-                          <span
-                            style={{
-                              flexShrink: 0,
-                              fontFamily: SANS,
-                              fontSize: 11,
-                              fontWeight: 700,
-                              color: AI_BLUE,
-                              minWidth: line.indent ? 16 : 40,
-                            }}
-                          >
-                            {line.label}
-                          </span>
-                        )}
-                        <p
+                        <div
                           style={{
-                            margin: 0,
-                            fontFamily: SANS,
-                            fontSize: 12.5,
-                            lineHeight: 1.9,
-                            color: INK,
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 6,
                           }}
                         >
-                          {line.text}
+                          {section.quote.lines.map((line, k) => (
+                            <div
+                              key={k}
+                              style={{
+                                display: "flex",
+                                gap: 8,
+                                paddingLeft: line.indent ? 16 : 0,
+                              }}
+                            >
+                              {line.label && (
+                                <span
+                                  style={{
+                                    flexShrink: 0,
+                                    fontFamily: SANS,
+                                    fontSize: 11,
+                                    fontWeight: 700,
+                                    color: AI_BLUE,
+                                    minWidth: line.indent ? 16 : 40,
+                                  }}
+                                >
+                                  {line.label}
+                                </span>
+                              )}
+                              <p
+                                style={{
+                                  margin: 0,
+                                  fontFamily: SANS,
+                                  fontSize: 12.5,
+                                  lineHeight: 1.9,
+                                  color: INK,
+                                }}
+                              >
+                                {line.text}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                        <p
+                          style={{
+                            margin: "8px 0 0",
+                            fontSize: 11,
+                            color: MUTED,
+                            textAlign: "right",
+                          }}
+                        >
+                          — {section.quote.cite}
                         </p>
                       </div>
-                    ))}
-                  </div>
-                  <p
-                    style={{
-                      margin: "8px 0 0",
-                      fontSize: 11,
-                      color: MUTED,
-                      textAlign: "right",
-                    }}
-                  >
-                    — {section.quote.cite}
-                  </p>
-                </div>
-              )}
-            </div>
-          ))}
+                    )}
+                  </>
+                )}
+              </div>
+            );
+          })}
         </div>
 
         <p
@@ -164,6 +263,7 @@ export function ReadingView({ reading }: { reading: Reading }) {
         </p>
 
         <TermPopup term={activeTerm} onClose={() => setActiveTerm(null)} />
+        <CitationPopup entry={activeCitation} onClose={() => setActiveCitation(null)} />
       </div>
     </div>
   );
