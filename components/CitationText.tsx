@@ -47,7 +47,16 @@ export function citify(
   onCite?: (surface: string) => void,
 ): ReactNode {
   if (!onCite || index.size === 0 || !pattern) return text;
-  const re = new RegExp(pattern, "g");
+  let re: RegExp;
+  try {
+    re = new RegExp(pattern, "g");
+  } catch {
+    // pattern は境界チェックに後読み(lookbehind)を使っており、これをサポートしない
+    // 古いブラウザ(iOS 16.3以前のSafari等)では正規表現の構築自体が例外を投げる。
+    // ページ全体が描画不能になるのを避けるため、そのときは条文リンク無しの
+    // 素のテキストとして表示する(fail-safe。索引に無い表記の素通しと同じ考え方)
+    return text;
+  }
   const parts: Array<string | { surface: string }> = [];
   let last = 0;
   let m: RegExpExecArray | null;
