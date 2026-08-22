@@ -9,7 +9,9 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import type { Reading } from "@/types";
-import { INK, AI_BLUE, AI_BLUE_BG, MUTED, SERIF, SANS } from "@/lib/tokens";
+import { QUESTIONS } from "@/data/questions";
+import { itemKeysForTopic } from "@/lib/items";
+import { INK, CARD, AI_BLUE, AI_BLUE_BG, MUTED, SERIF, SANS, RADIUS } from "@/lib/tokens";
 import { page, col, card, outlineButton } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
 import { TermPopup } from "@/components/TermPopup";
@@ -76,6 +78,10 @@ export function ReadingView({ reading }: { reading: Reading }) {
 
   const citationIndex = useMemo(() => buildCitationIndex(reading), [reading]);
   const pattern = useMemo(() => citationPattern(citationIndex), [citationIndex]);
+  const solveKeys = useMemo(
+    () => itemKeysForTopic(reading.topicId, QUESTIONS),
+    [reading],
+  );
 
   const openTerm = (word: string) => {
     setActiveCitation(null);
@@ -132,6 +138,36 @@ export function ReadingView({ reading }: { reading: Reading }) {
           </h1>
           <p style={{ color: MUTED, fontSize: 12, margin: 0 }}>{reading.law}</p>
         </div>
+
+        {reading.summary && reading.summary.length > 0 && (
+          <div
+            style={{
+              ...card,
+              background: AI_BLUE_BG,
+              borderColor: AI_BLUE,
+              marginBottom: 14,
+            }}
+          >
+            <Eyebrow>この論点の要点</Eyebrow>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 6,
+                marginTop: 8,
+                fontSize: 13.5,
+                lineHeight: 1.85,
+                color: INK,
+              }}
+            >
+              {reading.summary.map((line, i) => (
+                <p key={i} style={{ margin: 0 }}>
+                  {renderBody(line)}
+                </p>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           {reading.sections.map((section, i) => {
@@ -247,6 +283,28 @@ export function ReadingView({ reading }: { reading: Reading }) {
             );
           })}
         </div>
+
+        {solveKeys.length > 0 && (
+          <button
+            onClick={() => router.push(`/play?items=${solveKeys.join(",")}`)}
+            style={{
+              width: "100%",
+              minHeight: 48,
+              marginTop: 16,
+              fontSize: 14,
+              fontWeight: 700,
+              fontFamily: SERIF,
+              letterSpacing: 3,
+              color: CARD,
+              background: AI_BLUE,
+              border: "none",
+              borderRadius: RADIUS,
+              cursor: "pointer",
+            }}
+          >
+            この論点を解く — {solveKeys.length}肢
+          </button>
+        )}
 
         <p
           style={{
