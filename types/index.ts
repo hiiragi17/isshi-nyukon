@@ -248,8 +248,12 @@ export type ReadingQuote = {
 };
 
 /** 読み物1論点ぶんのセクション(見出し+段落+条文原文の引用は任意) */
+export type ReadingSectionKind = "intro" | "detail" | "trap" | "source";
+
 export type ReadingSection = {
   heading: string;
+  subtitle?: string;
+  kind?: ReadingSectionKind;
   body: string[]; // 段落(termify で用語ポップアップ対応)
   quote?: ReadingQuote;
 };
