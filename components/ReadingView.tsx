@@ -6,10 +6,10 @@
  *
  * 条文原文セクションは既定で畳む・本文の条文参照はタップでポップアップ(Issue #215)。
  */
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useRef, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import type { Reading } from "@/types";
-import { INK, CARD, AI_BLUE, AI_BLUE_BG, MUTED, SERIF, SANS, RADIUS } from "@/lib/tokens";
+import type { Reading, ReadingSection } from "@/types";
+import { INK, CARD, AI_BLUE, AI_BLUE_BG, MUTED, SERIF, SANS, RADIUS, SHU } from "@/lib/tokens";
 import { page, col, card, outlineButton } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
 import { TermPopup } from "@/components/TermPopup";
@@ -37,6 +37,7 @@ function QuoteToggle({
 }) {
   return (
     <button
+      type="button"
       onClick={onToggle}
       aria-expanded={open}
       style={{
@@ -68,6 +69,17 @@ function QuoteToggle({
   );
 }
 
+function sectionKind(section: ReadingSection): NonNullable<ReadingSection["kind"]> {
+  return section.kind ?? "detail";
+}
+
+function sectionLabel(section: ReadingSection): string {
+  const kind = sectionKind(section);
+  if (kind === "source") return "条文";
+  if (kind === "trap") return section.subtitle ?? "狙われる";
+  return section.heading;
+}
+
 /**
  * `solveKeys` はページ側(サーバーコンポーネント。app/learn/[topicId]/page.tsx)で
  * 計算して渡す。全問題データ(QUESTIONS)をこのクライアントコンポーネントの
@@ -84,9 +96,23 @@ export function ReadingView({
   const [activeTerm, setActiveTerm] = useState<string | null>(null);
   const [activeCitation, setActiveCitation] = useState<CitationEntry | null>(null);
   const [openQuotes, setOpenQuotes] = useState<Record<number, boolean>>({});
+  const sectionRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
   const citationIndex = useMemo(() => buildCitationIndex(reading), [reading]);
   const pattern = useMemo(() => citationPattern(citationIndex), [citationIndex]);
+  const tocItems = useMemo(() => {
+    const items: { key: string; label: string; index: number }[] = [];
+    const firstSource = reading.sections.findIndex((section) => sectionKind(section) === "source");
+    reading.sections.forEach((section, index) => {
+      const kind = sectionKind(section);
+      if (kind === "source") {
+        if (index === firstSource) items.push({ key: "source", label: "条文", index });
+        return;
+      }
+      items.push({ key: String(index), label: sectionLabel(section), index });
+    });
+    return items;
+  }, [reading]);
 
   const openTerm = (word: string) => {
     setActiveCitation(null);
@@ -100,6 +126,13 @@ export function ReadingView({
   };
   const toggleQuote = (i: number) =>
     setOpenQuotes((prev) => ({ ...prev, [i]: !prev[i] }));
+  const scrollToSection = (index: number) => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    sectionRefs.current[index]?.scrollIntoView({
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+      block: "start",
+    });
+  };
 
   const renderBody = (text: string): ReactNode => {
     const parts = citify(text, citationIndex, pattern, openCitation);
@@ -174,25 +207,107 @@ export function ReadingView({
           </div>
         )}
 
+        {tocItems.length > 0 && (
+          <nav
+            aria-label="読み物の目次"
+            style={{
+              ...card,
+              padding: "10px 12px",
+              marginBottom: 14,
+            }}
+          >
+            <Eyebrow>目次</Eyebrow>
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 8,
+                marginTop: 8,
+                minWidth: 0,
+              }}
+            >
+              {tocItems.map((item) => (
+                <button
+                  type="button"
+                  key={item.key}
+                  onClick={() => scrollToSection(item.index)}
+                  style={{
+                    minHeight: 44,
+                    maxWidth: "100%",
+                    padding: "6px 10px",
+                    border: `1px solid ${AI_BLUE}`,
+                    borderRadius: 999,
+                    background: CARD,
+                    color: AI_BLUE,
+                    fontFamily: SANS,
+                    fontSize: 12,
+                    fontWeight: 700,
+                    cursor: "pointer",
+                    overflowWrap: "anywhere",
+                  }}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </nav>
+        )}
+
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           {reading.sections.map((section, i) => {
             const quoteOpen = !!openQuotes[i];
-            const heading = section.quote
-              ? stripQuoteHeadingPrefix(section.heading)
-              : section.heading;
+            const kind = sectionKind(section);
+            const heading = kind === "source" ? "条文" : section.heading;
+            const subtitle =
+              section.subtitle ??
+              (section.quote ? stripQuoteHeadingPrefix(section.heading) : undefined);
+            const sectionCardStyle = {
+              ...card,
+              ...(kind === "intro"
+                ? { background: AI_BLUE_BG, borderColor: AI_BLUE }
+                : {}),
+              ...(kind === "trap"
+                ? { borderLeft: `4px solid ${SHU}` }
+                : {}),
+            };
             return (
-              <div key={i} style={card}>
+              <div
+                key={i}
+                ref={(node) => {
+                  sectionRefs.current[i] = node;
+                }}
+                style={{ ...sectionCardStyle, scrollMarginTop: 16 }}
+              >
+                {kind === "trap" && (
+                  <Eyebrow>
+                    <span style={{ color: SHU }}>狙われる</span>
+                  </Eyebrow>
+                )}
                 <div
                   style={{
                     fontFamily: SERIF,
                     fontSize: 15,
                     fontWeight: 800,
-                    color: AI_BLUE,
-                    marginBottom: 8,
+                    color: kind === "trap" ? SHU : AI_BLUE,
+                    marginBottom: subtitle ? 2 : 8,
                   }}
                 >
                   {heading}
                 </div>
+                {subtitle && (
+                  <div
+                    style={{
+                      fontFamily: SANS,
+                      fontSize: 12,
+                      fontWeight: 700,
+                      color: MUTED,
+                      lineHeight: 1.6,
+                      marginBottom: 8,
+                    }}
+                  >
+                    {subtitle}
+                  </div>
+                )}
                 <div
                   style={{
                     display: "flex",
@@ -212,7 +327,7 @@ export function ReadingView({
                 {section.quote && (
                   <>
                     <QuoteToggle
-                      label={heading}
+                      label={subtitle ?? heading}
                       open={quoteOpen}
                       onToggle={() => toggleQuote(i)}
                     />
