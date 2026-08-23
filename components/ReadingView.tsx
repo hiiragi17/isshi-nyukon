@@ -37,6 +37,7 @@ function QuoteToggle({
 }) {
   return (
     <button
+      type="button"
       onClick={onToggle}
       aria-expanded={open}
       style={{
@@ -75,7 +76,7 @@ function sectionKind(section: ReadingSection): NonNullable<ReadingSection["kind"
 function sectionLabel(section: ReadingSection): string {
   const kind = sectionKind(section);
   if (kind === "source") return "条文";
-  if (kind === "trap") return "狙われる";
+  if (kind === "trap") return section.subtitle ?? "狙われる";
   return section.heading;
 }
 
@@ -125,8 +126,13 @@ export function ReadingView({
   };
   const toggleQuote = (i: number) =>
     setOpenQuotes((prev) => ({ ...prev, [i]: !prev[i] }));
-  const scrollToSection = (index: number) =>
-    sectionRefs.current[index]?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const scrollToSection = (index: number) => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    sectionRefs.current[index]?.scrollIntoView({
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+      block: "start",
+    });
+  };
 
   const renderBody = (text: string): ReactNode => {
     const parts = citify(text, citationIndex, pattern, openCitation);
@@ -222,6 +228,7 @@ export function ReadingView({
             >
               {tocItems.map((item) => (
                 <button
+                  type="button"
                   key={item.key}
                   onClick={() => scrollToSection(item.index)}
                   style={{
