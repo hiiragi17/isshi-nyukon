@@ -232,7 +232,7 @@ export function ReadingView({
                   key={item.key}
                   onClick={() => scrollToSection(item.index)}
                   style={{
-                    minHeight: 32,
+                    minHeight: 44,
                     maxWidth: "100%",
                     padding: "6px 10px",
                     border: `1px solid ${AI_BLUE}`,
