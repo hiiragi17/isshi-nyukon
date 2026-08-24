@@ -189,7 +189,7 @@ export const coolingOffReading: Reading = {
           { id: "C", x: 280, y: 140, label: "所", sub: "事務所等以外の場所" },
         ],
         edges: [
-          { from: "B", to: "C", label: "申込み" },
+          { from: "B", to: "C", label: "申込みをした場所" },
           { from: "B", to: "A", label: "撤回(書面)", dashed: true },
         ],
       },
