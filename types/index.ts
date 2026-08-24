@@ -247,6 +247,17 @@ export type ReadingQuote = {
   article?: string;
 };
 
+/**
+ * 散文中の対比を整理する比較表(省略可・Issue #218)。本文に既にある記述の
+ * 整理に留め、新しい数字・条番号・法的主張を表だけに足さない(本文が正)。
+ * 390px幅で溢れないよう、列は2〜4列を想定。
+ */
+export type ReadingTable = {
+  headers: string[];
+  rows: string[][];
+  caption?: string;
+};
+
 /** 読み物1論点ぶんのセクション(見出し+段落+条文原文の引用は任意) */
 export type ReadingSectionKind = "intro" | "detail" | "trap" | "source";
 
@@ -262,6 +273,8 @@ export type ReadingSection = {
    * 図で新しい法的主張・数字・条番号を作らない。
    */
   diagram?: Diagram;
+  /** 本文の対比を整理する比較表(省略可・Issue #218) */
+  table?: ReadingTable;
 };
 
 /**
