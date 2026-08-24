@@ -256,6 +256,12 @@ export type ReadingSection = {
   kind?: ReadingSectionKind;
   body: string[]; // 段落(termify で用語ポップアップ対応)
   quote?: ReadingQuote;
+  /**
+   * 登場人物の関係図(省略可・Issue #219)。型は `Question.diagram` と同じ
+   * 既存の `Diagram` をそのまま使う。ラベルは本文にある語をそのまま使い、
+   * 図で新しい法的主張・数字・条番号を作らない。
+   */
+  diagram?: Diagram;
 };
 
 /**
