@@ -374,20 +374,30 @@ export function ReadingView({
                         <tbody>
                           {section.table.rows.map((row, ri) => (
                             <tr key={ri}>
-                              {row.map((cell, ci) => (
-                                <td
-                                  key={ci}
-                                  style={{
-                                    padding: "6px 8px",
-                                    borderBottom: `1px solid ${LINE}`,
-                                    color: INK,
-                                    verticalAlign: "top",
-                                    whiteSpace: ci === 0 ? "nowrap" : "normal",
-                                  }}
-                                >
-                                  {renderBody(cell)}
-                                </td>
-                              ))}
+                              {row.map((cell, ci) => {
+                                const cellStyle = {
+                                  padding: "6px 8px",
+                                  borderBottom: `1px solid ${LINE}`,
+                                  color: INK,
+                                  verticalAlign: "top" as const,
+                                  whiteSpace: ci === 0 ? ("nowrap" as const) : ("normal" as const),
+                                };
+                                // 先頭列は行見出し(スクリーンリーダーがセルの値と
+                                // 対応付けられるよう th scope="row" にする)
+                                return ci === 0 ? (
+                                  <th
+                                    key={ci}
+                                    scope="row"
+                                    style={{ ...cellStyle, textAlign: "left", fontWeight: 400 }}
+                                  >
+                                    {renderBody(cell)}
+                                  </th>
+                                ) : (
+                                  <td key={ci} style={cellStyle}>
+                                    {renderBody(cell)}
+                                  </td>
+                                );
+                              })}
                             </tr>
                           ))}
                         </tbody>
