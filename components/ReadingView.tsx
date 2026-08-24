@@ -9,7 +9,7 @@
 import { useMemo, useRef, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import type { Reading, ReadingSection } from "@/types";
-import { INK, CARD, AI_BLUE, AI_BLUE_BG, MUTED, SERIF, SANS, RADIUS, SHU } from "@/lib/tokens";
+import { INK, CARD, AI_BLUE, AI_BLUE_BG, MUTED, SERIF, SANS, RADIUS, SHU, LINE } from "@/lib/tokens";
 import { page, col, card, outlineButton } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
 import { Diagram } from "@/components/Diagram";
@@ -325,6 +325,92 @@ export function ReadingView({
                     </p>
                   ))}
                 </div>
+                {section.table && (
+                  <div style={{ marginTop: 10 }}>
+                    {section.table.caption && (
+                      <div
+                        id={`table-caption-${i}`}
+                        style={{
+                          fontFamily: SANS,
+                          fontSize: 11,
+                          fontWeight: 700,
+                          color: MUTED,
+                          marginBottom: 4,
+                        }}
+                      >
+                        {section.table.caption}
+                      </div>
+                    )}
+                    <div style={{ overflowX: "auto" }}>
+                      <table
+                        // caption があればそれを、無ければセクション見出しを表のアクセシブルネームにする
+                        // (menkyo.ts / takkenshi.ts のように caption を省略した表が
+                        // 無名にならないように。Codexレビュー指摘・PR #229)
+                        aria-labelledby={section.table.caption ? `table-caption-${i}` : undefined}
+                        aria-label={section.table.caption ? undefined : (subtitle ?? heading)}
+                        style={{
+                          width: "100%",
+                          // 列数に応じた最低幅。狭い画面では表側だけが横スクロールする
+                          // (ページ本体はスクロールさせない)。文字単位の折返しを避けるため。
+                          minWidth: Math.max(320, section.table.headers.length * 120),
+                          borderCollapse: "collapse",
+                          fontFamily: SANS,
+                          fontSize: 12.5,
+                        }}
+                      >
+                        <thead>
+                          <tr>
+                            {section.table.headers.map((h, hi) => (
+                              <th
+                                key={hi}
+                                style={{
+                                  textAlign: "left",
+                                  padding: "6px 8px",
+                                  borderBottom: `2px solid ${AI_BLUE}`,
+                                  color: AI_BLUE,
+                                  fontWeight: 700,
+                                  whiteSpace: "nowrap",
+                                }}
+                              >
+                                {renderBody(h)}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {section.table.rows.map((row, ri) => (
+                            <tr key={ri}>
+                              {row.map((cell, ci) => {
+                                const cellStyle = {
+                                  padding: "6px 8px",
+                                  borderBottom: `1px solid ${LINE}`,
+                                  color: INK,
+                                  verticalAlign: "top" as const,
+                                  whiteSpace: ci === 0 ? ("nowrap" as const) : ("normal" as const),
+                                };
+                                // 先頭列は行見出し(スクリーンリーダーがセルの値と
+                                // 対応付けられるよう th scope="row" にする)
+                                return ci === 0 ? (
+                                  <th
+                                    key={ci}
+                                    scope="row"
+                                    style={{ ...cellStyle, textAlign: "left", fontWeight: 400 }}
+                                  >
+                                    {renderBody(cell)}
+                                  </th>
+                                ) : (
+                                  <td key={ci} style={cellStyle}>
+                                    {renderBody(cell)}
+                                  </td>
+                                );
+                              })}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
                 {section.diagram && (
                   <div style={{ marginTop: 10 }}>
                     <Diagram data={section.diagram} />
