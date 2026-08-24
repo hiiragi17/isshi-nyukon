@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q94 犯罪収益移転防止法(取引時確認等)— 宅建業者が「特定事業者」として負う義務の範囲 */
 export const hanshuuhou: Question = {
   id: "q94",
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
