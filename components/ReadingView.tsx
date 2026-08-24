@@ -343,7 +343,11 @@ export function ReadingView({
                     )}
                     <div style={{ overflowX: "auto" }}>
                       <table
+                        // caption があればそれを、無ければセクション見出しを表のアクセシブルネームにする
+                        // (menkyo.ts / takkenshi.ts のように caption を省略した表が
+                        // 無名にならないように。Codexレビュー指摘・PR #229)
                         aria-labelledby={section.table.caption ? `table-caption-${i}` : undefined}
+                        aria-label={section.table.caption ? undefined : (subtitle ?? heading)}
                         style={{
                           width: "100%",
                           // 列数に応じた最低幅。狭い画面では表側だけが横スクロールする
