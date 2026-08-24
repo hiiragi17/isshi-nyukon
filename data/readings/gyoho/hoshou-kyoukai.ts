@@ -52,7 +52,7 @@ export const hoshouKyoukaiReading: Reading = {
         edges: [
           { from: "N", to: "K", label: "分担金" },
           { from: "K", to: "S", label: "供託" },
-          { from: "G", to: "K", label: "認証" },
+          { from: "K", to: "G", label: "認証" },
         ],
       },
     },
