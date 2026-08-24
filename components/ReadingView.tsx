@@ -329,6 +329,7 @@ export function ReadingView({
                   <div style={{ marginTop: 10 }}>
                     {section.table.caption && (
                       <div
+                        id={`table-caption-${i}`}
                         style={{
                           fontFamily: SANS,
                           fontSize: 11,
@@ -342,6 +343,7 @@ export function ReadingView({
                     )}
                     <div style={{ overflowX: "auto" }}>
                       <table
+                        aria-labelledby={section.table.caption ? `table-caption-${i}` : undefined}
                         style={{
                           width: "100%",
                           // 列数に応じた最低幅。狭い画面では表側だけが横スクロールする
