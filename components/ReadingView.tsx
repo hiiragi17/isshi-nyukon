@@ -12,6 +12,7 @@ import type { Reading, ReadingSection } from "@/types";
 import { INK, CARD, AI_BLUE, AI_BLUE_BG, MUTED, SERIF, SANS, RADIUS, SHU } from "@/lib/tokens";
 import { page, col, card, outlineButton } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
+import { Diagram } from "@/components/Diagram";
 import { TermPopup } from "@/components/TermPopup";
 import { termify } from "@/components/TermText";
 import { citify } from "@/components/CitationText";
@@ -324,6 +325,11 @@ export function ReadingView({
                     </p>
                   ))}
                 </div>
+                {section.diagram && (
+                  <div style={{ marginTop: 10 }}>
+                    <Diagram data={section.diagram} />
+                  </div>
+                )}
                 {section.quote && (
                   <>
                     <QuoteToggle
