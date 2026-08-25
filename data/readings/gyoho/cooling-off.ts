@@ -18,7 +18,7 @@ export const coolingOffReading: Reading = {
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "37条の2は hiiragi17提示の原文(2026-08-10、PR #179 レビュー対応)で全文確認。施行規則16条の5は gyoho-verification.md の q78 追加照合(2026-08-08 承認)の全文引用を転記",
+    note: "37条の2は hiiragi17提示の原文(2026-08-10、PR #179 レビュー対応)で全文確認。施行規則16条の5は gyoho-verification.md の q78 追加照合(2026-08-08 承認)の全文引用を転記。施行規則16条の6は hiiragi17提示の原文(2026-08-25、PR #230 判定フロー図レビュー対応)で全文確認(gyoho-verification.md q4 追加確認参照)",
   },
   lawVersion: {
     revisionId: "327AC1000000176_20260401_507AC0000000068",
@@ -64,7 +64,83 @@ export const coolingOffReading: Reading = {
         "② 宅地・建物の引渡しを受け、「かつ」代金の全部を支払ったとき——引渡しか代金完済のどちらか一方だけでは、まだ解除できる。「または」にすり替えるのが定番のひっかけ。",
         "解除(申込みの撤回等)の効力は、買主が解除の書面を発した時に生じる(発信主義)。宅建業者は、解除に伴う損害賠償・違約金を請求できない(1項後段)。",
         "解除が行われたときは、宅建業者は受領済みの手付金その他の金銭を速やかに返還しなければならない(3項)。また、これらの規定に反し申込者等に不利な特約は無効(4項)。",
+        "ここまでの要件を順に潰す判定フローは次のとおり(本文の要約。詳細は各質問から該当セクションへ移動して確認できる)。",
       ],
+      flow: {
+        start: "q-eligible",
+        nodes: [
+          {
+            id: "q-eligible",
+            kind: "question",
+            // クーリングオフは「宅建業者が自ら売主、買主が宅建業者ではない」契約(8種制限の一つ)
+            // でだけ使える制度(「制度の趣旨」セクションで既述)。目次から本セクションへ直接
+            // 移動した読者がこの前提を読み飛ばすと、対象外の取引にも「使える」という誤った
+            // 結論に達しうるため、フローの先頭にゲートとして明示する(Codexレビュー指摘・PR #230)
+            text: "宅建業者が自ら売主で、買主は宅建業者ではない",
+            yes: "q-office-apply",
+            no: "t-outofscope",
+            sectionIndex: 0,
+          },
+          {
+            id: "q-office-apply",
+            kind: "question",
+            text: "事務所等で申込みをした",
+            yes: "t-no",
+            no: "q-outside",
+            sectionIndex: 6,
+          },
+          {
+            id: "q-outside",
+            kind: "question",
+            // 37条の2第1項前段は「事務所等以外で申込みをした者」だけでなく「契約を締結した買主」も
+            // 保護対象に含む(申込みをせず直接契約したケースを含む)。事務所等で申込みをした場合は
+            // 直前の q-office-apply で除外済みなので、ここでは「申込みまたは契約」のどちらかが
+            // 事務所等以外であれば保護対象になる(Codex レビュー指摘・PR #230)
+            text: "事務所等以外で申込みまたは契約をした",
+            yes: "q-notice",
+            no: "t-no",
+            sectionIndex: 3,
+          },
+          {
+            id: "q-notice",
+            kind: "question",
+            // 37条の2第1項1号(同ファイル内で既に全文引用済み)は「撤回等を行うことが
+            // できる旨」『及び』「その方法」の両方が告げられることを要求する。方法を
+            // 欠く書面では8日のカウントは始まらないため、その旨だけを問う質問では
+            // 不正確(Codexレビュー指摘・PR #230 7回目)
+            text: "クーリングオフができる旨と方法を書面で告げられた日から8日を経過した",
+            yes: "t-no",
+            no: "q-delivery",
+            sectionIndex: 2,
+          },
+          {
+            id: "q-delivery",
+            kind: "question",
+            text: "引渡しを受け「かつ」代金の全部を支払った",
+            yes: "t-no",
+            no: "t-yes",
+            sectionIndex: 2,
+          },
+          {
+            id: "t-outofscope",
+            kind: "terminal",
+            text: "クーリングオフの制度自体の対象外(8種制限の適用外)",
+            positive: false,
+          },
+          {
+            id: "t-no",
+            kind: "terminal",
+            text: "クーリングオフはできない",
+            positive: false,
+          },
+          {
+            id: "t-yes",
+            kind: "terminal",
+            text: "クーリングオフができる",
+            positive: true,
+          },
+        ],
+      },
     },
     {
       heading: "原文を読む",
