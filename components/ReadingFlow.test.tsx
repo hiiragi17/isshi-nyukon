@@ -79,6 +79,24 @@ describe("ReadingFlow", () => {
     expect(screen.queryByText(/データに壊れた参照があるため/)).not.toBeInTheDocument();
   });
 
+  it("データが誤って循環しているときは、その旨を警告する(Codexレビュー指摘・PR #230 12回目)", () => {
+    // path による循環検出は無限再帰こそ防ぐが、以前はその枝を無警告で
+    // 切り落とすだけだった。DAGであるべきという前提は型では強制できないため、
+    // 誤って循環したデータ(q2のyesがq1に戻る)でも警告を出す
+    const nodes: ReadingFlowData["nodes"] = [
+      { id: "q1", kind: "question", text: "q1", yes: "q2", no: "t-no" },
+      { id: "q2", kind: "question", text: "q2", yes: "q1", no: "t-no" },
+      { id: "t-no", kind: "terminal", text: "t-no", positive: false },
+    ];
+    render(<ReadingFlow data={{ start: "q1", nodes }} />);
+    expect(screen.getByText(/データに循環参照があるため/)).toBeInTheDocument();
+  });
+
+  it("循環していないときは、循環参照の警告を出さない", () => {
+    render(<ReadingFlow data={flow} />);
+    expect(screen.queryByText(/データに循環参照があるため/)).not.toBeInTheDocument();
+  });
+
   it("深く再合流するDAGでも行数を打ち切り、フリーズせず描画する(Codexレビュー指摘・PR #230)", () => {
     // 各段の質問ノードは yes/no とも次の段の同じノードを指す「合流」を20段重ねる。
     // 経路を打ち切らずに展開すると 2^20 通り(100万件超)の行が生成されうる構造
