@@ -47,11 +47,15 @@ type FlowRow = {
 
 /** 開始ノードから深さ優先で辿り、表示順の行に平らにする。同じ終端に複数の経路から
  * 到達する(DAGの合流)ときは、経路ごとに複数回出てくる —— ASCIIの判定フローと同じ表現 */
-function flattenFlow(data: ReadingFlowData): FlowRow[] {
+function flattenFlow(data: ReadingFlowData): { rows: FlowRow[]; truncated: boolean } {
   const byId = new Map(data.nodes.map((n) => [n.id, n] as const));
   const rows: FlowRow[] = [];
+  let truncated = false;
   const visit = (id: string, depth: number, branch: "yes" | "no" | null, path: Set<string>) => {
-    if (rows.length >= MAX_ROWS) return;
+    if (rows.length >= MAX_ROWS) {
+      truncated = true;
+      return;
+    }
     const node = byId.get(id);
     if (!node || depth > MAX_TRAVERSE_DEPTH || path.has(id)) return;
     rows.push({ node, depth, branch });
@@ -62,7 +66,7 @@ function flattenFlow(data: ReadingFlowData): FlowRow[] {
     }
   };
   visit(data.start, 0, null, new Set());
-  return rows;
+  return { rows, truncated };
 }
 
 function boxX(depth: number): number {
@@ -185,7 +189,7 @@ export function ReadingFlow({
   data: ReadingFlowData;
   onJumpToSection?: (index: number) => void;
 }) {
-  const rows = flattenFlow(data);
+  const { rows, truncated } = flattenFlow(data);
   if (rows.length === 0) return null;
   const { laid, height } = layoutRows(rows);
   const rootText = rows[0].node.kind === "question" ? `${rows[0].node.text}?` : rows[0].node.text;
@@ -245,6 +249,11 @@ export function ReadingFlow({
       <p style={{ margin: "6px 0 0", fontSize: 10.5, color: MUTED, lineHeight: 1.6 }}>
         この図は本文の要約であり、要件の全部ではありません。正確な要件は本文で確認してください。
       </p>
+      {truncated && (
+        <p style={{ margin: "4px 0 0", fontSize: 10.5, color: SHU, fontWeight: 700, lineHeight: 1.6 }}>
+          分岐が多いため図を途中で打ち切っています。表示されていない結論がある可能性があります。
+        </p>
+      )}
       <details style={{ marginTop: 8 }}>
         <summary
           style={{

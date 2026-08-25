@@ -67,8 +67,20 @@ export const coolingOffReading: Reading = {
         "ここまでの要件を順に潰す判定フローは次のとおり(本文の要約。詳細は各質問から該当セクションへ移動して確認できる)。",
       ],
       flow: {
-        start: "q-office-apply",
+        start: "q-eligible",
         nodes: [
+          {
+            id: "q-eligible",
+            kind: "question",
+            // クーリングオフは「宅建業者が自ら売主、買主が宅建業者ではない」契約(8種制限の一つ)
+            // でだけ使える制度(「制度の趣旨」セクションで既述)。目次から本セクションへ直接
+            // 移動した読者がこの前提を読み飛ばすと、対象外の取引にも「使える」という誤った
+            // 結論に達しうるため、フローの先頭にゲートとして明示する(Codexレビュー指摘・PR #230)
+            text: "宅建業者が自ら売主で、買主は宅建業者ではない",
+            yes: "q-office-apply",
+            no: "t-outofscope",
+            sectionIndex: 0,
+          },
           {
             id: "q-office-apply",
             kind: "question",
@@ -104,6 +116,12 @@ export const coolingOffReading: Reading = {
             yes: "t-no",
             no: "t-yes",
             sectionIndex: 2,
+          },
+          {
+            id: "t-outofscope",
+            kind: "terminal",
+            text: "クーリングオフの制度自体の対象外(8種制限の適用外)",
+            positive: false,
           },
           {
             id: "t-no",

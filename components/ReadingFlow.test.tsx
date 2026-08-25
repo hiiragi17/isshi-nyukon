@@ -83,5 +83,13 @@ describe("ReadingFlow", () => {
     expect(performance.now() - start).toBeLessThan(3000);
     // 打ち切りにより、箱(rect)の数が現実的な範囲に収まっている
     expect(container.querySelectorAll("svg rect").length).toBeLessThan(1000);
+    // 打ち切りが起きたことを画面上に警告する(Codexレビュー指摘・PR #230:
+    // 打ち切りを示さないと、省略された結論があるのに完全な図であるかのように見えてしまう)
+    expect(screen.getByText(/図を途中で打ち切っています/)).toBeInTheDocument();
+  });
+
+  it("打ち切りが起きないときは警告を出さない", () => {
+    render(<ReadingFlow data={flow} />);
+    expect(screen.queryByText(/図を途中で打ち切っています/)).not.toBeInTheDocument();
   });
 });
