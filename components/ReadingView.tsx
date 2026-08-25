@@ -78,7 +78,8 @@ function sectionKind(section: ReadingSection): NonNullable<ReadingSection["kind"
 function sectionLabel(section: ReadingSection): string {
   const kind = sectionKind(section);
   if (kind === "source") return "条文";
-  if (kind === "trap") return section.subtitle ?? "狙われる";
+  // 目次だけを見て「ここが狙われる」だと分かるよう、色(朱)だけに頼らずテキストでも明示する
+  if (kind === "trap") return `狙われる・${section.subtitle ?? ""}`.replace(/・$/, "");
   return section.heading;
 }
 
@@ -103,15 +104,15 @@ export function ReadingView({
   const citationIndex = useMemo(() => buildCitationIndex(reading), [reading]);
   const pattern = useMemo(() => citationPattern(citationIndex), [citationIndex]);
   const tocItems = useMemo(() => {
-    const items: { key: string; label: string; index: number }[] = [];
+    const items: { key: string; label: string; index: number; trap: boolean }[] = [];
     const firstSource = reading.sections.findIndex((section) => sectionKind(section) === "source");
     reading.sections.forEach((section, index) => {
       const kind = sectionKind(section);
       if (kind === "source") {
-        if (index === firstSource) items.push({ key: "source", label: "条文", index });
+        if (index === firstSource) items.push({ key: "source", label: "条文", index, trap: false });
         return;
       }
-      items.push({ key: String(index), label: sectionLabel(section), index });
+      items.push({ key: String(index), label: sectionLabel(section), index, trap: kind === "trap" });
     });
     return items;
   }, [reading]);
@@ -151,18 +152,30 @@ export function ReadingView({
   return (
     <div style={page}>
       <div style={col}>
-        <button
-          onClick={() => router.push("/")}
-          style={{
-            ...outlineButton,
-            minHeight: 44,
-            padding: "8px 16px",
-            fontSize: 12.5,
-            marginBottom: 16,
-          }}
-        >
-          ← 検地帳に戻る
-        </button>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
+          <button
+            onClick={() => router.push("/learn")}
+            style={{
+              ...outlineButton,
+              minHeight: 44,
+              padding: "8px 16px",
+              fontSize: 12.5,
+            }}
+          >
+            ← 参考書一覧に戻る
+          </button>
+          <button
+            onClick={() => router.push("/")}
+            style={{
+              ...outlineButton,
+              minHeight: 44,
+              padding: "8px 16px",
+              fontSize: 12.5,
+            }}
+          >
+            ← 検地帳に戻る
+          </button>
+        </div>
 
         <div style={{ textAlign: "center", margin: "8px 0 20px" }}>
           <Eyebrow>参考書モード ・ {reading.category}</Eyebrow>
@@ -237,10 +250,10 @@ export function ReadingView({
                     minHeight: 44,
                     maxWidth: "100%",
                     padding: "6px 10px",
-                    border: `1px solid ${AI_BLUE}`,
+                    border: `1px solid ${item.trap ? SHU : AI_BLUE}`,
                     borderRadius: 999,
                     background: CARD,
-                    color: AI_BLUE,
+                    color: item.trap ? SHU : AI_BLUE,
                     fontFamily: SANS,
                     fontSize: 12,
                     fontWeight: 700,
