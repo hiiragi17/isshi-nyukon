@@ -146,12 +146,15 @@ describe("ReadingFlow", () => {
     expect(new Set(startXs).size).toBeGreaterThan(1);
   });
 
-  it("字下げは深さが増えるほど頭打ちにならず常に増え続ける(Codexレビュー指摘・PR #230 6回目)", () => {
+  it("字下げは深さが増えるほど頭打ちにならず、視認できる間隔を保ちながら増え続ける(Codexレビュー指摘・PR #230 6・7回目)", () => {
     // 以前は一定の深さ(3)で字下げが完全に固定され、それより深い親子ペア
     // (実データの q-notice→q-delivery 相当)が同じx位置に描画されて接続線が
-    // 重なっていた。分岐しない一本道のチェーンで、箱(rect)のx座標が
-    // 深さを追うごとに厳密に増え続けることを確認する(どこにも頭打ちが無い)
-    const depth = 10;
+    // 重なっていた。反比例の減衰だけに直したところ、今度は深い段で間隔が
+    // 接続線の太さ(1.2px)を下回り、結局また見分けがつかなくなった
+    // (7回目。指摘どおり40段目で約0.42pxまで縮んでいた)。分岐しない一本道の
+    // チェーンで、箱(rect)のx座標が深さを追うごとに、線の太さより十分大きい
+    // 間隔(MIN_STEP=4px)を保ちながら増え続けることを確認する
+    const depth = 40;
     const nodes: ReadingFlowData["nodes"] = [];
     for (let i = 0; i < depth; i++) {
       nodes.push({
@@ -166,14 +169,15 @@ describe("ReadingFlow", () => {
     nodes.push({ id: "t-end", kind: "terminal", text: "最後まで到達", positive: true });
     const { container } = render(<ReadingFlow data={{ start: "q0", nodes }} />);
     // DFS描画順は [質問i, 即終了(yes枝), 質問i+1(no枝), ...] の繰り返しなので、
-    // 偶数インデックスが深さ0→10と1段ずつ増える本筋(質問0..9, 最後にt-end)になる
+    // 偶数インデックスが深さ0→40と1段ずつ増える本筋(質問0..39, 最後にt-end)になる
     const rects = Array.from(container.querySelectorAll("svg rect"));
     const mainChainXs = rects
       .filter((_, i) => i % 2 === 0)
       .map((r) => Number(r.getAttribute("x")));
     expect(mainChainXs.length).toBe(depth + 1);
+    const MIN_VISIBLE_GAP = 4; // components/ReadingFlow.tsx の MIN_STEP と同じ値
     for (let i = 1; i < mainChainXs.length; i++) {
-      expect(mainChainXs[i]).toBeGreaterThan(mainChainXs[i - 1]);
+      expect(mainChainXs[i] - mainChainXs[i - 1]).toBeGreaterThanOrEqual(MIN_VISIBLE_GAP);
     }
   });
 

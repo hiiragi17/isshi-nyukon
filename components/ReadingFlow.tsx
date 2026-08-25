@@ -24,6 +24,21 @@ const INDENT_STEP = 16;
 /** 深さがこの段数までは字下げを1段そのままの幅で増やす。それ以降は下記 cumulativeIndent 参照 */
 const FULL_INDENT_STEPS = 3;
 const TEXT_INDENT_STEP = 14;
+/**
+ * 接続線の太さ(strokeWidth 1.2px)より十分大きい、隣り合う深さ同士の最小の字下げ差。
+ * これを下回ると、接続線同士が視覚的にくっついて見分けられなくなる
+ * (Codex レビュー指摘・PR #230 7回目: 減衰だけだと深さ16段目あたりから
+ * 1.2px を下回り、40段目では約0.42pxまで縮んで実質見分けがつかなくなっていた)
+ */
+const MIN_STEP = 4;
+/**
+ * この深さまでは MIN_STEP の間隔を保証する。宅建業法の判定フローが実際に必要と
+ * する深さ(現状最大5)の10倍以上の余裕を見ている。これを超える極端な深さでは
+ * 字下げを増やすのをやめる(SVGは本文の要約であって要件の全部ではない旨を
+ * 常に明示しているため、実際の階層は常にテキスト代替(<ul><li>のネスト。
+ * どの深さでも常に正確)で確認できる)
+ */
+const MAX_INDENT_DEPTH = 60;
 const FONT_SIZE = 12;
 const LINE_HEIGHT = 15;
 const BOX_V_PAD = 8;
@@ -75,22 +90,21 @@ function flattenFlow(data: ReadingFlowData): { rows: FlowRow[]; truncated: boole
 
 /**
  * 深さ0から depth までの累積字下げ幅。最初の FULL_INDENT_STEPS 段は step の
- * フル幅で増やし、それより深い段は増分を深さに反比例させて小さくする
- * (調和級数的な減衰)。これにより、どれだけ深くても字下げが完全に頭打ちに
- * なることはなく、隣り合う深さは必ず異なるx位置を持つ。
+ * フル幅で増やし、それより深い段(MAX_INDENT_DEPTH まで)は MIN_STEP を
+ * 保証しながら増やし続ける。MAX_INDENT_DEPTH を超えたら増やすのをやめる。
  *
  * 以前は一定の深さで字下げを完全に固定していたため、それより深い親子ペアが
  * 同じx位置に描画され、SVGの接続線が重なってどの質問への回答か区別できな
  * かった(Codex レビュー指摘・PR #230 6回目。実データの `q-notice`→`q-delivery`
- * で発生)。減衰であっても増分は常に正なので、いくら深くても頭打ちにならず、
- * かつ深くなるほど増分が小さくなるため画面幅は破綻しない(40段でも100px程度)
+ * で発生)。そこで増分を反比例で減衰させる方式に変えたが、減衰だけだと深い
+ * 段では MIN_STEP を割り込み、結局また見分けがつかなくなった(7回目)。
+ * MAX_INDENT_DEPTH までは MIN_STEP を必ず確保することで、実際に想定する
+ * 深さの範囲では確実に見分けがつくようにした
  */
 function cumulativeIndent(depth: number, step: number): number {
-  let total = 0;
-  for (let d = 1; d <= depth; d++) {
-    total += d <= FULL_INDENT_STEPS ? step : step / (d - FULL_INDENT_STEPS + 1);
-  }
-  return total;
+  const d = Math.min(depth, MAX_INDENT_DEPTH);
+  if (d <= FULL_INDENT_STEPS) return d * step;
+  return FULL_INDENT_STEPS * step + (d - FULL_INDENT_STEPS) * MIN_STEP;
 }
 
 function boxX(depth: number): number {
