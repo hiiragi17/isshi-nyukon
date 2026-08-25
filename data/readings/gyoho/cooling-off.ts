@@ -67,15 +67,27 @@ export const coolingOffReading: Reading = {
         "ここまでの要件を順に潰す判定フローは次のとおり(本文の要約。詳細は各質問から該当セクションへ移動して確認できる)。",
       ],
       flow: {
-        start: "q-office",
+        start: "q-office-apply",
         nodes: [
           {
-            id: "q-office",
+            id: "q-office-apply",
             kind: "question",
-            text: "事務所等以外で申込みをした",
+            text: "事務所等で申込みをした",
+            yes: "t-no",
+            no: "q-outside",
+            sectionIndex: 6,
+          },
+          {
+            id: "q-outside",
+            kind: "question",
+            // 37条の2第1項前段は「事務所等以外で申込みをした者」だけでなく「契約を締結した買主」も
+            // 保護対象に含む(申込みをせず直接契約したケースを含む)。事務所等で申込みをした場合は
+            // 直前の q-office-apply で除外済みなので、ここでは「申込みまたは契約」のどちらかが
+            // 事務所等以外であれば保護対象になる(Codex レビュー指摘・PR #230)
+            text: "事務所等以外で申込みまたは契約をした",
             yes: "q-notice",
             no: "t-no",
-            sectionIndex: 1,
+            sectionIndex: 3,
           },
           {
             id: "q-notice",

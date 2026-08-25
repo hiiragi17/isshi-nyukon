@@ -31,6 +31,13 @@ const BRANCH_TAG_HEIGHT = 16;
 const ROW_GAP = 8;
 /** 循環参照(型上は無いはずのグラフの壊れ方)を検出したら打ち切る保険の深さ */
 const MAX_TRAVERSE_DEPTH = 30;
+/**
+ * 経路ごとに展開する行数の上限(fail-safe)。DAGの合流を経路ごとに描画する方式は、
+ * 深く繰り返し再合流するグラフだと行数が経路数(最悪 2^深さ)に比例して増え、
+ * MAX_TRAVERSE_DEPTH だけでは頭打ちにならない(Codex レビュー指摘・PR #230)。
+ * 想定する読み物の判定フローは数問〜十数問程度なので、この上限に余裕はある
+ */
+const MAX_ROWS = 300;
 
 type FlowRow = {
   node: ReadingFlowNode;
@@ -44,6 +51,7 @@ function flattenFlow(data: ReadingFlowData): FlowRow[] {
   const byId = new Map(data.nodes.map((n) => [n.id, n] as const));
   const rows: FlowRow[] = [];
   const visit = (id: string, depth: number, branch: "yes" | "no" | null, path: Set<string>) => {
+    if (rows.length >= MAX_ROWS) return;
     const node = byId.get(id);
     if (!node || depth > MAX_TRAVERSE_DEPTH || path.has(id)) return;
     rows.push({ node, depth, branch });

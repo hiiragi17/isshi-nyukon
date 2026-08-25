@@ -62,4 +62,26 @@ describe("ReadingFlow", () => {
     const { container } = render(<ReadingFlow data={{ start: "missing", nodes: [] }} />);
     expect(container).toBeEmptyDOMElement();
   });
+
+  it("深く再合流するDAGでも行数を打ち切り、フリーズせず描画する(Codexレビュー指摘・PR #230)", () => {
+    // 各段の質問ノードは yes/no とも次の段の同じノードを指す「合流」を20段重ねる。
+    // 経路を打ち切らずに展開すると 2^20 通り(100万件超)の行が生成されうる構造
+    const depth = 20;
+    const nodes: ReadingFlowData["nodes"] = [];
+    for (let i = 0; i < depth; i++) {
+      nodes.push({
+        id: `q${i}`,
+        kind: "question",
+        text: `質問${i}`,
+        yes: i === depth - 1 ? "t" : `q${i + 1}`,
+        no: i === depth - 1 ? "t" : `q${i + 1}`,
+      });
+    }
+    nodes.push({ id: "t", kind: "terminal", text: "結論", positive: true });
+    const start = performance.now();
+    const { container } = render(<ReadingFlow data={{ start: "q0", nodes }} />);
+    expect(performance.now() - start).toBeLessThan(3000);
+    // 打ち切りにより、箱(rect)の数が現実的な範囲に収まっている
+    expect(container.querySelectorAll("svg rect").length).toBeLessThan(1000);
+  });
 });
