@@ -122,10 +122,7 @@ describe("ReadingFlow", () => {
     expect(connectors.length).toBe(4);
   });
 
-  it("字下げが頭打ちになる深さ(depth>=3)でも、接続線の始点で親の違いを区別できる(Codexレビュー指摘・PR #230 5回目)", () => {
-    // q3(depth2, x=32) の子 q4(depth3) と、q4(depth3, x=48) の子 t-c(depth4) は
-    // どちらも字下げの上限で x=48 に描画される。接続線が無いと同じ位置に見えて
-    // 親が違うことが伝わらない。接続線の始点xが異なることで区別できることを確認する
+  it("深い分岐でも、接続線の始点で親の違いを区別できる", () => {
     const nodes: ReadingFlowData["nodes"] = [
       { id: "q1", kind: "question", text: "q1", yes: "q2", no: "t-out" },
       { id: "q2", kind: "question", text: "q2", yes: "t-a", no: "q3" },
@@ -142,15 +139,42 @@ describe("ReadingFlow", () => {
       container.querySelectorAll("svg > g[aria-hidden='true'] > path"),
     );
     expect(connectors.length).toBe(nodes.length - 1);
-    // 各接続線の始点x(親のx+4)を抽出する
     const startXs = connectors.map((p) => {
       const d = p.getAttribute("d")!;
       return Number(d.match(/^M ([\d.]+) /)![1]);
     });
-    // q4(depth3, 親q3はdepth2)への接続線の始点xと、t-c(depth4, 親q4はdepth3)への
-    // 接続線の始点xは異なる(親の実際の深さが違うため)。ユニークな始点xが複数あることで、
-    // 字下げが頭打ちになっていても接続線側で親の違いを表現できていることを確認する
     expect(new Set(startXs).size).toBeGreaterThan(1);
+  });
+
+  it("字下げは深さが増えるほど頭打ちにならず常に増え続ける(Codexレビュー指摘・PR #230 6回目)", () => {
+    // 以前は一定の深さ(3)で字下げが完全に固定され、それより深い親子ペア
+    // (実データの q-notice→q-delivery 相当)が同じx位置に描画されて接続線が
+    // 重なっていた。分岐しない一本道のチェーンで、箱(rect)のx座標が
+    // 深さを追うごとに厳密に増え続けることを確認する(どこにも頭打ちが無い)
+    const depth = 10;
+    const nodes: ReadingFlowData["nodes"] = [];
+    for (let i = 0; i < depth; i++) {
+      nodes.push({
+        id: `q${i}`,
+        kind: "question",
+        text: `質問${i}`,
+        yes: "t-shortcut",
+        no: i === depth - 1 ? "t-end" : `q${i + 1}`,
+      });
+    }
+    nodes.push({ id: "t-shortcut", kind: "terminal", text: "即終了", positive: false });
+    nodes.push({ id: "t-end", kind: "terminal", text: "最後まで到達", positive: true });
+    const { container } = render(<ReadingFlow data={{ start: "q0", nodes }} />);
+    // DFS描画順は [質問i, 即終了(yes枝), 質問i+1(no枝), ...] の繰り返しなので、
+    // 偶数インデックスが深さ0→10と1段ずつ増える本筋(質問0..9, 最後にt-end)になる
+    const rects = Array.from(container.querySelectorAll("svg rect"));
+    const mainChainXs = rects
+      .filter((_, i) => i % 2 === 0)
+      .map((r) => Number(r.getAttribute("x")));
+    expect(mainChainXs.length).toBe(depth + 1);
+    for (let i = 1; i < mainChainXs.length; i++) {
+      expect(mainChainXs[i]).toBeGreaterThan(mainChainXs[i - 1]);
+    }
   });
 
   it("テキスト代替は実際の<ul><li>のネストで階層を表す(Codexレビュー指摘・PR #230 4回目)", () => {

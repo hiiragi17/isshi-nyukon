@@ -21,7 +21,9 @@ const RIGHT_MARGIN = 8;
 const TOP_MARGIN = 8;
 const BOTTOM_MARGIN = 8;
 const INDENT_STEP = 16;
-const MAX_INDENT_DEPTH = 3;
+/** 深さがこの段数までは字下げを1段そのままの幅で増やす。それ以降は下記 cumulativeIndent 参照 */
+const FULL_INDENT_STEPS = 3;
+const TEXT_INDENT_STEP = 14;
 const FONT_SIZE = 12;
 const LINE_HEIGHT = 15;
 const BOX_V_PAD = 8;
@@ -71,8 +73,28 @@ function flattenFlow(data: ReadingFlowData): { rows: FlowRow[]; truncated: boole
   return { rows, truncated };
 }
 
+/**
+ * 深さ0から depth までの累積字下げ幅。最初の FULL_INDENT_STEPS 段は step の
+ * フル幅で増やし、それより深い段は増分を深さに反比例させて小さくする
+ * (調和級数的な減衰)。これにより、どれだけ深くても字下げが完全に頭打ちに
+ * なることはなく、隣り合う深さは必ず異なるx位置を持つ。
+ *
+ * 以前は一定の深さで字下げを完全に固定していたため、それより深い親子ペアが
+ * 同じx位置に描画され、SVGの接続線が重なってどの質問への回答か区別できな
+ * かった(Codex レビュー指摘・PR #230 6回目。実データの `q-notice`→`q-delivery`
+ * で発生)。減衰であっても増分は常に正なので、いくら深くても頭打ちにならず、
+ * かつ深くなるほど増分が小さくなるため画面幅は破綻しない(40段でも100px程度)
+ */
+function cumulativeIndent(depth: number, step: number): number {
+  let total = 0;
+  for (let d = 1; d <= depth; d++) {
+    total += d <= FULL_INDENT_STEPS ? step : step / (d - FULL_INDENT_STEPS + 1);
+  }
+  return total;
+}
+
 function boxX(depth: number): number {
-  return LEFT_MARGIN + Math.min(depth, MAX_INDENT_DEPTH) * INDENT_STEP;
+  return LEFT_MARGIN + cumulativeIndent(depth, INDENT_STEP);
 }
 function boxWidth(depth: number): number {
   return VIEW_WIDTH - boxX(depth) - RIGHT_MARGIN;
@@ -121,9 +143,8 @@ function nodeColor(node: ReadingFlowNode): string {
 /**
  * 各行の親行のインデックスを、DFS前順(深さ付き)から復元する。`buildFlowTree`
  * (テキスト代替のネスト構築)と同じ考え方の別実装 —— こちらは SVG 側で
- * 親子をつなぐ接続線を引くために使う。深さ MAX_INDENT_DEPTH 以降は字下げが
- * 頭打ちになり、兄弟でも祖先でもない行同士が同じx位置に並ぶため、字下げだけでは
- * どの質問への回答かが分からなくなる(Codex レビュー指摘・PR #230 5回目)
+ * 親子をつなぐ接続線を引くために使う。字下げだけでは、離れた行同士が
+ * どの質問への回答かが分かりにくいため(Codex レビュー指摘・PR #230 5回目)
  */
 function computeParentIndices(rows: FlowRow[]): (number | null)[] {
   const parents: (number | null)[] = [];
@@ -174,9 +195,8 @@ function FlowTextNode({
   const sectionIndex = row.node.kind === "question" ? row.node.sectionIndex : undefined;
   const canJump = sectionIndex !== undefined && !!onJumpToSection;
   const content = row.node.kind === "question" ? `${row.node.text}?` : row.node.text;
-  // 深さ MAX_INDENT_DEPTH までは1段14pxずつ、それ以降は増やさない(SVG側の字下げと同じ上限)
-  const childIndent =
-    Math.min(row.depth + 1, MAX_INDENT_DEPTH) * 14 - Math.min(row.depth, MAX_INDENT_DEPTH) * 14;
+  // SVG側の字下げ(cumulativeIndent)と同じ考え方。頭打ちにせず、深いほど増分を小さくする
+  const childIndent = cumulativeIndent(row.depth + 1, TEXT_INDENT_STEP) - cumulativeIndent(row.depth, TEXT_INDENT_STEP);
   return (
     <li style={{ listStyle: "none", margin: 0, padding: 0 }}>
       <div
