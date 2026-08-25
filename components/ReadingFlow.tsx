@@ -31,14 +31,6 @@ const TEXT_INDENT_STEP = 14;
  * 1.2px を下回り、40段目では約0.42pxまで縮んで実質見分けがつかなくなっていた)
  */
 const MIN_STEP = 4;
-/**
- * この深さまでは MIN_STEP の間隔を保証する。宅建業法の判定フローが実際に必要と
- * する深さ(現状最大5)の10倍以上の余裕を見ている。これを超える極端な深さでは
- * 字下げを増やすのをやめる(SVGは本文の要約であって要件の全部ではない旨を
- * 常に明示しているため、実際の階層は常にテキスト代替(<ul><li>のネスト。
- * どの深さでも常に正確)で確認できる)
- */
-const MAX_INDENT_DEPTH = 60;
 const FONT_SIZE = 12;
 const LINE_HEIGHT = 15;
 const BOX_V_PAD = 8;
@@ -46,6 +38,29 @@ const BOX_H_PAD = 10;
 const BOX_MIN_HEIGHT = 30;
 const BRANCH_TAG_HEIGHT = 16;
 const ROW_GAP = 8;
+/** wrapText が保証する1行あたりの最低文字数(下記参照)と揃える */
+const MIN_CONTENT_CHARS = 4;
+/** wrapText の最低文字数がはみ出さずに収まる、箱の最小の内側幅 */
+const MIN_BOX_CONTENT_WIDTH = MIN_CONTENT_CHARS * FONT_SIZE * 1.05;
+/**
+ * 字下げを増やし続けてよい深さの上限。MIN_STEP で字下げし続けると、箱の幅が
+ * wrapText の最低文字数(MIN_CONTENT_CHARS)すら収まらないほど狭くなり、
+ * ラベルが箱からはみ出して 340px の viewBox の外まで出てしまう
+ * (Codex レビュー指摘・PR #230 8回目: 固定値 60 は深さ55〜60あたりで
+ * この条件を満たさなくなっていた)。箱の内側幅が MIN_BOX_CONTENT_WIDTH を
+ * 下回らない最大の深さを、他の定数から逆算する(定数を変えても自動的に安全)
+ */
+const MAX_INDENT_DEPTH =
+  FULL_INDENT_STEPS +
+  Math.floor(
+    (VIEW_WIDTH -
+      LEFT_MARGIN -
+      RIGHT_MARGIN -
+      FULL_INDENT_STEPS * INDENT_STEP -
+      MIN_BOX_CONTENT_WIDTH -
+      BOX_H_PAD * 2) /
+      MIN_STEP,
+  );
 /**
  * 経路ごとに展開する行数の上限(fail-safe)。DAGの合流を経路ごとに描画する方式は、
  * 深く繰り返し再合流するグラフだと行数が経路数(最悪 2^深さ)に比例して増える
@@ -138,7 +153,7 @@ function layoutRows(rows: FlowRow[]): { laid: LaidOutRow[]; height: number } {
   const laid: LaidOutRow[] = rows.map((row, i) => {
     const x = boxX(row.depth);
     const width = boxWidth(row.depth);
-    const maxChars = Math.max(4, Math.floor((width - BOX_H_PAD * 2) / (FONT_SIZE * 1.05)));
+    const maxChars = Math.max(MIN_CONTENT_CHARS, Math.floor((width - BOX_H_PAD * 2) / (FONT_SIZE * 1.05)));
     const lines = wrapText(row.node.text, maxChars);
     const boxHeight = Math.max(BOX_MIN_HEIGHT, lines.length * LINE_HEIGHT + BOX_V_PAD * 2);
     const y = cursor + (i === 0 ? 0 : ROW_GAP);

@@ -181,6 +181,38 @@ describe("ReadingFlow", () => {
     }
   });
 
+  it("字下げの上限を超える極端な深さでも、箱がviewBoxをはみ出さず最低限の幅を保つ(Codexレビュー指摘・PR #230 8回目)", () => {
+    // 固定値(60)の字下げ上限は、wrapText が保証する最低文字数すら収まらない
+    // ほど箱が狭くなる深さ(55〜60あたり)を許してしまい、ラベルが箱や
+    // viewBox からはみ出しうる指摘。字下げの上限を「箱の最小幅」から逆算する
+    // 方式に直したので、それより深い80段でも箱がviewBoxに収まることを確認する
+    const depth = 80;
+    const nodes: ReadingFlowData["nodes"] = [];
+    for (let i = 0; i < depth; i++) {
+      nodes.push({
+        id: `q${i}`,
+        kind: "question",
+        text: `質問${i}`,
+        yes: "t-shortcut",
+        no: i === depth - 1 ? "t-end" : `q${i + 1}`,
+      });
+    }
+    nodes.push({ id: "t-shortcut", kind: "terminal", text: "即終了", positive: false });
+    nodes.push({ id: "t-end", kind: "terminal", text: "最後まで到達", positive: true });
+    const { container } = render(<ReadingFlow data={{ start: "q0", nodes }} />);
+    const svg = container.querySelector("svg")!;
+    const viewBoxWidth = Number(svg.getAttribute("viewBox")!.split(" ")[2]);
+    const rects = Array.from(container.querySelectorAll("svg rect"));
+    expect(rects.length).toBeGreaterThan(0);
+    for (const r of rects) {
+      const x = Number(r.getAttribute("x"));
+      const width = Number(r.getAttribute("width"));
+      expect(x + width).toBeLessThanOrEqual(viewBoxWidth);
+      // wrapText の最低文字数(4文字)ぶんのラベル幅+左右パディングが入る最低限の幅
+      expect(width).toBeGreaterThanOrEqual(4 * 12 * 1.05 + 10 * 2 - 1); // 端数の丸め誤差を許容
+    }
+  });
+
   it("テキスト代替は実際の<ul><li>のネストで階層を表す(Codexレビュー指摘・PR #230 4回目)", () => {
     // CSSの字下げだけだと、q2 の全枝を辿ったあとの「No →」が q1 への回答だと
     // スクリーンリーダー利用者に伝わらない。実際のDOMネストで検証する
