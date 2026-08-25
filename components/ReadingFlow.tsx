@@ -41,13 +41,14 @@ const ROW_GAP = 8;
 /** wrapText が保証する1行あたりの最低文字数(下記参照)と揃える */
 const MIN_CONTENT_CHARS = 4;
 /**
- * wrapText の最低文字数がはみ出さずに収まる、箱の最小の内側幅。質問ノードは
- * 折返し後の最終行に「?」がさらに1文字追加される(下記 `${line}?` 参照)ため、
- * MIN_CONTENT_CHARS 文字ぶんだけでは足りず、その1文字分も確保しておく
- * (Codex レビュー指摘・PR #230 9回目: 4文字ぶんの幅しか確保しておらず、
- * 字下げ上限ちょうどの深さでは「?」が箱からはみ出しうった)
+ * wrapText の最低文字数がはみ出さずに収まる、箱の最小の内側幅。質問ノードの
+ * 「?」は折返し対象の文字列に最初から含める(layoutRows の displayText 参照)ため、
+ * 折返し後に別枠で確保する必要はなく、MIN_CONTENT_CHARS 文字ぶんで足りる
+ * (Codex レビュー指摘・PR #230 9・10回目: 折返し後に「?」を付け足す方式だと、
+ * 最終行がちょうど収まっているときにはみ出しうった。付け足すのではなく
+ * 最初から折返し対象に含める方式に直したので、幅の特別扱いは不要になった)
  */
-const MIN_BOX_CONTENT_WIDTH = (MIN_CONTENT_CHARS + 1) * FONT_SIZE * 1.05;
+const MIN_BOX_CONTENT_WIDTH = MIN_CONTENT_CHARS * FONT_SIZE * 1.05;
 /**
  * 字下げを増やし続けてよい深さの上限。MIN_STEP で字下げし続けると、箱の幅が
  * wrapText の最低文字数(MIN_CONTENT_CHARS)すら収まらないほど狭くなり、
@@ -160,7 +161,12 @@ function layoutRows(rows: FlowRow[]): { laid: LaidOutRow[]; height: number } {
     const x = boxX(row.depth);
     const width = boxWidth(row.depth);
     const maxChars = Math.max(MIN_CONTENT_CHARS, Math.floor((width - BOX_H_PAD * 2) / (FONT_SIZE * 1.05)));
-    const lines = wrapText(row.node.text, maxChars);
+    // 質問ノードの「?」は折返し後に別途足すのではなく、折返し対象の文字列に
+    // 最初から含める。折返し後に付け足す方式だと、最終行がちょうど maxChars
+    // 文字で埋まっているときに「?」の分だけ箱からはみ出しうった
+    // (Codex レビュー指摘・PR #230 10回目)
+    const displayText = row.node.kind === "question" ? `${row.node.text}?` : row.node.text;
+    const lines = wrapText(displayText, maxChars);
     const boxHeight = Math.max(BOX_MIN_HEIGHT, lines.length * LINE_HEIGHT + BOX_V_PAD * 2);
     const y = cursor + (i === 0 ? 0 : ROW_GAP);
     const boxY = y + (row.branch ? BRANCH_TAG_HEIGHT : 0);
@@ -385,7 +391,7 @@ export function ReadingFlow({
               >
                 {row.lines.map((line, li) => (
                   <tspan key={li} x={row.x + BOX_H_PAD} dy={li === 0 ? 0 : LINE_HEIGHT}>
-                    {row.node.kind === "question" && li === row.lines.length - 1 ? `${line}?` : line}
+                    {line}
                   </tspan>
                 ))}
               </text>

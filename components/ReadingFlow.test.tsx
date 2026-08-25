@@ -208,15 +208,49 @@ describe("ReadingFlow", () => {
       const x = Number(r.getAttribute("x"));
       const width = Number(r.getAttribute("width"));
       expect(x + width).toBeLessThanOrEqual(viewBoxWidth);
-      // wrapText の最低文字数(4文字)+質問ノードが末尾に付ける「?」の1文字ぶんの
-      // ラベル幅+左右パディングが入る最低限の幅(Codexレビュー指摘・PR #230 9回目:
-      // 「?」の分を確保していなかったため、上限深さちょうどではみ出しうった)
-      expect(width).toBeGreaterThanOrEqual(5 * 12 * 1.05 + 10 * 2 - 1); // 端数の丸め誤差を許容
+      // wrapText の最低文字数(4文字)ぶんのラベル幅+左右パディングが入る最低限の幅。
+      // 質問ノードの「?」は折返し対象の文字列に最初から含まれる(layoutRows参照)ため、
+      // 折返し後に別枠で確保する必要はない
+      expect(width).toBeGreaterThanOrEqual(4 * 12 * 1.05 + 10 * 2 - 1); // 端数の丸め誤差を許容
+    }
+  });
+
+  it("質問ノードの「?」は折返し前の文字列に含めて折り返し、箱からはみ出させない(Codexレビュー指摘・PR #230 10回目)", () => {
+    // 折返し後に「?」を別途付け足す方式だと、最終行がちょうど maxChars 文字で
+    // 埋まっているときに「?」の分だけ箱の内側幅をはみ出しうった。各行の各tspanの
+    // 文字数が、その行の箱の実際の幅から計算できる最大文字数を超えないことを確認する
+    const depth = 80;
+    const nodes: ReadingFlowData["nodes"] = [];
+    for (let i = 0; i < depth; i++) {
+      nodes.push({
+        id: `q${i}`,
+        kind: "question",
+        text: `質問${i}`,
+        yes: "t-shortcut",
+        no: i === depth - 1 ? "t-end" : `q${i + 1}`,
+      });
+    }
+    nodes.push({ id: "t-shortcut", kind: "terminal", text: "即終了", positive: false });
+    nodes.push({ id: "t-end", kind: "terminal", text: "最後まで到達", positive: true });
+    const { container } = render(<ReadingFlow data={{ start: "q0", nodes }} />);
+    const rowGroups = Array.from(container.querySelectorAll("svg > g")).filter(
+      (g) => g.getAttribute("aria-hidden") !== "true",
+    );
+    expect(rowGroups.length).toBeGreaterThan(0);
+    for (const g of rowGroups) {
+      const rect = g.querySelector("rect")!;
+      const width = Number(rect.getAttribute("width"));
+      // components/ReadingFlow.tsx の layoutRows と同じ式(BOX_H_PAD=10, FONT_SIZE=12, MIN_CONTENT_CHARS=4)
+      const maxChars = Math.max(4, Math.floor((width - 10 * 2) / (12 * 1.05)));
+      const tspans = Array.from(g.querySelectorAll("tspan"));
+      for (const tspan of tspans) {
+        expect(tspan.textContent!.length).toBeLessThanOrEqual(maxChars);
+      }
     }
   });
 
   it("字下げの上限を超える深さでは、親子関係を区別できない可能性を警告する(Codexレビュー指摘・PR #230 9回目)", () => {
-    // MAX_INDENT_DEPTH(現在51)を超える深さでは字下げが完全に頭打ちになり、
+    // MAX_INDENT_DEPTH(現在54)を超える深さでは字下げが完全に頭打ちになり、
     // それより深い親子ペアが同じx位置(=同じ接続線のレーン)に描画されて
     // 区別できなくなる。以前は無警告だったため、図が完全であるかのように見えた
     const depth = 60;
