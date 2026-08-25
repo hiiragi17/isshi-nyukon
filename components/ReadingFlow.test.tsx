@@ -114,4 +114,27 @@ describe("ReadingFlow", () => {
     expect(screen.getAllByText("最後まで到達").length).toBeGreaterThan(0);
     expect(screen.queryByText(/図を途中で打ち切っています/)).not.toBeInTheDocument();
   });
+
+  it("テキスト代替は実際の<ul><li>のネストで階層を表す(Codexレビュー指摘・PR #230 4回目)", () => {
+    // CSSの字下げだけだと、q2 の全枝を辿ったあとの「No →」が q1 への回答だと
+    // スクリーンリーダー利用者に伝わらない。実際のDOMネストで検証する
+    const { container } = render(<ReadingFlow data={flow} />);
+    const rootList = container.querySelector("details ul[role='list']");
+    expect(rootList).toBeTruthy();
+
+    const rootItems = rootList!.querySelectorAll(":scope > li");
+    expect(rootItems.length).toBe(1); // ルートは q1 の1件だけ
+
+    const q1Children = rootItems[0].querySelector(":scope > ul[role='list']");
+    const q1ChildItems = q1Children!.querySelectorAll(":scope > li");
+    expect(q1ChildItems.length).toBe(2); // q1 の直接の子は q2(yes)と t-no(no)の2件
+
+    // 2番目の子(q1のno経路)が t-no であり、q2 のさらに下にネストされていない
+    expect(q1ChildItems[1].textContent).toContain("クーリングオフはできない");
+
+    // q2(1番目の子)配下の t-no は別のDOMノード(q1直下のt-noとは別物)
+    const q2Children = q1ChildItems[0].querySelector(":scope > ul[role='list']");
+    const tNoUnderQ2 = q2Children!.querySelectorAll(":scope > li")[0];
+    expect(tNoUnderQ2).not.toBe(q1ChildItems[1]);
+  });
 });

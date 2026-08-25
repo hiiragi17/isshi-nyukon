@@ -118,69 +118,112 @@ function nodeColor(node: ReadingFlowNode): string {
   return node.positive ? INK : SHU;
 }
 
-/** テキスト代替(折りたたみ)の1行。判定ノードは sectionIndex があればボタンにする */
-function FlowTextRow({
-  row,
+type FlowTreeNode = { row: FlowRow; children: FlowTreeNode[] };
+
+/**
+ * 深さ優先順のフラットな行(rows)を、実際のネスト構造に組み直す。rows は
+ * 既に DFS 前順(親の直後にその子が並ぶ)なので、深さの増減だけで親子関係を
+ * 復元できる。テキスト代替を CSS の字下げだけの平らな行の並びにすると、
+ * 深い分岐から戻った直後の「No →」がどの質問への回答かをスクリーンリーダー
+ * 利用者が辿れない(Codex レビュー指摘・PR #230 4回目)。実際の `<ul>/<li>`
+ * のネストで表現することで、リストの入れ子そのものが階層を伝える
+ */
+function buildFlowTree(rows: FlowRow[]): FlowTreeNode[] {
+  const roots: FlowTreeNode[] = [];
+  const stack: FlowTreeNode[] = [];
+  for (const row of rows) {
+    const node: FlowTreeNode = { row, children: [] };
+    const parent = row.depth > 0 ? stack[row.depth - 1] : undefined;
+    if (parent) parent.children.push(node);
+    else roots.push(node);
+    stack[row.depth] = node;
+    stack.length = row.depth + 1;
+  }
+  return roots;
+}
+
+/** テキスト代替(折りたたみ)の1項目。判定ノードは sectionIndex があればボタンにする */
+function FlowTextNode({
+  node,
   onJumpToSection,
 }: {
-  row: FlowRow;
+  node: FlowTreeNode;
   onJumpToSection?: (index: number) => void;
 }) {
+  const { row, children } = node;
   const color = nodeColor(row.node);
   const branchLabel = row.branch === "yes" ? "Yes" : row.branch === "no" ? "No" : null;
   const sectionIndex = row.node.kind === "question" ? row.node.sectionIndex : undefined;
   const canJump = sectionIndex !== undefined && !!onJumpToSection;
-  const content =
-    row.node.kind === "question" ? `${row.node.text}?` : row.node.text;
+  const content = row.node.kind === "question" ? `${row.node.text}?` : row.node.text;
+  // 深さ MAX_INDENT_DEPTH までは1段14pxずつ、それ以降は増やさない(SVG側の字下げと同じ上限)
+  const childIndent =
+    Math.min(row.depth + 1, MAX_INDENT_DEPTH) * 14 - Math.min(row.depth, MAX_INDENT_DEPTH) * 14;
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 6,
-        paddingLeft: Math.min(row.depth, MAX_INDENT_DEPTH) * 14,
-        minHeight: 32,
-      }}
-    >
-      {branchLabel && (
-        <span
-          style={{
-            flexShrink: 0,
-            fontFamily: SANS,
-            fontSize: 10.5,
-            fontWeight: 700,
-            color: AI_BLUE,
-          }}
-        >
-          {branchLabel} →
-        </span>
+    <li style={{ listStyle: "none", margin: 0, padding: 0 }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 6,
+          minHeight: 32,
+          marginTop: 2,
+        }}
+      >
+        {branchLabel && (
+          <span
+            style={{
+              flexShrink: 0,
+              fontFamily: SANS,
+              fontSize: 10.5,
+              fontWeight: 700,
+              color: AI_BLUE,
+            }}
+          >
+            {branchLabel} →
+          </span>
+        )}
+        {canJump ? (
+          <button
+            type="button"
+            onClick={() => onJumpToSection!(sectionIndex!)}
+            style={{
+              minHeight: 44,
+              padding: "4px 8px",
+              background: "none",
+              border: `1px solid ${color}`,
+              borderRadius: 4,
+              color,
+              fontFamily: SANS,
+              fontSize: 12,
+              fontWeight: 700,
+              textAlign: "left",
+              cursor: "pointer",
+            }}
+          >
+            {content}
+          </button>
+        ) : (
+          <span
+            style={{
+              fontFamily: SANS,
+              fontSize: 12,
+              color,
+              fontWeight: row.node.kind === "terminal" ? 700 : 400,
+            }}
+          >
+            {content}
+          </span>
+        )}
+      </div>
+      {children.length > 0 && (
+        <ul role="list" style={{ listStyle: "none", margin: 0, padding: 0, paddingLeft: childIndent }}>
+          {children.map((child, i) => (
+            <FlowTextNode key={i} node={child} onJumpToSection={onJumpToSection} />
+          ))}
+        </ul>
       )}
-      {canJump ? (
-        <button
-          type="button"
-          onClick={() => onJumpToSection!(sectionIndex!)}
-          style={{
-            minHeight: 44,
-            padding: "4px 8px",
-            background: "none",
-            border: `1px solid ${color}`,
-            borderRadius: 4,
-            color,
-            fontFamily: SANS,
-            fontSize: 12,
-            fontWeight: 700,
-            textAlign: "left",
-            cursor: "pointer",
-          }}
-        >
-          {content}
-        </button>
-      ) : (
-        <span style={{ fontFamily: SANS, fontSize: 12, color, fontWeight: row.node.kind === "terminal" ? 700 : 400 }}>
-          {content}
-        </span>
-      )}
-    </div>
+    </li>
   );
 }
 
@@ -271,11 +314,11 @@ export function ReadingFlow({
         >
           文字で見る(判定順序の代替表示)
         </summary>
-        <div style={{ marginTop: 6, display: "flex", flexDirection: "column", gap: 2 }}>
-          {rows.map((row, i) => (
-            <FlowTextRow key={i} row={row} onJumpToSection={onJumpToSection} />
+        <ul role="list" style={{ listStyle: "none", margin: "6px 0 0", padding: 0 }}>
+          {buildFlowTree(rows).map((node, i) => (
+            <FlowTextNode key={i} node={node} onJumpToSection={onJumpToSection} />
           ))}
-        </div>
+        </ul>
       </details>
     </div>
   );
