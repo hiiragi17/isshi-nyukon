@@ -13,6 +13,7 @@ import { INK, CARD, AI_BLUE, AI_BLUE_BG, MUTED, SERIF, SANS, RADIUS, SHU, LINE }
 import { page, col, card, outlineButton } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
 import { Diagram } from "@/components/Diagram";
+import { ReadingFlow } from "@/components/ReadingFlow";
 import { TermPopup } from "@/components/TermPopup";
 import { termify } from "@/components/TermText";
 import { citify } from "@/components/CitationText";
@@ -414,6 +415,11 @@ export function ReadingView({
                 {section.diagram && (
                   <div style={{ marginTop: 10 }}>
                     <Diagram data={section.diagram} />
+                  </div>
+                )}
+                {section.flow && (
+                  <div style={{ marginTop: 10 }}>
+                    <ReadingFlow data={section.flow} onJumpToSection={scrollToSection} />
                   </div>
                 )}
                 {section.quote && (

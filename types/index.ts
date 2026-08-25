@@ -258,6 +258,40 @@ export type ReadingTable = {
   caption?: string;
 };
 
+/**
+ * 判定フロー図(要件を順に潰す図。省略可・Issue #220)。質問ノード(Yes/No分岐)と
+ * 終端ノード(結論)からなる有向非巡回グラフ。`Diagram`(登場人物の関係図)とは別物:
+ * こちらは分岐・Yes/No・終端の結論を表現する。
+ *
+ * **図は本文より先に誤りを教える。** 簡略化する分、条件を落とすと誤りになり、
+ * しかも図のほうが信じられやすい。そのため質問ノードは本文の該当セクションへの
+ * リンク(`sectionIndex`)を持てるようにし、詳細は本文に委ねる(図だけで要件を
+ * 完結させない)。ラベルは本文にある語をそのまま使い、新しい法的主張・数字・
+ * 条番号を図で作らない。図の分岐が本文の記述と矛盾していないこと(特に、本文が
+ * 「ここが狙われる」としている限定条件が図で消えていないこと)は人がレビューする。
+ */
+export type ReadingFlowNode =
+  | {
+      id: string;
+      kind: "question";
+      text: string; // 質問文
+      yes: string; // Yes の行き先ノード id
+      no: string; // No の行き先ノード id
+      /** タップで本文のこの Reading.sections のインデックスへ移動する(省略可) */
+      sectionIndex?: number;
+    }
+  | {
+      id: string;
+      kind: "terminal";
+      text: string; // 結論
+      positive: boolean; // true=肯定的な結論(墨で表示) / false=否定的な結論(朱で表示)
+    };
+
+export type ReadingFlow = {
+  nodes: ReadingFlowNode[];
+  start: string; // 開始ノードの id
+};
+
 /** 読み物1論点ぶんのセクション(見出し+段落+条文原文の引用は任意) */
 export type ReadingSectionKind = "intro" | "detail" | "trap" | "source";
 
@@ -275,6 +309,8 @@ export type ReadingSection = {
   diagram?: Diagram;
   /** 本文の対比を整理する比較表(省略可・Issue #218) */
   table?: ReadingTable;
+  /** 判定フロー図(省略可・Issue #220) */
+  flow?: ReadingFlow;
 };
 
 /**
