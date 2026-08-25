@@ -40,8 +40,14 @@ const BRANCH_TAG_HEIGHT = 16;
 const ROW_GAP = 8;
 /** wrapText が保証する1行あたりの最低文字数(下記参照)と揃える */
 const MIN_CONTENT_CHARS = 4;
-/** wrapText の最低文字数がはみ出さずに収まる、箱の最小の内側幅 */
-const MIN_BOX_CONTENT_WIDTH = MIN_CONTENT_CHARS * FONT_SIZE * 1.05;
+/**
+ * wrapText の最低文字数がはみ出さずに収まる、箱の最小の内側幅。質問ノードは
+ * 折返し後の最終行に「?」がさらに1文字追加される(下記 `${line}?` 参照)ため、
+ * MIN_CONTENT_CHARS 文字ぶんだけでは足りず、その1文字分も確保しておく
+ * (Codex レビュー指摘・PR #230 9回目: 4文字ぶんの幅しか確保しておらず、
+ * 字下げ上限ちょうどの深さでは「?」が箱からはみ出しうった)
+ */
+const MIN_BOX_CONTENT_WIDTH = (MIN_CONTENT_CHARS + 1) * FONT_SIZE * 1.05;
 /**
  * 字下げを増やし続けてよい深さの上限。MIN_STEP で字下げし続けると、箱の幅が
  * wrapText の最低文字数(MIN_CONTENT_CHARS)すら収まらないほど狭くなり、
@@ -305,6 +311,11 @@ export function ReadingFlow({
   if (rows.length === 0) return null;
   const { laid, height } = layoutRows(rows);
   const parentIndices = computeParentIndices(rows);
+  // MAX_INDENT_DEPTH を超える行は cumulativeIndent で頭打ちになり、それより
+  // 深い親子ペアが同じx位置(=同じ接続線のレーン)に描画されて区別できなくなる
+  // (Codex レビュー指摘・PR #230 9回目)。想定する読み物の深さ(現状最大5)を
+  // 大きく超える異常なデータでのみ起こるが、無警告で「見た目は完全」にしない
+  const depthCapped = rows.some((row) => row.depth > MAX_INDENT_DEPTH);
   const rootText = rows[0].node.kind === "question" ? `${rows[0].node.text}?` : rows[0].node.text;
 
   return (
@@ -388,6 +399,11 @@ export function ReadingFlow({
       {truncated && (
         <p style={{ margin: "4px 0 0", fontSize: 10.5, color: SHU, fontWeight: 700, lineHeight: 1.6 }}>
           分岐が多いため図を途中で打ち切っています。表示されていない結論がある可能性があります。
+        </p>
+      )}
+      {depthCapped && (
+        <p style={{ margin: "4px 0 0", fontSize: 10.5, color: SHU, fontWeight: 700, lineHeight: 1.6 }}>
+          階層が深いため、図の字下げ・接続線では一部の親子関係を区別できません。正確な階層は下の文字表示で確認してください。
         </p>
       )}
       <details style={{ marginTop: 8 }}>

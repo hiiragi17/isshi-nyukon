@@ -208,9 +208,37 @@ describe("ReadingFlow", () => {
       const x = Number(r.getAttribute("x"));
       const width = Number(r.getAttribute("width"));
       expect(x + width).toBeLessThanOrEqual(viewBoxWidth);
-      // wrapText の最低文字数(4文字)ぶんのラベル幅+左右パディングが入る最低限の幅
-      expect(width).toBeGreaterThanOrEqual(4 * 12 * 1.05 + 10 * 2 - 1); // 端数の丸め誤差を許容
+      // wrapText の最低文字数(4文字)+質問ノードが末尾に付ける「?」の1文字ぶんの
+      // ラベル幅+左右パディングが入る最低限の幅(Codexレビュー指摘・PR #230 9回目:
+      // 「?」の分を確保していなかったため、上限深さちょうどではみ出しうった)
+      expect(width).toBeGreaterThanOrEqual(5 * 12 * 1.05 + 10 * 2 - 1); // 端数の丸め誤差を許容
     }
+  });
+
+  it("字下げの上限を超える深さでは、親子関係を区別できない可能性を警告する(Codexレビュー指摘・PR #230 9回目)", () => {
+    // MAX_INDENT_DEPTH(現在51)を超える深さでは字下げが完全に頭打ちになり、
+    // それより深い親子ペアが同じx位置(=同じ接続線のレーン)に描画されて
+    // 区別できなくなる。以前は無警告だったため、図が完全であるかのように見えた
+    const depth = 60;
+    const nodes: ReadingFlowData["nodes"] = [];
+    for (let i = 0; i < depth; i++) {
+      nodes.push({
+        id: `q${i}`,
+        kind: "question",
+        text: `質問${i}`,
+        yes: "t-shortcut",
+        no: i === depth - 1 ? "t-end" : `q${i + 1}`,
+      });
+    }
+    nodes.push({ id: "t-shortcut", kind: "terminal", text: "即終了", positive: false });
+    nodes.push({ id: "t-end", kind: "terminal", text: "最後まで到達", positive: true });
+    render(<ReadingFlow data={{ start: "q0", nodes }} />);
+    expect(screen.getByText(/正確な階層は下の文字表示で確認してください/)).toBeInTheDocument();
+  });
+
+  it("字下げの上限を超えないときは、階層についての警告を出さない", () => {
+    render(<ReadingFlow data={flow} />);
+    expect(screen.queryByText(/正確な階層は下の文字表示で確認してください/)).not.toBeInTheDocument();
   });
 
   it("テキスト代替は実際の<ul><li>のネストで階層を表す(Codexレビュー指摘・PR #230 4回目)", () => {
