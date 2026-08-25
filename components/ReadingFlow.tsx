@@ -90,8 +90,17 @@ type FlowRow = {
  * 到達する(DAGの合流)ときは、経路ごとに複数回出てくる —— ASCIIの判定フローと同じ表現 */
 function flattenFlow(
   data: ReadingFlowData,
-): { rows: FlowRow[]; truncated: boolean; brokenRef: boolean; hasCycle: boolean } {
-  const byId = new Map(data.nodes.map((n) => [n.id, n] as const));
+): { rows: FlowRow[]; truncated: boolean; brokenRef: boolean; hasCycle: boolean; hasDuplicateIds: boolean } {
+  // id の一意性は型では強制できない。同じidのノードが2つあると、後勝ちで
+  // 片方が無言で握りつぶされ、意図と違う質問・結論が表示されてもどの警告も
+  // 発火しない(Codex レビュー指摘・PR #230 13回目)。到達可能かに関わらず、
+  // 全ノードを対象に重複を検出する
+  const byId = new Map<string, ReadingFlowNode>();
+  let hasDuplicateIds = false;
+  for (const n of data.nodes) {
+    if (byId.has(n.id)) hasDuplicateIds = true;
+    byId.set(n.id, n);
+  }
   const rows: FlowRow[] = [];
   let truncated = false;
   // yes/no は自由文字列なので、存在しないノードIDを指す誤り(タイプミス等)を
@@ -127,7 +136,7 @@ function flattenFlow(
     }
   };
   visit(data.start, 0, null, new Set());
-  return { rows, truncated, brokenRef, hasCycle };
+  return { rows, truncated, brokenRef, hasCycle, hasDuplicateIds };
 }
 
 /**
@@ -333,8 +342,20 @@ export function ReadingFlow({
   data: ReadingFlowData;
   onJumpToSection?: (index: number) => void;
 }) {
-  const { rows, truncated, brokenRef, hasCycle } = flattenFlow(data);
-  if (rows.length === 0) return null;
+  const { rows, truncated, brokenRef, hasCycle, hasDuplicateIds } = flattenFlow(data);
+  if (rows.length === 0) {
+    // nodes が空(意図的に何も渡さない)場合は、そもそも図を出す意図が無いと
+    // みなして何も描画しない。一方、nodes はあるのに start が解決できない
+    // (壊れた参照)場合は、この読み物の該当セクションには本来判定フロー図が
+    // あるはずなので、無言で消さずに壊れている旨を示す(Codex レビュー指摘・
+    // PR #230 13回目)
+    if (data.nodes.length === 0) return null;
+    return (
+      <p style={{ margin: 0, fontSize: 10.5, color: SHU, fontWeight: 700, lineHeight: 1.6 }}>
+        データに壊れた参照があるため、判定フロー図を表示できません。
+      </p>
+    );
+  }
   const { laid, height } = layoutRows(rows);
   const parentIndices = computeParentIndices(rows);
   // MAX_INDENT_DEPTH を超える行は cumulativeIndent で頭打ちになり、それより
@@ -440,6 +461,11 @@ export function ReadingFlow({
       {hasCycle && (
         <p style={{ margin: "4px 0 0", fontSize: 10.5, color: SHU, fontWeight: 700, lineHeight: 1.6 }}>
           データに循環参照があるため、図の一部が表示されていません。
+        </p>
+      )}
+      {hasDuplicateIds && (
+        <p style={{ margin: "4px 0 0", fontSize: 10.5, color: SHU, fontWeight: 700, lineHeight: 1.6 }}>
+          データに同じIDのノードが複数あるため、意図と異なる内容が表示されている可能性があります。
         </p>
       )}
       <details style={{ marginTop: 8 }}>

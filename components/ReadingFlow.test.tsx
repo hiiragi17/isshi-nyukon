@@ -97,6 +97,33 @@ describe("ReadingFlow", () => {
     expect(screen.queryByText(/データに循環参照があるため/)).not.toBeInTheDocument();
   });
 
+  it("ノードはあるのにstartが解決できないときは、無言で消さずに警告する(Codexレビュー指摘・PR #230 13回目)", () => {
+    // nodes:[] (意図的に何も渡さない)とは違い、nodesがあるのにstartが
+    // 壊れているケースは「この読み物には本来判定フロー図があるはず」なのに
+    // 何も描画されない状態になる。以前は空配列のときと同じ扱いで無言で消していた
+    const nodes: ReadingFlowData["nodes"] = [{ id: "t-no", kind: "terminal", text: "t-no", positive: false }];
+    render(<ReadingFlow data={{ start: "missing-start", nodes }} />);
+    expect(screen.getByText(/データに壊れた参照があるため/)).toBeInTheDocument();
+  });
+
+  it("同じIDのノードが複数あるときは、意図と異なる表示になりうる旨を警告する(Codexレビュー指摘・PR #230 13回目)", () => {
+    // id の一意性は型では強制できない。同じidが2つあると Map が後勝ちで
+    // 片方を無言で握りつぶし、意図と違う質問・結論が表示されても他の警告は
+    // 発火しない(壊れた参照でも循環でもないため)
+    const nodes: ReadingFlowData["nodes"] = [
+      { id: "q1", kind: "question", text: "q1", yes: "dup", no: "dup" },
+      { id: "dup", kind: "terminal", text: "最初のdup", positive: true },
+      { id: "dup", kind: "terminal", text: "2番目のdup", positive: false },
+    ];
+    render(<ReadingFlow data={{ start: "q1", nodes }} />);
+    expect(screen.getByText(/同じIDのノードが複数あるため/)).toBeInTheDocument();
+  });
+
+  it("IDがすべて一意なときは、重複IDの警告を出さない", () => {
+    render(<ReadingFlow data={flow} />);
+    expect(screen.queryByText(/同じIDのノードが複数あるため/)).not.toBeInTheDocument();
+  });
+
   it("深く再合流するDAGでも行数を打ち切り、フリーズせず描画する(Codexレビュー指摘・PR #230)", () => {
     // 各段の質問ノードは yes/no とも次の段の同じノードを指す「合流」を20段重ねる。
     // 経路を打ち切らずに展開すると 2^20 通り(100万件超)の行が生成されうる構造
