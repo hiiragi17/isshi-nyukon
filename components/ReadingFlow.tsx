@@ -154,7 +154,7 @@ function FlowTextRow({
           type="button"
           onClick={() => onJumpToSection!(sectionIndex!)}
           style={{
-            minHeight: 32,
+            minHeight: 44,
             padding: "4px 8px",
             background: "none",
             border: `1px solid ${color}`,
@@ -253,7 +253,9 @@ export function ReadingFlow({
             fontSize: 11,
             fontWeight: 700,
             color: AI_BLUE,
-            minHeight: 32,
+            minHeight: 44,
+            display: "flex",
+            alignItems: "center",
           }}
         >
           文字で見る(判定順序の代替表示)
