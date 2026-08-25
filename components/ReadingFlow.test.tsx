@@ -92,4 +92,26 @@ describe("ReadingFlow", () => {
     render(<ReadingFlow data={flow} />);
     expect(screen.queryByText(/図を途中で打ち切っています/)).not.toBeInTheDocument();
   });
+
+  it("循環ではない正当な深いチェーン(30段超)は打ち切らず全体を描画する(Codexレビュー指摘・PR #230 2回目)", () => {
+    // 分岐せず一本道で40段続くチェーン。以前の深さ上限(30)だと循環でなくても
+    // 無警告で打ち切られていた。合流が無いので行数は少なく MAX_ROWS にも掛からない
+    const depth = 40;
+    const nodes: ReadingFlowData["nodes"] = [];
+    for (let i = 0; i < depth; i++) {
+      nodes.push({
+        id: `q${i}`,
+        kind: "question",
+        text: `質問${i}`,
+        yes: "t-shortcut",
+        no: i === depth - 1 ? "t-end" : `q${i + 1}`,
+      });
+    }
+    nodes.push({ id: "t-shortcut", kind: "terminal", text: "即終了", positive: false });
+    nodes.push({ id: "t-end", kind: "terminal", text: "最後まで到達", positive: true });
+    render(<ReadingFlow data={{ start: "q0", nodes }} />);
+    expect(screen.getAllByText(/質問39/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText("最後まで到達").length).toBeGreaterThan(0);
+    expect(screen.queryByText(/図を途中で打ち切っています/)).not.toBeInTheDocument();
+  });
 });

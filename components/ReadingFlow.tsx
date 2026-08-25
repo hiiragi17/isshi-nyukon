@@ -29,12 +29,14 @@ const BOX_H_PAD = 10;
 const BOX_MIN_HEIGHT = 30;
 const BRANCH_TAG_HEIGHT = 16;
 const ROW_GAP = 8;
-/** 循環参照(型上は無いはずのグラフの壊れ方)を検出したら打ち切る保険の深さ */
-const MAX_TRAVERSE_DEPTH = 30;
 /**
  * 経路ごとに展開する行数の上限(fail-safe)。DAGの合流を経路ごとに描画する方式は、
- * 深く繰り返し再合流するグラフだと行数が経路数(最悪 2^深さ)に比例して増え、
- * MAX_TRAVERSE_DEPTH だけでは頭打ちにならない(Codex レビュー指摘・PR #230)。
+ * 深く繰り返し再合流するグラフだと行数が経路数(最悪 2^深さ)に比例して増える
+ * (Codex レビュー指摘・PR #230)。循環参照は `visit` の `path`(現在の経路上の
+ * ノードID集合)で検出して止めるため、深さそのものに別途上限は設けない
+ * ——深さ専用の上限は、正当な深いチェーン(循環ではない)を無警告で打ち切って
+ * しまう副作用があった(Codex レビュー指摘・PR #230 2回目)。単一チェーンでも
+ * 行を積むたびにしか再帰しないため、再帰の深さは実質この行数上限で抑えられる。
  * 想定する読み物の判定フローは数問〜十数問程度なので、この上限に余裕はある
  */
 const MAX_ROWS = 300;
@@ -57,7 +59,7 @@ function flattenFlow(data: ReadingFlowData): { rows: FlowRow[]; truncated: boole
       return;
     }
     const node = byId.get(id);
-    if (!node || depth > MAX_TRAVERSE_DEPTH || path.has(id)) return;
+    if (!node || path.has(id)) return;
     rows.push({ node, depth, branch });
     if (node.kind === "question") {
       const nextPath = new Set(path).add(id);
