@@ -115,6 +115,44 @@ describe("ReadingFlow", () => {
     expect(screen.queryByText(/図を途中で打ち切っています/)).not.toBeInTheDocument();
   });
 
+  it("SVGは各行(ルート以外)に親とつなぐ接続線を1本ずつ持つ", () => {
+    // 5行(q1, q2, q2のyes配下t-no, q2のno配下t-yes, q1のno配下t-no)のうちルート以外の4本
+    const { container } = render(<ReadingFlow data={flow} />);
+    const connectors = container.querySelectorAll("svg > g[aria-hidden='true'] > path");
+    expect(connectors.length).toBe(4);
+  });
+
+  it("字下げが頭打ちになる深さ(depth>=3)でも、接続線の始点で親の違いを区別できる(Codexレビュー指摘・PR #230 5回目)", () => {
+    // q3(depth2, x=32) の子 q4(depth3) と、q4(depth3, x=48) の子 t-c(depth4) は
+    // どちらも字下げの上限で x=48 に描画される。接続線が無いと同じ位置に見えて
+    // 親が違うことが伝わらない。接続線の始点xが異なることで区別できることを確認する
+    const nodes: ReadingFlowData["nodes"] = [
+      { id: "q1", kind: "question", text: "q1", yes: "q2", no: "t-out" },
+      { id: "q2", kind: "question", text: "q2", yes: "t-a", no: "q3" },
+      { id: "q3", kind: "question", text: "q3", yes: "q4", no: "t-b" },
+      { id: "q4", kind: "question", text: "q4", yes: "t-c", no: "t-d" },
+      { id: "t-out", kind: "terminal", text: "t-out", positive: false },
+      { id: "t-a", kind: "terminal", text: "t-a", positive: false },
+      { id: "t-b", kind: "terminal", text: "t-b", positive: false },
+      { id: "t-c", kind: "terminal", text: "t-c", positive: true },
+      { id: "t-d", kind: "terminal", text: "t-d", positive: false },
+    ];
+    const { container } = render(<ReadingFlow data={{ start: "q1", nodes }} />);
+    const connectors = Array.from(
+      container.querySelectorAll("svg > g[aria-hidden='true'] > path"),
+    );
+    expect(connectors.length).toBe(nodes.length - 1);
+    // 各接続線の始点x(親のx+4)を抽出する
+    const startXs = connectors.map((p) => {
+      const d = p.getAttribute("d")!;
+      return Number(d.match(/^M ([\d.]+) /)![1]);
+    });
+    // q4(depth3, 親q3はdepth2)への接続線の始点xと、t-c(depth4, 親q4はdepth3)への
+    // 接続線の始点xは異なる(親の実際の深さが違うため)。ユニークな始点xが複数あることで、
+    // 字下げが頭打ちになっていても接続線側で親の違いを表現できていることを確認する
+    expect(new Set(startXs).size).toBeGreaterThan(1);
+  });
+
   it("テキスト代替は実際の<ul><li>のネストで階層を表す(Codexレビュー指摘・PR #230 4回目)", () => {
     // CSSの字下げだけだと、q2 の全枝を辿ったあとの「No →」が q1 への回答だと
     // スクリーンリーダー利用者に伝わらない。実際のDOMネストで検証する

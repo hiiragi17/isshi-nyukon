@@ -13,7 +13,7 @@
  * ナビゲーションはテキスト代替側(下部の折りたたみ)の実 DOM ボタンが担う。
  */
 import type { ReadingFlow as ReadingFlowData, ReadingFlowNode } from "@/types";
-import { INK, CARD, AI_BLUE, SHU, MUTED, SANS, SERIF } from "@/lib/tokens";
+import { INK, CARD, AI_BLUE, SHU, MUTED, SANS, SERIF, LINE } from "@/lib/tokens";
 
 const VIEW_WIDTH = 340;
 const LEFT_MARGIN = 8;
@@ -116,6 +116,24 @@ function layoutRows(rows: FlowRow[]): { laid: LaidOutRow[]; height: number } {
 function nodeColor(node: ReadingFlowNode): string {
   if (node.kind === "question") return AI_BLUE;
   return node.positive ? INK : SHU;
+}
+
+/**
+ * 各行の親行のインデックスを、DFS前順(深さ付き)から復元する。`buildFlowTree`
+ * (テキスト代替のネスト構築)と同じ考え方の別実装 —— こちらは SVG 側で
+ * 親子をつなぐ接続線を引くために使う。深さ MAX_INDENT_DEPTH 以降は字下げが
+ * 頭打ちになり、兄弟でも祖先でもない行同士が同じx位置に並ぶため、字下げだけでは
+ * どの質問への回答かが分からなくなる(Codex レビュー指摘・PR #230 5回目)
+ */
+function computeParentIndices(rows: FlowRow[]): (number | null)[] {
+  const parents: (number | null)[] = [];
+  const stack: number[] = [];
+  rows.forEach((row, i) => {
+    parents.push(row.depth > 0 ? (stack[row.depth - 1] ?? null) : null);
+    stack[row.depth] = i;
+    stack.length = row.depth + 1;
+  });
+  return parents;
 }
 
 type FlowTreeNode = { row: FlowRow; children: FlowTreeNode[] };
@@ -237,6 +255,7 @@ export function ReadingFlow({
   const { rows, truncated } = flattenFlow(data);
   if (rows.length === 0) return null;
   const { laid, height } = layoutRows(rows);
+  const parentIndices = computeParentIndices(rows);
   const rootText = rows[0].node.kind === "question" ? `${rows[0].node.text}?` : rows[0].node.text;
 
   return (
@@ -247,6 +266,29 @@ export function ReadingFlow({
         role="img"
         aria-label={`判定フロー図: ${rootText} から始まる判定順序(本文の要約)`}
       >
+        <g aria-hidden="true">
+          {laid.map((row, i) => {
+            const parentIndex = parentIndices[i];
+            if (parentIndex === null) return null;
+            const parent = laid[parentIndex];
+            // 親の箱の下端左から、子の行の開始位置(ブランチタグの上)まで、
+            // 縦→横のL字で結ぶ。字下げが頭打ちになる深さでも、この接続線が
+            // どの質問から伸びた枝かを示す(Codex レビュー指摘・PR #230 5回目)
+            const startX = parent.x + 4;
+            const startY = parent.boxY + parent.boxHeight;
+            const endX = row.x + 4;
+            const endY = row.y;
+            return (
+              <path
+                key={i}
+                d={`M ${startX} ${startY} V ${endY} H ${endX}`}
+                fill="none"
+                stroke={LINE}
+                strokeWidth={1.2}
+              />
+            );
+          })}
+        </g>
         {laid.map((row, i) => {
           const color = nodeColor(row.node);
           return (
