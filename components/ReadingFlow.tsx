@@ -88,17 +88,27 @@ type FlowRow = {
 
 /** 開始ノードから深さ優先で辿り、表示順の行に平らにする。同じ終端に複数の経路から
  * 到達する(DAGの合流)ときは、経路ごとに複数回出てくる —— ASCIIの判定フローと同じ表現 */
-function flattenFlow(data: ReadingFlowData): { rows: FlowRow[]; truncated: boolean } {
+function flattenFlow(data: ReadingFlowData): { rows: FlowRow[]; truncated: boolean; brokenRef: boolean } {
   const byId = new Map(data.nodes.map((n) => [n.id, n] as const));
   const rows: FlowRow[] = [];
   let truncated = false;
+  // yes/no は自由文字列なので、存在しないノードIDを指す誤り(タイプミス等)を
+  // TypeScript は検出できない。以前はその枝を無警告で欠落させていたため、
+  // 図・テキスト代替の両方が「完全に見えるが実は結論が抜けている」状態になり
+  // うった(Codex レビュー指摘・PR #230 11回目)。他の欠落(MAX_ROWS)と同様、
+  // 画面上に警告する
+  let brokenRef = false;
   const visit = (id: string, depth: number, branch: "yes" | "no" | null, path: Set<string>) => {
     if (rows.length >= MAX_ROWS) {
       truncated = true;
       return;
     }
     const node = byId.get(id);
-    if (!node || path.has(id)) return;
+    if (!node) {
+      brokenRef = true;
+      return;
+    }
+    if (path.has(id)) return;
     rows.push({ node, depth, branch });
     if (node.kind === "question") {
       const nextPath = new Set(path).add(id);
@@ -107,7 +117,7 @@ function flattenFlow(data: ReadingFlowData): { rows: FlowRow[]; truncated: boole
     }
   };
   visit(data.start, 0, null, new Set());
-  return { rows, truncated };
+  return { rows, truncated, brokenRef };
 }
 
 /**
@@ -313,7 +323,7 @@ export function ReadingFlow({
   data: ReadingFlowData;
   onJumpToSection?: (index: number) => void;
 }) {
-  const { rows, truncated } = flattenFlow(data);
+  const { rows, truncated, brokenRef } = flattenFlow(data);
   if (rows.length === 0) return null;
   const { laid, height } = layoutRows(rows);
   const parentIndices = computeParentIndices(rows);
@@ -410,6 +420,11 @@ export function ReadingFlow({
       {depthCapped && (
         <p style={{ margin: "4px 0 0", fontSize: 10.5, color: SHU, fontWeight: 700, lineHeight: 1.6 }}>
           階層が深いため、図の字下げ・接続線では一部の親子関係を区別できません。正確な階層は下の文字表示で確認してください。
+        </p>
+      )}
+      {brokenRef && (
+        <p style={{ margin: "4px 0 0", fontSize: 10.5, color: SHU, fontWeight: 700, lineHeight: 1.6 }}>
+          データに壊れた参照があるため、図の一部が表示されていません。
         </p>
       )}
       <details style={{ marginTop: 8 }}>
