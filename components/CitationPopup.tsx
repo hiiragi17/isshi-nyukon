@@ -9,15 +9,25 @@
  * 最大高さとスクロールを持たせ、閉じるボタンを含むヘッダーを sticky にして
  * 常に手が届くようにしている
  */
+import type { ReactNode } from "react";
 import { INK, CARD, INK_SUB, SERIF, SANS } from "@/lib/tokens";
 import type { CitationEntry } from "@/lib/citations";
+import type { ReadingTable } from "@/types";
 
 export function CitationPopup({
   entry,
   onClose,
+  renderTable,
 }: {
   entry: CitationEntry | null;
   onClose: () => void;
+  /**
+   * 引用行に表(`line.tableAfter`)が付いている場合、その表を描画する。
+   * `ReadingView` 側のテーブル描画(スタイル・用語/条文参照リンク処理込み)を
+   * そのまま再利用するため、呼び出し元から渡してもらう(Codexレビュー指摘・PR #234:
+   * 本文の条文参照からポップアップを開いたとき、条文中の表が読めないと引用が不完全)
+   */
+  renderTable: (t: ReadingTable, idPrefix: string, fallbackLabel: string) => ReactNode;
 }) {
   if (!entry) return null;
   return (
@@ -94,6 +104,8 @@ export function CitationPopup({
         >
           {entry.line.text}
         </p>
+        {entry.line.tableAfter &&
+          renderTable(entry.line.tableAfter, "citation-table", entry.line.label ?? entry.key)}
         <p style={{ margin: "8px 0 0", fontSize: 11, color: INK_SUB, textAlign: "right" }}>
           — {entry.cite}
         </p>

@@ -8,8 +8,21 @@
  */
 import { useMemo, useRef, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import type { Reading, ReadingSection } from "@/types";
-import { INK, CARD, AI_BLUE, AI_BLUE_BG, MUTED, SERIF, SANS, RADIUS, SHU, LINE } from "@/lib/tokens";
+import type { Reading, ReadingSection, ReadingTable } from "@/types";
+import {
+  INK,
+  CARD,
+  AI_BLUE,
+  AI_BLUE_BG,
+  MUTED,
+  SERIF,
+  SANS,
+  RADIUS,
+  SHU,
+  LINE,
+  INK_SUB,
+  INK_DOTTED,
+} from "@/lib/tokens";
 import { page, col, card, outlineButton } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
 import { Diagram } from "@/components/Diagram";
@@ -146,6 +159,103 @@ export function ReadingView({
       ) : (
         part
       ),
+    );
+  };
+
+  const renderTable = (
+    t: ReadingTable,
+    idPrefix: string,
+    fallbackLabel: string,
+    // "dark" は CitationPopup(墨地・淡色文字)の中で使う配色(Codexレビュー指摘・PR #234:
+    // 通常のテーブル配色(淡い地に墨文字)をそのまま墨地に載せると文字が読めなくなるため)
+    variant: "light" | "dark" = "light",
+  ): ReactNode => {
+    const headColor = variant === "dark" ? INK_SUB : AI_BLUE;
+    const headBorder = variant === "dark" ? INK_DOTTED : AI_BLUE;
+    const cellColor = variant === "dark" ? CARD : INK;
+    const cellBorder = variant === "dark" ? INK_DOTTED : LINE;
+    const captionColor = variant === "dark" ? INK_SUB : MUTED;
+    return (
+      <div style={{ marginTop: 10 }}>
+        {t.caption && (
+          <div
+            id={`${idPrefix}-caption`}
+            style={{
+              fontFamily: SANS,
+              fontSize: 11,
+              fontWeight: 700,
+              color: captionColor,
+              marginBottom: 4,
+            }}
+          >
+            {t.caption}
+          </div>
+        )}
+        <div style={{ overflowX: "auto" }}>
+          <table
+            // caption があればそれを、無ければセクション見出しを表のアクセシブルネームにする
+            // (menkyo.ts / takkenshi.ts のように caption を省略した表が
+            // 無名にならないように。Codexレビュー指摘・PR #229)
+            aria-labelledby={t.caption ? `${idPrefix}-caption` : undefined}
+            aria-label={t.caption ? undefined : fallbackLabel}
+            style={{
+              width: "100%",
+              // 列数に応じた最低幅。狭い画面では表側だけが横スクロールする
+              // (ページ本体はスクロールさせない)。文字単位の折返しを避けるため。
+              minWidth: Math.max(320, t.headers.length * 120),
+              borderCollapse: "collapse",
+              fontFamily: SANS,
+              fontSize: 12.5,
+            }}
+          >
+            <thead>
+              <tr>
+                {t.headers.map((h, hi) => (
+                  <th
+                    key={hi}
+                    style={{
+                      textAlign: "left",
+                      padding: "6px 8px",
+                      borderBottom: `2px solid ${headBorder}`,
+                      color: headColor,
+                      fontWeight: 700,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {renderBody(h)}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {t.rows.map((row, ri) => (
+                <tr key={ri}>
+                  {row.map((cell, ci) => {
+                    const cellStyle = {
+                      padding: "6px 8px",
+                      borderBottom: `1px solid ${cellBorder}`,
+                      color: cellColor,
+                      verticalAlign: "top" as const,
+                      whiteSpace: ci === 0 ? ("nowrap" as const) : ("normal" as const),
+                    };
+                  // 先頭列は行見出し(スクリーンリーダーがセルの値と
+                  // 対応付けられるよう th scope="row" にする)
+                  return ci === 0 ? (
+                    <th key={ci} scope="row" style={{ ...cellStyle, textAlign: "left", fontWeight: 400 }}>
+                      {renderBody(cell)}
+                    </th>
+                  ) : (
+                    <td key={ci} style={cellStyle}>
+                      {renderBody(cell)}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        </div>
+      </div>
     );
   };
 
@@ -339,92 +449,8 @@ export function ReadingView({
                     </p>
                   ))}
                 </div>
-                {section.table && (
-                  <div style={{ marginTop: 10 }}>
-                    {section.table.caption && (
-                      <div
-                        id={`table-caption-${i}`}
-                        style={{
-                          fontFamily: SANS,
-                          fontSize: 11,
-                          fontWeight: 700,
-                          color: MUTED,
-                          marginBottom: 4,
-                        }}
-                      >
-                        {section.table.caption}
-                      </div>
-                    )}
-                    <div style={{ overflowX: "auto" }}>
-                      <table
-                        // caption があればそれを、無ければセクション見出しを表のアクセシブルネームにする
-                        // (menkyo.ts / takkenshi.ts のように caption を省略した表が
-                        // 無名にならないように。Codexレビュー指摘・PR #229)
-                        aria-labelledby={section.table.caption ? `table-caption-${i}` : undefined}
-                        aria-label={section.table.caption ? undefined : (subtitle ?? heading)}
-                        style={{
-                          width: "100%",
-                          // 列数に応じた最低幅。狭い画面では表側だけが横スクロールする
-                          // (ページ本体はスクロールさせない)。文字単位の折返しを避けるため。
-                          minWidth: Math.max(320, section.table.headers.length * 120),
-                          borderCollapse: "collapse",
-                          fontFamily: SANS,
-                          fontSize: 12.5,
-                        }}
-                      >
-                        <thead>
-                          <tr>
-                            {section.table.headers.map((h, hi) => (
-                              <th
-                                key={hi}
-                                style={{
-                                  textAlign: "left",
-                                  padding: "6px 8px",
-                                  borderBottom: `2px solid ${AI_BLUE}`,
-                                  color: AI_BLUE,
-                                  fontWeight: 700,
-                                  whiteSpace: "nowrap",
-                                }}
-                              >
-                                {renderBody(h)}
-                              </th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {section.table.rows.map((row, ri) => (
-                            <tr key={ri}>
-                              {row.map((cell, ci) => {
-                                const cellStyle = {
-                                  padding: "6px 8px",
-                                  borderBottom: `1px solid ${LINE}`,
-                                  color: INK,
-                                  verticalAlign: "top" as const,
-                                  whiteSpace: ci === 0 ? ("nowrap" as const) : ("normal" as const),
-                                };
-                                // 先頭列は行見出し(スクリーンリーダーがセルの値と
-                                // 対応付けられるよう th scope="row" にする)
-                                return ci === 0 ? (
-                                  <th
-                                    key={ci}
-                                    scope="row"
-                                    style={{ ...cellStyle, textAlign: "left", fontWeight: 400 }}
-                                  >
-                                    {renderBody(cell)}
-                                  </th>
-                                ) : (
-                                  <td key={ci} style={cellStyle}>
-                                    {renderBody(cell)}
-                                  </td>
-                                );
-                              })}
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                )}
+                {section.table &&
+                  renderTable(section.table, `table-${i}`, subtitle ?? heading)}
                 {section.diagram && (
                   <div style={{ marginTop: 10 }}>
                     <Diagram data={section.diagram} />
@@ -460,39 +486,46 @@ export function ReadingView({
                           }}
                         >
                           {section.quote.lines.map((line, k) => (
-                            <div
-                              key={k}
-                              style={{
-                                display: "flex",
-                                gap: 8,
-                                paddingLeft: line.indent ? 16 : 0,
-                              }}
-                            >
-                              {line.label && (
-                                <span
-                                  style={{
-                                    flexShrink: 0,
-                                    fontFamily: SANS,
-                                    fontSize: 11,
-                                    fontWeight: 700,
-                                    color: AI_BLUE,
-                                    minWidth: line.indent ? 16 : 40,
-                                  }}
-                                >
-                                  {line.label}
-                                </span>
-                              )}
-                              <p
+                            <div key={k}>
+                              <div
                                 style={{
-                                  margin: 0,
-                                  fontFamily: SANS,
-                                  fontSize: 12.5,
-                                  lineHeight: 1.9,
-                                  color: INK,
+                                  display: "flex",
+                                  gap: 8,
+                                  paddingLeft: line.indent ? 16 : 0,
                                 }}
                               >
-                                {line.text}
-                              </p>
+                                {line.label && (
+                                  <span
+                                    style={{
+                                      flexShrink: 0,
+                                      fontFamily: SANS,
+                                      fontSize: 11,
+                                      fontWeight: 700,
+                                      color: AI_BLUE,
+                                      minWidth: line.indent ? 16 : 40,
+                                    }}
+                                  >
+                                    {line.label}
+                                  </span>
+                                )}
+                                <p
+                                  style={{
+                                    margin: 0,
+                                    fontFamily: SANS,
+                                    fontSize: 12.5,
+                                    lineHeight: 1.9,
+                                    color: INK,
+                                  }}
+                                >
+                                  {line.text}
+                                </p>
+                              </div>
+                              {line.tableAfter &&
+                                renderTable(
+                                  line.tableAfter,
+                                  `table-${i}-${k}`,
+                                  `${subtitle ?? heading} ${line.label ?? ""}`.trim(),
+                                )}
                             </div>
                           ))}
                         </div>
@@ -556,7 +589,11 @@ export function ReadingView({
         </p>
 
         <TermPopup term={activeTerm} onClose={() => setActiveTerm(null)} />
-        <CitationPopup entry={activeCitation} onClose={() => setActiveCitation(null)} />
+        <CitationPopup
+          entry={activeCitation}
+          onClose={() => setActiveCitation(null)}
+          renderTable={(t, idPrefix, fallbackLabel) => renderTable(t, idPrefix, fallbackLabel, "dark")}
+        />
       </div>
     </div>
   );
