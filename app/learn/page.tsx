@@ -3,11 +3,16 @@
 /**
  * 参考書モードの一覧ページ(Issue #178)。
  * 検地帳の論点詳細を経由しなくても、分野別に読み物を一覧・直接閲覧できる入口。
+ *
+ * 分野ごとに開閉できる(初期状態は全開)。分野が増えても一覧性を保てるよう、
+ * `/play` の論点選択画面(app/play/page.tsx の toggleCatOpen)と同じ
+ * 開閉パターンを使う。
  */
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { READINGS } from "@/data/readings";
 import { byCategoryPriority } from "@/lib/categories";
-import { INK, CARD, MUTED, LINE, SERIF, RADIUS } from "@/lib/tokens";
+import { INK, CARD, AI_BLUE, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
 import { page, col, outlineButton } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
 
@@ -17,6 +22,20 @@ export default function LearnIndexPage() {
   const categories = [...new Set(readings.map((r) => r.category))].sort(
     byCategoryPriority,
   );
+  // 初期状態は全分野を開いておく(現状は分野が少なく、たたむと何も見えなくなるため)。
+  // 分野が増えたときにたたむ操作自体は使えるようにしておく
+  const [openCats, setOpenCats] = useState<Set<string>>(
+    () => new Set(categories),
+  );
+
+  const toggleCatOpen = (cat: string) => {
+    setOpenCats((s) => {
+      const next = new Set(s);
+      if (next.has(cat)) next.delete(cat);
+      else next.add(cat);
+      return next;
+    });
+  };
 
   return (
     <div style={page}>
@@ -57,59 +76,114 @@ export default function LearnIndexPage() {
           </p>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-            {categories.map((cat) => (
-              <div key={cat}>
-                <div
-                  style={{
-                    fontFamily: SERIF,
-                    fontSize: 14,
-                    fontWeight: 700,
-                    marginBottom: 8,
-                  }}
-                >
-                  {cat}
-                </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                  {readings
-                    .filter((r) => r.category === cat)
-                    .map((r) => (
-                      <button
-                        key={r.topicId}
-                        onClick={() => router.push(`/learn/${r.topicId}`)}
-                        style={{
-                          textAlign: "left",
-                          width: "100%",
-                          background: CARD,
-                          border: `1px solid ${LINE}`,
-                          borderRadius: RADIUS,
-                          padding: "12px 16px",
-                          cursor: "pointer",
-                        }}
-                      >
-                        <div
+            {categories.map((cat, catIdx) => {
+              const catReadings = readings.filter((r) => r.category === cat);
+              const catOpen = openCats.has(cat);
+              const listId = `reading-list-${catIdx}`;
+              return (
+                <div key={cat}>
+                  <button
+                    type="button"
+                    onClick={() => toggleCatOpen(cat)}
+                    aria-expanded={catOpen}
+                    aria-controls={listId}
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      textAlign: "left",
+                      background: "transparent",
+                      border: "none",
+                      cursor: "pointer",
+                      padding: "8px 0",
+                      minHeight: 44,
+                      color: INK,
+                    }}
+                  >
+                    <span
+                      aria-hidden="true"
+                      style={{
+                        flexShrink: 0,
+                        width: 16,
+                        textAlign: "center",
+                        fontFamily: SANS,
+                        fontSize: 14,
+                        fontWeight: 700,
+                        color: AI_BLUE,
+                      }}
+                    >
+                      {catOpen ? "−" : "+"}
+                    </span>
+                    <span
+                      style={{
+                        fontFamily: SERIF,
+                        fontSize: 14,
+                        fontWeight: 700,
+                      }}
+                    >
+                      {cat}
+                    </span>
+                    <span
+                      style={{
+                        fontFamily: SANS,
+                        fontSize: 11,
+                        color: MUTED,
+                      }}
+                    >
+                      {catReadings.length}論点
+                    </span>
+                  </button>
+                  {catOpen && (
+                    <div
+                      id={listId}
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 8,
+                        marginTop: 8,
+                      }}
+                    >
+                      {catReadings.map((r) => (
+                        <button
+                          key={r.topicId}
+                          onClick={() => router.push(`/learn/${r.topicId}`)}
                           style={{
-                            fontFamily: SERIF,
-                            fontSize: 14.5,
-                            fontWeight: 700,
-                            color: INK,
+                            textAlign: "left",
+                            width: "100%",
+                            background: CARD,
+                            border: `1px solid ${LINE}`,
+                            borderRadius: RADIUS,
+                            padding: "12px 16px",
+                            cursor: "pointer",
                           }}
                         >
-                          {r.title}
-                        </div>
-                        <div
-                          style={{
-                            fontSize: 11.5,
-                            color: MUTED,
-                            marginTop: 2,
-                          }}
-                        >
-                          {r.law}
-                        </div>
-                      </button>
-                    ))}
+                          <div
+                            style={{
+                              fontFamily: SERIF,
+                              fontSize: 14.5,
+                              fontWeight: 700,
+                              color: INK,
+                            }}
+                          >
+                            {r.title}
+                          </div>
+                          <div
+                            style={{
+                              fontSize: 11.5,
+                              color: MUTED,
+                              marginTop: 2,
+                            }}
+                          >
+                            {r.law}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
