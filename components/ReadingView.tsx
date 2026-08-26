@@ -339,92 +339,101 @@ export function ReadingView({
                     </p>
                   ))}
                 </div>
-                {section.table && (
-                  <div style={{ marginTop: 10 }}>
-                    {section.table.caption && (
-                      <div
-                        id={`table-caption-${i}`}
-                        style={{
-                          fontFamily: SANS,
-                          fontSize: 11,
-                          fontWeight: 700,
-                          color: MUTED,
-                          marginBottom: 4,
-                        }}
-                      >
-                        {section.table.caption}
-                      </div>
-                    )}
-                    <div style={{ overflowX: "auto" }}>
-                      <table
-                        // caption があればそれを、無ければセクション見出しを表のアクセシブルネームにする
-                        // (menkyo.ts / takkenshi.ts のように caption を省略した表が
-                        // 無名にならないように。Codexレビュー指摘・PR #229)
-                        aria-labelledby={section.table.caption ? `table-caption-${i}` : undefined}
-                        aria-label={section.table.caption ? undefined : (subtitle ?? heading)}
-                        style={{
-                          width: "100%",
-                          // 列数に応じた最低幅。狭い画面では表側だけが横スクロールする
-                          // (ページ本体はスクロールさせない)。文字単位の折返しを避けるため。
-                          minWidth: Math.max(320, section.table.headers.length * 120),
-                          borderCollapse: "collapse",
-                          fontFamily: SANS,
-                          fontSize: 12.5,
-                        }}
-                      >
-                        <thead>
-                          <tr>
-                            {section.table.headers.map((h, hi) => (
-                              <th
-                                key={hi}
-                                style={{
-                                  textAlign: "left",
-                                  padding: "6px 8px",
-                                  borderBottom: `2px solid ${AI_BLUE}`,
-                                  color: AI_BLUE,
-                                  fontWeight: 700,
-                                  whiteSpace: "nowrap",
-                                }}
-                              >
-                                {renderBody(h)}
-                              </th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {section.table.rows.map((row, ri) => (
-                            <tr key={ri}>
-                              {row.map((cell, ci) => {
-                                const cellStyle = {
-                                  padding: "6px 8px",
-                                  borderBottom: `1px solid ${LINE}`,
-                                  color: INK,
-                                  verticalAlign: "top" as const,
-                                  whiteSpace: ci === 0 ? ("nowrap" as const) : ("normal" as const),
-                                };
-                                // 先頭列は行見出し(スクリーンリーダーがセルの値と
-                                // 対応付けられるよう th scope="row" にする)
-                                return ci === 0 ? (
-                                  <th
-                                    key={ci}
-                                    scope="row"
-                                    style={{ ...cellStyle, textAlign: "left", fontWeight: 400 }}
-                                  >
-                                    {renderBody(cell)}
-                                  </th>
-                                ) : (
-                                  <td key={ci} style={cellStyle}>
-                                    {renderBody(cell)}
-                                  </td>
-                                );
-                              })}
+                {(() => {
+                  const t = section.table;
+                  if (!t) return null;
+                  const tableEl = (
+                    <div style={{ marginTop: 10 }}>
+                      {t.caption && (
+                        <div
+                          id={`table-caption-${i}`}
+                          style={{
+                            fontFamily: SANS,
+                            fontSize: 11,
+                            fontWeight: 700,
+                            color: MUTED,
+                            marginBottom: 4,
+                          }}
+                        >
+                          {t.caption}
+                        </div>
+                      )}
+                      <div style={{ overflowX: "auto" }}>
+                        <table
+                          // caption があればそれを、無ければセクション見出しを表のアクセシブルネームにする
+                          // (menkyo.ts / takkenshi.ts のように caption を省略した表が
+                          // 無名にならないように。Codexレビュー指摘・PR #229)
+                          aria-labelledby={t.caption ? `table-caption-${i}` : undefined}
+                          aria-label={t.caption ? undefined : (subtitle ?? heading)}
+                          style={{
+                            width: "100%",
+                            // 列数に応じた最低幅。狭い画面では表側だけが横スクロールする
+                            // (ページ本体はスクロールさせない)。文字単位の折返しを避けるため。
+                            minWidth: Math.max(320, t.headers.length * 120),
+                            borderCollapse: "collapse",
+                            fontFamily: SANS,
+                            fontSize: 12.5,
+                          }}
+                        >
+                          <thead>
+                            <tr>
+                              {t.headers.map((h, hi) => (
+                                <th
+                                  key={hi}
+                                  style={{
+                                    textAlign: "left",
+                                    padding: "6px 8px",
+                                    borderBottom: `2px solid ${AI_BLUE}`,
+                                    color: AI_BLUE,
+                                    fontWeight: 700,
+                                    whiteSpace: "nowrap",
+                                  }}
+                                >
+                                  {renderBody(h)}
+                                </th>
+                              ))}
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                          </thead>
+                          <tbody>
+                            {t.rows.map((row, ri) => (
+                              <tr key={ri}>
+                                {row.map((cell, ci) => {
+                                  const cellStyle = {
+                                    padding: "6px 8px",
+                                    borderBottom: `1px solid ${LINE}`,
+                                    color: INK,
+                                    verticalAlign: "top" as const,
+                                    whiteSpace: ci === 0 ? ("nowrap" as const) : ("normal" as const),
+                                  };
+                                  // 先頭列は行見出し(スクリーンリーダーがセルの値と
+                                  // 対応付けられるよう th scope="row" にする)
+                                  return ci === 0 ? (
+                                    <th
+                                      key={ci}
+                                      scope="row"
+                                      style={{ ...cellStyle, textAlign: "left", fontWeight: 400 }}
+                                    >
+                                      {renderBody(cell)}
+                                    </th>
+                                  ) : (
+                                    <td key={ci} style={cellStyle}>
+                                      {renderBody(cell)}
+                                    </td>
+                                  );
+                                })}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  );
+                  // kind === "source" の表(4条5項の読み替え表など)は原文引用そのものの
+                  // 一部なので、条文トグルの折りたたみの外に常時表示すると「条文を読む」を
+                  // 開く前から長大な表が見えてしまう。トグルを開いたときだけ表示する
+                  // (Codexレビュー指摘・PR #234)
+                  return kind === "source" ? (quoteOpen ? tableEl : null) : tableEl;
+                })()}
                 {section.diagram && (
                   <div style={{ marginTop: 10 }}>
                     <Diagram data={section.diagram} />
