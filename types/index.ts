@@ -227,6 +227,13 @@ export type ReadingQuoteLine = {
   label?: string; // 見出し(例: "1項", "一号", "ロ")
   text: string;
   indent?: boolean; // イ〜ホ等、号の下位区分は字下げして表示する
+  /**
+   * 条文中に表がある場合(例: 読み替え規定の第一欄〜第四欄)、この行の直後に
+   * 表を挿入する(省略可)。条文の条項順どおりの位置に表を置くための仕組み
+   * (Codexレビュー指摘・PR #234: 表をquoteの外に出すと、表を参照する前後の
+   * 項と統語順が入れ替わってしまう)。
+   */
+  tableAfter?: ReadingTable;
 };
 
 /**
