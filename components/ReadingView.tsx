@@ -9,7 +9,20 @@
 import { useMemo, useRef, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import type { Reading, ReadingSection, ReadingTable } from "@/types";
-import { INK, CARD, AI_BLUE, AI_BLUE_BG, MUTED, SERIF, SANS, RADIUS, SHU, LINE } from "@/lib/tokens";
+import {
+  INK,
+  CARD,
+  AI_BLUE,
+  AI_BLUE_BG,
+  MUTED,
+  SERIF,
+  SANS,
+  RADIUS,
+  SHU,
+  LINE,
+  INK_SUB,
+  INK_DOTTED,
+} from "@/lib/tokens";
 import { page, col, card, outlineButton } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
 import { Diagram } from "@/components/Diagram";
@@ -149,69 +162,82 @@ export function ReadingView({
     );
   };
 
-  const renderTable = (t: ReadingTable, idPrefix: string, fallbackLabel: string): ReactNode => (
-    <div style={{ marginTop: 10 }}>
-      {t.caption && (
-        <div
-          id={`${idPrefix}-caption`}
-          style={{
-            fontFamily: SANS,
-            fontSize: 11,
-            fontWeight: 700,
-            color: MUTED,
-            marginBottom: 4,
-          }}
-        >
-          {t.caption}
-        </div>
-      )}
-      <div style={{ overflowX: "auto" }}>
-        <table
-          // caption があればそれを、無ければセクション見出しを表のアクセシブルネームにする
-          // (menkyo.ts / takkenshi.ts のように caption を省略した表が
-          // 無名にならないように。Codexレビュー指摘・PR #229)
-          aria-labelledby={t.caption ? `${idPrefix}-caption` : undefined}
-          aria-label={t.caption ? undefined : fallbackLabel}
-          style={{
-            width: "100%",
-            // 列数に応じた最低幅。狭い画面では表側だけが横スクロールする
-            // (ページ本体はスクロールさせない)。文字単位の折返しを避けるため。
-            minWidth: Math.max(320, t.headers.length * 120),
-            borderCollapse: "collapse",
-            fontFamily: SANS,
-            fontSize: 12.5,
-          }}
-        >
-          <thead>
-            <tr>
-              {t.headers.map((h, hi) => (
-                <th
-                  key={hi}
-                  style={{
-                    textAlign: "left",
-                    padding: "6px 8px",
-                    borderBottom: `2px solid ${AI_BLUE}`,
-                    color: AI_BLUE,
-                    fontWeight: 700,
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {renderBody(h)}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {t.rows.map((row, ri) => (
-              <tr key={ri}>
-                {row.map((cell, ci) => {
-                  const cellStyle = {
-                    padding: "6px 8px",
-                    borderBottom: `1px solid ${LINE}`,
-                    color: INK,
-                    verticalAlign: "top" as const,
-                    whiteSpace: ci === 0 ? ("nowrap" as const) : ("normal" as const),
-                  };
+  const renderTable = (
+    t: ReadingTable,
+    idPrefix: string,
+    fallbackLabel: string,
+    // "dark" は CitationPopup(墨地・淡色文字)の中で使う配色(Codexレビュー指摘・PR #234:
+    // 通常のテーブル配色(淡い地に墨文字)をそのまま墨地に載せると文字が読めなくなるため)
+    variant: "light" | "dark" = "light",
+  ): ReactNode => {
+    const headColor = variant === "dark" ? INK_SUB : AI_BLUE;
+    const headBorder = variant === "dark" ? INK_DOTTED : AI_BLUE;
+    const cellColor = variant === "dark" ? CARD : INK;
+    const cellBorder = variant === "dark" ? INK_DOTTED : LINE;
+    const captionColor = variant === "dark" ? INK_SUB : MUTED;
+    return (
+      <div style={{ marginTop: 10 }}>
+        {t.caption && (
+          <div
+            id={`${idPrefix}-caption`}
+            style={{
+              fontFamily: SANS,
+              fontSize: 11,
+              fontWeight: 700,
+              color: captionColor,
+              marginBottom: 4,
+            }}
+          >
+            {t.caption}
+          </div>
+        )}
+        <div style={{ overflowX: "auto" }}>
+          <table
+            // caption があればそれを、無ければセクション見出しを表のアクセシブルネームにする
+            // (menkyo.ts / takkenshi.ts のように caption を省略した表が
+            // 無名にならないように。Codexレビュー指摘・PR #229)
+            aria-labelledby={t.caption ? `${idPrefix}-caption` : undefined}
+            aria-label={t.caption ? undefined : fallbackLabel}
+            style={{
+              width: "100%",
+              // 列数に応じた最低幅。狭い画面では表側だけが横スクロールする
+              // (ページ本体はスクロールさせない)。文字単位の折返しを避けるため。
+              minWidth: Math.max(320, t.headers.length * 120),
+              borderCollapse: "collapse",
+              fontFamily: SANS,
+              fontSize: 12.5,
+            }}
+          >
+            <thead>
+              <tr>
+                {t.headers.map((h, hi) => (
+                  <th
+                    key={hi}
+                    style={{
+                      textAlign: "left",
+                      padding: "6px 8px",
+                      borderBottom: `2px solid ${headBorder}`,
+                      color: headColor,
+                      fontWeight: 700,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {renderBody(h)}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {t.rows.map((row, ri) => (
+                <tr key={ri}>
+                  {row.map((cell, ci) => {
+                    const cellStyle = {
+                      padding: "6px 8px",
+                      borderBottom: `1px solid ${cellBorder}`,
+                      color: cellColor,
+                      verticalAlign: "top" as const,
+                      whiteSpace: ci === 0 ? ("nowrap" as const) : ("normal" as const),
+                    };
                   // 先頭列は行見出し(スクリーンリーダーがセルの値と
                   // 対応付けられるよう th scope="row" にする)
                   return ci === 0 ? (
@@ -228,9 +254,10 @@ export function ReadingView({
             ))}
           </tbody>
         </table>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div style={page}>
@@ -562,7 +589,11 @@ export function ReadingView({
         </p>
 
         <TermPopup term={activeTerm} onClose={() => setActiveTerm(null)} />
-        <CitationPopup entry={activeCitation} onClose={() => setActiveCitation(null)} />
+        <CitationPopup
+          entry={activeCitation}
+          onClose={() => setActiveCitation(null)}
+          renderTable={(t, idPrefix, fallbackLabel) => renderTable(t, idPrefix, fallbackLabel, "dark")}
+        />
       </div>
     </div>
   );
