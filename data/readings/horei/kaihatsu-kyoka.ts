@@ -91,8 +91,16 @@ export const kaihatsuKyokaReading: Reading = {
             id: "q-shigaika",
             kind: "question",
             text: "市街化区域内である",
-            yes: "q-kisei",
+            yes: "q-ordinance-shigaika",
             no: "q-mikubun",
+            sectionIndex: 1,
+          },
+          {
+            id: "q-ordinance-shigaika",
+            kind: "question",
+            text: "この区域について、条例による基準の引下げが定められている(施行令19条1項ただし書)",
+            yes: "t-ordinance",
+            no: "q-kisei",
             sectionIndex: 1,
           },
           {
@@ -123,8 +131,16 @@ export const kaihatsuKyokaReading: Reading = {
             id: "q-mikubun",
             kind: "question",
             text: "区域区分が定められていない都市計画区域又は準都市計画区域内である",
-            yes: "q-size3000",
+            yes: "q-ordinance-mikubun",
             no: "t-outofscope",
+            sectionIndex: 3,
+          },
+          {
+            id: "q-ordinance-mikubun",
+            kind: "question",
+            text: "この区域について、条例による基準の引下げが定められている(施行令19条1項ただし書)",
+            yes: "t-ordinance",
+            no: "q-size3000",
             sectionIndex: 3,
           },
           {
@@ -149,6 +165,12 @@ export const kaihatsuKyokaReading: Reading = {
           },
           { id: "t-required", kind: "terminal", text: "開発許可が必要", positive: true },
           { id: "t-not-required", kind: "terminal", text: "開発許可は不要", positive: false },
+          {
+            id: "t-ordinance",
+            kind: "terminal",
+            text: "条例で定められた基準による(この図の1,000㎡・3,000㎡は通常の基準。条例による引下げがある区域では、引き下げられた基準で判定する)",
+            positive: false,
+          },
           {
             id: "t-outofscope",
             kind: "terminal",
