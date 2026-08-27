@@ -11,6 +11,7 @@ import { kantokuShobunReading } from "./gyoho/kantoku-shobun";
 import { menkyoReading } from "./gyoho/menkyo";
 import { sanjunanaJouReading } from "./gyoho/sanjunana-jou";
 import { takkenshiReading } from "./gyoho/takkenshi";
+import { kaihatsuKyokaReading } from "./horei/kaihatsu-kyoka";
 
 /** 全読み物(生データ)。新規論点は末尾に追記する */
 const RAW_READINGS: Reading[] = [
@@ -25,6 +26,7 @@ const RAW_READINGS: Reading[] = [
   hoshuReading,
   kantokuShobunReading,
   hanshuuhouReading,
+  kaihatsuKyokaReading,
 ];
 
 /**

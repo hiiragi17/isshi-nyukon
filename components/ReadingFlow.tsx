@@ -207,6 +207,7 @@ function layoutRows(rows: FlowRow[]): { laid: LaidOutRow[]; height: number } {
 
 function nodeColor(node: ReadingFlowNode): string {
   if (node.kind === "question") return AI_BLUE;
+  if (node.positive === "conditional") return AI_BLUE;
   return node.positive ? INK : SHU;
 }
 
