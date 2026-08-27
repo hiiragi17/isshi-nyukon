@@ -291,7 +291,13 @@ export type ReadingFlowNode =
       id: string;
       kind: "terminal";
       text: string; // 結論
-      positive: boolean; // true=肯定的な結論(墨で表示) / false=否定的な結論(朱で表示)
+      /**
+       * true=肯定的な結論(墨で表示) / false=否定的な結論(朱で表示) /
+       * "conditional"=結論が別の条件(条例等)次第で確定しない・本文の確認が必要
+       * (藍で表示。墨・朱のどちらでもないことを示す。CodeRabbitレビュー指摘・PR #248:
+       * 「不要」と同じ朱色では否定的な結論と区別できないため追加)
+       */
+      positive: boolean | "conditional";
     };
 
 export type ReadingFlow = {
