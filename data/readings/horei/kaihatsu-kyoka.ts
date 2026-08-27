@@ -34,8 +34,8 @@ export const kaihatsuKyokaReading: Reading = {
     revisionId: "343AC0000000100_20250604_507AC0000000051",
     verifiedAgainst: "2025-06-04",
     examBasisDate: "2026-04-01",
-    driftChecked: "unchecked",
-    note: "法律側(29条・37条)は令和7年6月4日施行版(e-Govの版は施行日で刻まれるため2026-04-01の版は存在せず、基準日時点で効力を持つ版=施行日が基準日以下で最も新しいこの版)。次の版343AC0000000100_20260527_508AC0000000023の29条・37条と機械比較し、逐語一致を確認済み(docs/verification/horei-verification.md「追加照合(#129分)」参照。sha256 40b010eba15a91775792bfbc5d420f28b19226a7999b52ec3d8567470e4ea2f8)。29条・37条・施行令19条(都市計画法施行令344CO0000000158_20260401_508CO0000000066。施行日が法令基準日2026-04-01と一致)については単独ならdriftCheckedをchecked/not_requiredにできる状態。ただし施行令21条は同じ版由来と推定しているだけでRevisionIDそのものは未確認(docs/verification/horei-verification.md「追加照合(#248分)」参照)であり、この読み物1件に付き1つしか持てないdriftCheckedは全体の最も弱い水準に合わせる必要があるため、21条の版が未確認である以上 unchecked とする(Codexレビュー指摘・PR #248)。21条のRevisionIDが確認できれば checked に上げられる。revisionIdは法律側の版を示す。",
+    driftChecked: "checked",
+    note: "法律側(29条・37条)は令和7年6月4日施行版(e-Govの版は施行日で刻まれるため2026-04-01の版は存在せず、基準日時点で効力を持つ版=施行日が基準日以下で最も新しいこの版)。次の版343AC0000000100_20260527_508AC0000000023の29条・37条と機械比較し、逐語一致を確認済み(docs/verification/horei-verification.md「追加照合(#129分)」参照。sha256 40b010eba15a91775792bfbc5d420f28b19226a7999b52ec3d8567470e4ea2f8)。政令側(施行令19条・21条)は都市計画法施行令344CO0000000158_20260401_508CO0000000066(施行日が法令基準日2026-04-01と一致)。当初は施行令21条について同じ版由来と推定しているだけでRevisionIDそのものが未確認だったが(Codexレビュー指摘・PR #248)、hiiragi17がe-Govで直接RevisionIDを確認し(2026-08-27。docs/verification/horei-verification.md「追加照合(#248分)」参照)、21条を含む同令全体がこの版であることが確定した。法律側は基準日と版が一致しないため単独では driftChecked を not_required にはできず、機械比較で差分なしを確認済みの checked が全体としての水準になる(政令側は施行日が基準日と一致するため単独なら not_required だが、この読み物1件に付き1つしか持てない driftChecked は全体の最も弱い水準=checked に合わせる)。revisionIdは法律側の版を示す。",
   },
   summary: [
     "まず「公益上必要な一定の建築物(駅舎・図書館・公民館・変電所等)のための開発行為か」を確認する。該当すれば区域の内外・規模を問わず許可不要。",
