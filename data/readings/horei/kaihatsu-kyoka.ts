@@ -8,22 +8,23 @@ import type { Reading } from "@/types";
  * `docs/verification/horei-verification.md`の「追加照合(#129分)」に記録済みの
  * 逐語原文(hiiragi17提示・2026-07-30受領、Mami 2026-07-31承認)から転記した
  * (都市計画法29条1項柱書・1号・3号・2項2号、37条本文・1号・2号、
- * 同法施行令19条1項〔表を含む〕・2項)。転記そのものはこのissueで新たに行った
- * もので、まだ人による確認を経ていないため verified: false のまま追加する
- * (CLAUDE.mdの`verified`運用に準拠。転記の正確性を人が確認してから true にする)。
+ * 同法施行令19条1項〔表を含む〕・2項)。
  *
  * 法29条1項3号の「政令で定める建築物」の列挙(施行令21条)は、PR #248のレビュー対応中に
  * hiiragi17がこの会話でe-Gov逐語テキストを提示し、「追加照合(#248分)」として
  * docs/verification/horei-verification.md に記録した。駅舎=4号、変電所=14号、
  * 図書館=17号、公民館=18号にそれぞれ該当することを確認し、以前は法29条1項3号の
  * 文言内にとどめていた記述に具体の号を反映した。
+ *
+ * 転記の正確性はhiiragi17がこの会話で確認し(2026-08-27)、これ以上必要な原文は
+ * ないことを確認したうえで verified: true とした(CLAUDE.mdの`verified`運用に準拠)。
  */
 export const kaihatsuKyokaReading: Reading = {
   topicId: "q8",
   category: "法令上の制限",
   title: "開発許可",
   law: "都市計画法29条・37条、同法施行令19条・21条",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
