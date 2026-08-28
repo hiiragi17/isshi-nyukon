@@ -4,6 +4,7 @@ import type { Question } from "@/types";
 export const youtoChiiki2: Question = {
   id: "q95",
   topicId: "q7",
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
