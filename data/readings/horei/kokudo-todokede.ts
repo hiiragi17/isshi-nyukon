@@ -90,8 +90,16 @@ export const kokudoTodokedeReading: Reading = {
             kind: "question",
             text: "民事調停法による調停に基づく契約である、又は当事者の一方若しくは双方が国等(定義は18条。原文未確認のため内容には立ち入らない)である",
             yes: "t-not-required-3gou",
-            no: "q-kisei",
+            no: "q-kisei-tanitsuku",
             sectionIndex: 3,
+          },
+          {
+            id: "q-kisei-tanitsuku",
+            kind: "question",
+            text: "検討対象の土地(一団の場合は合算対象のすべての土地を含む)について、規制区域・注視区域・監視区域のいずれかに所在するかどうかが、全体を通じて同じである(一部だけがこれらの区域に所在する、といった混在がない)",
+            yes: "q-kisei",
+            no: "t-outofscope-mixedzone",
+            sectionIndex: 1,
           },
           {
             id: "q-kisei",
@@ -159,6 +167,12 @@ export const kokudoTodokedeReading: Reading = {
             id: "t-outofscope-multizone",
             kind: "terminal",
             text: "区域をまたぐ土地(一団を合算する場合を含む)の面積判定はこの読み物のスコープ外(一次ソースで解釈を確認できていない)。個別に確認すること。",
+            positive: "conditional",
+          },
+          {
+            id: "t-outofscope-mixedzone",
+            kind: "terminal",
+            text: "規制区域・注視区域・監視区域と、それ以外の区域が混在する一団の土地の判定はこの読み物のスコープ外(23条2項2号の適用除外は契約ごとの土地について判定されるため、混在する場合は契約ごとに個別に確認すること)。",
             positive: "conditional",
           },
           {
