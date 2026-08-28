@@ -12,14 +12,15 @@ import type { Reading } from "@/types";
  * 14条1項、23条1項柱書、23条2項柱書・1号柱書・イ・ロ・ハ・2号・3号、
  * 27条の4第1項・2項柱書・1号、27条の7第1項)。
  *
- * 転記時点では verified: false のまま(CLAUDE.mdの`verified`運用に準拠。
- * 転記の正確性は人が原文を確認してから true にする)。
+ * PR #249でのレビュー往復(CodeRabbit/Codex、計20スレッド)を経て、
+ * hiiragi17が2026-08-28に verified: true への変更を承認した。
  */
 export const kokudoTodokedeReading: Reading = {
   topicId: "q25",
   category: "法令上の制限",
   title: "事後届出(国土利用計画法)",
   law: "国土利用計画法14条・23条・27条の4・27条の7",
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
