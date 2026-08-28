@@ -98,8 +98,16 @@ export const kokudoTodokedeReading: Reading = {
             kind: "question",
             text: "規制区域・注視区域・監視区域内の土地である",
             yes: "t-outofscope",
-            no: "q-shigaika",
+            no: "q-tanitsuku-iki",
             sectionIndex: 1,
+          },
+          {
+            id: "q-tanitsuku-iki",
+            kind: "question",
+            text: "土地(一団の土地を合算する場合はその全体)が単一の区域(市街化区域/市街化区域以外の都市計画区域/都市計画区域外のいずれか一つ)に収まっている(複数の区域にまたがっていない)",
+            yes: "q-shigaika",
+            no: "t-outofscope-multizone",
+            sectionIndex: 4,
           },
           {
             id: "q-shigaika",
@@ -145,6 +153,12 @@ export const kokudoTodokedeReading: Reading = {
             id: "t-outofscope",
             kind: "terminal",
             text: "事後届出制度そのものの対象外(規制区域は許可制、注視区域は事後届出と同じ面積基準・監視区域は都道府県の規則で定める面積基準で事前届出制の対象になり得る)",
+            positive: "conditional",
+          },
+          {
+            id: "t-outofscope-multizone",
+            kind: "terminal",
+            text: "区域をまたぐ土地(一団を合算する場合を含む)の面積判定はこの読み物のスコープ外(一次ソースで解釈を確認できていない)。個別に確認すること。",
             positive: "conditional",
           },
           {
