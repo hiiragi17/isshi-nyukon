@@ -81,9 +81,17 @@ export const kokudoTodokedeReading: Reading = {
             id: "q-taika",
             kind: "question",
             text: "対価を得て行う契約である(対価のない贈与ではない)",
-            yes: "q-3gou",
+            yes: "q-3gou-tanitsuku",
             no: "t-not-required-taika",
             sectionIndex: 5,
+          },
+          {
+            id: "q-3gou-tanitsuku",
+            kind: "question",
+            text: "検討対象の土地(一団の場合は合算対象のすべての土地を含む)について、民事調停法による調停に基づく契約であるかどうか、及び当事者の一方若しくは双方が国等であるかどうかが、全体を通じて同じである(一部の契約だけがこれに該当する、といった混在がない)",
+            yes: "q-3gou",
+            no: "t-outofscope-mixed3gou",
+            sectionIndex: 3,
           },
           {
             id: "q-3gou",
@@ -173,6 +181,12 @@ export const kokudoTodokedeReading: Reading = {
             id: "t-outofscope-mixedzone",
             kind: "terminal",
             text: "規制区域・注視区域・監視区域と、それ以外の区域が混在する一団の土地の判定はこの読み物のスコープ外(23条2項2号の適用除外は契約ごとの土地について判定されるため、混在する場合は契約ごとに個別に確認すること)。",
+            positive: "conditional",
+          },
+          {
+            id: "t-outofscope-mixed3gou",
+            kind: "terminal",
+            text: "一団を構成する契約の一部だけが民事調停・国等該当(23条2項3号)に当たる場合の判定はこの読み物のスコープ外(3号の適用除外は契約ごとの土地について判定されるため、混在する場合は契約ごとに個別に確認すること)。",
             positive: "conditional",
           },
           {
