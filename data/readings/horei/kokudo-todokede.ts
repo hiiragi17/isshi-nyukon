@@ -163,7 +163,7 @@ export const kokudoTodokedeReading: Reading = {
             id: "t-required",
             kind: "terminal",
             text: "事後届出が必要(23条2項3号「その他政令で定める場合」に該当する場合は別。政令の中身は原文未取得のため、この読み物では条文に明記された調停・国等の2つに絞って扱う)",
-            positive: true,
+            positive: "conditional",
           },
           { id: "t-not-required", kind: "terminal", text: "事後届出は不要", positive: false },
         ],
