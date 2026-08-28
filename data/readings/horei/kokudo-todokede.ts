@@ -82,8 +82,16 @@ export const kokudoTodokedeReading: Reading = {
             id: "q-taika",
             kind: "question",
             text: "対価を得て行う契約である(対価のない贈与ではない)",
-            yes: "q-3gou-tanitsuku",
+            yes: "q-taika-tanitsuku",
             no: "t-not-required-taika",
+            sectionIndex: 5,
+          },
+          {
+            id: "q-taika-tanitsuku",
+            kind: "question",
+            text: "検討対象の土地(一団の場合は合算対象のすべての土地を含む)について、対価を得て行う契約であるかどうかが、全体を通じて同じである(一部が贈与など無償の取得である、といった混在がない)",
+            yes: "q-3gou-tanitsuku",
+            no: "t-outofscope-mixedtaika",
             sectionIndex: 5,
           },
           {
@@ -188,6 +196,12 @@ export const kokudoTodokedeReading: Reading = {
             id: "t-outofscope-mixed3gou",
             kind: "terminal",
             text: "一団を構成する契約の一部だけが民事調停・国等該当(23条2項3号)に当たる場合の判定はこの読み物のスコープ外(3号の適用除外は契約ごとの土地について判定されるため、混在する場合は契約ごとに個別に確認すること)。",
+            positive: "conditional",
+          },
+          {
+            id: "t-outofscope-mixedtaika",
+            kind: "terminal",
+            text: "一団を構成する契約の一部だけが対価を得て行う契約である(残りが贈与など無償である)場合の判定はこの読み物のスコープ外(一団の合算に無償取得分を含めるかどうかは条文の文言だけでは確定できず、一次ソースで確認できていない)。契約ごとに個別に確認すること。",
             positive: "conditional",
           },
           {
