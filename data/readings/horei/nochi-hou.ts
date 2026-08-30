@@ -88,15 +88,23 @@ export const nochiHouReading: Reading = {
             kind: "question",
             text: "転用を伴わない、農地(又は採草放牧地)のままの権利移動である",
             yes: "t-3jou",
-            no: "q-jiko",
+            no: "q-kenri",
             sectionIndex: 1,
+          },
+          {
+            id: "q-kenri",
+            kind: "question",
+            text: "転用に伴い、他人に地上権・賃借権その他の使用収益権を設定し、又は移転する(自己所有のまま自ら転用するのではない)",
+            yes: "q-shigaika-5",
+            no: "q-jiko",
+            sectionIndex: 3,
           },
           {
             id: "q-jiko",
             kind: "question",
-            text: "自己の農地を自ら転用する(他人に転用目的で権利を移転しない)",
+            text: "自ら転用する土地が農地である(採草放牧地ではない)",
             yes: "q-shigaika-4",
-            no: "q-shigaika-5",
+            no: "t-outofscope-sousaku",
             sectionIndex: 2,
           },
           {
@@ -118,8 +126,14 @@ export const nochiHouReading: Reading = {
           {
             id: "t-3jou",
             kind: "terminal",
-            text: "3条により農業委員会の許可が必要(市街化区域内であっても届出特例は無い)",
+            text: "3条により農業委員会の許可が必要(市街化区域内であっても届出特例は無い)。ただし、3条1項ただし書の各号(遺産の分割・財産分与による移転、農地中間管理機構による権利取得等)に該当する場合はこの限りでない(この読み物ではただし書の個々の要件までは扱わない)",
             positive: true,
+          },
+          {
+            id: "t-outofscope-sousaku",
+            kind: "terminal",
+            text: "自己所有の採草放牧地を、権利の設定・移転を伴わずに自ら転用する場合の規律は、この読み物が引用する3条・4条・5条の原文には明記されていない(4条は農地の転用に限られ、5条は権利の設定・移転を伴う場合に限られるため、この組み合わせはいずれにも当たらない)。この読み物ではスコープ外とする。",
+            positive: "conditional",
           },
           {
             id: "t-4jou-todokede",
