@@ -144,7 +144,7 @@ export const nochiHouReading: Reading = {
           {
             id: "t-4jou-kyoka",
             kind: "terminal",
-            text: "4条により都道府県知事等の許可が必要",
+            text: "4条により都道府県知事等の許可が必要。ただし、4条1項ただし書の他の号(国・都道府県等が転用する場合、土地収用法による収用等)に該当する場合はこの限りでない(この読み物では個々の要件までは扱わない)",
             positive: true,
           },
           {
@@ -156,7 +156,7 @@ export const nochiHouReading: Reading = {
           {
             id: "t-5jou-kyoka",
             kind: "terminal",
-            text: "5条により都道府県知事等の許可が必要",
+            text: "5条により都道府県知事等の許可が必要。ただし、5条1項ただし書の他の号に該当する場合はこの限りでない(この読み物では個々の要件までは扱わない)",
             positive: true,
           },
         ],
