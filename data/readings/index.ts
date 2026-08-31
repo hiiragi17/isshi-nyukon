@@ -13,6 +13,7 @@ import { sanjunanaJouReading } from "./gyoho/sanjunana-jou";
 import { takkenshiReading } from "./gyoho/takkenshi";
 import { kaihatsuKyokaReading } from "./horei/kaihatsu-kyoka";
 import { kokudoTodokedeReading } from "./horei/kokudo-todokede";
+import { nochiHouReading } from "./horei/nochi-hou";
 
 /** 全読み物(生データ)。新規論点は末尾に追記する */
 const RAW_READINGS: Reading[] = [
@@ -29,6 +30,7 @@ const RAW_READINGS: Reading[] = [
   hanshuuhouReading,
   kaihatsuKyokaReading,
   kokudoTodokedeReading,
+  nochiHouReading,
 ];
 
 /**
