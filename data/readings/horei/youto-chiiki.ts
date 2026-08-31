@@ -235,7 +235,6 @@ export const youtoChiikiReading: Reading = {
             indent: true,
           },
         ],
-        article: "48条",
         cite: "建築基準法48条13項、別表第二(わ)項(全文。docs/verification/horei-verification.md「追加照合(#129分)」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
       },
     },
