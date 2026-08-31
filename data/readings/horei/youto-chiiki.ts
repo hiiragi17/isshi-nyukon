@@ -19,15 +19,15 @@ import type { Reading } from "@/types";
  * を受けて、hiiragi17がe-Govで確認し、343AC0000000100_20250604_507AC0000000051
  * (令和7年6月4日施行。9条13項・13条1項7号後段と同じ基準日版)であることを確認した。
  *
- * 転記の正確性はまだ人が最終確認していないため、verified: false のまま追加する
- * (CLAUDE.mdの`verified`運用に準拠。人が確認でき次第 true に変更する)。
+ * 転記の正確性はhiiragi17がこの会話で確認し(2026-08-31)、verified: true とした
+ * (CLAUDE.mdの`verified`運用に準拠)。
  */
 export const youtoChiikiReading: Reading = {
   topicId: "q7",
   category: "法令上の制限",
   title: "用途地域",
   law: "都市計画法9条・13条、建築基準法48条・52条・53条・91条、別表第二",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
