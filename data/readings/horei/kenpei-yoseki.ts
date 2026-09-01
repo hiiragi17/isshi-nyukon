@@ -20,16 +20,15 @@ import type { Reading } from "@/types";
  * (「追加照合(#240分)」参照。「政令で定める」建築物の委任先自体は未取得
  * のため、その先へは踏み込んでいない)。
  *
- * 追加時点では verified: false(このデータ自体の転記の正確性は人の確認が
- * 必要。CLAUDE.mdの`verified`運用に準拠。特に版〔RevisionID〕はこの
- * セッションがネットワーク制限でe-Govへ直接アクセスできず独立確認できて
- * いないため、レビュー時にあわせて確認してください)。
+ * 転記の正確性はhiiragi17がこの会話で確認し(2026-09-01)、verified: true とした
+ * (CLAUDE.mdの`verified`運用に準拠)。
  */
 export const kenpeiYosekiReading: Reading = {
   topicId: "q9",
   category: "法令上の制限",
   title: "建蔽率・容積率",
   law: "建築基準法53条・52条",
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
