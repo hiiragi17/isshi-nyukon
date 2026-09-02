@@ -193,3 +193,76 @@ describe("LocalStorageAdapter", () => {
     ).rejects.toThrow();
   });
 });
+
+describe("LocalStorageAdapter — お気に入り", () => {
+  const KEY = "test:attempts";
+  const FAV_KEY = "test:favorites";
+
+  it("SSR(window 不在)では読み=空・書き=no-op で例外を出さない", async () => {
+    const adapter = new LocalStorageAdapter(KEY, FAV_KEY);
+    await expect(adapter.getFavorites()).resolves.toEqual([]);
+    await expect(adapter.saveFavorites(["t1"])).resolves.toBeUndefined();
+  });
+
+  it("saveFavorites は丸ごと差し替える", async () => {
+    const store = new Map<string, string>();
+    globals.window = fakeLocalStorage(store);
+    const adapter = new LocalStorageAdapter(KEY, FAV_KEY);
+    await adapter.saveFavorites(["t1", "t2"]);
+    await expect(adapter.getFavorites()).resolves.toEqual(["t1", "t2"]);
+    await adapter.saveFavorites(["t3"]);
+    await expect(adapter.getFavorites()).resolves.toEqual(["t3"]);
+  });
+
+  it("重複した topicId は除いて保存する", async () => {
+    const store = new Map<string, string>();
+    globals.window = fakeLocalStorage(store);
+    const adapter = new LocalStorageAdapter(KEY, FAV_KEY);
+    await adapter.saveFavorites(["t1", "t1", "t2"]);
+    await expect(adapter.getFavorites()).resolves.toEqual(["t1", "t2"]);
+  });
+
+  it("成績(attempts)のキーとは独立して保存される", async () => {
+    const store = new Map<string, string>();
+    globals.window = fakeLocalStorage(store);
+    const adapter = new LocalStorageAdapter(KEY, FAV_KEY);
+    await adapter.saveAttempt(attempt("q1", 0, 2, 2, "2026-07-01T00:00:00.000Z"));
+    await adapter.saveFavorites(["t1"]);
+    await expect(adapter.getAttempts()).resolves.toHaveLength(1);
+    await expect(adapter.getFavorites()).resolves.toEqual(["t1"]);
+  });
+
+  it("破損した JSON は空のお気に入りとして扱う", async () => {
+    const store = new Map<string, string>([[FAV_KEY, "{broken"]]);
+    globals.window = fakeLocalStorage(store);
+    const adapter = new LocalStorageAdapter(KEY, FAV_KEY);
+    await expect(adapter.getFavorites()).resolves.toEqual([]);
+  });
+
+  it("配列でない JSON も空のお気に入りとして扱う", async () => {
+    const store = new Map<string, string>([[FAV_KEY, '{"not":"array"}']]);
+    globals.window = fakeLocalStorage(store);
+    const adapter = new LocalStorageAdapter(KEY, FAV_KEY);
+    await expect(adapter.getFavorites()).resolves.toEqual([]);
+  });
+
+  it("文字列でない要素は除いて返す", async () => {
+    const store = new Map<string, string>([[FAV_KEY, '["t1", 2, null, "t2"]']]);
+    globals.window = fakeLocalStorage(store);
+    const adapter = new LocalStorageAdapter(KEY, FAV_KEY);
+    await expect(adapter.getFavorites()).resolves.toEqual(["t1", "t2"]);
+  });
+
+  it("setItem が例外を投げても saveFavorites は落ちない(容量超過等)", async () => {
+    globals.window = {
+      localStorage: {
+        getItem: () => null,
+        setItem: () => {
+          throw new Error("QuotaExceededError");
+        },
+      },
+    };
+    const adapter = new LocalStorageAdapter(KEY, FAV_KEY);
+    await expect(adapter.saveFavorites(["t1"])).resolves.toBeUndefined();
+  });
+});

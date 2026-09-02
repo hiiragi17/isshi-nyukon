@@ -22,7 +22,8 @@ import { QUESTIONS } from "@/data/questions";
 import { READINGS } from "@/data/readings";
 import type { Attempt } from "@/types";
 import { storage, latestByItem, itemKey } from "@/lib/storage";
-import { itemCountOf } from "@/lib/items";
+import { itemCountOf, itemKeysForTopic } from "@/lib/items";
+import { toggleFavorite } from "@/lib/favorites";
 import {
   topicProgress,
   groupTopicProgress,
@@ -49,6 +50,7 @@ import { Eyebrow } from "@/components/Eyebrow";
 import { GrowthChart } from "@/components/GrowthChart";
 import { BackupPanel } from "@/components/BackupPanel";
 import { DisclaimerFooter } from "@/components/DisclaimerFooter";
+import { FavoriteButton } from "@/components/FavoriteButton";
 
 /** SRS キューの対象 = 全問題の全肢 */
 const ALL_TARGETS = QUESTIONS.flatMap((q) =>
@@ -120,6 +122,8 @@ export default function Home() {
   const [attempts, setAttempts] = useState<Attempt[] | null>(null);
   const [sel, setSel] = useState<string | null>(null);
   const [stampedIds, setStampedIds] = useState<Set<string>>(new Set());
+  // お気に入り登録した論点(topicId)。null=未ロード
+  const [favorites, setFavorites] = useState<string[] | null>(null);
 
   // 全件履歴をロード
   useEffect(() => {
@@ -137,6 +141,33 @@ export default function Home() {
       alive = false;
     };
   }, []);
+
+  // お気に入りをロード
+  useEffect(() => {
+    let alive = true;
+    storage
+      .getFavorites()
+      .then((ids) => {
+        if (alive) setFavorites(ids);
+      })
+      .catch((e) => {
+        console.error("[storage] getFavorites に失敗しました", e);
+        if (alive) setFavorites([]);
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const toggleTopicFavorite = (topicId: string) => {
+    setFavorites((cur) => {
+      const next = toggleFavorite(cur ?? [], topicId);
+      storage
+        .saveFavorites(next)
+        .catch((e) => console.error("[storage] saveFavorites に失敗しました", e));
+      return next;
+    });
+  };
 
   // 控えからの復元後に全件履歴を読み直して画面へ反映する
   const reloadAttempts = () => {
@@ -347,6 +378,15 @@ export default function Home() {
             </div>
           )}
         </div>
+        {favorites !== null && (
+          <div style={{ marginTop: 8 }}>
+            <FavoriteButton
+              active={favorites.includes(q.topicId ?? q.id)}
+              onClick={() => toggleTopicFavorite(q.topicId ?? q.id)}
+              inactiveColor={INK_SUB}
+            />
+          </div>
+        )}
         <button
           onClick={() => goPlay(groupSessionKeys(qis))}
           style={{
@@ -574,6 +614,77 @@ export default function Home() {
                 </button>
               </div>
             )}
+
+            {/* お気に入り(あとで出したい論点だけの出題モード) */}
+            {favorites !== null && favorites.length > 0 && (() => {
+              const favTopics = favorites
+                .filter((tid) => TOPIC_ID_TO_QIS.has(tid))
+                .map((tid) => ({
+                  topicId: tid,
+                  q: QUESTIONS[TOPIC_ID_TO_QIS.get(tid)![0]],
+                }));
+              const favKeys = favTopics.flatMap(({ topicId }) =>
+                itemKeysForTopic(topicId, QUESTIONS),
+              );
+              if (!favTopics.length) return null;
+              return (
+                <div
+                  style={{
+                    background: CARD,
+                    border: `1px solid ${LINE}`,
+                    borderRadius: RADIUS,
+                    padding: "16px 18px",
+                    marginBottom: 12,
+                  }}
+                >
+                  <div style={{ fontSize: 11, letterSpacing: 2.5, color: MUTED }}>
+                    お気に入り
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 6,
+                      margin: "8px 0 12px",
+                    }}
+                  >
+                    {favTopics.map(({ topicId, q }) => (
+                      <div
+                        key={topicId}
+                        style={{
+                          fontFamily: SERIF,
+                          fontSize: 13.5,
+                          fontWeight: 700,
+                        }}
+                      >
+                        {q.topic}
+                        <span style={{ fontFamily: SANS, fontWeight: 400, color: MUTED, marginLeft: 8, fontSize: 11.5 }}>
+                          {q.category}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => goPlay(favKeys)}
+                    style={{
+                      width: "100%",
+                      minHeight: 48,
+                      fontSize: 14,
+                      fontWeight: 700,
+                      fontFamily: SERIF,
+                      letterSpacing: 3,
+                      color: CARD,
+                      background: SHU,
+                      border: "none",
+                      borderRadius: RADIUS,
+                      cursor: "pointer",
+                    }}
+                  >
+                    お気に入りだけ出題する({favKeys.length}肢)
+                  </button>
+                </div>
+              );
+            })()}
 
             {/* 範囲を選んで始める(分野・論点選択 / 少量モードの入口) */}
             <button

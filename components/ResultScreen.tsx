@@ -8,12 +8,16 @@
  * (取りこぼし再戦 / 範囲選び直し)は親から onRetryMisses / onToTop で受け取る。
  * 検地帳への遷移は新規完璧到達論点(newlyPerfectIds)にのみ依存するため内部で完結させる。
  */
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { QUESTIONS } from "@/data/questions";
+import { storage } from "@/lib/storage";
+import { toggleFavorite } from "@/lib/favorites";
 import { INK, CARD, AI_BLUE, SHU, GREEN, MUTED, LINE, SERIF, RADIUS } from "@/lib/tokens";
 import { page, col, card } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
 import { Stamp } from "@/components/Stamp";
+import { FavoriteButton } from "@/components/FavoriteButton";
 
 /** 判決画面が扱うセッション成績1件(qi=問題添字 / ci=肢番号) */
 export type ItemRecord = { qi: number; ci: number; pts: number; max: number };
@@ -42,6 +46,33 @@ export function ResultScreen({
   const toDashboard = () =>
     router.push(newlyPerfectIds.length ? `/?stamped=${newlyPerfectIds.join(",")}` : "/");
 
+  // お気に入り(topicId の集合)。解いた直後に「あとで出したい」論点へ印を付けられるようにする
+  const [favorites, setFavorites] = useState<string[] | null>(null);
+  useEffect(() => {
+    let alive = true;
+    storage
+      .getFavorites()
+      .then((ids) => {
+        if (alive) setFavorites(ids);
+      })
+      .catch((e) => {
+        console.error("[storage] getFavorites に失敗しました", e);
+        if (alive) setFavorites([]);
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
+  const toggleTopicFavorite = (topicId: string) => {
+    setFavorites((cur) => {
+      const next = toggleFavorite(cur ?? [], topicId);
+      storage
+        .saveFavorites(next)
+        .catch((e) => console.error("[storage] saveFavorites に失敗しました", e));
+      return next;
+    });
+  };
+
   return (
     <div style={page}>
       <div style={col}>
@@ -67,35 +98,45 @@ export function ResultScreen({
             const rs = records.filter((r) => r.qi === i);
             const pts = rs.reduce((s, r) => s + r.pts, 0);
             const max = rs.reduce((s, r) => s + r.max, 0);
+            const topicId = QUESTIONS[i].topicId ?? QUESTIONS[i].id;
             return (
               <div
                 key={i}
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  alignItems: "baseline",
+                  alignItems: "center",
                   padding: "12px 0",
                   borderBottom:
                     n < topicsInSession.length - 1 ? `1px solid ${LINE}` : "none",
                   fontSize: 14.5,
                 }}
               >
-                <div>
+                <div style={{ minWidth: 0 }}>
                   <b>{QUESTIONS[i].topic}</b>
                   <span style={{ color: MUTED, marginLeft: 8, fontSize: 11.5 }}>
                     {QUESTIONS[i].law}({rs.length}肢)
                   </span>
                 </div>
-                <div
-                  style={{
-                    fontFamily: SERIF,
-                    fontWeight: 700,
-                    fontSize: 15,
-                    fontVariantNumeric: "tabular-nums",
-                    color: pts === max ? GREEN : pts >= max * 0.6 ? INK : SHU,
-                  }}
-                >
-                  {pts} / {max}
+                <div style={{ display: "flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
+                  {favorites !== null && (
+                    <FavoriteButton
+                      size="sm"
+                      active={favorites.includes(topicId)}
+                      onClick={() => toggleTopicFavorite(topicId)}
+                    />
+                  )}
+                  <div
+                    style={{
+                      fontFamily: SERIF,
+                      fontWeight: 700,
+                      fontSize: 15,
+                      fontVariantNumeric: "tabular-nums",
+                      color: pts === max ? GREEN : pts >= max * 0.6 ? INK : SHU,
+                    }}
+                  >
+                    {pts} / {max}
+                  </div>
                 </div>
               </div>
             );
