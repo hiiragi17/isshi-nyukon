@@ -9,6 +9,7 @@
  * このファイルの Adapter 差し替えのみで完了する(design-v1.md 3.2)。
  */
 import type { Attempt } from "@/types";
+import { toggleFavorite } from "@/lib/favorites";
 
 /**
  * 成績ストア。実装は localStorage(v1)/ Neon(v3)で差し替える。
@@ -25,10 +26,23 @@ export interface StorageAdapter {
    * 「保存経路は Adapter だけ」の原則を保つために置く。
    */
   replaceAttempts(attempts: Attempt[]): Promise<void>;
+  /** お気に入り登録した論点(topicId)を全件返す */
+  getFavorites(): Promise<string[]>;
+  /** お気に入り(topicId の集合)を丸ごと置き換える */
+  saveFavorites(topicIds: string[]): Promise<void>;
+  /**
+   * 指定した topicId のお気に入りを反転させ、更新後の一覧を返す。
+   * 読み込み・反転・保存を1呼び出しにまとめることで、呼び出し側が古い
+   * キャッシュから computed した一覧を保存してしまう事故(CodeRabbit指摘・PR #255)
+   * を Adapter 側で防ぐ。
+   */
+  toggleFavorite(topicId: string): Promise<string[]>;
 }
 
 /** localStorage 上の保存キー。バージョンを含めてスキーマ変更に備える */
 const STORAGE_KEY = "isshi-nyukon:attempts:v1";
+/** お気に入り(topicId)の保存キー。成績履歴とは別キーで独立に持つ */
+const FAVORITES_STORAGE_KEY = "isshi-nyukon:favorites:v1";
 
 /**
  * 肢(item)を一意に指す文字列キー。
@@ -63,9 +77,14 @@ export function latestByItem(attempts: Attempt[]): Map<string, Attempt> {
  */
 export class LocalStorageAdapter implements StorageAdapter {
   private readonly key: string;
+  private readonly favoritesKey: string;
 
-  constructor(key: string = STORAGE_KEY) {
+  constructor(
+    key: string = STORAGE_KEY,
+    favoritesKey: string = FAVORITES_STORAGE_KEY,
+  ) {
     this.key = key;
+    this.favoritesKey = favoritesKey;
   }
 
   /** localStorage が使える環境か(SSR / 無効化ブラウザを弾く) */
@@ -122,6 +141,51 @@ export class LocalStorageAdapter implements StorageAdapter {
     // write() の握りつぶしを使わず persist() の例外を伝播させる
     // (BackupPanel が失敗をユーザーに表示できるようにする)。
     this.persist([...attempts]);
+  }
+
+  private readFavorites(): string[] {
+    // available() の判定自体・getItem の呼び出しも、ストレージが無効化された
+    // 環境では例外を投げうる(CodeRabbit指摘・PR #255)。フォールバックが効くよう
+    // try の外に出さない。
+    try {
+      if (!this.available()) return [];
+      const raw = window.localStorage.getItem(this.favoritesKey);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed)
+        ? parsed.filter((v): v is string => typeof v === "string")
+        : [];
+    } catch {
+      return [];
+    }
+  }
+
+  private writeFavorites(topicIds: string[]): void {
+    try {
+      if (!this.available()) return;
+      window.localStorage.setItem(this.favoritesKey, JSON.stringify(topicIds));
+    } catch {
+      // 容量超過・ストレージ無効化等。お気に入りの保存失敗は成績に影響しないため
+      // 握りつぶす(saveAttempt と同じ方針)。
+    }
+  }
+
+  async getFavorites(): Promise<string[]> {
+    return this.readFavorites();
+  }
+
+  async saveFavorites(topicIds: string[]): Promise<void> {
+    // 重複を除いて保存する(呼び出し側は Set 相当として扱う)
+    this.writeFavorites([...new Set(topicIds)]);
+  }
+
+  async toggleFavorite(topicId: string): Promise<string[]> {
+    // 読み込み・反転・保存の間に await を挟まないことで、同一タブ内の
+    // 連続トグルに対しては最新の永続化済み値からの反転を保証する
+    // (別タブとの競合まではローカルストレージの性質上解消できない)。
+    const next = toggleFavorite(this.readFavorites(), topicId);
+    this.writeFavorites(next);
+    return next;
   }
 }
 
