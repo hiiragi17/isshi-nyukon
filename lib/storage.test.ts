@@ -273,6 +273,20 @@ describe("LocalStorageAdapter — お気に入り", () => {
     await expect(adapter.getFavorites()).resolves.toEqual(["t1", "t2"]);
   });
 
+  it("getItem が例外を投げても空のお気に入りとして扱う(ストレージ無効化等)", async () => {
+    globals.window = {
+      localStorage: {
+        getItem: () => {
+          throw new Error("SecurityError");
+        },
+        setItem: () => {},
+      },
+    };
+    const adapter = new LocalStorageAdapter(KEY, FAV_KEY);
+    await expect(adapter.getFavorites()).resolves.toEqual([]);
+    await expect(adapter.toggleFavorite("t1")).resolves.toEqual(["t1"]);
+  });
+
   it("setItem が例外を投げても saveFavorites は落ちない(容量超過等)", async () => {
     globals.window = {
       localStorage: {

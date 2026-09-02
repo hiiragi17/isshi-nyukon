@@ -144,10 +144,13 @@ export class LocalStorageAdapter implements StorageAdapter {
   }
 
   private readFavorites(): string[] {
-    if (!this.available()) return [];
-    const raw = window.localStorage.getItem(this.favoritesKey);
-    if (!raw) return [];
+    // available() の判定自体・getItem の呼び出しも、ストレージが無効化された
+    // 環境では例外を投げうる(CodeRabbit指摘・PR #255)。フォールバックが効くよう
+    // try の外に出さない。
     try {
+      if (!this.available()) return [];
+      const raw = window.localStorage.getItem(this.favoritesKey);
+      if (!raw) return [];
       const parsed = JSON.parse(raw);
       return Array.isArray(parsed)
         ? parsed.filter((v): v is string => typeof v === "string")
@@ -158,12 +161,12 @@ export class LocalStorageAdapter implements StorageAdapter {
   }
 
   private writeFavorites(topicIds: string[]): void {
-    if (!this.available()) return;
     try {
+      if (!this.available()) return;
       window.localStorage.setItem(this.favoritesKey, JSON.stringify(topicIds));
     } catch {
-      // 容量超過等。お気に入りの保存失敗は成績に影響しないため握りつぶす
-      // (saveAttempt と同じ方針)。
+      // 容量超過・ストレージ無効化等。お気に入りの保存失敗は成績に影響しないため
+      // 握りつぶす(saveAttempt と同じ方針)。
     }
   }
 
