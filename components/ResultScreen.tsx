@@ -63,14 +63,18 @@ export function ResultScreen({
       alive = false;
     };
   }, []);
+  // 保存直前に永続化済みの値を読み直してからトグルする。手元の state だけで
+  // トグルすると、複数タブで同時に操作したとき片方の変更が丸ごと上書きされて
+  // 消えうる(Codexレビュー指摘・PR #255)。
   const toggleTopicFavorite = (topicId: string) => {
-    setFavorites((cur) => {
-      const next = toggleFavorite(cur ?? [], topicId);
-      storage
-        .saveFavorites(next)
-        .catch((e) => console.error("[storage] saveFavorites に失敗しました", e));
-      return next;
-    });
+    storage
+      .getFavorites()
+      .then((cur) => {
+        const next = toggleFavorite(cur, topicId);
+        setFavorites(next);
+        return storage.saveFavorites(next);
+      })
+      .catch((e) => console.error("[storage] saveFavorites に失敗しました", e));
   };
 
   return (
