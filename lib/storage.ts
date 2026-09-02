@@ -9,6 +9,7 @@
  * このファイルの Adapter 差し替えのみで完了する(design-v1.md 3.2)。
  */
 import type { Attempt } from "@/types";
+import { toggleFavorite } from "@/lib/favorites";
 
 /**
  * 成績ストア。実装は localStorage(v1)/ Neon(v3)で差し替える。
@@ -29,6 +30,13 @@ export interface StorageAdapter {
   getFavorites(): Promise<string[]>;
   /** お気に入り(topicId の集合)を丸ごと置き換える */
   saveFavorites(topicIds: string[]): Promise<void>;
+  /**
+   * 指定した topicId のお気に入りを反転させ、更新後の一覧を返す。
+   * 読み込み・反転・保存を1呼び出しにまとめることで、呼び出し側が古い
+   * キャッシュから computed した一覧を保存してしまう事故(CodeRabbit指摘・PR #255)
+   * を Adapter 側で防ぐ。
+   */
+  toggleFavorite(topicId: string): Promise<string[]>;
 }
 
 /** localStorage 上の保存キー。バージョンを含めてスキーマ変更に備える */
@@ -166,6 +174,15 @@ export class LocalStorageAdapter implements StorageAdapter {
   async saveFavorites(topicIds: string[]): Promise<void> {
     // 重複を除いて保存する(呼び出し側は Set 相当として扱う)
     this.writeFavorites([...new Set(topicIds)]);
+  }
+
+  async toggleFavorite(topicId: string): Promise<string[]> {
+    // 読み込み・反転・保存の間に await を挟まないことで、同一タブ内の
+    // 連続トグルに対しては最新の永続化済み値からの反転を保証する
+    // (別タブとの競合まではローカルストレージの性質上解消できない)。
+    const next = toggleFavorite(this.readFavorites(), topicId);
+    this.writeFavorites(next);
+    return next;
   }
 }
 

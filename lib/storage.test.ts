@@ -222,6 +222,26 @@ describe("LocalStorageAdapter — お気に入り", () => {
     await expect(adapter.getFavorites()).resolves.toEqual(["t1", "t2"]);
   });
 
+  it("toggleFavorite は永続化済みの最新値から反転し、結果を返す", async () => {
+    const store = new Map<string, string>();
+    globals.window = fakeLocalStorage(store);
+    const adapter = new LocalStorageAdapter(KEY, FAV_KEY);
+    await expect(adapter.toggleFavorite("t1")).resolves.toEqual(["t1"]);
+    await expect(adapter.getFavorites()).resolves.toEqual(["t1"]);
+    await expect(adapter.toggleFavorite("t1")).resolves.toEqual([]);
+    await expect(adapter.getFavorites()).resolves.toEqual([]);
+  });
+
+  it("toggleFavorite は他所からの保存(別タブ相当)を上書きしない", async () => {
+    const store = new Map<string, string>();
+    globals.window = fakeLocalStorage(store);
+    const adapter = new LocalStorageAdapter(KEY, FAV_KEY);
+    await adapter.saveFavorites(["t1"]);
+    // 別タブが t2 を追加したのと同じ状態を、ストレージへ直接書き込んで再現する
+    store.set(FAV_KEY, JSON.stringify(["t1", "t2"]));
+    await expect(adapter.toggleFavorite("t3")).resolves.toEqual(["t1", "t2", "t3"]);
+  });
+
   it("成績(attempts)のキーとは独立して保存される", async () => {
     const store = new Map<string, string>();
     globals.window = fakeLocalStorage(store);
