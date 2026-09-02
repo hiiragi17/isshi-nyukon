@@ -4,7 +4,7 @@
  * お気に入り(論点)のトグルボタン。星アイコンはSVG(絵文字UIは使わない・既決事項)。
  * 判決画面(論点ごとの一覧)と検地帳の論点詳細の2箇所で使う共通コンポーネント。
  */
-import { SHU, MUTED, SANS } from "@/lib/tokens";
+import { SHU, MUTED, SANS, RADIUS } from "@/lib/tokens";
 
 function StarIcon({ filled, color }: { filled: boolean; color: string }) {
   return (
@@ -46,8 +46,8 @@ export function FavoriteButton({
           display: "inline-flex",
           alignItems: "center",
           justifyContent: "center",
-          width: 32,
-          height: 32,
+          width: 44,
+          height: 44,
           flexShrink: 0,
           background: "transparent",
           border: "none",
@@ -76,7 +76,7 @@ export function FavoriteButton({
         color,
         background: "transparent",
         border: `1.5px solid ${color}`,
-        borderRadius: 8,
+        borderRadius: RADIUS,
         cursor: "pointer",
       }}
     >
