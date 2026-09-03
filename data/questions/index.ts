@@ -97,6 +97,7 @@ import { hanshuuhou } from "./gyoho/hanshuuhou";
 import { youtoChiiki2 } from "./horei/youto-chiiki-2";
 import { kenpeiYoseki2 } from "./horei/kenpei-yoseki-2";
 import { toshiKeikaku2 } from "./horei/toshi-keikaku-2";
+import { tantaiKitei2 } from "./horei/tantai-kitei-2";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -201,6 +202,7 @@ const RAW_QUESTIONS: Question[] = [
   youtoChiiki2,
   kenpeiYoseki2,
   toshiKeikaku2,
+  tantaiKitei2,
 ];
 
 /**
