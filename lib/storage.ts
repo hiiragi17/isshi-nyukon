@@ -70,9 +70,12 @@ const DIGITS_ONLY = /^\d+$/;
 /**
  * itemKey を questionId と choiceIndex に分解する(itemKey の逆演算)。
  * questionId 自体にハイフンを含みうるため、最後のハイフンで区切る。
- * 形式が壊れている(ハイフンが無い / 末尾が数字だけの文字列でない)場合は null。
+ * 形式が壊れている場合は null(ハイフンが無い / 末尾が数字だけの文字列でない /
+ * 数字だけの文字列でも Number.MAX_SAFE_INTEGER を超えるなど安全な整数でない)。
  * 末尾が空文字や空白だと `Number("")` / `Number(" ")` が 0 を返してしまうため、
- * Number() に渡す前に数字だけの文字列であることを確認する。
+ * Number() に渡す前に数字だけの文字列であることを確認する。また DIGITS_ONLY は
+ * 桁数を制限しないため、桁数が多すぎて丸められたり Infinity になったりする値は
+ * Number.isSafeInteger で弾く。
  */
 export function parseItemKey(
   key: string,
@@ -82,7 +85,9 @@ export function parseItemKey(
   const questionId = key.slice(0, cut);
   const suffix = key.slice(cut + 1);
   if (!questionId || !DIGITS_ONLY.test(suffix)) return null;
-  return { questionId, choiceIndex: Number(suffix) };
+  const choiceIndex = Number(suffix);
+  if (!Number.isSafeInteger(choiceIndex)) return null;
+  return { questionId, choiceIndex };
 }
 
 /**

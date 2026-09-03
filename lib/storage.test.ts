@@ -64,6 +64,11 @@ describe("parseItemKey — itemKey の逆演算", () => {
     expect(parseItemKey("q1-0x1")).toBeNull();
   });
 
+  it("Number.MAX_SAFE_INTEGER を超える数字列は丸めや Infinity になるため null", () => {
+    expect(parseItemKey("q1-9007199254740993")).toBeNull();
+    expect(parseItemKey(`q1-${"9".repeat(400)}`)).toBeNull();
+  });
+
   it("itemKey と往復する", () => {
     expect(parseItemKey(itemKey("q1", 2))).toEqual({
       questionId: "q1",
