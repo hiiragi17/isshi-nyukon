@@ -52,6 +52,18 @@ describe("parseItemKey — itemKey の逆演算", () => {
     expect(parseItemKey("q1-abc")).toBeNull();
   });
 
+  it("末尾が空文字・空白だけの場合も null(Number(\"\")===0 で choiceIndex=0 と誤認しない)", () => {
+    expect(parseItemKey("q1-")).toBeNull();
+    expect(parseItemKey("q1- ")).toBeNull();
+    expect(parseItemKey("q1-  ")).toBeNull();
+  });
+
+  it("符号・小数点・16進数表記など数字だけでない末尾は null", () => {
+    expect(parseItemKey("q1-+1")).toBeNull();
+    expect(parseItemKey("q1-1.5")).toBeNull();
+    expect(parseItemKey("q1-0x1")).toBeNull();
+  });
+
   it("itemKey と往復する", () => {
     expect(parseItemKey(itemKey("q1", 2))).toEqual({
       questionId: "q1",

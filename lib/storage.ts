@@ -64,10 +64,15 @@ export function itemKey(questionId: string, choiceIndex: number): string {
   return `${questionId}-${choiceIndex}`;
 }
 
+/** 数字だけからなる文字列(非負整数の正準表記)。空文字・空白・符号・小数点は含まない */
+const DIGITS_ONLY = /^\d+$/;
+
 /**
  * itemKey を questionId と choiceIndex に分解する(itemKey の逆演算)。
  * questionId 自体にハイフンを含みうるため、最後のハイフンで区切る。
- * 形式が壊れている(ハイフンが無い / 末尾が整数でない)場合は null。
+ * 形式が壊れている(ハイフンが無い / 末尾が数字だけの文字列でない)場合は null。
+ * 末尾が空文字や空白だと `Number("")` / `Number(" ")` が 0 を返してしまうため、
+ * Number() に渡す前に数字だけの文字列であることを確認する。
  */
 export function parseItemKey(
   key: string,
@@ -75,9 +80,9 @@ export function parseItemKey(
   const cut = key.lastIndexOf("-");
   if (cut < 0) return null;
   const questionId = key.slice(0, cut);
-  const choiceIndex = Number(key.slice(cut + 1));
-  if (!questionId || !Number.isInteger(choiceIndex)) return null;
-  return { questionId, choiceIndex };
+  const suffix = key.slice(cut + 1);
+  if (!questionId || !DIGITS_ONLY.test(suffix)) return null;
+  return { questionId, choiceIndex: Number(suffix) };
 }
 
 /**
