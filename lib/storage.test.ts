@@ -6,7 +6,12 @@
  */
 import { describe, it, expect, afterEach } from "vitest";
 import type { Attempt } from "@/types";
-import { itemKey, latestByItem, LocalStorageAdapter } from "@/lib/storage";
+import {
+  itemKey,
+  parseItemKey,
+  latestByItem,
+  LocalStorageAdapter,
+} from "@/lib/storage";
 
 /** テスト用に Attempt を作るヘルパー */
 function attempt(
@@ -23,6 +28,52 @@ describe("itemKey — 肢の一意キー", () => {
   it("`${questionId}-${choiceIndex}` 形式", () => {
     expect(itemKey("q1", 0)).toBe("q1-0");
     expect(itemKey("q12", 3)).toBe("q12-3");
+  });
+});
+
+describe("parseItemKey — itemKey の逆演算", () => {
+  it("questionId と choiceIndex に分解する", () => {
+    expect(parseItemKey("q1-0")).toEqual({ questionId: "q1", choiceIndex: 0 });
+    expect(parseItemKey("q12-3")).toEqual({
+      questionId: "q12",
+      choiceIndex: 3,
+    });
+  });
+
+  it("questionId 自体にハイフンを含んでいても最後のハイフンで区切る", () => {
+    expect(parseItemKey("kenri-01-2")).toEqual({
+      questionId: "kenri-01",
+      choiceIndex: 2,
+    });
+  });
+
+  it("ハイフンが無い・末尾が整数でない場合は null", () => {
+    expect(parseItemKey("noindex")).toBeNull();
+    expect(parseItemKey("q1-abc")).toBeNull();
+  });
+
+  it("末尾が空文字・空白だけの場合も null(Number(\"\")===0 で choiceIndex=0 と誤認しない)", () => {
+    expect(parseItemKey("q1-")).toBeNull();
+    expect(parseItemKey("q1- ")).toBeNull();
+    expect(parseItemKey("q1-  ")).toBeNull();
+  });
+
+  it("符号・小数点・16進数表記など数字だけでない末尾は null", () => {
+    expect(parseItemKey("q1-+1")).toBeNull();
+    expect(parseItemKey("q1-1.5")).toBeNull();
+    expect(parseItemKey("q1-0x1")).toBeNull();
+  });
+
+  it("Number.MAX_SAFE_INTEGER を超える数字列は丸めや Infinity になるため null", () => {
+    expect(parseItemKey("q1-9007199254740993")).toBeNull();
+    expect(parseItemKey(`q1-${"9".repeat(400)}`)).toBeNull();
+  });
+
+  it("itemKey と往復する", () => {
+    expect(parseItemKey(itemKey("q1", 2))).toEqual({
+      questionId: "q1",
+      choiceIndex: 2,
+    });
   });
 });
 
@@ -298,5 +349,40 @@ describe("LocalStorageAdapter — お気に入り", () => {
     };
     const adapter = new LocalStorageAdapter(KEY, FAV_KEY);
     await expect(adapter.saveFavorites(["t1"])).resolves.toBeUndefined();
+  });
+
+  it("toggleFavorites は1つも登録されていなければ全て追加する", async () => {
+    const store = new Map<string, string>();
+    globals.window = fakeLocalStorage(store);
+    const adapter = new LocalStorageAdapter(KEY, FAV_KEY);
+    await expect(adapter.toggleFavorites(["t1-0", "t1-1"])).resolves.toEqual([
+      "t1-0",
+      "t1-1",
+    ]);
+    await expect(adapter.getFavorites()).resolves.toEqual(["t1-0", "t1-1"]);
+  });
+
+  it("toggleFavorites は全て登録済みなら全て取り除く", async () => {
+    const store = new Map<string, string>();
+    globals.window = fakeLocalStorage(store);
+    const adapter = new LocalStorageAdapter(KEY, FAV_KEY);
+    await adapter.saveFavorites(["t1-0", "t1-1"]);
+    await expect(adapter.toggleFavorites(["t1-0", "t1-1"])).resolves.toEqual(
+      [],
+    );
+  });
+
+  it("toggleFavorites は永続化済みの最新値から反転する(他所からの保存を上書きしない)", async () => {
+    const store = new Map<string, string>();
+    globals.window = fakeLocalStorage(store);
+    const adapter = new LocalStorageAdapter(KEY, FAV_KEY);
+    await adapter.saveFavorites(["t1-0"]);
+    // 別タブが t2-0 を追加したのと同じ状態を、ストレージへ直接書き込んで再現する
+    store.set(FAV_KEY, JSON.stringify(["t1-0", "t2-0"]));
+    await expect(adapter.toggleFavorites(["t1-1"])).resolves.toEqual([
+      "t1-0",
+      "t2-0",
+      "t1-1",
+    ]);
   });
 });

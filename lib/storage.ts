@@ -9,7 +9,7 @@
  * このファイルの Adapter 差し替えのみで完了する(design-v1.md 3.2)。
  */
 import type { Attempt } from "@/types";
-import { toggleFavorite } from "@/lib/favorites";
+import { toggleFavorite, toggleFavoriteGroup } from "@/lib/favorites";
 
 /**
  * 成績ストア。実装は localStorage(v1)/ Neon(v3)で差し替える。
@@ -26,23 +26,35 @@ export interface StorageAdapter {
    * 「保存経路は Adapter だけ」の原則を保つために置く。
    */
   replaceAttempts(attempts: Attempt[]): Promise<void>;
-  /** お気に入り登録した論点(topicId)を全件返す */
+  /** お気に入り登録した肢(itemKey)を全件返す */
   getFavorites(): Promise<string[]>;
-  /** お気に入り(topicId の集合)を丸ごと置き換える */
-  saveFavorites(topicIds: string[]): Promise<void>;
+  /** お気に入り(itemKey の集合)を丸ごと置き換える */
+  saveFavorites(itemKeys: string[]): Promise<void>;
   /**
-   * 指定した topicId のお気に入りを反転させ、更新後の一覧を返す。
+   * 指定した itemKey のお気に入りを反転させ、更新後の一覧を返す。
    * 読み込み・反転・保存を1呼び出しにまとめることで、呼び出し側が古い
    * キャッシュから computed した一覧を保存してしまう事故(CodeRabbit指摘・PR #255)
    * を Adapter 側で防ぐ。
    */
-  toggleFavorite(topicId: string): Promise<string[]>;
+  toggleFavorite(itemKey: string): Promise<string[]>;
+  /**
+   * 指定した itemKey 群(論点1件ぶんの全肢)をまとめて反転させ、更新後の
+   * 一覧を返す。全て登録済みなら全解除、そうでなければ未登録分を追加する
+   * (ダッシュボード・判決画面の「論点まるごとお気に入り」用。個々の肢を
+   * 選びたいときは toggleFavorite を使う)。
+   */
+  toggleFavorites(itemKeys: string[]): Promise<string[]>;
 }
 
 /** localStorage 上の保存キー。バージョンを含めてスキーマ変更に備える */
 const STORAGE_KEY = "isshi-nyukon:attempts:v1";
-/** お気に入り(topicId)の保存キー。成績履歴とは別キーで独立に持つ */
-const FAVORITES_STORAGE_KEY = "isshi-nyukon:favorites:v1";
+/**
+ * お気に入り(itemKey)の保存キー。成績履歴とは別キーで独立に持つ。
+ * v1 は論点(topicId)単位で保存していたが、肢単位に細分化したため v2 で
+ * キーを切り替える(古い v1 の値は topicId 形式で itemKey とは意味が異なるため、
+ * 引き継がずに空から始める)。
+ */
+const FAVORITES_STORAGE_KEY = "isshi-nyukon:favorites:v2";
 
 /**
  * 肢(item)を一意に指す文字列キー。
@@ -50,6 +62,32 @@ const FAVORITES_STORAGE_KEY = "isshi-nyukon:favorites:v1";
  */
 export function itemKey(questionId: string, choiceIndex: number): string {
   return `${questionId}-${choiceIndex}`;
+}
+
+/** 数字だけからなる文字列(非負整数の正準表記)。空文字・空白・符号・小数点は含まない */
+const DIGITS_ONLY = /^\d+$/;
+
+/**
+ * itemKey を questionId と choiceIndex に分解する(itemKey の逆演算)。
+ * questionId 自体にハイフンを含みうるため、最後のハイフンで区切る。
+ * 形式が壊れている場合は null(ハイフンが無い / 末尾が数字だけの文字列でない /
+ * 数字だけの文字列でも Number.MAX_SAFE_INTEGER を超えるなど安全な整数でない)。
+ * 末尾が空文字や空白だと `Number("")` / `Number(" ")` が 0 を返してしまうため、
+ * Number() に渡す前に数字だけの文字列であることを確認する。また DIGITS_ONLY は
+ * 桁数を制限しないため、桁数が多すぎて丸められたり Infinity になったりする値は
+ * Number.isSafeInteger で弾く。
+ */
+export function parseItemKey(
+  key: string,
+): { questionId: string; choiceIndex: number } | null {
+  const cut = key.lastIndexOf("-");
+  if (cut < 0) return null;
+  const questionId = key.slice(0, cut);
+  const suffix = key.slice(cut + 1);
+  if (!questionId || !DIGITS_ONLY.test(suffix)) return null;
+  const choiceIndex = Number(suffix);
+  if (!Number.isSafeInteger(choiceIndex)) return null;
+  return { questionId, choiceIndex };
 }
 
 /**
@@ -160,10 +198,10 @@ export class LocalStorageAdapter implements StorageAdapter {
     }
   }
 
-  private writeFavorites(topicIds: string[]): void {
+  private writeFavorites(itemKeys: string[]): void {
     try {
       if (!this.available()) return;
-      window.localStorage.setItem(this.favoritesKey, JSON.stringify(topicIds));
+      window.localStorage.setItem(this.favoritesKey, JSON.stringify(itemKeys));
     } catch {
       // 容量超過・ストレージ無効化等。お気に入りの保存失敗は成績に影響しないため
       // 握りつぶす(saveAttempt と同じ方針)。
@@ -174,16 +212,23 @@ export class LocalStorageAdapter implements StorageAdapter {
     return this.readFavorites();
   }
 
-  async saveFavorites(topicIds: string[]): Promise<void> {
+  async saveFavorites(itemKeys: string[]): Promise<void> {
     // 重複を除いて保存する(呼び出し側は Set 相当として扱う)
-    this.writeFavorites([...new Set(topicIds)]);
+    this.writeFavorites([...new Set(itemKeys)]);
   }
 
-  async toggleFavorite(topicId: string): Promise<string[]> {
+  async toggleFavorite(itemKey: string): Promise<string[]> {
     // 読み込み・反転・保存の間に await を挟まないことで、同一タブ内の
     // 連続トグルに対しては最新の永続化済み値からの反転を保証する
     // (別タブとの競合まではローカルストレージの性質上解消できない)。
-    const next = toggleFavorite(this.readFavorites(), topicId);
+    const next = toggleFavorite(this.readFavorites(), itemKey);
+    this.writeFavorites(next);
+    return next;
+  }
+
+  async toggleFavorites(itemKeys: string[]): Promise<string[]> {
+    // toggleFavorite と同じく、読み込み・反転・保存の間に await を挟まない。
+    const next = toggleFavoriteGroup(this.readFavorites(), itemKeys);
     this.writeFavorites(next);
     return next;
   }

@@ -21,7 +21,7 @@ import { useRouter } from "next/navigation";
 import { QUESTIONS } from "@/data/questions";
 import { READINGS } from "@/data/readings";
 import type { Attempt } from "@/types";
-import { storage, latestByItem, itemKey } from "@/lib/storage";
+import { storage, latestByItem, itemKey, parseItemKey } from "@/lib/storage";
 import { itemCountOf, itemKeysForTopic } from "@/lib/items";
 import {
   topicProgress,
@@ -158,14 +158,15 @@ export default function Home() {
     };
   }, []);
 
-  // 読み込み・反転・保存を Adapter 側の1呼び出しにまとめることで、手元に
-  // キャッシュした古い一覧から次の値を組み立てて上書き保存する事故を防ぐ
-  // (Codex / CodeRabbit レビュー指摘・PR #255)。
+  // 論点まるごと(全肢)のお気に入り登録/解除。読み込み・反転・保存を Adapter 側の
+  // 1呼び出しにまとめることで、手元にキャッシュした古い一覧から次の値を組み立てて
+  // 上書き保存する事故を防ぐ(Codex / CodeRabbit レビュー指摘・PR #255)。
+  // 肢を1つだけお気に入りにしたいときは play 中(ZenshiEngine の explain フェーズ)で行う。
   const toggleTopicFavorite = (topicId: string) => {
     storage
-      .toggleFavorite(topicId)
+      .toggleFavorites(itemKeysForTopic(topicId, QUESTIONS))
       .then(setFavorites)
-      .catch((e) => console.error("[storage] toggleFavorite に失敗しました", e));
+      .catch((e) => console.error("[storage] toggleFavorites に失敗しました", e));
   };
 
   // 控えからの復元後に全件履歴を読み直して画面へ反映する
@@ -380,7 +381,9 @@ export default function Home() {
         {favorites !== null && (
           <div style={{ marginTop: 8 }}>
             <FavoriteButton
-              active={favorites.includes(q.topicId ?? q.id)}
+              active={itemKeysForTopic(q.topicId ?? q.id, QUESTIONS).every(
+                (k) => favorites.includes(k),
+              )}
               onClick={() => toggleTopicFavorite(q.topicId ?? q.id)}
               inactiveColor={INK_SUB}
             />
@@ -614,18 +617,34 @@ export default function Home() {
               </div>
             )}
 
-            {/* お気に入り(あとで出したい論点だけの出題モード) */}
+            {/* お気に入り(あとで出したい肢だけの出題モード。肢単位で登録できる) */}
             {favorites !== null && favorites.length > 0 && (() => {
-              const favTopics = favorites
-                .filter((tid) => TOPIC_ID_TO_QIS.has(tid))
-                .map((tid) => ({
-                  topicId: tid,
-                  q: QUESTIONS[TOPIC_ID_TO_QIS.get(tid)![0]],
-                }));
-              const favKeys = favTopics.flatMap(({ topicId }) =>
-                itemKeysForTopic(topicId, QUESTIONS),
-              );
-              if (!favTopics.length) return null;
+              // 壊れた/古い形式の itemKey や、削除済み問題を指す itemKey は捨てる
+              const favItems = favorites
+                .map((key) => {
+                  const parsed = parseItemKey(key);
+                  if (!parsed) return null;
+                  const qi = ID_TO_INDEX.get(parsed.questionId);
+                  if (qi === undefined) return null;
+                  const q = QUESTIONS[qi];
+                  if (parsed.choiceIndex < 0 || parsed.choiceIndex >= itemCountOf(q))
+                    return null;
+                  return { key, q };
+                })
+                .filter((v): v is { key: string; q: (typeof QUESTIONS)[number] } => v !== null);
+              if (!favItems.length) return null;
+              // 論点(topicId)単位でまとめて表示する。同じ論点の肢を複数登録していても
+              // 見出しは1行にまとめ、件数(n肢)を添えて「全部ではない」ことがわかるようにする
+              const favTopics = new Map<
+                string,
+                { q: (typeof QUESTIONS)[number]; count: number }
+              >();
+              for (const { q } of favItems) {
+                const tid = q.topicId ?? q.id;
+                const cur = favTopics.get(tid);
+                if (cur) cur.count += 1;
+                else favTopics.set(tid, { q, count: 1 });
+              }
               return (
                 <div
                   style={{
@@ -647,7 +666,7 @@ export default function Home() {
                       margin: "8px 0 12px",
                     }}
                   >
-                    {favTopics.map(({ topicId, q }) => (
+                    {[...favTopics.entries()].map(([topicId, { q, count }]) => (
                       <div
                         key={topicId}
                         style={{
@@ -658,13 +677,13 @@ export default function Home() {
                       >
                         {q.topic}
                         <span style={{ fontFamily: SANS, fontWeight: 400, color: MUTED, marginLeft: 8, fontSize: 11.5 }}>
-                          {q.category}
+                          {q.category} · {count}肢
                         </span>
                       </div>
                     ))}
                   </div>
                   <button
-                    onClick={() => goPlay(favKeys)}
+                    onClick={() => goPlay(favItems.map((it) => it.key))}
                     style={{
                       width: "100%",
                       minHeight: 48,
@@ -679,7 +698,7 @@ export default function Home() {
                       cursor: "pointer",
                     }}
                   >
-                    お気に入りだけ出題する({favKeys.length}肢)
+                    お気に入りだけ出題する({favItems.length}肢)
                   </button>
                 </div>
               );

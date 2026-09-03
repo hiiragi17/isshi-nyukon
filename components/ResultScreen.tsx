@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { QUESTIONS } from "@/data/questions";
 import { storage } from "@/lib/storage";
+import { itemKeysForTopic } from "@/lib/items";
 import { INK, CARD, AI_BLUE, SHU, GREEN, MUTED, LINE, SERIF, RADIUS } from "@/lib/tokens";
 import { page, col, card } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
@@ -45,14 +46,15 @@ export function ResultScreen({
   const toDashboard = () =>
     router.push(newlyPerfectIds.length ? `/?stamped=${newlyPerfectIds.join(",")}` : "/");
 
-  // お気に入り(topicId の集合)。解いた直後に「あとで出したい」論点へ印を付けられるようにする
+  // お気に入り(itemKey の集合)。ここでは論点まるごと(全肢)の登録/解除に使う。
+  // 肢を1つだけお気に入りにしたいときは play 中(ZenshiEngine の explain フェーズ)で行う。
   const [favorites, setFavorites] = useState<string[] | null>(null);
   useEffect(() => {
     let alive = true;
     storage
       .getFavorites()
-      .then((ids) => {
-        if (alive) setFavorites(ids);
+      .then((keys) => {
+        if (alive) setFavorites(keys);
       })
       .catch((e) => {
         console.error("[storage] getFavorites に失敗しました", e);
@@ -67,9 +69,9 @@ export function ResultScreen({
   // (Codex / CodeRabbit レビュー指摘・PR #255)。
   const toggleTopicFavorite = (topicId: string) => {
     storage
-      .toggleFavorite(topicId)
+      .toggleFavorites(itemKeysForTopic(topicId, QUESTIONS))
       .then(setFavorites)
-      .catch((e) => console.error("[storage] toggleFavorite に失敗しました", e));
+      .catch((e) => console.error("[storage] toggleFavorites に失敗しました", e));
   };
 
   return (
@@ -121,7 +123,9 @@ export function ResultScreen({
                   {favorites !== null && (
                     <FavoriteButton
                       size="sm"
-                      active={favorites.includes(topicId)}
+                      active={itemKeysForTopic(topicId, QUESTIONS).every((k) =>
+                        favorites.includes(k),
+                      )}
                       onClick={() => toggleTopicFavorite(topicId)}
                     />
                   )}
