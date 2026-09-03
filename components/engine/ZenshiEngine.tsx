@@ -2,14 +2,19 @@
  * 全肢判定エンジン(zenshi)。
  * 判定(○×) → 誤り箇所タップ → 理由選択 の三段。プロトタイプの play 画面(zenshi)と同一挙動。
  * 得点: ○肢=最大2点 / ×肢=最大3点(判定1 + 箇所1 + 理由1)。
+ *
+ * 解き終えた肢(explain フェーズ)には、その肢1件だけをお気に入りに登録する
+ * ボタンを添える(論点まるごとではなく肢単位で「あとで出せる」ようにするため)。
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { storage, itemKey } from "@/lib/storage";
 import { INK, CARD, AI_BLUE, SHU, GREEN, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
 import { card } from "@/lib/gameStyles";
 import { SceneCard } from "../SceneCard";
 import { LessonAccordion } from "../LessonAccordion";
 import { Eyebrow } from "../Eyebrow";
 import { Stamp } from "../Stamp";
+import { FavoriteButton } from "../FavoriteButton";
 import { termify } from "../TermText";
 import type { EngineCommonProps } from "./types";
 
@@ -42,6 +47,32 @@ export function ZenshiEngine({
   const [reasonPick, setReasonPick] = useState<number | null>(null);
   // 理由の並びは item ごとに固定(remount で切り替わる)
   const [shuffledReasons] = useState(() => shuffle(choice.reasons));
+
+  // この肢のお気に入り登録状態。null=未ロード(engine は item ごとに remount される)
+  const [favorited, setFavorited] = useState<boolean | null>(null);
+  useEffect(() => {
+    let alive = true;
+    const key = itemKey(question.id, ci);
+    storage
+      .getFavorites()
+      .then((keys) => {
+        if (alive) setFavorited(keys.includes(key));
+      })
+      .catch((e) => {
+        console.error("[storage] getFavorites に失敗しました", e);
+        if (alive) setFavorited(false);
+      });
+    return () => {
+      alive = false;
+    };
+  }, [question.id, ci]);
+  const toggleItemFavorite = () => {
+    const key = itemKey(question.id, ci);
+    storage
+      .toggleFavorite(key)
+      .then((keys) => setFavorited(keys.includes(key)))
+      .catch((e) => console.error("[storage] toggleFavorite に失敗しました", e));
+  };
 
   const judged = judgePick !== null;
   const judgeCorrect = judgePick === choice.correct;
@@ -300,18 +331,23 @@ export function ZenshiEngine({
                       ? "判定は正解。ただし根拠が違いました。"
                       : "判定は正解。ただし理由が違いました。"}
               </b>
-              <span
-                style={{
-                  fontFamily: SERIF,
-                  fontWeight: 800,
-                  fontSize: 18,
-                  color: INK,
-                  whiteSpace: "nowrap",
-                }}
-              >
-                +{currentPts()}
-                <span style={{ fontSize: 12, color: MUTED }}>/{choice.correct ? 2 : 3}点</span>
-              </span>
+              <div style={{ display: "flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
+                {favorited !== null && (
+                  <FavoriteButton size="sm" active={favorited} onClick={toggleItemFavorite} />
+                )}
+                <span
+                  style={{
+                    fontFamily: SERIF,
+                    fontWeight: 800,
+                    fontSize: 18,
+                    color: INK,
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  +{currentPts()}
+                  <span style={{ fontSize: 12, color: MUTED }}>/{choice.correct ? 2 : 3}点</span>
+                </span>
+              </div>
             </div>
             {reasonPick !== null && !shuffledReasons[reasonPick]?.correct && (
               <p style={{ fontSize: 13, margin: "0 0 8px", color: MUTED }}>

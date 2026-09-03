@@ -11,7 +11,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { QUESTIONS } from "@/data/questions";
-import { storage, latestByItem, itemKey } from "@/lib/storage";
+import { storage, latestByItem, itemKey, parseItemKey } from "@/lib/storage";
 import { itemCountOf } from "@/lib/items";
 import { maxOf } from "@/lib/scoring";
 import {
@@ -113,11 +113,11 @@ const CATEGORY_TOPIC_IDS = new Map<string, string[]>(
 const parseItemKeys = (raw: string): Item[] => {
   const items: Item[] = [];
   for (const key of raw.split(",")) {
-    const cut = key.lastIndexOf("-");
-    if (cut < 0) continue;
-    const qi = idToIndex.get(key.slice(0, cut));
-    const ci = Number(key.slice(cut + 1));
-    if (qi === undefined || !Number.isInteger(ci)) continue;
+    const parsed = parseItemKey(key);
+    if (!parsed) continue;
+    const qi = idToIndex.get(parsed.questionId);
+    if (qi === undefined) continue;
+    const ci = parsed.choiceIndex;
     if (ci < 0 || ci >= itemCountOf(QUESTIONS[qi])) continue;
     items.push({ qi, ci });
   }
