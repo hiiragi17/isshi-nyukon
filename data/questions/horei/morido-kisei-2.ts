@@ -4,7 +4,7 @@ import type { Question } from "@/types";
 export const moridoKisei2: Question = {
   id: "q100",
   topicId: "q26",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
