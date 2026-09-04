@@ -16,21 +16,22 @@ import type { Reading } from "@/types";
  * (400㎡・300%・6mなど)は calc 問題側に譲り、この読み物では一般的なルールの
  * 説明に留めている)。
  *
- * 転記はq9の読み物(hiiragi17が2026-09-01に確認済み)と同一条文の再転記だが、
- * この読み物自体の transcription をhiiragi17が確認するまでは verified: false
- * のままとする(CLAUDE.mdの`verified`運用に準拠。AIの下書き照合だけを根拠に
- * verified: true にしない)。
+ * 転記はq9の読み物(hiiragi17が2026-09-01に確認済み)と同一条文の再転記だったが、
+ * この会話でhiiragi17が52条・53条全文(RevisionID 325AC0000000201_20260401_507AC0000000068、
+ * 令和8年4月1日施行版)を直接提示し、このファイルの52条1項(全9行・柱書+一号〜八号)・
+ * 52条2項(全4行・柱書+一号〜三号)がその原文と一字一句一致することを確認できたため、
+ * verified: true とした(CLAUDE.mdの`verified`運用に準拠。2026-09-04)。
  */
 export const yosekiCalcReading: Reading = {
   topicId: "q10",
   category: "法令上の制限",
   title: "容積率(延べ面積)",
   law: "建築基準法52条",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "52条2項(柱書・一号・二号・三号。前面道路の幅員による容積率の制限)は docs/verification/horei-verification.md の「建築基準法(集団規定)— q9・q10・q49 の根拠」に記録された逐語原文(hiiragi17提示・2026-07-30受領)をそのまま転記した。52条1項(指定容積率の原則・全文)は同シート「追加照合(#240分・2026-09-01)」に記録された逐語原文(hiiragi17提示)をそのまま転記した。q10(yoseki-calc.ts)の照合表(同シート内「q10 容積率(延べ面積) — 原文裏取りの状況」)もあわせて参照。q9の読み物(kenpei-yoseki.ts)が引用する同じ2ブロックの再掲であり、転記元・版は同一。",
+    note: "52条2項(柱書・一号・二号・三号。前面道路の幅員による容積率の制限)は docs/verification/horei-verification.md の「建築基準法(集団規定)— q9・q10・q49 の根拠」に記録された逐語原文(hiiragi17提示・2026-07-30受領)をそのまま転記した。52条1項(指定容積率の原則・全文)は同シート「追加照合(#240分・2026-09-01)」に記録された逐語原文(hiiragi17提示)をそのまま転記した。q10(yoseki-calc.ts)の照合表(同シート内「q10 容積率(延べ面積) — 原文裏取りの状況」)もあわせて参照。q9の読み物(kenpei-yoseki.ts)が引用する同じ2ブロックの再掲であり、転記元・版は同一。あわせてこの会話(2026-09-04)でhiiragi17が52条・53条全文を直接提示し、本ファイルの52条1項・2項の引用が一字一句一致することを確認済み。",
   },
   lawVersion: {
     revisionId: "325AC0000000201_20260401_507AC0000000068",
