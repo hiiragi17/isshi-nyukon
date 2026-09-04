@@ -16,6 +16,7 @@ import { kenpeiYosekiReading } from "./horei/kenpei-yoseki";
 import { kokudoTodokedeReading } from "./horei/kokudo-todokede";
 import { nochiHouReading } from "./horei/nochi-hou";
 import { youtoChiikiReading } from "./horei/youto-chiiki";
+import { yosekiCalcReading } from "./horei/yoseki-calc";
 
 /** 全読み物(生データ)。新規論点は末尾に追記する */
 const RAW_READINGS: Reading[] = [
@@ -35,6 +36,7 @@ const RAW_READINGS: Reading[] = [
   nochiHouReading,
   youtoChiikiReading,
   kenpeiYosekiReading,
+  yosekiCalcReading,
 ];
 
 /**
