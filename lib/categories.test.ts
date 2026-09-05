@@ -80,4 +80,45 @@ describe("topicPriorityLabel", () => {
   it("請負・委任は優先度低", () => {
     expect(topicPriorityLabel("q64")).toBe("優先度低");
   });
+
+  it("宅建業法の最優先5本柱(媒介契約・重説35条・37条書面・8種制限・報酬)は優先度高", () => {
+    expect(topicPriorityLabel("q14")).toBe("優先度高"); // 媒介契約
+    expect(topicPriorityLabel("q12")).toBe("優先度高"); // 重要事項の説明(35条)
+    expect(topicPriorityLabel("q13")).toBe("優先度高"); // 37条書面
+    expect(topicPriorityLabel("q4")).toBe("優先度高"); // クーリングオフ
+    expect(topicPriorityLabel("q17")).toBe("優先度高"); // 8種制限(手付・保全措置)
+    expect(topicPriorityLabel("q5")).toBe("優先度高"); // 報酬額の制限
+  });
+
+  it("宅建業法の免許・保証協会・広告規制は優先度中、監督処分・罰則は優先度低", () => {
+    expect(topicPriorityLabel("q15")).toBe("優先度中"); // 免許(基準・欠格事由)
+    expect(topicPriorityLabel("q32")).toBe("優先度中"); // 保証協会
+    expect(topicPriorityLabel("q6")).toBe("優先度中"); // 広告規制
+    expect(topicPriorityLabel("q34")).toBe("優先度低"); // 監督処分・罰則
+  });
+
+  it("事務所・案内所の規制・住宅瑕疵担保履行法はこの優先順位づけの対象外(未分類)", () => {
+    expect(topicPriorityLabel("q33")).toBeNull();
+    expect(topicPriorityLabel("q35")).toBeNull();
+  });
+
+  it("法令上の制限は開発許可・農地法・建蔽率容積率が優先度高、都市計画法・土地区画整理法・盛土規制法が優先度低", () => {
+    expect(topicPriorityLabel("q8")).toBe("優先度高"); // 開発許可
+    expect(topicPriorityLabel("q24")).toBe("優先度高"); // 農地法
+    expect(topicPriorityLabel("q9")).toBe("優先度高"); // 建蔽率・容積率(zenshi)
+    expect(topicPriorityLabel("q10")).toBe("優先度高"); // 容積率(calc)
+    expect(topicPriorityLabel("q48")).toBe("優先度低"); // 都市計画法
+    expect(topicPriorityLabel("q50")).toBe("優先度低"); // 土地区画整理法
+    expect(topicPriorityLabel("q26")).toBe("優先度低"); // 盛土規制法
+  });
+
+  it("税・その他は不動産取得税等・印紙税等が優先度高、土地・建物が優先度低", () => {
+    expect(topicPriorityLabel("q27")).toBe("優先度高"); // 不動産取得税
+    expect(topicPriorityLabel("q28")).toBe("優先度高"); // 固定資産税
+    expect(topicPriorityLabel("q29")).toBe("優先度高"); // 印紙税
+    expect(topicPriorityLabel("q51")).toBe("優先度高"); // 登録免許税
+    expect(topicPriorityLabel("q57")).toBe("優先度中"); // 景品表示法
+    expect(topicPriorityLabel("q55")).toBe("優先度低"); // 土地
+    expect(topicPriorityLabel("q56")).toBe("優先度低"); // 建物
+  });
 });
