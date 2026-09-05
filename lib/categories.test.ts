@@ -97,8 +97,10 @@ describe("topicPriorityLabel", () => {
     expect(topicPriorityLabel("q34")).toBe("優先度低"); // 監督処分・罰則
   });
 
-  it("事務所・案内所の規制・住宅瑕疵担保履行法は優先度高(範囲が狭く得点効率が良い枠)", () => {
+  it("事務所・案内所の規制(5点セット全体)・住宅瑕疵担保履行法は優先度高(範囲が狭く得点効率が良い枠)", () => {
     expect(topicPriorityLabel("q33")).toBe("優先度高");
+    expect(topicPriorityLabel("q38")).toBe("優先度高"); // 従業者証明書・名簿・帳簿・標識
+    expect(topicPriorityLabel("q75")).toBe("優先度高"); // 従業者名簿の記載事項・標識の様式
     expect(topicPriorityLabel("q35")).toBe("優先度高");
   });
 
