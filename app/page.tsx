@@ -29,7 +29,7 @@ import {
   type TopicProgress,
 } from "@/lib/progress";
 import { buildSummonQueue, type SrsItemState } from "@/lib/srs";
-import { byCategoryPriority } from "@/lib/categories";
+import { byCategoryPriority, byTopicPriority } from "@/lib/categories";
 import {
   INK,
   CARD,
@@ -87,7 +87,9 @@ const FIELDS = [...new Set(QUESTIONS.map((q) => q.category))]
     name,
     topics: TOPIC_IDS.filter(
       (tid) => QUESTIONS[TOPIC_ID_TO_QIS.get(tid)![0]].category === name,
-    ).map((topicId) => ({ topicId, qis: TOPIC_ID_TO_QIS.get(topicId)! })),
+    )
+      .sort(byTopicPriority)
+      .map((topicId) => ({ topicId, qis: TOPIC_ID_TO_QIS.get(topicId)! })),
   }));
 
 const DAY_MS = 24 * 60 * 60 * 1000;
