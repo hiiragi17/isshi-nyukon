@@ -5,6 +5,7 @@ import {
   TOPIC_PRIORITY_ORDER,
   TOPIC_LOW_PRIORITY,
 } from "@/lib/categories";
+import { QUESTIONS } from "@/data/questions";
 
 describe("byTopicPriority", () => {
   it("優先度高の論点(意思表示)が優先度中の論点(物権変動)より先に来る", () => {
@@ -79,5 +80,64 @@ describe("topicPriorityLabel", () => {
 
   it("請負・委任は優先度低", () => {
     expect(topicPriorityLabel("q64")).toBe("優先度低");
+  });
+
+  it("宅建業法の最優先5本柱(媒介契約・重説35条・37条書面・8種制限・報酬)は優先度高", () => {
+    expect(topicPriorityLabel("q14")).toBe("優先度高"); // 媒介契約
+    expect(topicPriorityLabel("q12")).toBe("優先度高"); // 重要事項の説明(35条)
+    expect(topicPriorityLabel("q13")).toBe("優先度高"); // 37条書面
+    expect(topicPriorityLabel("q4")).toBe("優先度高"); // クーリングオフ
+    expect(topicPriorityLabel("q17")).toBe("優先度高"); // 8種制限(手付・保全措置)
+    expect(topicPriorityLabel("q5")).toBe("優先度高"); // 報酬額の制限
+  });
+
+  it("宅建業法の免許・保証協会・広告規制は優先度中、監督処分・罰則は優先度低", () => {
+    expect(topicPriorityLabel("q15")).toBe("優先度中"); // 免許(基準・欠格事由)
+    expect(topicPriorityLabel("q32")).toBe("優先度中"); // 保証協会
+    expect(topicPriorityLabel("q6")).toBe("優先度中"); // 広告規制
+    expect(topicPriorityLabel("q34")).toBe("優先度低"); // 監督処分・罰則
+  });
+
+  it("事務所・案内所の規制(5点セット全体)・住宅瑕疵担保履行法は優先度高(範囲が狭く得点効率が良い枠)", () => {
+    expect(topicPriorityLabel("q33")).toBe("優先度高");
+    expect(topicPriorityLabel("q38")).toBe("優先度高"); // 従業者証明書・名簿・帳簿・標識
+    expect(topicPriorityLabel("q75")).toBe("優先度高"); // 従業者名簿の記載事項・標識の様式
+    expect(topicPriorityLabel("q35")).toBe("優先度高");
+  });
+
+  it("法令上の制限は開発許可・農地法・建蔽率容積率・建築確認が優先度高、都市計画法・土地区画整理法・盛土規制法が優先度低", () => {
+    expect(topicPriorityLabel("q8")).toBe("優先度高"); // 開発許可
+    expect(topicPriorityLabel("q24")).toBe("優先度高"); // 農地法
+    expect(topicPriorityLabel("q9")).toBe("優先度高"); // 建蔽率・容積率(zenshi)
+    expect(topicPriorityLabel("q10")).toBe("優先度高"); // 容積率(calc)
+    expect(topicPriorityLabel("q47")).toBe("優先度高"); // 建築確認(直近改正のひっかけリスク)
+    expect(topicPriorityLabel("q7")).toBe("優先度中"); // 建築基準法(用途制限)
+    expect(topicPriorityLabel("q48")).toBe("優先度低"); // 都市計画法
+    expect(topicPriorityLabel("q50")).toBe("優先度低"); // 土地区画整理法
+    expect(topicPriorityLabel("q26")).toBe("優先度低"); // 盛土規制法
+  });
+
+  it("税・その他は不動産取得税等・印紙税等が優先度高、土地・建物が優先度低", () => {
+    expect(topicPriorityLabel("q27")).toBe("優先度高"); // 不動産取得税
+    expect(topicPriorityLabel("q28")).toBe("優先度高"); // 固定資産税
+    expect(topicPriorityLabel("q29")).toBe("優先度高"); // 印紙税
+    expect(topicPriorityLabel("q51")).toBe("優先度高"); // 登録免許税
+    expect(topicPriorityLabel("q57")).toBe("優先度中"); // 景品表示法
+    expect(topicPriorityLabel("q55")).toBe("優先度低"); // 土地
+    expect(topicPriorityLabel("q56")).toBe("優先度低"); // 建物
+  });
+
+  it("犯罪収益移転防止法(直近改正・新傾向の論点)は優先度高", () => {
+    expect(topicPriorityLabel("q94")).toBe("優先度高");
+  });
+
+  it("実在する論点(topicId)はすべて優先度高/中/低のいずれかに分類されている(未分類なし)", () => {
+    const realTopicIds = [
+      ...new Set(QUESTIONS.map((q) => q.topicId ?? q.id)),
+    ];
+    const unclassified = realTopicIds.filter(
+      (tid) => topicPriorityLabel(tid) === null,
+    );
+    expect(unclassified).toEqual([]);
   });
 });
