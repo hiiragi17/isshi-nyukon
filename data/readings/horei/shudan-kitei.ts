@@ -235,7 +235,7 @@ export const shudanKiteiReading: Reading = {
       quote: {
         lines: [
           {
-            label: "1項(抜粋)",
+            label: "1項",
             text: "別表第四（い）欄の各項に掲げる地域又は区域の全部又は一部で地方公共団体の条例で指定する区域",
           },
           {
