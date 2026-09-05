@@ -24,14 +24,15 @@ import type { Reading } from "@/types";
  * 人口50万人以上に限る〕)。同じ復元をquestion側(`toshi-keikaku.ts`肢1の
  * `explanation`)にも行っている。
  *
- * 転記時点では`verified: false`のまま(CLAUDE.mdの`verified`運用に準拠。
- * 転記の正確性を人が確認してから`true`にする)。
+ * 転記の正確性はhiiragi17がこの会話で確認し(2026-09-05)、verified: true とした
+ * (CLAUDE.mdの`verified`運用に準拠)。
  */
 export const toshiKeikakuReading: Reading = {
   topicId: "q48",
   category: "法令上の制限",
   title: "都市計画法",
   law: "都市計画法7条・12条の5・58条の2・65条",
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
