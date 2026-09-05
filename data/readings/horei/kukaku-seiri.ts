@@ -10,9 +10,11 @@ import type { Reading } from "@/types";
  * `data/questions/horei/kukaku-seiri.ts`は同じ根拠で既に`verified: true`
  * (2026-07-30照合・96条1項の追加照合で2026-07-31に`source.level`をprimaryへ復帰)。
  *
- * 転記の正確性はこのコミット時点で人による原文突合せを経ていないため、
- * `verified: false` のまま追加する(CLAUDE.mdの`verified`運用に準拠。原文との
- * 突き合わせが完了し次第 true に更新する)。確認用e-Govリンク:
+ * 転記の正確性はhiiragi17がこの会話で確認した(2026-09-05)。hiiragi17が
+ * e-Gov法令検索から99条(1項〜3項)・104条(1項〜11項)・76条(1項〜5項)・96条
+ * (1項〜3項)の原文を直接貼付し、この読み物が引用した99条1項・104条1項・
+ * 104条11項・76条1項・96条1項をすべて突き合わせた結果、いずれも逐語一致した。
+ * この確認を反映して `verified: true` とした。確認用e-Govリンク:
  * https://laws.e-gov.go.jp/law/329AC0000000119
  */
 export const kukakuSeiriReading: Reading = {
@@ -20,6 +22,7 @@ export const kukakuSeiriReading: Reading = {
   category: "法令上の制限",
   title: "土地区画整理",
   law: "土地区画整理法76条・96条・99条・104条",
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
