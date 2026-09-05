@@ -371,6 +371,49 @@ describe("citationPattern / resolveCitation — 表記の解決と未ヒット�
     expect(resolveCitation(index, "3項")?.line.text).toBe("唯一の3項。");
   });
 
+  it("「N項」の行に「ただし、」が含まれる場合、「N項本文」「N項ただし書」の両方で同じ行に解決できる", () => {
+    const reading = makeReading({
+      sections: [
+        {
+          heading: "h",
+          body: [],
+          quote: {
+            article: "テスト法7条",
+            cite: "c",
+            lines: [
+              {
+                label: "1項",
+                text: "原則として定めることができる。ただし、次に掲げる場合は、定めるものとする。",
+              },
+            ],
+          },
+        },
+      ],
+    });
+    const index = buildCitationIndex(reading);
+    expect(index.get("テスト法7条1項本文")?.line.text).toContain("原則として定めることができる");
+    expect(index.get("テスト法7条1項ただし書")?.line.text).toContain("原則として定めることができる");
+  });
+
+  it("「N項」の行に「ただし、」が含まれない場合、「N項本文」「N項ただし書」を付けた表記は登録しない", () => {
+    const reading = makeReading({
+      sections: [
+        {
+          heading: "h",
+          body: [],
+          quote: {
+            article: "テスト法7条",
+            cite: "c",
+            lines: [{ label: "1項", text: "定めることができる。" }],
+          },
+        },
+      ],
+    });
+    const index = buildCitationIndex(reading);
+    expect(index.has("テスト法7条1項本文")).toBe(false);
+    expect(index.has("テスト法7条1項ただし書")).toBe(false);
+  });
+
   it("条名なしの「N項」表記は、複数の条文が同じ項番号を持つときは登録しない(曖昧な解決を避ける)", () => {
     const reading = makeReading({
       sections: [
