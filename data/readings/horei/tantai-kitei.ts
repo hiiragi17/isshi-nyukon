@@ -120,7 +120,7 @@ export const tantaiKiteiReading: Reading = {
     {
       heading: "原文を読む",
       kind: "source",
-      subtitle: "建築基準法28条1項(採光・換気の開口部。全文)",
+      subtitle: "建築基準法28条1項(採光の開口部。全文)",
       body: ["省略なしの全文。"],
       quote: {
         lines: [
