@@ -19,10 +19,26 @@ describe("byTopicPriority", () => {
     expect(byTopicPriority("q-unclassified", "q39")).toBeLessThan(0);
   });
 
-  it("安定ソートで一覧の登場順どおりに並ぶ", () => {
-    const input = ["q-unclassified", "q39", "q19", "q59", "q1", "q2"];
+  it("安定ソートで一覧の登場順どおりに並ぶ(同順位の未分類論点も元の順序を保つ)", () => {
+    const input = [
+      "q-unclassified-b",
+      "q-unclassified-a",
+      "q39",
+      "q19",
+      "q59",
+      "q1",
+      "q2",
+    ];
     const sorted = [...input].sort(byTopicPriority);
-    expect(sorted).toEqual(["q2", "q19", "q1", "q59", "q-unclassified", "q39"]);
+    expect(sorted).toEqual([
+      "q2",
+      "q19",
+      "q1",
+      "q59",
+      "q-unclassified-b",
+      "q-unclassified-a",
+      "q39",
+    ]);
   });
 
   it("TOPIC_PRIORITY_ORDER と TOPIC_LOW_PRIORITY は重複しない", () => {
