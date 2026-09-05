@@ -303,6 +303,18 @@ export function buildCitationIndex(reading: Reading): Map<string, CitationEntry>
           occurrences.push(entry);
           bareProjectionOccurrences.set(alias, occurrences);
         }
+        // 「〜できる。ただし、…、この限りでない。」のように項の中に本文とただし書が
+        // 同居する行は、本文が「N項本文」「N項ただし書」の両方で参照することがある
+        // (自己完結表記のただし書エイリアスと同じ考え方)。行を分割せず段全体を指す
+        if (line.text.includes("ただし、")) {
+          for (const suffix of ["本文", "ただし書"]) {
+            const alias = `${label}${suffix}`;
+            registerWithArticle(quote.article, alias, entry);
+            const occurrences = bareProjectionOccurrences.get(alias) ?? [];
+            occurrences.push(entry);
+            bareProjectionOccurrences.set(alias, occurrences);
+          }
+        }
         continue;
       }
 
