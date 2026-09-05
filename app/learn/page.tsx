@@ -11,7 +11,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { READINGS } from "@/data/readings";
-import { byCategoryPriority } from "@/lib/categories";
+import { byCategoryPriority, byTopicPriority } from "@/lib/categories";
 import { INK, CARD, AI_BLUE, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
 import { page, col, outlineButton } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
@@ -77,7 +77,9 @@ export default function LearnIndexPage() {
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
             {categories.map((cat, catIdx) => {
-              const catReadings = readings.filter((r) => r.category === cat);
+              const catReadings = readings
+                .filter((r) => r.category === cat)
+                .sort((a, b) => byTopicPriority(a.topicId, b.topicId));
               const catOpen = openCats.has(cat);
               const listId = `reading-list-${catIdx}`;
               return (
