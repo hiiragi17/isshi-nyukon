@@ -97,16 +97,18 @@ describe("topicPriorityLabel", () => {
     expect(topicPriorityLabel("q34")).toBe("優先度低"); // 監督処分・罰則
   });
 
-  it("事務所・案内所の規制・住宅瑕疵担保履行法はこの優先順位づけの対象外(未分類)", () => {
-    expect(topicPriorityLabel("q33")).toBeNull();
-    expect(topicPriorityLabel("q35")).toBeNull();
+  it("事務所・案内所の規制・住宅瑕疵担保履行法は優先度高(範囲が狭く得点効率が良い枠)", () => {
+    expect(topicPriorityLabel("q33")).toBe("優先度高");
+    expect(topicPriorityLabel("q35")).toBe("優先度高");
   });
 
-  it("法令上の制限は開発許可・農地法・建蔽率容積率が優先度高、都市計画法・土地区画整理法・盛土規制法が優先度低", () => {
+  it("法令上の制限は開発許可・農地法・建蔽率容積率・建築確認が優先度高、都市計画法・土地区画整理法・盛土規制法が優先度低", () => {
     expect(topicPriorityLabel("q8")).toBe("優先度高"); // 開発許可
     expect(topicPriorityLabel("q24")).toBe("優先度高"); // 農地法
     expect(topicPriorityLabel("q9")).toBe("優先度高"); // 建蔽率・容積率(zenshi)
     expect(topicPriorityLabel("q10")).toBe("優先度高"); // 容積率(calc)
+    expect(topicPriorityLabel("q47")).toBe("優先度高"); // 建築確認(直近改正のひっかけリスク)
+    expect(topicPriorityLabel("q7")).toBe("優先度中"); // 建築基準法(用途制限)
     expect(topicPriorityLabel("q48")).toBe("優先度低"); // 都市計画法
     expect(topicPriorityLabel("q50")).toBe("優先度低"); // 土地区画整理法
     expect(topicPriorityLabel("q26")).toBe("優先度低"); // 盛土規制法
