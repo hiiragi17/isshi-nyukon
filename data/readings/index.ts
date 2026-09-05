@@ -12,6 +12,7 @@ import { menkyoReading } from "./gyoho/menkyo";
 import { sanjunanaJouReading } from "./gyoho/sanjunana-jou";
 import { takkenshiReading } from "./gyoho/takkenshi";
 import { kaihatsuKyokaReading } from "./horei/kaihatsu-kyoka";
+import { kenchikuKakuninReading } from "./horei/kenchiku-kakunin";
 import { kenpeiYosekiReading } from "./horei/kenpei-yoseki";
 import { kokudoTodokedeReading } from "./horei/kokudo-todokede";
 import { moridoKiseiReading } from "./horei/morido-kisei";
@@ -39,6 +40,7 @@ const RAW_READINGS: Reading[] = [
   youtoChiikiReading,
   kenpeiYosekiReading,
   yosekiCalcReading,
+  kenchikuKakuninReading,
 ];
 
 /**
