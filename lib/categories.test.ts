@@ -5,6 +5,7 @@ import {
   TOPIC_PRIORITY_ORDER,
   TOPIC_LOW_PRIORITY,
 } from "@/lib/categories";
+import { QUESTIONS } from "@/data/questions";
 
 describe("byTopicPriority", () => {
   it("優先度高の論点(意思表示)が優先度中の論点(物権変動)より先に来る", () => {
@@ -124,5 +125,19 @@ describe("topicPriorityLabel", () => {
     expect(topicPriorityLabel("q57")).toBe("優先度中"); // 景品表示法
     expect(topicPriorityLabel("q55")).toBe("優先度低"); // 土地
     expect(topicPriorityLabel("q56")).toBe("優先度低"); // 建物
+  });
+
+  it("犯罪収益移転防止法(直近改正・新傾向の論点)は優先度高", () => {
+    expect(topicPriorityLabel("q94")).toBe("優先度高");
+  });
+
+  it("実在する論点(topicId)はすべて優先度高/中/低のいずれかに分類されている(未分類なし)", () => {
+    const realTopicIds = [
+      ...new Set(QUESTIONS.map((q) => q.topicId ?? q.id)),
+    ];
+    const unclassified = realTopicIds.filter(
+      (tid) => topicPriorityLabel(tid) === null,
+    );
+    expect(unclassified).toEqual([]);
   });
 });
