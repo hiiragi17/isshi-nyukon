@@ -25,7 +25,7 @@ import {
   type QuickState,
 } from "@/lib/quickPick";
 import { buildMockSession, dedupeByTopic, EXAM_DISTRIBUTION } from "@/lib/mock";
-import { byCategoryPriority } from "@/lib/categories";
+import { byCategoryPriority, byTopicPriority } from "@/lib/categories";
 import { INK, PAPER, CARD, AI_BLUE, AI_BLUE_BG, SHU, GREEN, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
 import { page, col, card, outlineButton } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
@@ -61,14 +61,24 @@ const CATEGORIES = [...new Set(QUESTIONS.map((q) => q.category))].sort(
   byCategoryPriority,
 );
 
-/** 分野 → その分野に属する論点の添字。全選択/全解除トグルで使う(レンダリング毎の再計算を避ける) */
+/**
+ * 分野 → その分野に属する論点の添字。全選択/全解除トグルで使うほか、範囲選択リストの
+ * 表示順にもなる(レンダリング毎の再計算を避ける)。
+ * 表示順は論点(topicId)の優先度順(lib/categories の byTopicPriority)。同じ topicId の
+ * 2周目バリアントは安定ソートで元の登場順を保つ。QUESTIONS 配列の添字自体は変えない。
+ */
 const CATEGORY_INDICES = new Map<string, number[]>(
   CATEGORIES.map((cat) => [
     cat,
     QUESTIONS.reduce<number[]>((acc, q, i) => {
       if (q.category === cat) acc.push(i);
       return acc;
-    }, []),
+    }, []).sort((a, b) =>
+      byTopicPriority(
+        QUESTIONS[a].topicId ?? QUESTIONS[a].id,
+        QUESTIONS[b].topicId ?? QUESTIONS[b].id,
+      ),
+    ),
   ]),
 );
 
@@ -663,8 +673,8 @@ export default function PlayPage() {
                     id={listId}
                     style={{ display: "flex", flexDirection: "column", gap: 8 }}
                   >
-                  {catOpen && QUESTIONS.map((qq, i) => {
-                    if (qq.category !== cat) return null;
+                  {catOpen && catIndices.map((i) => {
+                    const qq = QUESTIONS[i];
                     const on = selected.has(i);
                     const st = allStats[i];
                     return (
