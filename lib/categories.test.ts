@@ -11,18 +11,18 @@ describe("byTopicPriority", () => {
     expect(byTopicPriority("q2", "q1")).toBeLessThan(0);
   });
 
-  it("優先度中の論点(不法行為)が一覧に無い論点(共有)より先に来る", () => {
-    expect(byTopicPriority("q59", "q45")).toBeLessThan(0);
+  it("優先度中の論点(不法行為)が一覧に無い論点(架空のid)より先に来る", () => {
+    expect(byTopicPriority("q59", "q-unclassified")).toBeLessThan(0);
   });
 
-  it("一覧に無い論点(共有)が優先度低の論点(制限行為能力者)より先に来る", () => {
-    expect(byTopicPriority("q45", "q39")).toBeLessThan(0);
+  it("一覧に無い論点(架空のid)が優先度低の論点(制限行為能力者)より先に来る", () => {
+    expect(byTopicPriority("q-unclassified", "q39")).toBeLessThan(0);
   });
 
   it("安定ソートで一覧の登場順どおりに並ぶ", () => {
-    const input = ["q45", "q39", "q19", "q59", "q1", "q2"];
+    const input = ["q-unclassified", "q39", "q19", "q59", "q1", "q2"];
     const sorted = [...input].sort(byTopicPriority);
-    expect(sorted).toEqual(["q2", "q19", "q1", "q59", "q45", "q39"]);
+    expect(sorted).toEqual(["q2", "q19", "q1", "q59", "q-unclassified", "q39"]);
   });
 
   it("TOPIC_PRIORITY_ORDER と TOPIC_LOW_PRIORITY は重複しない", () => {
@@ -46,7 +46,22 @@ describe("topicPriorityLabel", () => {
     expect(topicPriorityLabel("q39")).toBe("優先度低");
   });
 
-  it("一覧に無い論点(共有)には null を返す", () => {
-    expect(topicPriorityLabel("q45")).toBeNull();
+  it("一覧に無い論点(架空のid)には null を返す", () => {
+    expect(topicPriorityLabel("q-unclassified")).toBeNull();
+  });
+
+  it("暗記ゲー寄りで費用対効果が良い論点(不動産登記法・区分所有法)は優先度高", () => {
+    expect(topicPriorityLabel("q46")).toBe("優先度高");
+    expect(topicPriorityLabel("q58")).toBe("優先度高");
+  });
+
+  it("時効・共有は優先度中", () => {
+    expect(topicPriorityLabel("q66")).toBe("優先度中");
+    expect(topicPriorityLabel("q44")).toBe("優先度中");
+    expect(topicPriorityLabel("q45")).toBe("優先度中");
+  });
+
+  it("請負・委任は優先度低", () => {
+    expect(topicPriorityLabel("q64")).toBe("優先度低");
   });
 });
