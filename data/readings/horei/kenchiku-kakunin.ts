@@ -238,7 +238,7 @@ export const kenchikuKakuninReading: Reading = {
           },
           {
             label: "137条の18八号",
-            text: "百貨店、マーケット、その他の物品販売業を営む店舗",
+            text: "百貨店、マーケットその他の物品販売業を営む店舗",
             indent: true,
           },
           { label: "137条の18九号", text: "キャバレー、カフェー、ナイトクラブ、バー", indent: true },
