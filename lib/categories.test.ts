@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   byTopicPriority,
+  topicPriorityLabel,
   TOPIC_PRIORITY_ORDER,
   TOPIC_LOW_PRIORITY,
 } from "@/lib/categories";
@@ -29,5 +30,23 @@ describe("byTopicPriority", () => {
       TOPIC_LOW_PRIORITY.has(tid),
     );
     expect(overlap).toEqual([]);
+  });
+});
+
+describe("topicPriorityLabel", () => {
+  it("優先度高の論点(意思表示)には「優先度高」を返す", () => {
+    expect(topicPriorityLabel("q2")).toBe("優先度高");
+  });
+
+  it("優先度中の論点(不法行為)には「優先度中」を返す", () => {
+    expect(topicPriorityLabel("q59")).toBe("優先度中");
+  });
+
+  it("優先度低の論点(制限行為能力者)には「優先度低」を返す", () => {
+    expect(topicPriorityLabel("q39")).toBe("優先度低");
+  });
+
+  it("一覧に無い論点(共有)には null を返す", () => {
+    expect(topicPriorityLabel("q45")).toBeNull();
   });
 });

@@ -25,7 +25,11 @@ import {
   type QuickState,
 } from "@/lib/quickPick";
 import { buildMockSession, dedupeByTopic, EXAM_DISTRIBUTION } from "@/lib/mock";
-import { byCategoryPriority, byTopicPriority } from "@/lib/categories";
+import {
+  byCategoryPriority,
+  byTopicPriority,
+  topicPriorityLabel,
+} from "@/lib/categories";
 import { INK, PAPER, CARD, AI_BLUE, AI_BLUE_BG, SHU, GREEN, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
 import { page, col, card, outlineButton } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
@@ -677,6 +681,7 @@ export default function PlayPage() {
                     const qq = QUESTIONS[i];
                     const on = selected.has(i);
                     const st = allStats[i];
+                    const tierLabel = topicPriorityLabel(qq.topicId ?? qq.id);
                     return (
                       <button
                         key={qq.id}
@@ -730,6 +735,7 @@ export default function PlayPage() {
                             </span>
                             <span style={{ color: MUTED, fontWeight: 400, fontSize: 12 }}>
                               {qq.law}
+                              {tierLabel && ` ・ ${tierLabel}`}
                             </span>
                           </span>
                           {st.tried > 0 ? (
