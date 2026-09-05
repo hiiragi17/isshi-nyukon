@@ -20,7 +20,7 @@ const CACHE = "isshi-nyukon-sw-v1";
 // インストール時に控えておくページ(全ルート)とアプリアイコン。
 // /learn/[topicId] は動的ルートなので、data/readings に論点を追加するたびに
 // ここへもパスを追記する(data/questions/index.ts への手動登録と同じ運用)。
-const PRECACHE_PAGES = ["/", "/play", "/learn", "/learn/q4", "/learn/q15", "/learn/q16", "/learn/q32", "/learn/q12", "/learn/q13", "/learn/q17", "/learn/q14", "/learn/q5", "/learn/q34", "/learn/q8", "/learn/q25", "/learn/q24", "/learn/q7", "/learn/q9", "/learn/q10", "/learn/q26"];
+const PRECACHE_PAGES = ["/", "/play", "/learn", "/learn/q4", "/learn/q15", "/learn/q16", "/learn/q32", "/learn/q12", "/learn/q13", "/learn/q17", "/learn/q14", "/learn/q5", "/learn/q34", "/learn/q8", "/learn/q25", "/learn/q24", "/learn/q7", "/learn/q9", "/learn/q10", "/learn/q26", "/learn/q47"];
 const PRECACHE_ASSETS = ["/icon-192.png", "/icon-512.png"];
 
 /**
