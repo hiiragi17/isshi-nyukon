@@ -22,14 +22,16 @@ import type { Reading } from "@/types";
  * `data/questions/horei/kenchiku-kakunin.ts`は同じ根拠で既に`verified: true`
  * (2026-07-30照合・2026-07-31 Mami承認)。脱落していた2箇所の括弧書き・追記した号は、
  * いずれも4肢の正誤判定に使っていない部分のため、Question側の記載・判定への影響はない。
- * この読み物自体の転記の正確性は人による確認が済んでいないため、`verified`はfalseの
- * まま追加する(CLAUDE.mdの`verified`運用に準拠)。
+ *
+ * この読み物自体の転記の正確性は、hiiragi17がこの会話で確認し(2026-09-05)、
+ * `verified: true` とした(CLAUDE.mdの`verified`運用に準拠)。
  */
 export const kenchikuKakuninReading: Reading = {
   topicId: "q47",
   category: "法令上の制限",
   title: "建築確認",
   law: "建築基準法6条・7条の6・87条、同法施行令137条の18",
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
