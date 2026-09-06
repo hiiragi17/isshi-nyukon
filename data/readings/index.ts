@@ -18,6 +18,7 @@ import { kokudoTodokedeReading } from "./horei/kokudo-todokede";
 import { kukakuSeiriReading } from "./horei/kukaku-seiri";
 import { moridoKiseiReading } from "./horei/morido-kisei";
 import { nochiHouReading } from "./horei/nochi-hou";
+import { shudanKiteiReading } from "./horei/shudan-kitei";
 import { tantaiKiteiReading } from "./horei/tantai-kitei";
 import { toshiKeikakuReading } from "./horei/toshi-keikaku";
 import { youtoChiikiReading } from "./horei/youto-chiiki";
@@ -46,6 +47,7 @@ const RAW_READINGS: Reading[] = [
   toshiKeikakuReading,
   kenchikuKakuninReading,
   kukakuSeiriReading,
+  shudanKiteiReading,
   tantaiKiteiReading,
 ];
 
