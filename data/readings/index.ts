@@ -23,6 +23,7 @@ import { tantaiKiteiReading } from "./horei/tantai-kitei";
 import { toshiKeikakuReading } from "./horei/toshi-keikaku";
 import { youtoChiikiReading } from "./horei/youto-chiiki";
 import { yosekiCalcReading } from "./horei/yoseki-calc";
+import { fudousanShutokuzeiReading } from "./zei/fudousan-shutokuzei";
 
 /** 全読み物(生データ)。新規論点は末尾に追記する */
 const RAW_READINGS: Reading[] = [
@@ -49,6 +50,7 @@ const RAW_READINGS: Reading[] = [
   kukakuSeiriReading,
   shudanKiteiReading,
   tantaiKiteiReading,
+  fudousanShutokuzeiReading,
 ];
 
 /**
