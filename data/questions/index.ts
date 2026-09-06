@@ -101,6 +101,7 @@ import { tantaiKitei2 } from "./horei/tantai-kitei-2";
 import { shudanKitei2 } from "./horei/shudan-kitei-2";
 import { moridoKisei2 } from "./horei/morido-kisei-2";
 import { kukakuSeiri2 } from "./horei/kukaku-seiri-2";
+import { rentaiSaimu2 } from "./kenri/rentai-saimu-2";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -209,6 +210,7 @@ const RAW_QUESTIONS: Question[] = [
   shudanKitei2,
   moridoKisei2,
   kukakuSeiri2,
+  rentaiSaimu2,
 ];
 
 /**
