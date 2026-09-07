@@ -799,7 +799,7 @@ Issue #265(権利関係の優先度高論点に「2周目」の別シナリオ�
 >
 > **📌 追加確認(2026-09-06)**: hiiragi17提示のe-Gov原文で438条・440条・442条1項・445条を再照合し、一字一句一致を確認したため `source.level`/`answerLevel` を `mirrored`→`secondary`→`primary` に格上げした。
 
-承認: ☐ verified / ☐ 要修正 — メモ: 438条・440条・442条1項・445条はhiiragi17提示のe-Gov原文で一致確認済み。`verified: true` への切替えは人による最終承認をお願いします。
+承認: ☑ verified(hiiragi17・2026-09-07) / ☐ 要修正 — メモ: 438条・440条・442条1項・445条をhiiragi17提示のe-Gov原文で一致確認。`rentai-saimu-2.ts` の `verified: true` に反映済み。
 
 ---
 
@@ -835,13 +835,11 @@ Issue #265(権利関係の優先度高論点に「2周目」の別シナリオ�
 
 **総合判定: 妥当(訂正あり・primary)。** 既存 `souzokubun.ts`(q23)は配偶者+子2人の基本パターン(代襲相続なし)。本問は代襲相続(孫が親に代わって相続)という2段階の計算になる別パターンで、「孫を独立した頭数に入れる」典型的な誤りをdistractorとして用意した。
 
+> **📌 訂正(2026-09-06・PR #317 Codexレビュー指摘)**: (1)source.levelをmirroredからsecondaryに降格(WebSearchは法令DBの原文直接取得ではないため)。(2)calc様式はF8(数値肢のanswerLevel: primary要件)の機械検査対象外だが、数値そのものが答えになる問題である以上、原文未確認のままprimaryを僭称するのではなく、secondaryのまま正直に記録し、人による原文確認とprimaryへの格上げを待つのが誠実な対応と判断した。
+>
 > **📌 追加確認(2026-09-06)**: hiiragi17提示のe-Gov原文で887条(1項・2項・3項)・901条(1項・2項)を再照合し、一字一句一致を確認した。計算根拠の887条2項・900条4号・901条1項がすべてprimary確認済みとなったため `source.level`/`answerLevel` を `secondary`→`primary` に格上げした。
 
-承認: ☐ verified / ☐ 要修正 — メモ: 887条2項・901条1項はhiiragi17提示のe-Gov原文で一致確認済み(900条4号は既存q23で確認済みの文言と同一)。`verified: true` への切替えは人による最終承認をお願いします。
-
-> **📌 訂正(2026-09-06・PR #317 Codexレビュー指摘)**: (1)source.levelをmirroredからsecondaryに降格(WebSearchは法令DBの原文直接取得ではないため)。(2)calc様式はF8(数値肢のanswerLevel: primary要件)の機械検査対象外だが、数値そのものが答えになる問題である以上、原文未確認のままprimaryを僭称するのではなく、secondaryのまま正直に記録し、人による原文確認とprimaryへの格上げを待つのが誠実な対応と判断した。
-
-承認: ☐ verified / ☐ 要修正 — メモ: e-Gov原文未確認(本セッションはegress制限によりアクセス不可)。887条2項・901条1項の原文確認をお願いします。
+承認: ☑ verified(hiiragi17・2026-09-07) / ☐ 要修正 — メモ: 887条2項・901条1項をhiiragi17提示のe-Gov原文で一致確認(900条4号は既存q23で確認済みの文言と同一)。`souzokubun-2.ts` の `verified: true` に反映済み。
 
 ---
 

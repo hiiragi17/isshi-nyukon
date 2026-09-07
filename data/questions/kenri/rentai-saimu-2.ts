@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q105 連帯債務(更改・混同の絶対効、求償の範囲)(民法438条・440条・442条・445条)— 2周目 */
 export const rentaiSaimu2: Question = {
   id: "q105",
+  verified: true,
   topicId: "q68",
   source: {
     level: "primary",

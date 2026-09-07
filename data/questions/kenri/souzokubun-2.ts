@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 /** q107 法定相続分(代襲相続・calc)(民法887条2項・900条4号・901条1項)— 2周目 */
 export const souzokubun2: Question = {
   id: "q107",
+  verified: true,
   topicId: "q23",
   source: {
     level: "primary",
