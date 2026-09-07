@@ -104,6 +104,9 @@ import { kukakuSeiri2 } from "./horei/kukaku-seiri-2";
 import { rentaiSaimu2 } from "./kenri/rentai-saimu-2";
 import { chintaishaku2 } from "./kenri/chintaishaku-2";
 import { souzokubun2 } from "./kenri/souzokubun-2";
+import { ishiHyouji2 } from "./kenri/ishi-hyouji-2";
+import { hyokenDairi2 } from "./kenri/hyoken-dairi-2";
+import { teitouken2 } from "./kenri/teitouken-2";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -215,6 +218,9 @@ const RAW_QUESTIONS: Question[] = [
   rentaiSaimu2,
   chintaishaku2,
   souzokubun2,
+  ishiHyouji2,
+  hyokenDairi2,
+  teitouken2,
 ];
 
 /**
