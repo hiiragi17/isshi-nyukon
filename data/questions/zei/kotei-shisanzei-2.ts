@@ -12,7 +12,7 @@ import type { Question } from "@/types";
 export const koteiShisanzei2: Question = {
   id: "q110",
   topicId: "q28",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
