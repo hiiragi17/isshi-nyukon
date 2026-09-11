@@ -111,6 +111,7 @@ import { fudousanTouki2 } from "./kenri/fudousan-touki-2";
 import { kubunShoyuu2 } from "./kenri/kubun-shoyuu-2";
 import { koteiShisanzei2 } from "./zei/kotei-shisanzei-2";
 import { joutoShotoku2 } from "./zei/jouto-shotoku-2";
+import { chikaKoji2 } from "./zei/chika-koji-2";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -229,6 +230,7 @@ const RAW_QUESTIONS: Question[] = [
   kubunShoyuu2,
   koteiShisanzei2,
   joutoShotoku2,
+  chikaKoji2,
 ];
 
 /**
