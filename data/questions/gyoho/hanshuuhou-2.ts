@@ -85,11 +85,18 @@ import type { Question } from "@/types";
  * 指示語になっており、肢2の結論と整合しない余地があった。「Aが行う
  * Eとの建物の売買の代理は」という形に限定し、E・F双方に及ぶ曖昧さを
  * 解消した
+ *
+ * CodeRabbitの指摘(2026-09-13): 肢1の根拠(代理により締結される売買契約が
+ * 別表下欄の特定取引に当たるか、それとも政令で別途定める代理契約の締結が
+ * 特定取引かという上記Codex八回目指摘)が犯罪収益移転防止法施行令の原文
+ * 確認待ちで保留のまま verified: true としているのは矛盾している。原文
+ * 確認・承認が完了するまで verified を false に戻す(CLAUDE.mdの運用方針:
+ * 未確認のまま verified: true にしない)
  */
 export const hanshuuhou2: Question = {
   id: "q114",
   topicId: "q94",
-  verified: true,
+  verified: false,
   source: {
     level: "primary",
     answerLevel: "primary",
