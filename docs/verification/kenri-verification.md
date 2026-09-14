@@ -817,7 +817,7 @@ Issue #265(権利関係の優先度高論点に「2周目」の別シナリオ�
 
 > **追記(2026-09-06)**: hiiragi17提示のe-Gov原文(109条1項・2項)で全肢を再照合し、`source.level: primary` / `answerLevel: primary` に更新。
 
-承認: ☐ verified / ☐ 要修正 — メモ: 原文一致は確認済み。`verified: true` への更新はhiiragi17の最終承認をお願いします。
+承認: ☑ verified(hiiragi17・2026-09-14) / ☐ 要修正
 
 ---
 
