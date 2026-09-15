@@ -117,6 +117,7 @@ import { hanshuuhou2 } from "./gyoho/hanshuuhou-2";
 import { kanriKanrishaHoushiki2 } from "./gyoho/kanri-kanrisha-houshiki-2";
 import { coolingOffHyoushiki2 } from "./gyoho/cooling-off-hyoushiki-2";
 import { hachishuSonota2 } from "./gyoho/hachishu-sonota-2";
+import { shoyuukenRyuuho2 } from "./gyoho/shoyuuken-ryuuho-2";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -241,6 +242,7 @@ const RAW_QUESTIONS: Question[] = [
   kanriKanrishaHoushiki2,
   coolingOffHyoushiki2,
   hachishuSonota2,
+  shoyuukenRyuuho2,
 ];
 
 /**
