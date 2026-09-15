@@ -115,6 +115,7 @@ import { chikaKoji2 } from "./zei/chika-koji-2";
 import { kikou2 } from "./zei/kikou-2";
 import { hanshuuhou2 } from "./gyoho/hanshuuhou-2";
 import { kanriKanrishaHoushiki2 } from "./gyoho/kanri-kanrisha-houshiki-2";
+import { coolingOffHyoushiki2 } from "./gyoho/cooling-off-hyoushiki-2";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -237,6 +238,7 @@ const RAW_QUESTIONS: Question[] = [
   kikou2,
   hanshuuhou2,
   kanriKanrishaHoushiki2,
+  coolingOffHyoushiki2,
 ];
 
 /**
