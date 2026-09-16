@@ -163,6 +163,8 @@ export const TOPIC_LOW_PRIORITY: ReadonlySet<string> = new Set([
   // 税・その他: 常識問題に近い
   "q55", // 土地
   "q56", // 建物
+  // 税・その他: 暗記でなく鮮度管理が課題(#86)。表示順は優先度低に合わせる
+  "q123", // 統計
 ]);
 
 /** 優先度高→中の順に並べた表示順リスト(byTopicPriority の並び替えに使う) */
