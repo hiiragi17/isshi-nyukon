@@ -55,8 +55,8 @@ export const coolingOffHyoushiki2: Question = {
   diagram: {
     nodes: [
       { id: "A", x: 70, y: 90, label: "A", sub: "分譲主(宅建業者)" },
-      { id: "B", x: 210, y: 90, label: "B", sub: "代理業者(宅建業者)" },
-      { id: "C", x: 350, y: 90, label: "C", sub: "買主(非業者)" },
+      { id: "B", x: 180, y: 90, label: "B", sub: "代理業者(宅建業者)" },
+      { id: "C", x: 290, y: 90, label: "C", sub: "買主(非業者)" },
     ],
     edges: [
       { from: "A", to: "B", label: "分譲の代理を依頼" },
