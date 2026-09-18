@@ -14,14 +14,21 @@ import type { Reading } from "@/types";
  * 設計とし、2周目固有の内容(4条1項1号による4条許可の重複回避)はこの読み物のスコープ外とする
  * (承認状況ではなく、Issue #237が定めたこの読み物の対象範囲によるスコープ外)。
  *
- * この読み物自体の転記の正確性は人による確認が済んでいないため、`verified` は false のまま
- * 追加する(CLAUDE.mdの`verified`運用に準拠)。
+ * 追加時点では、この読み物自体の転記の正確性を人がまだ確認していなかったため
+ * `verified: false`のまま追加していた。hiiragi17がこの会話で農地法3条・4条・5条の
+ * 全文(e-Gov法令検索 https://laws.e-gov.go.jp/law/327AC0000000229、RevisionID
+ * 327AC0000000229_20250601_504AC0000000068=既存のlawVersionと同一版)を改めて提示し、
+ * この読み物が引用する5箇所(3条1項柱書、4条1項柱書・7号、5条1項柱書・6号)が
+ * いずれも一字一句完全に一致することを確認した(docs/verification/horei-verification.md
+ * 「農地法 — q24 の根拠」に追記として記録)。よって`verified: true`とする
+ * (CLAUDE.mdの`verified`運用に準拠)。
  */
 export const nochiHouReading: Reading = {
   topicId: "q24",
   category: "法令上の制限",
   title: "農地法",
   law: "農地法3条・4条・5条",
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
