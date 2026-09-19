@@ -26,6 +26,7 @@ import { yosekiCalcReading } from "./horei/yoseki-calc";
 import { fudousanShutokuzeiReading } from "./zei/fudousan-shutokuzei";
 import { inshizeiReading } from "./zei/inshizei";
 import { koteiShisanzeiReading } from "./zei/kotei-shisanzei";
+import { tourokuMenkyozeiReading } from "./zei/touroku-menkyozei";
 
 /** 全読み物(生データ)。新規論点は末尾に追記する */
 const RAW_READINGS: Reading[] = [
@@ -55,6 +56,7 @@ const RAW_READINGS: Reading[] = [
   fudousanShutokuzeiReading,
   koteiShisanzeiReading,
   inshizeiReading,
+  tourokuMenkyozeiReading,
 ];
 
 /**
