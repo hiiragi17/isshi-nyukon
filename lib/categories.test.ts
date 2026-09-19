@@ -4,6 +4,7 @@ import {
   topicPriorityLabel,
   TOPIC_PRIORITY_ORDER,
   TOPIC_LOW_PRIORITY,
+  TOPIC_PRIORITY_EXEMPT,
 } from "@/lib/categories";
 import { QUESTIONS } from "@/data/questions";
 
@@ -131,13 +132,19 @@ describe("topicPriorityLabel", () => {
     expect(topicPriorityLabel("q94")).toBe("優先度高");
   });
 
-  it("実在する論点(topicId)はすべて優先度高/中/低のいずれかに分類されている(未分類なし)", () => {
+  it("実在する論点(topicId)はすべて優先度高/中/低のいずれかに分類されているか、優先度の枠組み対象外として明示されている(未分類なし)", () => {
     const realTopicIds = [
       ...new Set(QUESTIONS.map((q) => q.topicId ?? q.id)),
     ];
     const unclassified = realTopicIds.filter(
-      (tid) => topicPriorityLabel(tid) === null,
+      (tid) => topicPriorityLabel(tid) === null && !TOPIC_PRIORITY_EXEMPT.has(tid),
     );
     expect(unclassified).toEqual([]);
+  });
+
+  it("統計(q123)は優先度の枠組み対象外でラベルを持たないが、表示順は末尾に回る(#86)", () => {
+    expect(topicPriorityLabel("q123")).toBeNull();
+    expect(byTopicPriority("q123", "q2")).toBeGreaterThan(0);
+    expect(byTopicPriority("q123", "q55")).toBe(0);
   });
 });

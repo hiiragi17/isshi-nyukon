@@ -163,8 +163,17 @@ export const TOPIC_LOW_PRIORITY: ReadonlySet<string> = new Set([
   // 税・その他: 常識問題に近い
   "q55", // 土地
   "q56", // 建物
-  // 税・その他: 暗記でなく鮮度管理が課題(#86)。表示順は優先度低に合わせる
-  "q123", // 統計
+]);
+
+/**
+ * 優先度高/中/低の枠組みそのものの対象外(docs/design-v1.md)。表示順(byTopicPriority)は
+ * 優先度低と同じく末尾に回すが、`topicPriorityLabel` は null を返し「優先度低」という
+ * ラベルは出さない。TOPIC_LOW_PRIORITY に混ぜると `topicPriorityLabel` にも波及し、
+ * 出題範囲選択画面(app/play/page.tsx)に誤ったラベルが出てしまうため分離している
+ * (Codexレビュー指摘・PR #384)。
+ */
+export const TOPIC_PRIORITY_EXEMPT: ReadonlySet<string> = new Set([
+  "q123", // 統計。暗記でなく鮮度管理が課題(#86)で、優先度低とは理由が異なる
 ]);
 
 /** 優先度高→中の順に並べた表示順リスト(byTopicPriority の並び替えに使う) */
@@ -175,14 +184,14 @@ export const TOPIC_PRIORITY_ORDER: string[] = [
 
 /**
  * TOPIC_PRIORITY_ORDER 基準の比較関数。載っていない論点は次点(優先度低の
- * 論点よりは前)に、優先度低の論点はさらにその後ろに回る。同順内は安定ソート
- * (Array.prototype.sort)により元の登場順を保つ。
+ * 論点よりは前)に、優先度低・優先度の枠組み対象外の論点はさらにその後ろに回る。
+ * 同順内は安定ソート(Array.prototype.sort)により元の登場順を保つ。
  */
 export function byTopicPriority(a: string, b: string): number {
   const rank = (tid: string) => {
     const i = TOPIC_PRIORITY_ORDER.indexOf(tid);
     if (i >= 0) return i;
-    return TOPIC_LOW_PRIORITY.has(tid)
+    return TOPIC_LOW_PRIORITY.has(tid) || TOPIC_PRIORITY_EXEMPT.has(tid)
       ? TOPIC_PRIORITY_ORDER.length + 1
       : TOPIC_PRIORITY_ORDER.length;
   };
@@ -190,10 +199,12 @@ export function byTopicPriority(a: string, b: string): number {
 }
 
 /**
- * 論点(topicId)の優先度ラベル。載っていない論点(未分類)は null。
- * 出題範囲選択画面で「この論点は優先度高/中/低」と一目でわかるように表示するために使う。
+ * 論点(topicId)の優先度ラベル。載っていない論点(未分類)・優先度の枠組み対象外の
+ * 論点(TOPIC_PRIORITY_EXEMPT)は null。出題範囲選択画面で「この論点は優先度高/中/低」と
+ * 一目でわかるように表示するために使う。
  */
 export function topicPriorityLabel(tid: string): "優先度高" | "優先度中" | "優先度低" | null {
+  if (TOPIC_PRIORITY_EXEMPT.has(tid)) return null;
   if (TOPIC_PRIORITY_HIGH.includes(tid)) return "優先度高";
   if (TOPIC_PRIORITY_MID.includes(tid)) return "優先度中";
   if (TOPIC_LOW_PRIORITY.has(tid)) return "優先度低";
