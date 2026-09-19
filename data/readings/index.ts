@@ -28,6 +28,7 @@ import { inshizeiReading } from "./zei/inshizei";
 import { joutoShotokuReading } from "./zei/jouto-shotoku";
 import { koteiShisanzeiReading } from "./zei/kotei-shisanzei";
 import { tourokuMenkyozeiReading } from "./zei/touroku-menkyozei";
+import { zoyozeiReading } from "./zei/zoyozei";
 
 /** 全読み物(生データ)。新規論点は末尾に追記する */
 const RAW_READINGS: Reading[] = [
@@ -59,6 +60,7 @@ const RAW_READINGS: Reading[] = [
   inshizeiReading,
   tourokuMenkyozeiReading,
   joutoShotokuReading,
+  zoyozeiReading,
 ];
 
 /**
