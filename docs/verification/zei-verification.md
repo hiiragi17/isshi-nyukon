@@ -836,6 +836,8 @@ Issue #86。地価公示・建築着工統計・土地取引件数・宅地建�
 
 **総合: 4肢とも原文と一致。** 数値そのものが答えを決める肢を含むため(F8)、`source.level/answerLevel: primary` を記録した。法令の改正版という概念が無い統計データのため、`lawVersion.revisionId` には代表として肢1(地価公示)の報道発表を principal として記録し、残り3件(肢2〜4)の根拠版は `lawVersion.note` に記録する形にした(CodeRabbitレビュー指摘・PR #384: revisionId は単一の文書を指すべきで、他の根拠版は note に置く)。`driftChecked` は tochi.ts(q55)と同様 `unchecked`(適用対象外)とした。承認: ☑ verified(hiiragi17・2026-09-19) / ☐ 要修正 — メモ: hiiragi17が4件の報道発表PDF原文を提示し、下書き段階の記述(出典名の誤り「登記統計月報」→正しくは「法務統計月報」を含む)を全て突き合わせて確定した
 
+**鮮度の機械チェック(Codexレビュー指摘・PR #384)**: 統計は法令ドリフトの概念こそ無いが、年度が変わると数値そのものが古くなるという同種の「年1回の見直しが要る」性質を持つ。`lawVersion.examBasisDate: "2026-04-01"` を設定し、`data/questions/integrity.test.ts` の#133チェック(examBasisDateが現在年度の基準日と一致するか)に相乗りさせることで、年度が変わったときに更新忘れを機械的に検出できるようにした。新しいスキーマ・テストは追加せず、既存の年度ドリフト機構を転用している。`driftChecked` は法令版ドリフトの概念が無いため引き続き `unchecked`。
+
 **原文URL(いずれも確認済み・hiiragi17提示のPDFで突合せ完了)**:
 - 地価公示: https://www.mlit.go.jp/page/kanbo01_hy_010767.html (概要PDF: https://www.mlit.go.jp/totikensangyo/content/001985434.pdf)
 - 建築着工統計(令和7年計分): https://www.mlit.go.jp/report/press/joho04_hh_001350.html (報道発表PDF: https://www.mlit.go.jp/report/press/content/kencha25.pdf)
