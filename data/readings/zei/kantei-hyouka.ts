@@ -30,8 +30,8 @@ export const kanteiHyoukaReading: Reading = {
   },
   lawVersion: {
     verifiedAgainst: "2014-05-01",
-    driftChecked: "checked",
-    note: "不動産鑑定評価基準は法令ではなく国土交通省が定める鑑定評価の基準。docs/verification/zei-verification.mdの記録によれば、承認者提示の国交省PDF冒頭の改正履歴の最終が平成26年5月1日(2014-05-01)で以後の改正記載なし=現行の基準。法令のexamBasisDate(年度の4月1日施行という相対規則)は基準には直接当てはまらないため未設定とし、fileIdで版を識別する。e-GovのRevisionIDは存在しない(対応する問題kantei-hyouka.tsのlawVersionと同一の考え方)。",
+    driftChecked: "unchecked",
+    note: "不動産鑑定評価基準は法令ではなく国土交通省が定める鑑定評価の基準。対応する問題(kantei-hyouka.ts)のlawVersionは、承認者提示の国交省PDF(2026-08-02取得)冒頭の改正履歴の最終が平成26年5月1日(2014-05-01)で以後の改正記載なし=現行の基準、との理由でdriftChecked: checkedと記録されている。しかしこの読み物の追加時点(2026-09-21)では、この環境のネットワーク制限によりMLITの現行公開版を再取得して同じ確認をやり直すことができていない。2014年時点のPDFの改正履歴だけでは、それ以降に改正が無いことは示せない(施行日が基準日より前であることが基準日時点でも内容が変わっていないことを示さないのと同じ理屈)。そのため、この読み物のlawVersionはfail-closedの既定値であるdriftChecked: uncheckedのまま追加する(Codexレビュー指摘・PR #389で修正)。法令のexamBasisDate(年度の4月1日施行という相対規則)は基準には直接当てはまらないため未設定とし、fileIdで版を識別する。e-GovのRevisionIDは存在しない。",
   },
   summary: [
     "鑑定評価の方式は原価法(積算価格)・取引事例比較法(比準価格)・収益還元法(収益価格)の3つ。対象不動産に応じて複数の方式を併用すべきとされ、困難な場合もできるだけ他方式の考え方を参酌するよう努める。",
