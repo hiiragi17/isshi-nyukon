@@ -36,7 +36,7 @@ export const keihinHyoujihouReading: Reading = {
   topicId: "q57",
   category: "税・その他",
   title: "景品表示法・表示規約",
-  law: "景品表示法5条、不動産の表示に関する公正競争規約9条・12条",
+  law: "景品表示法5条、不動産の表示に関する公正競争規約施行規則9条・12条",
   verified: true,
   source: {
     level: "primary",
