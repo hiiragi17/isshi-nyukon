@@ -28,6 +28,7 @@ import { fudousanShutokuzeiReading } from "./zei/fudousan-shutokuzei";
 import { inshizeiReading } from "./zei/inshizei";
 import { joutoShotokuReading } from "./zei/jouto-shotoku";
 import { kanteiHyoukaReading } from "./zei/kantei-hyouka";
+import { kikouReading } from "./zei/kikou";
 import { koteiShisanzeiReading } from "./zei/kotei-shisanzei";
 import { tourokuMenkyozeiReading } from "./zei/touroku-menkyozei";
 import { zoyozeiReading } from "./zei/zoyozei";
@@ -65,6 +66,7 @@ const RAW_READINGS: Reading[] = [
   zoyozeiReading,
   chikaKojiReading,
   kanteiHyoukaReading,
+  kikouReading,
 ];
 
 /**
