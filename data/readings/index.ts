@@ -2,6 +2,7 @@ import type { Reading } from "@/types";
 import { normalizeReading } from "@/lib/readings";
 import { baikaiKeiyakuReading } from "./gyoho/baikai-keiyaku";
 import { coolingOffReading } from "./gyoho/cooling-off";
+import { coolingOffHyoushikiReading } from "./gyoho/cooling-off-hyoushiki";
 import { hachishuSeigenReading } from "./gyoho/hachishu-seigen";
 import { hanshuuhouReading } from "./gyoho/hanshuuhou";
 import { hoshouKyoukaiReading } from "./gyoho/hoshou-kyoukai";
@@ -75,6 +76,7 @@ const RAW_READINGS: Reading[] = [
   tochiReading,
   tatemonoReading,
   kanriKanrishaHoushikiReading,
+  coolingOffHyoushikiReading,
 ];
 
 /**
