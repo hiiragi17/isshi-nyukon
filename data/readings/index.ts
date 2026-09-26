@@ -4,6 +4,7 @@ import { baikaiKeiyakuReading } from "./gyoho/baikai-keiyaku";
 import { coolingOffReading } from "./gyoho/cooling-off";
 import { coolingOffHyoushikiReading } from "./gyoho/cooling-off-hyoushiki";
 import { hachishuSeigenReading } from "./gyoho/hachishu-seigen";
+import { hachishuSonotaReading } from "./gyoho/hachishu-sonota";
 import { hanshuuhouReading } from "./gyoho/hanshuuhou";
 import { hoshouKyoukaiReading } from "./gyoho/hoshou-kyoukai";
 import { hoshuReading } from "./gyoho/hoshu";
@@ -77,6 +78,7 @@ const RAW_READINGS: Reading[] = [
   tatemonoReading,
   kanriKanrishaHoushikiReading,
   coolingOffHyoushikiReading,
+  hachishuSonotaReading,
 ];
 
 /**
