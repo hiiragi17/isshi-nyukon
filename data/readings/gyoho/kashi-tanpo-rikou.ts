@@ -23,14 +23,16 @@ import type { Reading } from "@/types";
  * 2号ロで買主から宅建業者を除く)も、hiiragi17が提示したe-Gov法令検索の原文の
  * 逐語全文を転記した。
  *
- * 追加時点では `verified: false`(転記の正確性を人が確認してから true にする)。
+ * 追加時点では `verified: false` だった。すべての引用がhiiragi17の提示したe-Gov法令検索の
+ * 原文(または照合シートの承認済み逐語引用)の逐語全文で、hiiragi17が転記の正確性を
+ * 確認のうえ `verified: true` とした(CLAUDE.mdの`verified`運用に準拠)。
  */
 export const kashiTanpoRikouReading: Reading = {
   topicId: "q35",
   category: "宅建業法",
   title: "住宅瑕疵担保履行法",
   law: "住宅瑕疵担保履行法2条・3条・11条〜13条・15条・同法施行規則16条・品確法2条・94条・95条",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
