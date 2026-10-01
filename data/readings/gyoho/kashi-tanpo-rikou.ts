@@ -25,16 +25,17 @@ import type { Reading } from "@/types";
  * 2号ロで買主から宅建業者を除く)も、hiiragi17が提示したe-Gov法令検索の原文の
  * 逐語全文を転記した。
  *
- * 追加時点では `verified: false` だった。すべての引用がhiiragi17の提示したe-Gov法令検索の
- * 原文(または照合シートの承認済み逐語引用)の逐語全文で、hiiragi17が転記の正確性を
- * 確認のうえ `verified: true` とした(CLAUDE.mdの`verified`運用に準拠)。
+ * `verified` は false。いったん true にしたが、その後に追加した品確法97条の引用は、
+ * 照合シートの承認記録(q35はこの条を含まない)と合わないため、hiiragi17の指示で
+ * false に戻した(CLAUDE.mdの`verified`運用に準拠)。97条の転記をe-Gov原文と見比べて
+ * 確認し、照合シートに記録したうえで、あらためて true にする。
  */
 export const kashiTanpoRikouReading: Reading = {
   topicId: "q35",
   category: "宅建業法",
   title: "住宅瑕疵担保履行法",
   law: "住宅瑕疵担保履行法2条・3条・10条2項・11条〜13条・14条1項・15条・同法施行規則16条1項・品確法2条2項・94条・95条・97条・宅建業法35条1項13号・8項・同法施行規則16条の4の2",
-  verified: true,
+  verified: false,
   source: {
     level: "primary",
     answerLevel: "primary",
