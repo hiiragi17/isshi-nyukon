@@ -123,6 +123,7 @@ import { juugyoushaHyoushiki2 } from "./gyoho/juugyousha-hyoushiki-2";
 import { juugyoushaMeibo2 } from "./gyoho/juugyousha-meibo-2";
 import { kashiTanpoRikou2 } from "./gyoho/kashi-tanpo-rikou-2";
 import { toukei } from "./zei/toukei";
+import { toukei2 } from "./zei/toukei-2";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -253,6 +254,7 @@ const RAW_QUESTIONS: Question[] = [
   juugyoushaMeibo2,
   kashiTanpoRikou2,
   toukei,
+  toukei2,
 ];
 
 /**
