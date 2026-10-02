@@ -10,6 +10,7 @@ import { hoshouKyoukaiReading } from "./gyoho/hoshou-kyoukai";
 import { hoshuReading } from "./gyoho/hoshu";
 import { jimushoAnnaijoReading } from "./gyoho/jimusho-annaijo";
 import { juugyoushaHyoushikiReading } from "./gyoho/juugyousha-hyoushiki";
+import { juugyoushaMeiboReading } from "./gyoho/juugyousha-meibo";
 import { juuyouJikouReading } from "./gyoho/juuyou-jikou";
 import { kashiTanpoRikouReading } from "./gyoho/kashi-tanpo-rikou";
 import { kanriKanrishaHoushikiReading } from "./gyoho/kanri-kanrisha-houshiki";
@@ -87,6 +88,7 @@ const RAW_READINGS: Reading[] = [
   jimushoAnnaijoReading,
   kashiTanpoRikouReading,
   juugyoushaHyoushikiReading,
+  juugyoushaMeiboReading,
 ];
 
 /**
