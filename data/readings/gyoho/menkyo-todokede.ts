@@ -25,20 +25,19 @@ import type { Reading } from "@/types";
  * - 宅建業法76条: `docs/verification/gyoho-verification.md`「q72」節(2026-07-28・監査C1)で
  *   確定した全文
  *
- * 転記元の問題・検証シート自体は承認済みだが、この読み物として新たに書き起こした
- * 説明文自体は人の確認前のAI下書きのため、`verified: false` のまま追加する
- * (CLAUDE.mdの`verified`運用に準拠)。
+ * 追加時は人の確認前のAI下書きのため `verified: false` だったが、hiiragi17が内容を確認し
+ * 2026-10-03に `verified: true` への更新を承認した(CLAUDE.mdの`verified`運用に準拠)。
  */
 export const menkyoTodokedeReading: Reading = {
   topicId: "q72",
   category: "宅建業法",
   title: "免許の届出・免許換え(変更・廃業・取引結了)",
   law: "宅建業法3条・4条・7条・9条・11条・76条",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "宅建業法4条(1項・2項)・7条(全2項)・11条(全2項)はhiiragi17が2026-10-03に提示したe-Gov法令検索の原文全文(Law RevisionID 327AC1000000176_20260401_507AC0000000068)、9条(全2項)・3条2項・4項はhiiragi17提示の原文全文(2026-08-11)、76条は照合シートq72節(監査C1)で確定した全文から転記した。本文中の説明・表・「ここが狙われる」は、これらの原文から導いたAI下書きで、人の確認前。",
+    note: "宅建業法4条(1項・2項)・7条(全2項)・11条(全2項)はhiiragi17が2026-10-03に提示したe-Gov法令検索の原文全文(Law RevisionID 327AC1000000176_20260401_507AC0000000068)、9条(全2項)・3条2項・4項はhiiragi17提示の原文全文(2026-08-11)、76条は照合シートq72節(監査C1)で確定した全文から転記した。本文中の説明・表・「ここが狙われる」は、これらの原文から導いたAI下書きを、hiiragi17が確認・承認した(2026-10-03)。",
   },
   lawVersion: {
     revisionId: "327AC1000000176_20260401_507AC0000000068",
