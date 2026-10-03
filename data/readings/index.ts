@@ -16,6 +16,7 @@ import { kashiTanpoRikouReading } from "./gyoho/kashi-tanpo-rikou";
 import { kanriKanrishaHoushikiReading } from "./gyoho/kanri-kanrisha-houshiki";
 import { kantokuShobunReading } from "./gyoho/kantoku-shobun";
 import { menkyoReading } from "./gyoho/menkyo";
+import { menkyoTodokedeReading } from "./gyoho/menkyo-todokede";
 import { menkyoYohiReading } from "./gyoho/menkyo-yohi";
 import { sanjunanaJouReading } from "./gyoho/sanjunana-jou";
 import { shoyuukenRyuuhoReading } from "./gyoho/shoyuuken-ryuuho";
@@ -91,6 +92,7 @@ const RAW_READINGS: Reading[] = [
   juugyoushaHyoushikiReading,
   juugyoushaMeiboReading,
   menkyoYohiReading,
+  menkyoTodokedeReading,
 ];
 
 /**
