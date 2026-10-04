@@ -14,8 +14,11 @@ import type { Reading } from "@/types";
  * 言及にとどめ、説明していない。
  *
  * 原文引用(「原文を読む」)は、hiiragi17が2026-10-04にこの会話で提示した35条の2の
- * 全文(柱書・1号・2号)を省略記号なしでそのまま転記した。提示時に版(RevisionID)の
- * 記載はなかったため、`lawVersion` は fail-closed に `unchecked` とした。
+ * 全文(柱書・1号・2号)を省略記号なしでそのまま転記した。版は同日に提示された
+ * 「令和8年4月1日施行・現在施行 / Law RevisionID 327AC1000000176_20260401_507AC0000000068」
+ * (公立の義務教育諸学校等の教育職員の給与等に関する特別措置法等の一部を改正する法律
+ * 〔令和7年法律第68号〕による改正後)。施行日が試験の法令基準日と一致するため
+ * `driftChecked` は `not_required`。
  *
  * 追加時点では人の確認前のAI下書きのため `verified: false`。転記の正確性を人が確認してから
  * `true` にする(CLAUDE.mdの `verified` 運用に準拠)。
@@ -29,14 +32,14 @@ export const kyoutakushoSetsumeiReading: Reading = {
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "宅建業法35条の2(柱書・1号・2号)はhiiragi17が2026-10-04に提示した原文全文を転記した。本文中の説明・表・「ここが狙われる」は、この原文と、問題q37の照合記録(gyoho-verification.md q37エントリ)から導いたAI下書きで、人の確認前。",
+    note: "宅建業法35条の2(柱書・1号・2号)はhiiragi17が2026-10-04に提示した原文全文(Law RevisionID 327AC1000000176_20260401_507AC0000000068)を転記した。本文中の説明・表・「ここが狙われる」は、この原文と、問題q37の照合記録(gyoho-verification.md q37エントリ)から導いたAI下書きで、人の確認前。",
   },
   lawVersion: {
     revisionId: "327AC1000000176_20260401_507AC0000000068",
     verifiedAgainst: "2026-04-01",
     examBasisDate: "2026-04-01",
-    driftChecked: "unchecked",
-    note: "提示された原文には版の記載がなかった。照合シートq37エントリが記録する版(施行日が試験の法令基準日と一致)と同じ条文である可能性が高いが、提示原文とその版との突合せは未実施のため unchecked とする。examBasisDateは導出値(年度が変われば再導出が必要)。",
+    driftChecked: "not_required",
+    note: "照合に用いた版(令和8年4月1日施行・現在施行。hiiragi17が2026-10-04に提示)の施行日が試験の法令基準日(令和8年4月1日)と一致するため差分は生じない。examBasisDateは導出値(年度が変われば再導出が必要)。",
   },
   summary: [
     "供託所等に関する説明は、宅建業者が、相手方等(宅建業者を除く)に対し、売買・交換・貸借の契約が成立するまでの間に行うようにしなければならない(35条の2)。35条の重要事項説明とは別の条文。",
@@ -108,7 +111,7 @@ export const kyoutakushoSetsumeiReading: Reading = {
           },
         ],
         article: "宅建業法35条の2",
-        cite: "宅建業法35条の2(全文。hiiragi17提示・2026-10-04。提示時に版の記載なし)",
+        cite: "宅建業法35条の2(全文。hiiragi17提示・2026-10-04。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
       },
     },
     {
