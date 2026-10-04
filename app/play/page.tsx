@@ -30,6 +30,11 @@ import {
   byTopicPriority,
   topicPriorityLabel,
 } from "@/lib/categories";
+import {
+  isMenjoQuestion,
+  menjoQuestionIndices,
+  MENJO_LABEL,
+} from "@/lib/menjo";
 import { INK, PAPER, CARD, AI_BLUE, AI_BLUE_BG, SHU, GREEN, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
 import { page, col, card, outlineButton } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
@@ -95,6 +100,16 @@ const CATEGORY_ITEM_COUNTS = new Map<string, number>(
       0,
     ),
   ]),
+);
+
+/**
+ * 5問免除科目(住宅金融支援機構・景品表示法・統計・土地・建物)に属する問題の添字と肢数。
+ * 分野は「税・その他」のまま、印だけで絞り込む(lib/menjo)。
+ */
+const MENJO_INDICES = menjoQuestionIndices(QUESTIONS);
+const MENJO_ITEM_COUNT = MENJO_INDICES.reduce(
+  (s, i) => s + itemCountOf(QUESTIONS[i]),
+  0,
 );
 
 /**
@@ -331,6 +346,23 @@ export default function PlayPage() {
   };
 
   /**
+   * 5問免除科目だけの少量モード: 出題範囲の選択(selected)には関わらず、
+   * 5問免除科目(住宅金融支援機構・景品表示法・統計・土地・建物)の中から n 肢を
+   * 弱点 → 未着手 → その他の順で抽出する。n に全肢数を渡せば、5科目を並び替えて全部出す。
+   */
+  const startMenjoQuick = (n: number) => {
+    const menjo = new Set(MENJO_INDICES);
+    const pool = allItems.filter((it) => menjo.has(it.qi));
+    const classify = (it: Item): QuickState => {
+      const h = history[`${it.qi}-${it.ci}`];
+      if (!h) return "untried";
+      return h.pts < h.max ? "weak" : "other";
+    };
+    const ordered = buildQuickSession(pool, classify, n, shuffleInPlace);
+    if (ordered.length) startSession(ordered);
+  };
+
+  /**
    * ミニ模試: 選択範囲に関わらず全論点から、本試験配分(権利14:業法20:法令8:税8)に
    * 寄せて MOCK_TOPIC_COUNT 論点を横断抽出する。抽出は lib/mock に切り出し、
    * ここでは論点→肢の展開とセッション開始だけを行う。成績は通常どおり記録され、
@@ -396,6 +428,8 @@ export default function PlayPage() {
   // 全論点の一括選択 / 解除
   const selectAll = () => setSelected(new Set(QUESTIONS.map((_, i) => i)));
   const clearAll = () => setSelected(new Set());
+  // 5問免除科目だけを選ぶ(分野は問わず、5科目の論点だけにチェックを付け直す)
+  const selectMenjoOnly = () => setSelected(new Set(MENJO_INDICES));
 
   // 分野の論点一覧の開閉(選択状態には影響しない)
   const toggleCatOpen = (cat: string) => {
@@ -425,6 +459,9 @@ export default function PlayPage() {
       0,
     );
     const allSelected = selected.size === QUESTIONS.length;
+    const menjoOnly =
+      selected.size === MENJO_INDICES.length &&
+      MENJO_INDICES.every((i) => selected.has(i));
     // 進捗サマリ: 全論点の統計を1回だけ計算し、全体・分野の集計に使い回す
     const allStats = QUESTIONS.map((_, i) => topicStats(i));
     // 全体・分野の集計は topicId 単位(頻出論点の2周目は1論点として数える)
@@ -545,6 +582,25 @@ export default function PlayPage() {
                 {allSelected ? "全解除" : "全選択"}
               </button>
             </div>
+            {MENJO_INDICES.length > 0 && (
+              <button
+                type="button"
+                onClick={selectMenjoOnly}
+                aria-pressed={menjoOnly}
+                style={{
+                  ...outlineButton,
+                  width: "100%",
+                  minHeight: 44,
+                  padding: "10px 16px",
+                  marginBottom: 12,
+                  fontSize: 13,
+                  letterSpacing: 1.5,
+                  background: menjoOnly ? AI_BLUE_BG : CARD,
+                }}
+              >
+                {MENJO_LABEL}科目だけを選ぶ
+              </button>
+            )}
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               {CATEGORIES.map((cat, catIdx) => {
                 const catIndices = CATEGORY_INDICES.get(cat) ?? [];
@@ -736,6 +792,7 @@ export default function PlayPage() {
                             <span style={{ color: MUTED, fontWeight: 400, fontSize: 12 }}>
                               {qq.law}
                               {tierLabel && ` ・ ${tierLabel}`}
+                              {isMenjoQuestion(qq) && ` ・ ${MENJO_LABEL}`}
                             </span>
                           </span>
                           {st.tried > 0 ? (
@@ -886,6 +943,69 @@ export default function PlayPage() {
                       {s}肢
                     </button>
                   ))}
+              </div>
+            </div>
+          )}
+
+          {MENJO_ITEM_COUNT >= 5 && (
+            <div style={{ ...card, marginBottom: 16 }}>
+              <Eyebrow>{MENJO_LABEL}科目</Eyebrow>
+              <div
+                style={{
+                  fontFamily: SERIF,
+                  fontWeight: 700,
+                  fontSize: 15,
+                  margin: "4px 0 4px",
+                }}
+              >
+                免除対象の5科目だけ解く
+              </div>
+              <p
+                style={{
+                  fontSize: 12.5,
+                  color: MUTED,
+                  margin: "0 0 12px",
+                  lineHeight: 1.8,
+                }}
+              >
+                住宅金融支援機構・景品表示法・統計・土地・建物の中から、上の「審理する論点を選ぶ」の選択状態とは関係なく、弱点・未着手を優先して出題します。
+              </p>
+              <div style={{ display: "flex", gap: 8 }}>
+                {[5, 10, 20]
+                  .filter((s) => s < MENJO_ITEM_COUNT)
+                  .map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => startMenjoQuick(s)}
+                      aria-label={`${MENJO_LABEL}科目から${s}肢`}
+                      style={{
+                        ...outlineButton,
+                        flex: 1,
+                        minHeight: 44,
+                        padding: "12px 0",
+                        fontSize: 15,
+                        letterSpacing: 2,
+                      }}
+                    >
+                      {s}肢
+                    </button>
+                  ))}
+                <button
+                  type="button"
+                  onClick={() => startMenjoQuick(MENJO_ITEM_COUNT)}
+                  aria-label={`${MENJO_LABEL}科目を全${MENJO_ITEM_COUNT}肢`}
+                  style={{
+                    ...outlineButton,
+                    flex: 2,
+                    minHeight: 44,
+                    padding: "12px 0",
+                    fontSize: 15,
+                    letterSpacing: 2,
+                  }}
+                >
+                  全{MENJO_ITEM_COUNT}肢
+                </button>
               </div>
             </div>
           )}
