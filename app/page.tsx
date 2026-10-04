@@ -921,7 +921,11 @@ export default function Home() {
                                     fontSize: 9,
                                     fontWeight: 800,
                                     lineHeight: 1,
-                                    color: st.level === 0 ? MUTED : CARD,
+                                    // 角(左上)は1つ目のバリアントの色で塗られる。円形(完了)は全面が朱
+                                    color:
+                                      st.level !== 2 && variantLevels[0] === 0
+                                        ? MUTED
+                                        : CARD,
                                   }}
                                 >
                                   免
