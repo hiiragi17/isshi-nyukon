@@ -30,6 +30,7 @@ import {
 } from "@/lib/progress";
 import { buildSummonQueue, type SrsItemState } from "@/lib/srs";
 import { byCategoryPriority, byTopicPriority } from "@/lib/categories";
+import { isMenjoTopic, MENJO_LABEL } from "@/lib/menjo";
 import {
   INK,
   CARD,
@@ -339,6 +340,7 @@ export default function Home() {
           <div>
             <div style={{ fontSize: 11, letterSpacing: 2.5, color: INK_SUB }}>
               {q.category} · {q.law}
+              {isMenjoTopic(q.topicId ?? q.id) && ` · ${MENJO_LABEL}科目`}
             </div>
             <div
               style={{
@@ -780,6 +782,7 @@ export default function Home() {
                     border={LINE}
                     label="未着手"
                   />
+                  <span>免 = {MENJO_LABEL}</span>
                 </div>
               </div>
 
@@ -867,11 +870,16 @@ export default function Home() {
                                   )
                                   .join("、")
                               : levelText(st.level);
+                          // 5問免除科目の印(「免」)。読み上げ・ツールチップにも含める
+                          const menjo = isMenjoTopic(topicId);
+                          const cellLabel = menjo
+                            ? `${q.topic}(${statusText}・${MENJO_LABEL})`
+                            : `${q.topic}(${statusText})`;
                           return (
                             <button
                               key={topicId}
-                              title={`${q.topic}(${statusText})`}
-                              aria-label={`${q.topic}(${statusText})`}
+                              title={cellLabel}
+                              aria-label={cellLabel}
                               onClick={() =>
                                 setSel((cur) =>
                                   cur === topicId ? null : topicId,
@@ -893,8 +901,26 @@ export default function Home() {
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
+                                position: "relative",
                               }}
                             >
+                              {menjo && (
+                                <span
+                                  aria-hidden="true"
+                                  style={{
+                                    position: "absolute",
+                                    top: 2,
+                                    left: 3,
+                                    fontFamily: SERIF,
+                                    fontSize: 9,
+                                    fontWeight: 800,
+                                    lineHeight: 1,
+                                    color: st.level === 0 ? MUTED : CARD,
+                                  }}
+                                >
+                                  免
+                                </span>
+                              )}
                               {stamped ? (
                                 <span
                                   className="stamp-in"
