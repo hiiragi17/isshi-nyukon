@@ -13,15 +13,15 @@ import type { Reading } from "@/types";
  * 読み仮名(ルビ)が貼り付け時に混ざったもので、原文の条見出しは「(心裡留保)」である
  * (承認者がe-Gov画面のスクリーンショットで確認。2026-10-04)。
  *
- * 追加時は `verified: false` とする(CLAUDE.mdの`verified`運用に準拠。人が原文と突き合わせて
- * 確認できたら `true` にする)。
+ * 追加時は `verified: false` とし、承認者(hiiragi17)が提示原文との突き合わせを
+ * 確認したうえで `verified: true` にした(CLAUDE.mdの`verified`運用に準拠)。
  */
 export const ishiHyoujiReading: Reading = {
   topicId: "q18",
   category: "権利関係(民法)",
   title: "意思表示(虚偽表示・錯誤・心裡留保)",
   law: "民法93条・94条・95条",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
