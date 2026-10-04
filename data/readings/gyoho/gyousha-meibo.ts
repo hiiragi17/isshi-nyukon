@@ -19,19 +19,19 @@ import type { Reading } from "@/types";
  * - 宅建業法4条(1項・2項)・9条(全2項): `menkyo-todokede.ts`(q72読み物)の「原文を読む」と
  *   同じ、hiiragi17提示の原文全文(4条は2026-10-03、9条は2026-08-11)
  *
- * 追加時は人の確認前のAI下書きのため `verified: false`。転記の正確性を人が確認してから
- * `true` にする(CLAUDE.mdの`verified`運用に準拠)。
+ * 追加時は人の確認前のAI下書きのため `verified: false` だったが、hiiragi17が内容を確認し
+ * 2026-10-04に `verified: true` への更新を承認した(CLAUDE.mdの`verified`運用に準拠)。
  */
 export const gyoushaMeiboReading: Reading = {
   topicId: "q74",
   category: "宅建業法",
   title: "宅建業者名簿と変更の届出",
   law: "宅建業法4条・8条・9条・10条、施行規則5条・6条",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "宅建業法8条(全2項)・10条、施行規則5条(全2項)・6条(全2項)はhiiragi17が2026-10-04に提示した原文全文、4条(1項・2項)・9条(全2項)はq72読み物(menkyo-todokede.ts)で人が確認済みの原文全文を転記し、2026-10-04にhiiragi17が改めて提示した原文(Law RevisionID 327AC1000000176_20260401_507AC0000000068)と全文一致することを確認した。本文中の説明・表・「ここが狙われる」はこれらの原文から導いたAI下書きで、人の確認前。",
+    note: "宅建業法8条(全2項)・10条、施行規則5条(全2項)・6条(全2項)はhiiragi17が2026-10-04に提示した原文全文、4条(1項・2項)・9条(全2項)はq72読み物(menkyo-todokede.ts)で人が確認済みの原文全文を転記し、2026-10-04にhiiragi17が改めて提示した原文(Law RevisionID 327AC1000000176_20260401_507AC0000000068)と全文一致することを確認した。本文中の説明・表・「ここが狙われる」は、これらの原文から導いたAI下書きを、hiiragi17が確認・承認した(2026-10-04)。",
   },
   lawVersion: {
     revisionId: "327AC1000000176_20260401_507AC0000000068",
