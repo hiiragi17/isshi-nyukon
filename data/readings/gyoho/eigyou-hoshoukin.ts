@@ -28,19 +28,19 @@ import type { Reading } from "@/types";
  * 様式第三号の通知書の記載内容は未取得のため、本文ではそれらを説明していない
  * (2条〜5条の文言の範囲にとどめた)。
  *
- * 追加時は人の確認前のAI下書きのため `verified: false`。転記の正確性を人が確認してから
- * `true` にする(CLAUDE.mdの`verified`運用に準拠)。
+ * 追加時は人の確認前のAI下書きのため `verified: false` だったが、hiiragi17が内容を確認し
+ * 2026-10-04に `verified: true` への更新を承認した(CLAUDE.mdの`verified`運用に準拠)。
  */
 export const eigyouHoshoukinReading: Reading = {
   topicId: "q31",
   category: "宅建業法",
   title: "営業保証金",
   law: "宅建業法25条〜28条・施行令2条の4・施行規則15条・営業保証金規則2条〜5条",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "宅建業法25条〜28条・施行規則15条・営業保証金規則2条〜5条はhiiragi17が2026-10-04に提示した原文全文、施行令2条の4はgyoho-verification.md q31/q32エントリの承認済み引用(2026-08-03)を転記した。本文中の説明・表・「ここが狙われる」はこれらの原文から導いたAI下書きで、人の確認前。",
+    note: "宅建業法25条〜28条・施行規則15条・営業保証金規則2条〜5条はhiiragi17が2026-10-04に提示した原文全文、施行令2条の4はgyoho-verification.md q31/q32エントリの承認済み引用(2026-08-03)を転記した。本文中の説明・表・「ここが狙われる」は、これらの原文から導いたAI下書きを、hiiragi17が確認・承認した(2026-10-04)。",
   },
   lawVersion: {
     revisionId: "327AC1000000176_20260401_507AC0000000068",
