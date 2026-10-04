@@ -13,15 +13,15 @@ import type { Reading } from "@/types";
  * 2項(第三者による詐欺)は対応する問題の肢の対象外のため、本文では説明を加えず、
  * 原文の引用にとどめる。
  *
- * この読み物として新たに書き起こした説明文は人の確認前のAI下書きのため、
- * `verified: false` のまま追加する(CLAUDE.mdの`verified`運用に準拠)。
+ * 追加時は `verified: false` とし、承認者(hiiragi17)が提示原文との突き合わせを
+ * 確認したうえで `verified: true` にした(CLAUDE.mdの`verified`運用に準拠)。
  */
 export const sagiKyouhakuReading: Reading = {
   topicId: "q2",
   category: "権利関係(民法)",
   title: "詐欺・強迫と第三者",
   law: "民法96条",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
