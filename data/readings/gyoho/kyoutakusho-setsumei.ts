@@ -20,19 +20,19 @@ import type { Reading } from "@/types";
  * 〔令和7年法律第68号〕による改正後)。施行日が試験の法令基準日と一致するため
  * `driftChecked` は `not_required`。
  *
- * 追加時点では人の確認前のAI下書きのため `verified: false`。転記の正確性を人が確認してから
- * `true` にする(CLAUDE.mdの `verified` 運用に準拠)。
+ * 追加時は人の確認前のAI下書きのため `verified: false` だった。hiiragi17は2026-10-04に
+ * 転記と本文の内容を確認し、`verified: true` への更新を承認した(CLAUDE.mdの `verified` 運用に準拠)。
  */
 export const kyoutakushoSetsumeiReading: Reading = {
   topicId: "q37",
   category: "宅建業法",
   title: "供託所等に関する説明",
   law: "宅建業法35条の2",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "宅建業法35条の2(柱書・1号・2号)はhiiragi17が2026-10-04に提示した原文全文(Law RevisionID 327AC1000000176_20260401_507AC0000000068)を転記した。本文中の説明・表・「ここが狙われる」は、この原文と、問題q37の照合記録(gyoho-verification.md q37エントリ)から導いたAI下書きで、人の確認前。",
+    note: "宅建業法35条の2(柱書・1号・2号)はhiiragi17が2026-10-04に提示した原文全文(Law RevisionID 327AC1000000176_20260401_507AC0000000068)を転記した。本文中の説明・表・「ここが狙われる」は、この原文と、問題q37の照合記録(gyoho-verification.md q37エントリ)から導いたAI下書きを、hiiragi17が確認・承認した(2026-10-04)。",
   },
   lawVersion: {
     revisionId: "327AC1000000176_20260401_507AC0000000068",
