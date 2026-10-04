@@ -909,8 +909,14 @@ export default function Home() {
                                   aria-hidden="true"
                                   style={{
                                     position: "absolute",
-                                    top: 2,
-                                    left: 3,
+                                    // 完了(円形)セルは角が塗りの外に出るため、円の内側上部に寄せる
+                                    ...(st.level === 2
+                                      ? {
+                                          top: 6,
+                                          left: "50%",
+                                          transform: "translateX(-50%)",
+                                        }
+                                      : { top: 2, left: 3 }),
                                     fontFamily: SERIF,
                                     fontSize: 9,
                                     fontWeight: 800,
