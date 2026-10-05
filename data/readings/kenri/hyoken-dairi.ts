@@ -13,15 +13,15 @@ import type { Reading } from "@/types";
  * 施行 令和8年4月1日)から転記した。提示原文にある107条・108条・111条は、問題の範囲外のため
  * 引用していない。「正当な理由=善意無過失」は条文にない判例の定式で、結論のみを述べている。
  *
- * 追加時は `verified: false` とし、承認者が提示原文との突き合わせを確認してから
- * `true` にする(CLAUDE.mdの`verified`運用に準拠)。
+ * 追加時は `verified: false` とし、承認者(hiiragi17)が提示原文との突き合わせを
+ * 確認したうえで `verified: true` にした(CLAUDE.mdの`verified`運用に準拠)。
  */
 export const hyokenDairiReading: Reading = {
   topicId: "q63",
   category: "権利関係(民法)",
   title: "表見代理・復代理",
   law: "民法104条〜106条・109条・110条・112条・判例",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
