@@ -12,15 +12,15 @@ import type { Reading } from "@/types";
  * 118条(単独行為の無権代理)は問題の範囲外のため引用しない。
  * 判例(最判昭40.6.18・最判昭37.4.20)は結論のみを本文で述べ、判決文は引用していない。
  *
- * 追加時は `verified: false` とし、承認者が提示原文との突き合わせを確認してから
- * `true` にする(CLAUDE.mdの`verified`運用に準拠)。
+ * 追加時は `verified: false` とし、承認者(hiiragi17)が提示原文との突き合わせを
+ * 確認したうえで `verified: true` にした(CLAUDE.mdの`verified`運用に準拠)。
  */
 export const mukenDairiReading: Reading = {
   topicId: "q3",
   category: "権利関係(民法)",
   title: "無権代理",
   law: "民法113条〜117条・判例",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
