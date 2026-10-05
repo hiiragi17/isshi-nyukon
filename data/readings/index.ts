@@ -28,6 +28,7 @@ import { sanjunanaJouReading } from "./gyoho/sanjunana-jou";
 import { shoyuukenRyuuhoReading } from "./gyoho/shoyuuken-ryuuho";
 import { takkenshiReading } from "./gyoho/takkenshi";
 import { ishiHyoujiReading } from "./kenri/ishi-hyouji";
+import { hyokenDairiReading } from "./kenri/hyoken-dairi";
 import { mukenDairiReading } from "./kenri/muken-dairi";
 import { sagiKyouhakuReading } from "./kenri/sagi-kyouhaku";
 import { kaihatsuKyokaReading } from "./horei/kaihatsu-kyoka";
@@ -111,6 +112,7 @@ const RAW_READINGS: Reading[] = [
   sagiKyouhakuReading,
   ishiHyoujiReading,
   mukenDairiReading,
+  hyokenDairiReading,
 ];
 
 /**
