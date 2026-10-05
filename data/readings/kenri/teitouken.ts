@@ -22,7 +22,7 @@ export const teitoukenReading: Reading = {
   topicId: "q19",
   category: "権利関係(民法)",
   title: "抵当権(法定地上権・物上代位ほか)",
-  law: "民法371条・372条・374条・388条・398条の4(304条1項は372条による準用元)",
+  law: "民法371条・372条・374条・388条・398条の4・398条の5(304条1項は372条による準用元)",
   verified: true,
   source: {
     level: "primary",
