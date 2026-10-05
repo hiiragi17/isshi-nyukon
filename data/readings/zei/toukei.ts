@@ -16,15 +16,15 @@ import type { Reading } from "@/types";
  * 統計は毎年数値が変わる。数値の出典と公表時期を本文に明記し、年度が変わったときの
  * 見直し箇所がわかるようにした(`lawVersion.examBasisDate` による年度更新チェックの対象)。
  *
- * 追加時は `verified: false` とし、承認者が提示原文との突き合わせを確認してから
- * `true` にする(CLAUDE.mdの`verified`運用に準拠)。
+ * 追加時は `verified: false` とし、承認者(hiiragi17)が提示原文との突き合わせを
+ * 確認したうえで `verified: true` にした(CLAUDE.mdの`verified`運用に準拠)。
  */
 export const toukeiReading: Reading = {
   topicId: "q123",
   category: "税・その他",
   title: "統計",
   law: "5問免除・統計",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
