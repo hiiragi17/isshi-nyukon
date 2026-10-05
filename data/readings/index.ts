@@ -53,6 +53,7 @@ import { kikouReading } from "./zei/kikou";
 import { koteiShisanzeiReading } from "./zei/kotei-shisanzei";
 import { tatemonoReading } from "./zei/tatemono";
 import { tochiReading } from "./zei/tochi";
+import { toukeiReading } from "./zei/toukei";
 import { tourokuMenkyozeiReading } from "./zei/touroku-menkyozei";
 import { zoyozeiReading } from "./zei/zoyozei";
 
@@ -93,6 +94,7 @@ const RAW_READINGS: Reading[] = [
   keihinHyoujihouReading,
   tochiReading,
   tatemonoReading,
+  toukeiReading,
   kanriKanrishaHoushikiReading,
   coolingOffHyoushikiReading,
   hachishuSonotaReading,
