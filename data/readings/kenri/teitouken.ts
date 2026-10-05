@@ -15,15 +15,15 @@ import type { Reading } from "@/types";
  * 解釈論は、根拠が通説(secondary)にとどまり承認が済んでいない(検証シート q19 参照)ため、
  * 本読み物には含めていない。
  *
- * 追加時は `verified: false`。引用の正確性と本文を人が確認してから `true` にする
- * (CLAUDE.mdの`verified`運用に準拠)。
+ * 追加時は `verified: false` とし、承認者(hiiragi17)が提示原文との突き合わせを
+ * 確認したうえで `verified: true` にした(CLAUDE.mdの`verified`運用に準拠)。
  */
 export const teitoukenReading: Reading = {
   topicId: "q19",
   category: "権利関係(民法)",
   title: "抵当権(法定地上権・物上代位ほか)",
   law: "民法371条・372条・374条・388条・398条の4(304条1項は372条による準用元)",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
