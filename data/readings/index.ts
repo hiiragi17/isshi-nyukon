@@ -34,6 +34,7 @@ import { sagiKyouhakuReading } from "./kenri/sagi-kyouhaku";
 import { teitoukenReading } from "./kenri/teitouken";
 import { hoshouRentaiReading } from "./kenri/hoshou-rentai";
 import { rentaiSaimuReading } from "./kenri/rentai-saimu";
+import { chintaishakuReading } from "./kenri/chintaishaku";
 import { kaihatsuKyokaReading } from "./horei/kaihatsu-kyoka";
 import { kenchikuKakuninReading } from "./horei/kenchiku-kakunin";
 import { kenpeiYosekiReading } from "./horei/kenpei-yoseki";
@@ -121,6 +122,7 @@ const RAW_READINGS: Reading[] = [
   teitoukenReading,
   hoshouRentaiReading,
   rentaiSaimuReading,
+  chintaishakuReading,
 ];
 
 /**
