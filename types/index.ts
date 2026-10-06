@@ -361,3 +361,38 @@ export type Attempt = {
 };
 
 export type MasteryState = "perfect" | "learning" | "untouched";
+
+/* ---------- 暗記シート(コラム) ---------- */
+/**
+ * 暗記シート内の1節。数字を語呂・ペア・階段でまとめる横断コラムの単位。
+ * `Reading`(1論点の読み物)とは別物で、複数論点をまたいで比較できるようにする。
+ * 表は `ReadingTable` を再利用する。
+ */
+export type SheetSection = {
+  /** ページ内アンカー(`/sheets#<id>`)。他画面からのリンク用に安定させる */
+  id: string;
+  heading: string;
+  /** 見出し下の導入(省略可) */
+  lead?: string;
+  tables: ReadingTable[];
+  /** 表の下に置く補足(覚え方・注意)。1要素=1段落 */
+  notes?: string[];
+};
+
+/**
+ * 暗記シート本体。精度担保の枠組みは `Question` / `Reading` と同じ(fail-closed):
+ * 照合前は `verified: false` / `source.level: "unverified"` / `driftChecked: "unchecked"`。
+ */
+export type Sheet = {
+  id: string;
+  title: string;
+  /** 何の暗記シートかを一文で(一覧のカードとシート上部に表示) */
+  description: string;
+  /** 関連する法令(表示用) */
+  law: string;
+  intro: string[];
+  sections: SheetSection[];
+  verified: boolean;
+  source: SourceRef;
+  lawVersion: LawVersion;
+};
