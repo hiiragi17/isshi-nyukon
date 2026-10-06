@@ -19,6 +19,10 @@ const COL_WIDTHS: Record<number, string[]> = {
   3: ["26%", "40%", "34%"],
 };
 
+/**
+ * 暗記シートの表1枚。列幅は `COL_WIDTHS` で固定し、先頭列を行見出し(th scope="row")にする。
+ * `label` は caption が無い表のアクセシブルネームに使う。
+ */
 function SheetTable({ t, label }: { t: ReadingTable; label: string }) {
   return (
     <div style={{ marginTop: 12 }}>
@@ -92,6 +96,10 @@ function SheetTable({ t, label }: { t: ReadingTable; label: string }) {
   );
 }
 
+/**
+ * 暗記シートのページ(`/learn/sheets`)。`SHEETS` を節ごとのカードで並べる。
+ * 未承認、または法令基準日との差分確認が未了の場合は、その旨の注記を出す。
+ */
 export default function SheetsPage() {
   return (
     <div style={page}>
