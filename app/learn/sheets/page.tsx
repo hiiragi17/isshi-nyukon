@@ -147,7 +147,7 @@ export default function SheetsPage() {
               </p>
             ))}
 
-            {sheet.verified && sheet.lawVersion.driftChecked === "unchecked" && (
+            {sheet.verified && (sheet.lawVersion.driftChecked ?? "unchecked") === "unchecked" && (
               <p
                 style={{
                   fontSize: 11.5,
