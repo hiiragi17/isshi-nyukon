@@ -97,7 +97,7 @@ export default function SheetsPage() {
     <div style={page}>
       <div style={col}>
         <Link
-          href="/"
+          href="/learn"
           style={{
             ...outlineButton,
             display: "inline-flex",
@@ -109,7 +109,7 @@ export default function SheetsPage() {
             textDecoration: "none",
           }}
         >
-          ← 検地帳に戻る
+          ← 参考書に戻る
         </Link>
 
         {SHEETS.map((sheet) => (
@@ -121,6 +121,17 @@ export default function SheetsPage() {
               </h1>
               <p style={{ color: MUTED, fontSize: 12, margin: 0 }}>{sheet.law}</p>
             </div>
+
+            <p
+              style={{
+                fontSize: 13,
+                lineHeight: 1.9,
+                fontWeight: 700,
+                margin: "0 0 8px",
+              }}
+            >
+              {sheet.description}
+            </p>
 
             {sheet.intro.map((p) => (
               <p key={p} style={{ fontSize: 13, lineHeight: 1.9, margin: "0 0 8px" }}>

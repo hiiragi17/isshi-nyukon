@@ -386,6 +386,8 @@ export type SheetSection = {
 export type Sheet = {
   id: string;
   title: string;
+  /** 何の暗記シートかを一文で(一覧のカードとシート上部に表示) */
+  description: string;
   /** 関連する法令(表示用) */
   law: string;
   intro: string[];

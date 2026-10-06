@@ -13,6 +13,8 @@ import type { Sheet } from "@/types";
 export const horeiSuujiSheet: Sheet = {
   id: "horei-suuji",
   title: "法令上の制限・数字",
+  description:
+    "法令上の制限で毎年のように出る数字の暗記用。避雷20m・非常用昇降機31m、用途地域ごとの店舗面積、開発許可の面積、国土利用計画法の届出面積・期限などを、語呂・階段・ペアでまとめた1枚。",
   law: "建築基準法・都市計画法・国土利用計画法",
   verified: false,
   source: {

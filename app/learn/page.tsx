@@ -11,6 +11,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { READINGS } from "@/data/readings";
+import { SHEETS } from "@/data/sheets";
 import { byCategoryPriority, byTopicPriority } from "@/lib/categories";
 import { INK, CARD, AI_BLUE, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
 import { page, col, outlineButton } from "@/lib/gameStyles";
@@ -66,9 +67,77 @@ export default function LearnIndexPage() {
             論点を読む
           </h1>
           <p style={{ color: MUTED, fontSize: 12, margin: 0, lineHeight: 1.8 }}>
-            30秒レッスンより深掘りした読み物。宅建業法から順に拡充予定。
+            30秒レッスンより深掘りした読み物と、数字をまとめた暗記シート。
           </p>
         </div>
+
+        {/* 暗記シート(複数論点をまたぐ数字の横断コラム)。論点別の読み物とは別枠で先頭に置く */}
+        {SHEETS.length > 0 && (
+          <div style={{ marginBottom: 20 }}>
+            <div
+              style={{
+                fontFamily: SERIF,
+                fontSize: 14,
+                fontWeight: 700,
+                padding: "8px 0",
+              }}
+            >
+              暗記シート
+              <span
+                style={{
+                  fontFamily: SANS,
+                  fontSize: 11,
+                  fontWeight: 400,
+                  color: MUTED,
+                  marginLeft: 8,
+                }}
+              >
+                数字を横に並べて覚える
+              </span>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {SHEETS.map((sh) => (
+                <button
+                  key={sh.id}
+                  onClick={() => router.push("/learn/sheets")}
+                  style={{
+                    textAlign: "left",
+                    width: "100%",
+                    background: CARD,
+                    border: `1px solid ${LINE}`,
+                    borderRadius: RADIUS,
+                    padding: "12px 16px",
+                    cursor: "pointer",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontFamily: SERIF,
+                      fontSize: 14.5,
+                      fontWeight: 700,
+                      color: INK,
+                    }}
+                  >
+                    {sh.title}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 12,
+                      color: INK,
+                      lineHeight: 1.7,
+                      marginTop: 4,
+                    }}
+                  >
+                    {sh.description}
+                  </div>
+                  <div style={{ fontSize: 11.5, color: MUTED, marginTop: 4 }}>
+                    {sh.law}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {readings.length === 0 ? (
           <p style={{ color: MUTED, fontSize: 13, textAlign: "center" }}>

@@ -18,7 +18,6 @@
  */
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { QUESTIONS } from "@/data/questions";
 import { READINGS } from "@/data/readings";
 import type { Attempt } from "@/types";
@@ -740,25 +739,6 @@ export default function Home() {
                 参考書を読む
               </button>
             )}
-
-            {/* 暗記シート(横断コラム)の入口 */}
-            <Link
-              href="/sheets"
-              style={{
-                ...outlineButton,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "100%",
-                minHeight: 48,
-                marginBottom: 12,
-                fontSize: 14,
-                letterSpacing: 3,
-                textDecoration: "none",
-              }}
-            >
-              暗記シートを見る
-            </Link>
 
             {/* 検地帳マトリクス(6列) */}
             <div
