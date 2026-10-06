@@ -22,11 +22,16 @@ describe("暗記シートのデータ整合性", () => {
     }
   });
 
-  it("verified: true にするなら一次ソース照合と法令基準日の記録が必要(fail-closed)", () => {
+  it("verified: true にするなら一次ソース照合と、版・基準日の記録が必要(fail-closed)", () => {
     for (const s of SHEETS) {
       if (!s.verified) continue;
       expect(s.source.level).toBe("primary");
-      expect(s.lawVersion.driftChecked).not.toBe("unchecked");
+      expect(s.lawVersion.revisionId).toBeTruthy();
+      expect(s.lawVersion.note).toBeTruthy();
+      // 差分確認が済んでいない(unchecked)なら、その理由を note に残す
+      if (s.lawVersion.driftChecked === "unchecked") {
+        expect(s.lawVersion.note).toContain("確認できていない");
+      }
     }
   });
 });

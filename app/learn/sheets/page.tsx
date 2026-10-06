@@ -139,6 +139,21 @@ export default function SheetsPage() {
               </p>
             ))}
 
+            {sheet.verified && sheet.lawVersion.driftChecked === "unchecked" && (
+              <p
+                style={{
+                  fontSize: 11.5,
+                  lineHeight: 1.8,
+                  color: MUTED,
+                  border: `1px dashed ${LINE}`,
+                  borderRadius: RADIUS,
+                  padding: "8px 12px",
+                  margin: "12px 0",
+                }}
+              >
+                条文の原文と照合済みです。試験の法令基準日(毎年4月1日現在施行)時点の版との差分確認は一部未了のため、試験前に最新の条文も確認してください。
+              </p>
+            )}
             {!sheet.verified && (
               <p
                 style={{
