@@ -40,6 +40,7 @@ import { shakuchiShakkaReading } from "./kenri/shakuchi-shakka";
 import { shakuchiReading } from "./kenri/shakuchi";
 import { shakkaReading } from "./kenri/shakka";
 import { souzokubunReading } from "./kenri/souzokubun";
+import { souzokuToukiReading } from "./kenri/souzoku-touki";
 import { kaihatsuKyokaReading } from "./horei/kaihatsu-kyoka";
 import { kenchikuKakuninReading } from "./horei/kenchiku-kakunin";
 import { kenpeiYosekiReading } from "./horei/kenpei-yoseki";
@@ -133,6 +134,7 @@ const RAW_READINGS: Reading[] = [
   shakuchiReading,
   shakkaReading,
   souzokubunReading,
+  souzokuToukiReading,
 ];
 
 /**
