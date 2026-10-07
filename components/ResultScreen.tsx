@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { QUESTIONS } from "@/data/questions";
 import { storage } from "@/lib/storage";
 import { itemKeysForTopic } from "@/lib/items";
+import { sheetLinkFor, type ResolvedSheetLink } from "@/data/sheets/links";
 import { INK, CARD, AI_BLUE, SHU, GREEN, MUTED, LINE, SERIF, RADIUS } from "@/lib/tokens";
 import { page, col, card } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
@@ -43,6 +44,15 @@ export function ResultScreen({
   const passed = pct >= 70;
   const misses = records.filter((r) => r.pts < r.max);
   const topicsInSession = [...new Set(records.map((r) => r.qi))];
+  // 取りこぼした論点に対応する暗記シートの節(同じ節は1つにまとめる)
+  const sheetLinks = [
+    ...new Map(
+      misses
+        .map((r) => sheetLinkFor(QUESTIONS[r.qi].topicId ?? QUESTIONS[r.qi].id))
+        .filter((l): l is ResolvedSheetLink => l !== null)
+        .map((l) => [l.href, l] as const),
+    ).values(),
+  ];
   const toDashboard = () =>
     router.push(newlyPerfectIds.length ? `/?stamped=${newlyPerfectIds.join(",")}` : "/");
 
@@ -177,6 +187,43 @@ export function ResultScreen({
                 </li>
               ))}
             </ul>
+          </div>
+        )}
+
+        {sheetLinks.length > 0 && (
+          <div style={{ ...card, marginBottom: 16 }}>
+            <Eyebrow>暗記シート</Eyebrow>
+            <div style={{ fontFamily: SERIF, fontWeight: 700, fontSize: 15, margin: "4px 0 8px" }}>
+              数字を確認する
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {sheetLinks.map((l) => (
+                <button
+                  key={l.href}
+                  onClick={() => router.push(l.href)}
+                  style={{
+                    textAlign: "left",
+                    minHeight: 44,
+                    padding: "8px 14px",
+                    fontFamily: SERIF,
+                    fontWeight: 700,
+                    fontSize: 14,
+                    color: AI_BLUE,
+                    background: CARD,
+                    border: `1px solid ${LINE}`,
+                    borderRadius: RADIUS,
+                    cursor: "pointer",
+                  }}
+                >
+                  {l.heading}
+                  <span
+                    style={{ fontWeight: 400, fontSize: 11.5, color: MUTED, marginLeft: 8 }}
+                  >
+                    {l.sheetTitle}
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
