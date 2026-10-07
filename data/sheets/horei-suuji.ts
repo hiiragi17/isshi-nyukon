@@ -22,7 +22,7 @@ export const horeiSuujiSheet: Sheet = {
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "docs/verification/horei-verification.md「暗記シート(法令上の制限・数字)」の照合表(全32行✅)。e-Gov法令検索の逐語原文(hiiragi17 提示・2026-10-06)に当てた。照合表の「ゴルフコースは面積を問わない」は条文の構造からの読みで、人が確認した。",
+    note: "docs/verification/horei-verification.md「暗記シート(法令上の制限・数字)」の照合表(全32行✅)。e-Gov法令検索の逐語原文(hiiragi17 提示・2026-10-06)に当てた。照合表の「ゴルフコースは面積を問わない」は条文の構造からの読みで、hiiragi17 が確認した(2026-10-07)。",
   },
   lawVersion: {
     revisionId:
