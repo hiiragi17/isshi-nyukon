@@ -220,6 +220,8 @@
 
 > **#143 追記(2026-08-05)**: 承認者提示の e-Gov 逐語原文(民法 RevisionId `129AC0000000089_20260401_506AC0000000033`・施行 令和8年4月1日=基準日一致)で900条(柱書・1〜4号)を再照合し、問題データに `source.level: primary` / `answerLevel: primary`(答えの数値=1,500万円が900条の割合を根拠とするため)/ `lawVersion(not_required)` を記録。あわせて根拠原文を900条の e-Gov 逐語(全号)に差し替え。calc様式のため F8 の機械検査は対象外だが、数値が答えになるため人の判断で primary。
 
+> **📌 読み物への引用(2026-10-07・Issue #364)**: 参考書モードの読み物(`data/readings/kenri/souzokubun.ts`)が、上の「根拠原文」の900条(柱書・1〜4号)を逐語で引用する(新たな原文取得はしていない。条見出しは本エントリに記録していないため読み物にも載せていない)。読み物の `verified` は `false` で、転記の確認は未了。問題 q23 の `source` / `lawVersion` / `verified` は変更していない。
+
 承認: ☑ verified(Mami 2026-07-16) / ☐ 要修正 — メモ:
 
 ---
@@ -945,6 +947,8 @@ Issue #265(権利関係の優先度高論点に「2周目」の別シナリオ�
 > **📌 訂正(2026-09-06・PR #317 Codexレビュー指摘)**: (1)source.levelをmirroredからsecondaryに降格(WebSearchは法令DBの原文直接取得ではないため)。(2)calc様式はF8(数値肢のanswerLevel: primary要件)の機械検査対象外だが、数値そのものが答えになる問題である以上、原文未確認のままprimaryを僭称するのではなく、secondaryのまま正直に記録し、人による原文確認とprimaryへの格上げを待つのが誠実な対応と判断した。
 >
 > **📌 追加確認(2026-09-06)**: hiiragi17提示のe-Gov原文で887条(1項・2項・3項)・901条(1項・2項)を再照合し、一字一句一致を確認した。計算根拠の887条2項・900条4号・901条1項がすべてprimary確認済みとなったため `source.level`/`answerLevel` を `secondary`→`primary` に格上げした。
+
+> **📌 読み物への引用(2026-10-07・Issue #364)**: 参考書モードの読み物(`data/readings/kenri/souzokubun.ts`・topicId q23)が、上の「根拠原文」の887条2項・901条1項を逐語で引用する(新たな原文取得はしていない。887条は2項のみ、901条は1項のみ)。読み物の `verified` は `false` で、転記の確認は未了。問題 q107 の `source` / `lawVersion` / `verified` は変更していない。
 
 承認: ☑ verified(hiiragi17・2026-09-07) / ☐ 要修正 — メモ: 887条2項・901条1項をhiiragi17提示のe-Gov原文で一致確認(900条4号は既存q23で確認済みの文言と同一)。`souzokubun-2.ts` の `verified: true` に反映済み。
 
