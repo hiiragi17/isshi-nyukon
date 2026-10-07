@@ -9,6 +9,7 @@
  * 検地帳への遷移は新規完璧到達論点(newlyPerfectIds)にのみ依存するため内部で完結させる。
  */
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { QUESTIONS } from "@/data/questions";
 import { storage } from "@/lib/storage";
@@ -198,11 +199,14 @@ export function ResultScreen({
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               {sheetLinks.map((l) => (
-                <button
+                <Link
                   key={l.href}
-                  onClick={() => router.push(l.href)}
+                  href={l.href}
                   style={{
+                    display: "flex",
+                    alignItems: "center",
                     textAlign: "left",
+                    textDecoration: "none",
                     minHeight: 44,
                     padding: "8px 14px",
                     fontFamily: SERIF,
@@ -221,7 +225,7 @@ export function ResultScreen({
                   >
                     {l.sheetTitle}
                   </span>
-                </button>
+                </Link>
               ))}
             </div>
           </div>
