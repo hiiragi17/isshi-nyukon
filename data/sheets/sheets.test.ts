@@ -11,6 +11,11 @@ describe("暗記シートのデータ整合性", () => {
     }
   });
 
+  it("節 id がシートをまたいでも重複しない(アンカー #節id がページ内で一意になるように)", () => {
+    const ids = SHEETS.flatMap((s) => s.sections.map((x) => x.id));
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
   it("表の各行が見出しと同じ列数で、行見出し(先頭列)が表内で重複しない", () => {
     for (const s of SHEETS) {
       for (const sec of s.sections) {
