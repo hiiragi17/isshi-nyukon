@@ -20,15 +20,15 @@ import type { Reading } from "@/types";
  * `source.level` は、問題 q41 と同じ水準(`primary`)とした。「解除は制裁ではなく債権者を契約の拘束から解放する
  * 制度」という説明は条文の文言ではなく改正の整理を述べたもので、問題 q41 のレッスンと同じ記述に留めている。
  *
- * 追加時は `verified: false` のまま。転記の正確性を人(承認者)が原文と突き合わせてから `true` にする
- * (CLAUDE.mdの`verified`運用に準拠)。
+ * 追加時は `verified: false` とし、転記の正確性を承認者(hiiragi17)が原文と突き合わせて確認したため、
+ * 2026-10-09 に `true` とした(CLAUDE.mdの`verified`運用に準拠)。
  */
 export const saimuFurikouReading: Reading = {
   topicId: "q41",
   category: "権利関係(民法)",
   title: "債務不履行と解除",
   law: "民法415条・536条・540条・541条・542条・543条",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
