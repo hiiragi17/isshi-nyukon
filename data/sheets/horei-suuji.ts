@@ -88,7 +88,7 @@ export const horeiSuujiSheet: Sheet = {
           ],
         },
         {
-          caption: "追加分(一次ソースとの照合前)",
+          caption: "追加分(2026-10-09 原文照合済み)",
           headers: ["論点", "数字・ルール"],
           rows: [
             [
@@ -175,7 +175,7 @@ export const horeiSuujiSheet: Sheet = {
           ],
         },
         {
-          caption: "追加分(一次ソースとの照合前)",
+          caption: "追加分(2026-10-09 原文照合済み)",
           headers: ["論点", "内容"],
           rows: [
             [
@@ -238,7 +238,7 @@ export const horeiSuujiSheet: Sheet = {
           ],
         },
         {
-          caption: "追加分(一次ソースとの照合前)",
+          caption: "追加分(2026-10-09 原文照合済み)",
           headers: ["論点", "内容"],
           rows: [
             ["博物館", "博物館法2条1項の博物館(同法の登録を受けたもの)の用に供する建築物は、公益上必要な建築物に含まれる(病院は含まれない、と対で覚える)"],
@@ -315,7 +315,7 @@ export const horeiSuujiSheet: Sheet = {
           ],
         },
         {
-          caption: "追加分(一次ソースとの照合前)",
+          caption: "追加分(2026-10-09 原文照合済み)",
           headers: ["論点", "内容"],
           rows: [
             ["勧告に従わないとき", "契約は取り消されない。公表はできる(義務ではない)"],
