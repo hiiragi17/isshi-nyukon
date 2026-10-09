@@ -48,6 +48,7 @@ import { nijuuJoutoReading } from "./kenri/nijuu-jouto";
 import { bukkenHendoReading } from "./kenri/bukken-hendo";
 import { fuhouKouiReading } from "./kenri/fuhou-koui";
 import { keiyakuFutekigouReading } from "./kenri/keiyaku-futekigou";
+import { saimuFurikouReading } from "./kenri/saimu-furikou";
 import { kaihatsuKyokaReading } from "./horei/kaihatsu-kyoka";
 import { kenchikuKakuninReading } from "./horei/kenchiku-kakunin";
 import { kenpeiYosekiReading } from "./horei/kenpei-yoseki";
@@ -149,6 +150,7 @@ const RAW_READINGS: Reading[] = [
   bukkenHendoReading,
   fuhouKouiReading,
   keiyakuFutekigouReading,
+  saimuFurikouReading,
 ];
 
 /**
