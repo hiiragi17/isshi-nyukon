@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { QUESTIONS } from "@/data/questions";
 import { SHEETS } from "./index";
-import { SHEET_LINKS, sheetLinkFor } from "./links";
+import { SHEET_LINKS, questionLinksForSection, sheetLinkFor } from "./links";
 
 describe("暗記シートへの対応表", () => {
   it("対応表の論点が、実在する問題の topicId(無ければ id)と一致する", () => {
@@ -29,6 +29,19 @@ describe("暗記シートへの対応表", () => {
       heading: "開発許可",
       sheetTitle: "法令上の制限・数字",
     });
+  });
+
+  it("節ごとに、対応する論点の全肢を出題するリンクを返す", () => {
+    const links = questionLinksForSection("horei-suuji", "kaihatsu");
+    expect(links.map((l) => l.topicId)).toEqual(["q8"]);
+    expect(links[0].href).toMatch(/^\/play\?items=q8-0,/);
+  });
+
+  it("対応表の全論点が、いずれかの節のリンクとして出る", () => {
+    const shown = SHEETS.flatMap((sh) =>
+      sh.sections.flatMap((se) => questionLinksForSection(sh.id, se.id)),
+    ).map((l) => l.topicId);
+    expect(new Set(shown)).toEqual(new Set(Object.keys(SHEET_LINKS)));
   });
 
   it("対応の無い論点は null を返す", () => {

@@ -5,6 +5,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SHEETS } from "@/data/sheets";
+import { questionLinksForSection } from "@/data/sheets/links";
 import type { ReadingTable } from "@/types";
 import { INK, CARD, AI_BLUE, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
 import { page, col, card, outlineButton } from "@/lib/gameStyles";
@@ -93,6 +94,39 @@ function SheetTable({ t, label }: { t: ReadingTable; label: string }) {
         </table>
       </div>
     </div>
+  );
+}
+
+/** 節の下の「この数字を問題で確かめる」リンク。対応する論点が無ければ何も出さない */
+function QuestionLinks({ sheetId, sectionId }: { sheetId: string; sectionId: string }) {
+  const links = questionLinksForSection(sheetId, sectionId);
+  if (!links.length) return null;
+  return (
+    <nav
+      aria-label="この節の問題"
+      style={{ marginTop: 16, paddingTop: 12, borderTop: `1px solid ${LINE}` }}
+    >
+      <Eyebrow>問題で確かめる</Eyebrow>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 8 }}>
+        {links.map((l) => (
+          <Link
+            key={l.topicId}
+            href={l.href}
+            style={{
+              ...outlineButton,
+              display: "inline-flex",
+              alignItems: "center",
+              minHeight: 44,
+              padding: "8px 14px",
+              fontSize: 12.5,
+              textDecoration: "none",
+            }}
+          >
+            {l.topic} →
+          </Link>
+        ))}
+      </div>
+    </nav>
   );
 }
 
@@ -223,6 +257,7 @@ export default function SheetsPage() {
                       {n}
                     </p>
                   ))}
+                  <QuestionLinks sheetId={sheet.id} sectionId={s.id} />
                 </section>
               ))}
             </div>

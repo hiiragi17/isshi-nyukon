@@ -1,3 +1,5 @@
+import { QUESTIONS } from "@/data/questions";
+import { itemKeysForTopic } from "@/lib/items";
 import { SHEETS } from "./index";
 
 /** 論点から暗記シートの節へのリンク先 */
@@ -36,6 +38,34 @@ export type ResolvedSheetLink = {
   /** 暗記シートの題名 */
   sheetTitle: string;
 };
+
+/** 暗記シートの節の下に出す、論点の問題へのリンク */
+export type SectionQuestionLink = {
+  topicId: string;
+  /** 論点名(`Question.topic`) */
+  topic: string;
+  /** その論点の全肢で `/play` を開始するリンク */
+  href: string;
+};
+
+/**
+ * 暗記シートの節に対応する論点の問題リンクを返す(`SHEET_LINKS` の逆引き)。
+ * 同じ論点の問題が複数ファイルあれば、全肢をまとめて出題する。
+ * 問題データに無い論点は捨てる。
+ */
+export function questionLinksForSection(
+  sheetId: string,
+  sectionId: string,
+): SectionQuestionLink[] {
+  return Object.entries(SHEET_LINKS)
+    .filter(([, l]) => l.sheetId === sheetId && l.sectionId === sectionId)
+    .flatMap(([topicId]) => {
+      const keys = itemKeysForTopic(topicId, QUESTIONS);
+      const q = QUESTIONS.find((x) => (x.topicId ?? x.id) === topicId);
+      if (!q || !keys.length) return [];
+      return [{ topicId, topic: q.topic, href: `/play?items=${keys.join(",")}` }];
+    });
+}
 
 /** 論点IDに対応する暗記シートのリンクを返す。対応が無い、または節が見つからなければ null */
 export function sheetLinkFor(topicId: string): ResolvedSheetLink | null {
