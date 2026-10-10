@@ -18,19 +18,19 @@ import type { Reading } from "@/types";
  * 転記し、条見出しは同じ全文による。括弧は原文どおり全角とした(検証シートの表記は半角)。
  * 問題 q66 自体の `source.level` は `mirrored` のまま(判例の原文は未確認)で、本読み物は条文の範囲に限っている。
  *
- * 追加時は `verified: false` とする。転記の正確性を承認者が原文と突き合わせて確認してから
- * `true` にする(CLAUDE.mdの`verified`運用に準拠)。
+ * 追加時は `verified: false` とし、転記の正確性を承認者(hiiragi17)が提示した e-Gov 原文と突き合わせて
+ * 確認したため、2026-10-10 に `true` とした(CLAUDE.mdの`verified`運用に準拠)。
  */
 export const shutokuJikouReading: Reading = {
   topicId: "q66",
   category: "権利関係(民法)",
   title: "取得時効",
   law: "民法162条・185条・186条・187条",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "mirrored",
-    note: "162条(1項・2項)・185条・186条(1項・2項)・187条(1項・2項)の逐語引用は、検証シート kenri-verification.md の q66「条文要約」に記録された条文文言を、承認者(hiiragi17)が2026-10-10に提示した民法全文(RevisionId 129AC0000000089_20260401_506AC0000000033・施行 令和8年4月1日)の記載と突き合わせて一致を確認したうえで転記した(条見出しも同全文による。括弧は原文どおり全角。検証シートの表記は半角)。本文は同じ topicId の問題(data/questions/kenri/shutoku-jikou.ts)の肢の根拠の範囲にとどめ、条文原文で裏付けられない記述(判例の引用全般、「無過失は推定されない」という結論そのもの、即時取得との対比)は載せていない。肢2(賃借人の占有が所有の意思のない占有であること)と肢3(善意無過失の判定時点)の結論は、問題 q66 側では判例にも依拠しており、問題自体の source.level は mirrored のため、answerLevel は mirrored とした。10年・20年の期間は162条の原文で裏付けている。転記の確認は未了のため verified: false。",
+    note: "162条(1項・2項)・185条・186条(1項・2項)・187条(1項・2項)の逐語引用は、検証シート kenri-verification.md の q66「条文要約」に記録された条文文言を、承認者(hiiragi17)が2026-10-10に提示した民法全文(RevisionId 129AC0000000089_20260401_506AC0000000033・施行 令和8年4月1日)の記載と突き合わせて一致を確認したうえで転記した(条見出しも同全文による。括弧は原文どおり全角。検証シートの表記は半角)。本文は同じ topicId の問題(data/questions/kenri/shutoku-jikou.ts)の肢の根拠の範囲にとどめ、条文原文で裏付けられない記述(判例の引用全般、「無過失は推定されない」という結論そのもの、即時取得との対比)は載せていない。肢2(賃借人の占有が所有の意思のない占有であること)と肢3(善意無過失の判定時点)の結論は、問題 q66 側では判例にも依拠しており、問題自体の source.level は mirrored のため、answerLevel は mirrored とした。10年・20年の期間は162条の原文で裏付けている。引用はすべて、承認者(hiiragi17)が2026-10-10に提示した民法全文と突き合わせて一致を確認したため verified: true。",
   },
   lawVersion: {
     revisionId: "129AC0000000089_20260401_506AC0000000033",
