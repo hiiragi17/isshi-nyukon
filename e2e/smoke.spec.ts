@@ -161,3 +161,45 @@ test("召喚状: 開廷するは今日の10肢だけを出題し、全件は補�
   await expect(page).toHaveURL(/\/play\?items=/);
   await expect(page.getByText("/ 全10肢")).toBeVisible();
 });
+
+/**
+ * 出題の途中で中断して検地帳へ戻れる(#470)。
+ * 解答済みの肢は1肢ごとに保存済みなので、中断しても記録は残る。
+ * 確認ダイアログを閉じた(キャンセルした)ときは出題を続けられる。
+ */
+test("出題中: 確認のうえ中断して検地帳へ戻れ、解答済みの肢は保存されている", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await waitDashboardReady(page);
+  await page.getByRole("button", { name: "開廷する — 今日の10肢" }).click();
+  await expect(page.getByText("/ 全10肢")).toBeVisible();
+
+  // 1肢だけ解く(◯ 正しい → 理由が出たら先頭 → 解説まで進める)
+  await page.getByRole("button", { name: "◯ 正しい", exact: true }).click();
+  const reasons = page.locator("button.opt-btn");
+  const nextBtn = page.getByRole("button", { name: /次の肢へ|次の問題へ/ });
+  await expect(reasons.first().or(nextBtn)).toBeVisible();
+  if ((await reasons.count()) > 0) await reasons.first().click();
+  await expect(nextBtn).toBeVisible();
+
+  const quit = page.getByRole("button", { name: /中断して検地帳へ/ });
+
+  // キャンセルすると出題画面に留まる
+  page.once("dialog", async (d) => {
+    expect(d.message()).toContain("1肢の解答は保存済み");
+    await d.dismiss();
+  });
+  await quit.click();
+  await expect(nextBtn).toBeVisible();
+
+  // OK で検地帳へ戻り、解答した1肢が保存されている
+  page.once("dialog", (d) => d.accept());
+  await quit.click();
+  await waitDashboardReady(page);
+  const saved = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? "[]").length,
+    STORAGE_KEY,
+  );
+  expect(saved).toBe(1);
+});
