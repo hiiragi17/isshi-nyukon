@@ -141,3 +141,23 @@ test("検地帳: 先頭分野のマスを選ぶと詳細が画面内に出る", 
   expect(detailBox.y).toBeGreaterThan(cellBox.y);
   expect(detailBox.y - cellBox.y).toBeLessThan(300);
 });
+
+/**
+ * 召喚状の主ボタンは、キュー全体ではなく「今日の10肢」だけを始める(#471)。
+ * 1セッション5〜10分の想定に対し、記録ゼロでキュー全体(数百肢)を始めないため。
+ * キュー全体は補助ボタン「全N肢をまとめて審理」から始められる。
+ */
+test("召喚状: 開廷するは今日の10肢だけを出題し、全件は補助ボタンに残る", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await waitDashboardReady(page);
+
+  await expect(
+    page.getByRole("button", { name: /全\d+肢をまとめて審理/ }),
+  ).toBeVisible();
+
+  await page.getByRole("button", { name: "開廷する — 今日の10肢" }).click();
+  await expect(page).toHaveURL(/\/play\?items=/);
+  await expect(page.getByText("/ 全10肢")).toBeVisible();
+});

@@ -6,7 +6,8 @@
  *
  * 構成:
  *  - 本日の召喚状 : lib/srs の buildSummonQueue(全件履歴から SRS キュー)で駆動。
- *    「開廷する」で、その肢だけを /play?items=... に渡してセッションを自動開始する。
+ *    「開廷する」で、キュー先頭の10肢(DAILY_SUMMON_SIZE)を /play?items=... に渡して
+ *    セッションを自動開始する。キュー全体は補助ボタンから始められる。
  *  - 検地帳マトリクス : 分野(カテゴリ)×論点(問題)を 6 列固定で一望する。
  *    セルの色は論点の習熟(完璧=朱 / 学習中=藍 / 未着手=白)。
  *  - 集印カウンタ : 完璧に到達した論点の数 / 全論点。
@@ -94,6 +95,13 @@ const FIELDS = [...new Set(QUESTIONS.map((q) => q.category))]
   }));
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * 召喚状の「開廷する」で1回に出題する肢数(#471)。
+ * 1セッション5〜10分の想定に合わせ、キュー(弱点 > 期限切れ > 未着手)の先頭から
+ * この数だけ取る。キュー全体は補助ボタン「全N肢をまとめて審理」から始められる。
+ */
+const DAILY_SUMMON_SIZE = 10;
 
 /** 宅建試験(10月第3日曜)までの残日数。過ぎていれば翌年ぶんを見る */
 function daysUntilExam(now: Date): number {
@@ -260,11 +268,17 @@ export default function Home() {
     return actionable.length ? actionable : queue;
   }, [queue]);
   const summonKeys = summonList.map((s) => itemKey(s.questionId, s.choiceIndex));
+  // 本日分 = キュー先頭の DAILY_SUMMON_SIZE 肢。一覧の表示もこの範囲で組む
+  const todayList = useMemo(
+    () => summonList.slice(0, DAILY_SUMMON_SIZE),
+    [summonList],
+  );
+  const todayKeys = summonKeys.slice(0, DAILY_SUMMON_SIZE);
   // 論点ごとにまとめる(キュー順=切迫順を保つ)
   const summonGroups = useMemo(() => {
     const seen = new Map<string, { head: SrsItemState; count: number }>();
     const order: string[] = [];
-    for (const s of summonList) {
+    for (const s of todayList) {
       const g = seen.get(s.questionId);
       if (g) g.count++;
       else {
@@ -273,7 +287,7 @@ export default function Home() {
       }
     }
     return order.map((qid) => ({ qid, ...seen.get(qid)! }));
-  }, [summonList]);
+  }, [todayList]);
 
   const dueLabel = (s: SrsItemState): { text: string; color: string } => {
     if (s.bucket === "weak") return { text: "要復習", color: DUE_URGENT };
@@ -599,8 +613,13 @@ export default function Home() {
                     );
                   })}
                 </div>
+                {summonGroups.length > 3 && (
+                  <div style={{ fontSize: 11, color: INK_SUB, marginTop: 6 }}>
+                    ほか {summonGroups.length - 3}論点
+                  </div>
+                )}
                 <button
-                  onClick={() => goPlay(summonKeys)}
+                  onClick={() => goPlay(todayKeys)}
                   style={{
                     width: "100%",
                     minHeight: 48,
@@ -616,8 +635,30 @@ export default function Home() {
                     cursor: "pointer",
                   }}
                 >
-                  開廷する — {summonKeys.length}肢
+                  開廷する — 今日の{todayKeys.length}肢
                 </button>
+                {/* キュー全体をまとめて解きたいとき用の補助導線(主ボタンより控えめに) */}
+                {summonKeys.length > todayKeys.length && (
+                  <button
+                    onClick={() => goPlay(summonKeys)}
+                    style={{
+                      width: "100%",
+                      minHeight: 44,
+                      marginTop: 8,
+                      fontSize: 12.5,
+                      fontWeight: 700,
+                      fontFamily: SERIF,
+                      letterSpacing: 2,
+                      color: CARD,
+                      background: "transparent",
+                      border: `1px solid ${INK_DOTTED}`,
+                      borderRadius: RADIUS,
+                      cursor: "pointer",
+                    }}
+                  >
+                    全{summonKeys.length}肢をまとめて審理
+                  </button>
+                )}
               </div>
             )}
 
