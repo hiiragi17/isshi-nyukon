@@ -205,10 +205,20 @@ test("出題中: 確認のうえ中断して検地帳へ戻れ、解答済みの
   await quit.click();
   await waitDashboardReady(page);
   const saved = await page.evaluate(
-    (key) => JSON.parse(localStorage.getItem(key) ?? "[]").length,
+    (key) =>
+      JSON.parse(localStorage.getItem(key) ?? "[]") as Array<{
+        questionId: string;
+      }>,
     STORAGE_KEY,
   );
-  expect(saved).toBe(1);
+  expect(saved).toHaveLength(1);
+  // 記録ゼロの召喚状は先頭の論点(二重譲渡 = q1)から出題される
+  expect(saved[0].questionId).toBe("q1");
+
+  // 戻った検地帳にも反映されている(未着手 → 学習中)
+  await expect(
+    page.locator('button[aria-label="二重譲渡(学習中)"]'),
+  ).toHaveCount(1);
 });
 
 /**
@@ -228,4 +238,20 @@ test("検地帳: スクロールせずにマスを押しても、詳細の審理
 
   const detail = page.locator("div.fade-up");
   await expect(detail.getByRole("button", { name: /審理/ })).toBeInViewport();
+});
+
+/** キーボードでマスを選んだときも、詳細の審理ボタンが画面内に入る(#472) */
+test("検地帳: キーボードでマスを選んでも、詳細の審理ボタンが画面内に入る", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await waitDashboardReady(page);
+
+  const firstCell = page.locator('button[aria-label*="("]').first();
+  await firstCell.focus();
+  await page.keyboard.press("Enter");
+
+  const detail = page.locator("div.fade-up");
+  await expect(detail.getByRole("button", { name: /審理/ })).toBeInViewport();
+  await expect(firstCell).toBeFocused();
 });
