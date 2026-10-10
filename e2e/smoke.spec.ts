@@ -29,7 +29,11 @@ test("スモーク: 出題→解答→判決→ダッシュボード反映と永
 
   // 全解除 → 分野を開いて二重譲渡だけ選ぶ(分野は既定でたたまれている)
   await page.getByRole("button", { name: "全解除", exact: true }).click();
-  await page.getByRole("button", { name: /^権利関係\(民法\)/ }).click();
+  // 分野の開閉ボタン(aria-expanded 付き)。同じ分野名で始まる少量モードの
+  // 「権利関係(民法)から5肢」などと区別するため expanded で絞る
+  await page
+    .getByRole("button", { name: /^権利関係\(民法\)/, expanded: false })
+    .click();
   await page.getByRole("button", { name: /二重譲渡/ }).click();
   await page.getByRole("button", { name: /開廷する/ }).click();
 
@@ -108,7 +112,10 @@ test("範囲選択: 論点一覧を開いてスクロールしても開廷ボタ
   // 分野を開くと選択カードが縦に伸びるが、どこまでスクロールしても位置は変わらない。
   // 検証位置は一覧の途中(ボタンの自然位置がまだ画面より下)に採り、
   // 「一覧が伸びて自然位置が画面に入っただけ」では通らないようにする
-  await page.getByRole("button", { name: /^宅建業法/ }).click();
+  // 分野の開閉ボタン(aria-expanded 付き)。「宅建業法から5肢」などと区別する
+  await page
+    .getByRole("button", { name: /^宅建業法/, expanded: false })
+    .click();
   for (const y of [300, 900]) {
     await page.evaluate((to) => window.scrollTo(0, to), y);
     await expect(start).toBeInViewport();
