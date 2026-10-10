@@ -203,3 +203,22 @@ test("出題中: 確認のうえ中断して検地帳へ戻れ、解答済みの
   );
   expect(saved).toBe(1);
 });
+
+/**
+ * ページを開いた直後(スクロールしていない状態)にマスをタップしても、
+ * 詳細の審理ボタンが画面内に入る(#472)。宅建業法は27マス・5段あり、
+ * その直下に出る詳細は 390×844 では画面外になっていたため、
+ * 詳細が出たら自動でその位置までスクロールする。
+ */
+test("検地帳: スクロールせずにマスを押しても、詳細の審理ボタンが画面内に入る", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await waitDashboardReady(page);
+
+  // 宅建業法の先頭マス(スクロールせず、そのままタップ)
+  await page.locator('button[aria-label*="("]').first().click();
+
+  const detail = page.locator("div.fade-up");
+  await expect(detail.getByRole("button", { name: /審理/ })).toBeInViewport();
+});

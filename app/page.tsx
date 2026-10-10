@@ -17,7 +17,7 @@
  *
  * データは StorageAdapter(lib/storage)経由の全件履歴のみで駆動する(モックなし)。
  */
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { QUESTIONS } from "@/data/questions";
 import { READINGS } from "@/data/readings";
@@ -134,6 +134,8 @@ export default function Home() {
   const [stampedIds, setStampedIds] = useState<Set<string>>(new Set());
   // お気に入り登録した論点(topicId)。null=未ロード
   const [favorites, setFavorites] = useState<string[] | null>(null);
+  // 選択マスの詳細パネル。タップ後にこの位置までスクロールさせる(#472)
+  const detailRef = useRef<HTMLDivElement>(null);
 
   // 全件履歴をロード
   useEffect(() => {
@@ -189,6 +191,18 @@ export default function Home() {
         console.error("[storage] getAttempts に失敗しました", e);
       });
   };
+
+  // マスを選んだら、詳細パネル(論点名・審理ボタン)が画面内に入るまでスクロールする。
+  // 詳細はタップした分野のグリッド直下に出るが、マスの多い分野(宅建業法は5段)では
+  // それでも画面外になり、タップの反応が見えなかった(#472)。
+  // 既に見えていれば動かさない(block: "nearest")。動きを減らす設定では即時に移動する。
+  useEffect(() => {
+    if (sel === null) return;
+    const el = detailRef.current;
+    if (!el) return;
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    el.scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" });
+  }, [sel]);
 
   // 直前のセッションで新たに完璧到達した論点(/play → ?stamped=)を受け取り、印を押す
   useEffect(() => {
@@ -334,6 +348,7 @@ export default function Home() {
     }
     return (
       <div
+        ref={detailRef}
         className="fade-up"
         style={{
           background: INK,
@@ -341,6 +356,8 @@ export default function Home() {
           borderRadius: RADIUS,
           padding: "14px 16px",
           marginTop: 10,
+          // スクロールで画面下端にぴったり付かないよう、少し余白を残す
+          scrollMarginBottom: 16,
         }}
       >
         <div
