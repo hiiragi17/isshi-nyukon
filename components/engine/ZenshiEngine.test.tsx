@@ -120,3 +120,16 @@ describe("ZenshiEngine — ×肢(最大3点)", () => {
     expect(onComplete).toHaveBeenCalledWith({ pts: 0, max: 3 });
   });
 });
+
+describe("ZenshiEngine — 誤り箇所タップの見た目(#469)", () => {
+  it("locate フェーズの各区切りに点線の下線が付く(border の一括指定で消えない)", () => {
+    setup(1);
+    clickJudge("✕ 誤り");
+    const segs = ["前半は妥当だが", "この中間部分が誤り", "で締めくくる。"].map((name) =>
+      screen.getByRole("button", { name }),
+    );
+    for (const seg of segs) {
+      expect(seg.style.borderBottomStyle).toBe("dotted");
+    }
+  });
+});

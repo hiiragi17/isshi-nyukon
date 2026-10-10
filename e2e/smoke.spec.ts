@@ -29,7 +29,11 @@ test("スモーク: 出題→解答→判決→ダッシュボード反映と永
 
   // 全解除 → 分野を開いて二重譲渡だけ選ぶ(分野は既定でたたまれている)
   await page.getByRole("button", { name: "全解除", exact: true }).click();
-  await page.getByRole("button", { name: /^権利関係\(民法\)/ }).click();
+  // 分野の開閉ボタン(aria-expanded 付き)。同じ分野名で始まる少量モードの
+  // 「権利関係(民法)から5肢」などと区別するため expanded で絞る
+  await page
+    .getByRole("button", { name: /^権利関係\(民法\)/, expanded: false })
+    .click();
   await page.getByRole("button", { name: /二重譲渡/ }).click();
   await page.getByRole("button", { name: /開廷する/ }).click();
 
@@ -108,7 +112,10 @@ test("範囲選択: 論点一覧を開いてスクロールしても開廷ボタ
   // 分野を開くと選択カードが縦に伸びるが、どこまでスクロールしても位置は変わらない。
   // 検証位置は一覧の途中(ボタンの自然位置がまだ画面より下)に採り、
   // 「一覧が伸びて自然位置が画面に入っただけ」では通らないようにする
-  await page.getByRole("button", { name: /^宅建業法/ }).click();
+  // 分野の開閉ボタン(aria-expanded 付き)。「宅建業法から5肢」などと区別する
+  await page
+    .getByRole("button", { name: /^宅建業法/, expanded: false })
+    .click();
   for (const y of [300, 900]) {
     await page.evaluate((to) => window.scrollTo(0, to), y);
     await expect(start).toBeInViewport();
@@ -140,4 +147,111 @@ test("検地帳: 先頭分野のマスを選ぶと詳細が画面内に出る", 
   const detailBox = (await detail.boundingBox())!;
   expect(detailBox.y).toBeGreaterThan(cellBox.y);
   expect(detailBox.y - cellBox.y).toBeLessThan(300);
+});
+
+/**
+ * 召喚状の主ボタンは、キュー全体ではなく「今日の10肢」だけを始める(#471)。
+ * 1セッション5〜10分の想定に対し、記録ゼロでキュー全体(数百肢)を始めないため。
+ * キュー全体は補助ボタン「全N肢をまとめて審理」から始められる。
+ */
+test("召喚状: 開廷するは今日の10肢だけを出題し、全件は補助ボタンに残る", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await waitDashboardReady(page);
+
+  await expect(
+    page.getByRole("button", { name: /全\d+肢をまとめて審理/ }),
+  ).toBeVisible();
+
+  await page.getByRole("button", { name: "開廷する — 今日の10肢" }).click();
+  await expect(page).toHaveURL(/\/play\?items=/);
+  await expect(page.getByText("/ 全10肢")).toBeVisible();
+});
+
+/**
+ * 出題の途中で中断して検地帳へ戻れる(#470)。
+ * 解答済みの肢は1肢ごとに保存済みなので、中断しても記録は残る。
+ * 確認ダイアログを閉じた(キャンセルした)ときは出題を続けられる。
+ */
+test("出題中: 確認のうえ中断して検地帳へ戻れ、解答済みの肢は保存されている", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await waitDashboardReady(page);
+  await page.getByRole("button", { name: "開廷する — 今日の10肢" }).click();
+  await expect(page.getByText("/ 全10肢")).toBeVisible();
+
+  // 1肢だけ解く(◯ 正しい → 理由が出たら先頭 → 解説まで進める)
+  await page.getByRole("button", { name: "◯ 正しい", exact: true }).click();
+  const reasons = page.locator("button.opt-btn");
+  const nextBtn = page.getByRole("button", { name: /次の肢へ|次の問題へ/ });
+  await expect(reasons.first().or(nextBtn)).toBeVisible();
+  if ((await reasons.count()) > 0) await reasons.first().click();
+  await expect(nextBtn).toBeVisible();
+
+  const quit = page.getByRole("button", { name: /中断して検地帳へ/ });
+
+  // キャンセルすると出題画面に留まる
+  page.once("dialog", async (d) => {
+    expect(d.message()).toContain("1肢の解答は保存済み");
+    await d.dismiss();
+  });
+  await quit.click();
+  await expect(nextBtn).toBeVisible();
+
+  // OK で検地帳へ戻り、解答した1肢が保存されている
+  page.once("dialog", (d) => d.accept());
+  await quit.click();
+  await waitDashboardReady(page);
+  const saved = await page.evaluate(
+    (key) =>
+      JSON.parse(localStorage.getItem(key) ?? "[]") as Array<{
+        questionId: string;
+      }>,
+    STORAGE_KEY,
+  );
+  expect(saved).toHaveLength(1);
+  // 記録ゼロの召喚状は先頭の論点(二重譲渡 = q1)から出題される
+  expect(saved[0].questionId).toBe("q1");
+
+  // 戻った検地帳にも反映されている(未着手 → 学習中)
+  await expect(
+    page.locator('button[aria-label="二重譲渡(学習中)"]'),
+  ).toHaveCount(1);
+});
+
+/**
+ * ページを開いた直後(スクロールしていない状態)にマスをタップしても、
+ * 詳細の審理ボタンが画面内に入る(#472)。宅建業法は27マス・5段あり、
+ * その直下に出る詳細は 390×844 では画面外になっていたため、
+ * 詳細が出たら自動でその位置までスクロールする。
+ */
+test("検地帳: スクロールせずにマスを押しても、詳細の審理ボタンが画面内に入る", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await waitDashboardReady(page);
+
+  // 宅建業法の先頭マス(スクロールせず、そのままタップ)
+  await page.locator('button[aria-label*="("]').first().click();
+
+  const detail = page.locator("div.fade-up");
+  await expect(detail.getByRole("button", { name: /審理/ })).toBeInViewport();
+});
+
+/** キーボードでマスを選んだときも、詳細の審理ボタンが画面内に入る(#472) */
+test("検地帳: キーボードでマスを選んでも、詳細の審理ボタンが画面内に入る", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await waitDashboardReady(page);
+
+  const firstCell = page.locator('button[aria-label*="("]').first();
+  await firstCell.focus();
+  await page.keyboard.press("Enter");
+
+  const detail = page.locator("div.fade-up");
+  await expect(detail.getByRole("button", { name: /審理/ })).toBeInViewport();
+  await expect(firstCell).toBeFocused();
 });

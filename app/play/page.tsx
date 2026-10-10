@@ -410,6 +410,28 @@ export default function PlayPage() {
     }
   };
 
+  /**
+   * 出題の途中で中断して検地帳へ戻る(#470)。解答済みの肢は recordItem で
+   * 1肢ごとに保存済みなので、失われるのは判決(まとめ)の表示だけ。
+   * それを確認文で伝えてから戻る。新たに完璧到達した論点があれば、
+   * 判決画面からの戻りと同じく ?stamped= で検地帳に朱印を押させる。
+   */
+  const quitSession = () => {
+    const ok = window.confirm(
+      records.length > 0
+        ? `ここまでの${records.length}肢の解答は保存済みです。\n判決(まとめ)は表示されません。検地帳に戻りますか?`
+        : "まだ解答した肢はありません。検地帳に戻りますか?",
+    );
+    if (!ok) return;
+    const getHist = (qi: number, ci: number) => history[`${qi}-${ci}`];
+    const newlyPerfectIds = [...new Set(records.map((r) => r.qi))]
+      .filter((i) => !perfectAtStart.has(i) && isAllPerfect(i, getHist))
+      .map((i) => QUESTIONS[i].id);
+    router.push(
+      newlyPerfectIds.length ? `/?stamped=${newlyPerfectIds.join(",")}` : "/",
+    );
+  };
+
   const toTop = () => {
     setScreen("start");
     setLessonOpen(false);
@@ -1216,6 +1238,27 @@ export default function PlayPage() {
   return (
     <div style={page}>
       <div style={col}>
+        {/* 中断(解答済みの肢は保存済み。確認のうえ検地帳へ戻る) */}
+        <button
+          type="button"
+          onClick={quitSession}
+          style={{
+            minHeight: 44,
+            padding: "0 2px",
+            marginTop: -8,
+            marginBottom: 4,
+            fontSize: 13,
+            fontWeight: 700,
+            fontFamily: SERIF,
+            letterSpacing: 2,
+            color: AI_BLUE,
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+          }}
+        >
+          ← 中断して検地帳へ
+        </button>
         {/* 進捗 */}
         <div
           style={{
