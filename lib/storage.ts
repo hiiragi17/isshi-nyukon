@@ -14,6 +14,8 @@ import { toggleFavorite, toggleFavoriteGroup } from "@/lib/favorites";
 /**
  * 成績ストア。実装は localStorage(v1)/ Neon(v3)で差し替える。
  * メソッドは Promise を返す(Neon など非同期実装に備える)。
+ * 書き込み系のメソッドは、保存できなかったときに reject する(握りつぶさない)。
+ * 呼び出し側はそれを捕まえて利用者に伝える(#473)。
  */
 export interface StorageAdapter {
   /** 保存済みの Attempt を全件、記録順(古い→新しい)で返す */
@@ -144,7 +146,8 @@ export class LocalStorageAdapter implements StorageAdapter {
 
   /**
    * localStorage へ実際に書き込む。書けない環境・容量超過等では例外を投げる。
-   * 「失敗を伝えたい経路(復元)」と「伝えたくない経路(追記)」を分けるための土台。
+   * 追記・復元・お気に入りのどの経路でも失敗を握りつぶさず呼び出し側へ伝え、
+   * 「保存できていないのに保存できたように見える」状態を作らない(#473)。
    */
   private persist(attempts: Attempt[]): void {
     if (!this.available()) {
@@ -153,31 +156,24 @@ export class LocalStorageAdapter implements StorageAdapter {
     window.localStorage.setItem(this.key, JSON.stringify(attempts));
   }
 
-  private write(attempts: Attempt[]): void {
-    try {
-      this.persist(attempts);
-    } catch {
-      // 容量超過 / プライベートブラウジング等で setItem が例外を投げても、
-      // 保存を no-op に落として呼び出し側(セッション終了時の記録)を壊さない
-    }
-  }
-
   async getAttempts(): Promise<Attempt[]> {
     return this.read();
   }
 
   async saveAttempt(a: Attempt): Promise<void> {
+    // SSR(window 不在)では呼ばれない想定だが、念のため no-op にする
+    if (!this.available()) return;
     const attempts = this.read();
     attempts.push(a);
-    this.write(attempts);
+    // 容量超過・プライベートブラウジング等で setItem が投げた例外は reject として
+    // 伝える(呼び出し側が「この端末に保存できませんでした」を表示する・#473)
+    this.persist(attempts);
   }
 
   async replaceAttempts(attempts: Attempt[]): Promise<void> {
     // 追記ではなく丸ごと差し替え(控えからの復元)。渡された配列を複製して
     // 外部からの後続変更が保存内容に波及しないようにする。
-    // 復元は「保存できなかった」ことを呼び出し側へ伝える必要があるため、
-    // write() の握りつぶしを使わず persist() の例外を伝播させる
-    // (BackupPanel が失敗をユーザーに表示できるようにする)。
+    // persist() の例外はそのまま伝播させる(BackupPanel が失敗を表示する)。
     this.persist([...attempts]);
   }
 
@@ -199,13 +195,10 @@ export class LocalStorageAdapter implements StorageAdapter {
   }
 
   private writeFavorites(itemKeys: string[]): void {
-    try {
-      if (!this.available()) return;
-      window.localStorage.setItem(this.favoritesKey, JSON.stringify(itemKeys));
-    } catch {
-      // 容量超過・ストレージ無効化等。お気に入りの保存失敗は成績に影響しないため
-      // 握りつぶす(saveAttempt と同じ方針)。
-    }
+    if (!this.available()) return;
+    // 容量超過・ストレージ無効化等で setItem が投げた例外は握りつぶさず伝える。
+    // 握りつぶすと、星は塗られたのに保存されていない状態になる(#473)
+    window.localStorage.setItem(this.favoritesKey, JSON.stringify(itemKeys));
   }
 
   async getFavorites(): Promise<string[]> {

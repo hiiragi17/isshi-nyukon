@@ -43,6 +43,7 @@ import { ResultScreen, type ItemRecord } from "@/components/ResultScreen";
 import { ZenshiEngine } from "@/components/engine/ZenshiEngine";
 import { CalcEngine } from "@/components/engine/CalcEngine";
 import { SpotEngine } from "@/components/engine/SpotEngine";
+import { ATTEMPT_SAVE_ERROR } from "@/lib/storageErrors";
 
 type Item = { qi: number; ci: number };
 type Hist = { pts: number; max: number };
@@ -179,6 +180,9 @@ export default function PlayPage() {
   const [activeTerm, setActiveTerm] = useState<string | null>(null);
   // セッション開始時点で「完璧」だった論点。判決後に新規完璧到達を検出するのに使う
   const [perfectAtStart, setPerfectAtStart] = useState<Set<number>>(new Set());
+  // このセッション中に解答の保存に失敗したか。成功時と同じ見た目のまま進ませず、
+  // 成績に残っていないことを伝える(#473)
+  const [saveError, setSaveError] = useState(false);
 
   // 保存済みの全件履歴から「肢ごとの最新結果」を復元する
   useEffect(() => {
@@ -220,6 +224,7 @@ export default function PlayPage() {
       setSessionSeq((n) => n + 1);
       setIdx(0);
       setRecords([]);
+      setSaveError(false);
       setLessonOpen(false);
       setActiveTerm(null);
       setScreen("play");
@@ -283,7 +288,10 @@ export default function PlayPage() {
         max,
         answeredAt: new Date().toISOString(),
       })
-      .catch((e) => console.error("[storage] saveAttempt に失敗しました", e));
+      .catch((e) => {
+        console.error("[storage] saveAttempt に失敗しました", e);
+        setSaveError(true);
+      });
   };
 
   const startSession = (items: Item[]) => {
@@ -298,6 +306,7 @@ export default function PlayPage() {
     setSessionSeq((n) => n + 1);
     setIdx(0);
     setRecords([]);
+    setSaveError(false);
     setLessonOpen(false);
     setActiveTerm(null);
     setScreen("play");
@@ -1302,6 +1311,25 @@ export default function PlayPage() {
             }}
           />
         </div>
+
+        {/* 解答の保存に失敗した(容量超過・プライベートモード等)。出題は続けられるが、
+            成績に残っていないことを伝える(#473) */}
+        {saveError && (
+          <div
+            role="alert"
+            style={{
+              ...card,
+              padding: "12px 16px",
+              marginTop: -12,
+              marginBottom: 16,
+              borderLeft: `4px solid ${SHU}`,
+              fontSize: 13,
+              lineHeight: 1.8,
+            }}
+          >
+            {ATTEMPT_SAVE_ERROR}
+          </div>
+        )}
 
         {isZenshi && (
           <ZenshiEngine

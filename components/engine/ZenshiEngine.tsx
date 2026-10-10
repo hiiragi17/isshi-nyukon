@@ -16,6 +16,7 @@ import { Eyebrow } from "../Eyebrow";
 import { Stamp } from "../Stamp";
 import { FavoriteButton } from "../FavoriteButton";
 import { termify } from "../TermText";
+import { FAVORITE_SAVE_ERROR } from "@/lib/storageErrors";
 import type { EngineCommonProps } from "./types";
 
 function shuffle<T>(arr: readonly T[]): T[] {
@@ -50,6 +51,8 @@ export function ZenshiEngine({
 
   // この肢のお気に入り登録状態。null=未ロード(engine は item ごとに remount される)
   const [favorited, setFavorited] = useState<boolean | null>(null);
+  // お気に入りの保存に失敗したか(星だけ変わって保存されていない状態にしない・#473)
+  const [favError, setFavError] = useState(false);
   useEffect(() => {
     let alive = true;
     const key = itemKey(question.id, ci);
@@ -70,8 +73,14 @@ export function ZenshiEngine({
     const key = itemKey(question.id, ci);
     storage
       .toggleFavorite(key)
-      .then((keys) => setFavorited(keys.includes(key)))
-      .catch((e) => console.error("[storage] toggleFavorite に失敗しました", e));
+      .then((keys) => {
+        setFavorited(keys.includes(key));
+        setFavError(false);
+      })
+      .catch((e) => {
+        console.error("[storage] toggleFavorite に失敗しました", e);
+        setFavError(true);
+      });
   };
 
   const judged = judgePick !== null;
@@ -353,6 +362,11 @@ export function ZenshiEngine({
                 </span>
               </div>
             </div>
+            {favError && (
+              <p role="alert" style={{ fontSize: 12.5, margin: "0 0 8px", color: SHU }}>
+                {FAVORITE_SAVE_ERROR}
+              </p>
+            )}
             {reasonPick !== null && !shuffledReasons[reasonPick]?.correct && (
               <p style={{ fontSize: 13, margin: "0 0 8px", color: MUTED }}>
                 正しい{choice.correct ? "根拠" : "理由"}:{" "}

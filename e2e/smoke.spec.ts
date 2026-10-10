@@ -255,3 +255,67 @@ test("検地帳: キーボードでマスを選んでも、詳細の審理ボタ
   await expect(detail.getByRole("button", { name: /審理/ })).toBeInViewport();
   await expect(firstCell).toBeFocused();
 });
+
+/**
+ * 成績を読み込めなかったときは、記録ゼロ(全マス未着手)と同じ表示にせず、
+ * 読み込み失敗の案内を出す(#473)。控えの復元で上書きさせないよう、
+ * 検地帳・控えのパネルは出さない。
+ */
+test("検地帳: 成績を読み込めないときは、記録ゼロと区別して案内する", async ({
+  page,
+}) => {
+  await page.addInitScript((key) => {
+    const orig = Storage.prototype.getItem;
+    Storage.prototype.getItem = function (k: string) {
+      if (k === key) throw new DOMException("denied", "SecurityError");
+      return orig.call(this, k);
+    };
+  }, STORAGE_KEY);
+  await page.goto("/");
+  await waitDashboardReady(page);
+
+  // Next.js のルートアナウンサーも role="alert" を持つため、文言で絞る
+  await expect(
+    page.getByRole("alert").filter({ hasText: "成績を読み込めませんでした" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "ページを再読み込みする" }),
+  ).toBeVisible();
+  // 記録ゼロのときの表示(検地帳・成長グラフの空表示・控え)は出さない
+  await expect(page.getByText("検地帳 — 分野×論点")).toHaveCount(0);
+  await expect(page.getByText("まだ審理の記録がありません。")).toHaveCount(0);
+  await expect(page.getByText("記録の控え(書き出し・復元)")).toHaveCount(0);
+});
+
+/**
+ * 解答を保存できなかったときは、出題画面に「成績に残らない」ことを伝える(#473)。
+ */
+test("出題中: 解答を保存できないときは、成績に残らないことを伝える", async ({
+  page,
+}) => {
+  await page.addInitScript((key) => {
+    const orig = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (k: string, v: string) {
+      if (k === key) throw new DOMException("full", "QuotaExceededError");
+      return orig.call(this, k, v);
+    };
+  }, STORAGE_KEY);
+  await page.goto("/");
+  await waitDashboardReady(page);
+  await page.getByRole("button", { name: "開廷する — 今日の10肢" }).click();
+  await expect(page.getByText("/ 全10肢")).toBeVisible();
+
+  // 保存前は案内を出さない(Next.js のルートアナウンサーも role="alert" のため文言で絞る)
+  const saveAlert = page
+    .getByRole("alert")
+    .filter({ hasText: "この解答は成績に残りません" });
+  await expect(saveAlert).toHaveCount(0);
+
+  await page.getByRole("button", { name: "◯ 正しい", exact: true }).click();
+  const reasons = page.locator("button.opt-btn");
+  const nextBtn = page.getByRole("button", { name: /次の肢へ|次の問題へ/ });
+  await expect(reasons.first().or(nextBtn)).toBeVisible();
+  if ((await reasons.count()) > 0) await reasons.first().click();
+
+  await expect(saveAlert).toBeVisible();
+});

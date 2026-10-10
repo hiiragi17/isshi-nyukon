@@ -21,6 +21,7 @@ import {
   BackupError,
 } from "@/lib/backup";
 import { Eyebrow } from "@/components/Eyebrow";
+import { STORAGE_WRITE_ERROR } from "@/lib/storageErrors";
 import { CARD, INK, AI_BLUE, SHU, GREEN, MUTED, LINE, SERIF, RADIUS } from "@/lib/tokens";
 
 type Msg = { kind: "ok" | "error"; text: string } | null;
@@ -85,7 +86,7 @@ export function BackupPanel({
     } catch {
       setMsg({
         kind: "error",
-        text: "この端末に保存できませんでした(空き容量やプライベートモードをご確認ください)。",
+        text: STORAGE_WRITE_ERROR,
       });
       return;
     }
