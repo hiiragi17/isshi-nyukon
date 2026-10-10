@@ -7,6 +7,7 @@ import type { Sheet } from "@/types";
  * 数字・場所・記載事項を横断で表にして、直前に見直すためのコラム。
  * まだ一次ソース(e-Gov 等)の原文と突き合わせていないため `verified: false`
  * (CLAUDE.md の `verified` 運用。照合・承認は人が原文を見て行う)。
+ * 照合表(下書き・全行⏳)は docs/verification/gyoho-verification.md の暗記シート節。
  */
 export const gyohoAnkiSheet: Sheet = {
   id: "gyoho-anki",
