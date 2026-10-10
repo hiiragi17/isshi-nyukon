@@ -25,7 +25,7 @@ describe("暗記シートへの対応表", () => {
 
   it("リンクは節のアンカーを指し、見出しは暗記シートの節の見出しになる", () => {
     expect(sheetLinkFor("q8")).toEqual({
-      href: "/learn/sheets#kaihatsu",
+      href: "/learn/sheets/horei-suuji#kaihatsu",
       heading: "開発許可",
       sheetTitle: "法令上の制限・数字",
     });
