@@ -99,7 +99,7 @@ export default function LearnIndexPage() {
               {SHEETS.map((sh) => (
                 <button
                   key={sh.id}
-                  onClick={() => router.push("/learn/sheets")}
+                  onClick={() => router.push(`/learn/sheets/${sh.id}`)}
                   style={{
                     textAlign: "left",
                     width: "100%",

@@ -75,7 +75,7 @@ export function sheetLinkFor(topicId: string): ResolvedSheetLink | null {
   const section = sheet?.sections.find((s) => s.id === link.sectionId);
   if (!sheet || !section) return null;
   return {
-    href: `/learn/sheets#${section.id}`,
+    href: `/learn/sheets/${sheet.id}#${section.id}`,
     heading: section.heading,
     sheetTitle: sheet.title,
   };
