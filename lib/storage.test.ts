@@ -172,7 +172,7 @@ describe("LocalStorageAdapter", () => {
     await expect(adapter.getAttempts()).resolves.toEqual([a]);
   });
 
-  it("setItem が例外を投げても saveAttempt は落ちない(容量超過等)", async () => {
+  it("saveAttempt は setItem が例外を投げたら reject する(容量超過等・#473)", async () => {
     const store = new Map<string, string>();
     globals.window = {
       localStorage: {
@@ -185,7 +185,7 @@ describe("LocalStorageAdapter", () => {
     const adapter = new LocalStorageAdapter(KEY);
     await expect(
       adapter.saveAttempt(attempt("q1", 0, 2, 2, "2026-07-01T00:00:00.000Z")),
-    ).resolves.toBeUndefined();
+    ).rejects.toThrow("QuotaExceededError");
   });
 
   it("キーが違えば履歴は分離される", async () => {
@@ -338,7 +338,7 @@ describe("LocalStorageAdapter — お気に入り", () => {
     await expect(adapter.toggleFavorite("t1")).resolves.toEqual(["t1"]);
   });
 
-  it("setItem が例外を投げても saveFavorites は落ちない(容量超過等)", async () => {
+  it("saveFavorites / toggleFavorite(s) は setItem が例外を投げたら reject する(#473)", async () => {
     globals.window = {
       localStorage: {
         getItem: () => null,
@@ -348,7 +348,9 @@ describe("LocalStorageAdapter — お気に入り", () => {
       },
     };
     const adapter = new LocalStorageAdapter(KEY, FAV_KEY);
-    await expect(adapter.saveFavorites(["t1"])).resolves.toBeUndefined();
+    await expect(adapter.saveFavorites(["t1"])).rejects.toThrow();
+    await expect(adapter.toggleFavorite("t1")).rejects.toThrow();
+    await expect(adapter.toggleFavorites(["t1-0", "t1-1"])).rejects.toThrow();
   });
 
   it("toggleFavorites は1つも登録されていなければ全て追加する", async () => {
@@ -384,5 +386,27 @@ describe("LocalStorageAdapter — お気に入り", () => {
       "t2-0",
       "t1-1",
     ]);
+  });
+});
+
+describe("LocalStorageAdapter — ブラウザで localStorage だけが使えないとき(#473)", () => {
+  // ストレージを無効化したブラウザでは、window はあっても localStorage が null になる
+  const noStorageWindow = () => {
+    (globalThis as { window?: unknown }).window = { localStorage: null };
+  };
+
+  it("saveAttempt は成功扱いにせず reject する", async () => {
+    noStorageWindow();
+    const adapter = new LocalStorageAdapter("test:attempts");
+    await expect(
+      adapter.saveAttempt(attempt("q1", 0, 2, 2, "2026-07-01T00:00:00.000Z")),
+    ).rejects.toThrow();
+  });
+
+  it("toggleFavorite / toggleFavorites も reject する", async () => {
+    noStorageWindow();
+    const adapter = new LocalStorageAdapter("test:attempts", "test:favorites");
+    await expect(adapter.toggleFavorite("t1")).rejects.toThrow();
+    await expect(adapter.toggleFavorites(["t1-0", "t1-1"])).rejects.toThrow();
   });
 });
