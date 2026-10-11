@@ -145,10 +145,14 @@ export function ZenshiEngine({
             const picked = locatePick === i;
             let styleSeg: React.CSSProperties = {};
             if (tappable) {
+              // 区切りごとに下地と隙間をつけ、どこまでが1つのタップ単位かを見せる
+              // (下地色・ホバーは globals.css の .seg-btn)
               styleSeg = {
                 borderBottom: `2px dotted ${AI_BLUE}`,
+                borderRadius: 4,
                 cursor: "pointer",
-                padding: "1px 1px",
+                padding: "1px 3px",
+                margin: "0 3px 4px 0",
               };
             }
             if (revealed && judgePick === false && !choice.correct) {
@@ -166,13 +170,13 @@ export function ZenshiEngine({
                 key={i}
                 className="seg-btn"
                 onClick={() => handleLocate(i)}
+                // border の一括指定は styleSeg より前に置く。後ろに置くと、
+                // オブジェクトのキー順で borderBottom(点線)が打ち消される(#469)
                 style={{
+                  border: "none",
                   ...styleSeg,
                   font: "inherit",
                   color: "inherit",
-                  background: "transparent",
-                  border: "none",
-                  borderBottom: styleSeg.borderBottom,
                   textAlign: "left",
                   lineHeight: "inherit",
                 }}
@@ -241,7 +245,7 @@ export function ZenshiEngine({
           <b style={{ fontSize: 14 }}>お見事、この肢は誤りです。</b>
           <p style={{ fontSize: 13.5, margin: "6px 0 0", color: MUTED }}>
             では、<b style={{ color: INK }}>どこが誤っているか</b>
-            、上の文の該当箇所をタップしてください。(+1点)
+            、上の文の点線で区切られた語句から1つ選んでタップしてください。(+1点)
           </p>
         </div>
       )}
