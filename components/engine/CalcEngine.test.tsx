@@ -99,3 +99,16 @@ describe("CalcEngine — 途中式ビルダーの採点(最大2点)", () => {
     expect(screen.getByRole("button", { name: /指定容積率と比較して小を採る/ })).toBeInTheDocument();
   });
 });
+
+describe("CalcEngine — フォーカス移動と読み上げ(#474)", () => {
+  it("第一式を選ぶと第二式の先頭へ、第二式まで選ぶと「次へ」へフォーカスが移る", () => {
+    setup();
+    expect(screen.getByRole("status")).toBeEmptyDOMElement();
+    pick(/前面道路4×0.4=160/);
+    expect(screen.getByRole("button", { name: /指定容積率と比較して小を採る/ })).toHaveFocus();
+    expect(screen.getByRole("status")).toHaveTextContent("続けて第二式を選んでください");
+    pick(/指定容積率と比較して小を採る/);
+    expect(screen.getByRole("button", { name: "次へ" })).toHaveFocus();
+    expect(screen.getByRole("status")).toHaveTextContent("2点(2点満点)");
+  });
+});

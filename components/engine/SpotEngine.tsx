@@ -2,7 +2,7 @@
  * 間違い探しエンジン(spot)。マイソク広告の違反箇所を根拠付きで申し立てる。
  * プロトタイプの spot エンジンと同一挙動。得点: errorCount − 誤指摘数(下限0)。
  */
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { INK, CARD, AI_BLUE, SHU, GREEN, MUTED, LINE, SERIF, RADIUS } from "@/lib/tokens";
 import { card } from "@/lib/gameStyles";
 import { SceneCard } from "../SceneCard";
@@ -29,8 +29,28 @@ export function SpotEngine({
 
   const spotDone = spotFound.length === spot.errorCount;
 
+  // フォーカス移動(#474)。ゾーンを押すと申立て確認が広告の下に出るため、
+  // 「申し立てる」へフォーカスを移す。申し立て/取り下げで確認が消えたら、押した
+  // ゾーンへ戻す(戻さないとフォーカスの行き場がなくなる)。全違反を摘発したら「次へ」へ。
+  const zoneTriggerRef = useRef<HTMLElement | null>(null);
+  const accuseRef = useRef<HTMLButtonElement>(null);
+  const nextRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (spotPending) {
+      accuseRef.current?.focus();
+    } else if (spotDone) {
+      nextRef.current?.focus();
+    } else if (zoneTriggerRef.current?.isConnected) {
+      zoneTriggerRef.current.focus();
+      zoneTriggerRef.current = null;
+    }
+  }, [spotPending, spotDone]);
+
   const handleSpotZone = (id: string) => {
     if (spotDone || spotFound.includes(id) || spotPending === id) return;
+    if (document.activeElement instanceof HTMLElement) {
+      zoneTriggerRef.current = document.activeElement;
+    }
     setSpotPending(id);
     setSpotMsg(null);
   };
@@ -58,8 +78,22 @@ export function SpotEngine({
 
   const pendingZone = spotPending ? spot.zones.find((z) => z.id === spotPending) : null;
 
+  // 読み上げ用の結果通知(#474)。常に置いてある live region の文言を差し替える
+  const announce = spotDone
+    ? spotWrong === 0
+      ? `全違反を摘発。誤指摘なし。完璧。${spot.errorCount}点(${spot.errorCount}点満点)。`
+      : `全違反を摘発。ただし誤指摘 ${spotWrong} 件。${Math.max(0, spot.errorCount - spotWrong)}点(${spot.errorCount}点満点)。`
+    : pendingZone
+      ? `「${pendingZone.name}」を広告規制違反として申し立てますか。`
+      : spotMsg
+        ? `${spotMsg.title}。${spotMsg.body}`
+        : "";
+
   return (
     <>
+      <p role="status" className="sr-only">
+        {announce}
+      </p>
       <SceneCard question={question} onTerm={onTerm} />
       <LessonAccordion
         lesson={question.lesson}
@@ -110,6 +144,7 @@ export function SpotEngine({
           </div>
           <div style={{ display: "flex", gap: 10, marginTop: 12 }}>
             <button
+              ref={accuseRef}
               onClick={handleSpotAccuse}
               style={{
                 flex: 1,
@@ -239,6 +274,7 @@ export function SpotEngine({
             </div>
           </div>
           <button
+            ref={nextRef}
             onClick={onNext}
             style={{
               width: "100%",

@@ -133,3 +133,38 @@ describe("ZenshiEngine — 誤り箇所タップの見た目(#469)", () => {
     }
   });
 });
+
+describe("ZenshiEngine — フォーカス移動と読み上げ(#474)", () => {
+  it("×肢: 判定→箇所→理由→解説と進むたびに、次に操作する要素へフォーカスが移る", () => {
+    setup(1);
+    clickJudge("✕ 誤り");
+    // locate: 最初の区切りへ
+    expect(screen.getByRole("button", { name: "前半は妥当だが" })).toHaveFocus();
+    expect(screen.getByRole("status")).toHaveTextContent("誤っている箇所を選んでください");
+
+    fireEvent.click(screen.getByRole("button", { name: "この中間部分が誤り" }));
+    // reason: 理由の先頭(並びはシャッフルされるので、理由一覧の最初のボタン)へ
+    const reasonNames = ["正しい理由エックス", "誤った理由ワイ", "誤った理由ゼット"];
+    const focused = document.activeElement as HTMLElement;
+    expect(reasonNames).toContain(focused.textContent);
+    expect(screen.getByRole("status")).toHaveTextContent("箇所も正解。なぜ誤りなのか");
+
+    fireEvent.click(screen.getByRole("button", { name: "正しい理由エックス" }));
+    // explain: 「次へ」へ。結果と得点を読み上げる
+    expect(screen.getByRole("button", { name: "次へ" })).toHaveFocus();
+    expect(screen.getByRole("status")).toHaveTextContent("理由まで正解。完璧です。 3点(3点満点)");
+  });
+
+  it("判定ミスで解説に直行したときも「次へ」へフォーカスが移る", () => {
+    setup(0);
+    clickJudge("✕ 誤り");
+    expect(screen.getByRole("button", { name: "次へ" })).toHaveFocus();
+    expect(screen.getByRole("status")).toHaveTextContent("判定ミス。この肢は「正しい」でした。 0点(2点満点)");
+  });
+
+  it("判定前は読み上げもフォーカス移動もしない", () => {
+    setup(0);
+    expect(screen.getByRole("status")).toBeEmptyDOMElement();
+    expect(document.activeElement).toBe(document.body);
+  });
+});

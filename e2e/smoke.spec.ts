@@ -255,3 +255,32 @@ test("検地帳: キーボードでマスを選んでも、詳細の審理ボタ
   await expect(detail.getByRole("button", { name: /審理/ })).toBeInViewport();
   await expect(firstCell).toBeFocused();
 });
+
+/**
+ * キーボードだけで、判定 → (理由) → 「次へ」まで進める(#474)。
+ * 押したボタンが消えるたびに次の操作対象へフォーカスが移るので、
+ * 最初の判定ボタンにフォーカスした後は Enter を押すだけで判決まで届く。
+ */
+test("出題中: キーボードの Enter だけで判定から判決まで進める", async ({ page }) => {
+  await page.goto("/play?items=q1-0,q1-1");
+  const judge = page.getByRole("button", { name: "◯ 正しい", exact: true });
+  await expect(judge).toBeVisible();
+  await judge.focus();
+
+  // 1肢あたり「判定 → 理由(○肢のみ)→ 次へ」。2肢で最大6回の Enter で判決に届く
+  for (let i = 0; i < 6; i++) {
+    await page.keyboard.press("Enter");
+    if (await page.getByText("判決", { exact: true }).count()) break;
+    // 2肢目の開始時はエンジンが作り直されるため、判定ボタンへ合わせ直す
+    if (await judge.count()) {
+      if (!(await judge.evaluate((el) => el === document.activeElement))) {
+        await judge.focus();
+      }
+    } else {
+      // 判定以外のフェーズでは、フォーカスがボタン上にある(body に落ちていない)
+      const tag = await page.evaluate(() => document.activeElement?.tagName);
+      expect(tag).toBe("BUTTON");
+    }
+  }
+  await expect(page.getByText("判決", { exact: true })).toBeVisible();
+});

@@ -72,3 +72,34 @@ describe("SpotEngine — 間違い探しの採点(得点=errorCount−誤指摘)
     expect(onComplete).toHaveBeenCalledWith({ pts: 4, max: 4 });
   });
 });
+
+describe("SpotEngine — フォーカス移動と読み上げ(#474)", () => {
+  it("ゾーンを押すと「申し立てる」へ、申し立て後は押したゾーンへフォーカスが戻る", () => {
+    setup();
+    const zone = screen.getByRole("button", { name: /販売価格/ });
+    zone.focus();
+    fireEvent.click(zone);
+    expect(screen.getByRole("button", { name: "申し立てる" })).toHaveFocus();
+    expect(screen.getByRole("status")).toHaveTextContent("申し立てますか");
+
+    fireEvent.click(screen.getByRole("button", { name: "申し立てる" }));
+    expect(zone).toHaveFocus();
+    expect(screen.getByRole("status")).toHaveTextContent("申立て棄却");
+  });
+
+  it("取り下げても押したゾーンへフォーカスが戻る", () => {
+    setup();
+    const zone = screen.getByRole("button", { name: /販売価格/ });
+    zone.focus();
+    fireEvent.click(zone);
+    fireEvent.click(screen.getByRole("button", { name: "取り下げる" }));
+    expect(zone).toHaveFocus();
+  });
+
+  it("全違反を摘発すると「次へ」へフォーカスが移り、結果を読み上げる", () => {
+    setup();
+    VIOLATIONS.forEach(accuse);
+    expect(screen.getByRole("button", { name: "判決を聞く" })).toHaveFocus();
+    expect(screen.getByRole("status")).toHaveTextContent("全違反を摘発。誤指摘なし。完璧。4点(4点満点)");
+  });
+});

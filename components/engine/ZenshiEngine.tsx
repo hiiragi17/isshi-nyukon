@@ -6,7 +6,7 @@
  * 解き終えた肢(explain フェーズ)には、その肢1件だけをお気に入りに登録する
  * ボタンを添える(論点まるごとではなく肢単位で「あとで出せる」ようにするため)。
  */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { storage, itemKey } from "@/lib/storage";
 import { INK, CARD, AI_BLUE, SHU, GREEN, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
 import { card } from "@/lib/gameStyles";
@@ -77,6 +77,25 @@ export function ZenshiEngine({
   const judged = judgePick !== null;
   const judgeCorrect = judgePick === choice.correct;
 
+  // フェーズが進むと、押したボタン(判定・箇所・理由)自体が消えてフォーカスの
+  // 行き場がなくなる。次に操作する要素へフォーカスを移し、キーボード操作で
+  // ページ先頭から辿り直さずに済むようにする(#474)。マウス・タッチ操作では
+  // :focus-visible の枠は出ない。
+  const choiceCardRef = useRef<HTMLDivElement>(null);
+  const reasonListRef = useRef<HTMLDivElement>(null);
+  const nextRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    const target =
+      phase === "locate"
+        ? choiceCardRef.current?.querySelector<HTMLButtonElement>(".seg-btn")
+        : phase === "reason"
+          ? reasonListRef.current?.querySelector<HTMLButtonElement>("button")
+          : phase === "explain"
+            ? nextRef.current
+            : null;
+    target?.focus();
+  }, [phase]);
+
   const finishChoice = (pts: number) => {
     onComplete({ pts, max: choice.correct ? 2 : 3 });
   };
@@ -120,8 +139,34 @@ export function ZenshiEngine({
     setPhase("explain");
   };
 
+  const explainTitle = !judgeCorrect
+    ? `判定ミス。この肢は「${choice.correct ? "正しい" : "誤り"}」でした。`
+    : reasonPick !== null && shuffledReasons[reasonPick]?.correct
+      ? choice.correct
+        ? "根拠まで正解。完璧です。"
+        : "理由まで正解。完璧です。"
+      : choice.correct
+        ? "判定は正解。ただし根拠が違いました。"
+        : "判定は正解。ただし理由が違いました。";
+
+  // 読み上げ用の結果通知(#474)。画面上の結果欄はフェーズごとに付け替わるため、
+  // 常に置いてある1つの live region の文言を差し替えて確実に読ませる
+  const announce =
+    phase === "locate"
+      ? "お見事、この肢は誤りです。上の文から、誤っている箇所を選んでください。"
+      : phase === "reason"
+        ? choice.correct
+          ? "判定正解。この肢は「正しい」。なぜ正しいと言えるのか、根拠を選んでください。"
+          : `${locatePick === choice.wrongIndex ? "箇所も正解。" : "箇所は不正解。"}なぜ誤りなのか、理由を選んでください。`
+        : phase === "explain"
+          ? `${explainTitle} ${currentPts()}点(${choice.correct ? 2 : 3}点満点)。`
+          : "";
+
   return (
     <>
+      <p role="status" className="sr-only">
+        {announce}
+      </p>
       <SceneCard question={question} onTerm={onTerm} />
       <LessonAccordion
         lesson={question.lesson}
@@ -132,6 +177,7 @@ export function ZenshiEngine({
 
       {/* 肢カード */}
       <div
+        ref={choiceCardRef}
         className="fade-up"
         key={`${question.id}-${ci}`}
         style={{ ...card, padding: "20px 22px", position: "relative", marginBottom: 16 }}
@@ -281,7 +327,7 @@ export function ZenshiEngine({
               </p>
             </div>
           )}
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <div ref={reasonListRef} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {shuffledReasons.map((r, i) => (
               <button
                 key={i}
@@ -325,15 +371,7 @@ export function ZenshiEngine({
               }}
             >
               <b style={{ fontSize: 15, color: judgeCorrect ? GREEN : SHU }}>
-                {!judgeCorrect
-                  ? `判定ミス。この肢は「${choice.correct ? "正しい" : "誤り"}」でした。`
-                  : reasonPick !== null && shuffledReasons[reasonPick]?.correct
-                    ? choice.correct
-                      ? "根拠まで正解。完璧です。"
-                      : "理由まで正解。完璧です。"
-                    : choice.correct
-                      ? "判定は正解。ただし根拠が違いました。"
-                      : "判定は正解。ただし理由が違いました。"}
+                {explainTitle}
               </b>
               <div style={{ display: "flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
                 {favorited !== null && (
@@ -369,6 +407,7 @@ export function ZenshiEngine({
             </p>
           </div>
           <button
+            ref={nextRef}
             onClick={onNext}
             style={{
               width: "100%",

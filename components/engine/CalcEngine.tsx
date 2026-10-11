@@ -2,7 +2,7 @@
  * 計算エンジン(calc)。報酬計算などを「途中式ビルダー」で段ごとに選ぶ。
  * プロトタイプの calc エンジンと同一挙動。得点: 第一式1点 + 第二式1点 = 最大2点。
  */
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { INK, CARD, AI_BLUE, SHU, GREEN, MUTED, LINE, SERIF, SANS, RADIUS } from "@/lib/tokens";
 import { card } from "@/lib/gameStyles";
 import { SceneCard } from "../SceneCard";
@@ -43,8 +43,30 @@ export function CalcEngine({
   const verdict = calcDone ? evaluateCalc(calc, calcF!, calcT!) : null;
   const donePts = verdict ? verdict.pts : 0;
 
+  // 段を選ぶたびに、次に操作する要素へフォーカスを移す(#474)。
+  // 第一式を選んだら第二式の先頭へ、第二式まで選んだら「次へ」へ。
+  const step2Ref = useRef<HTMLDivElement>(null);
+  const nextRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (calcF === null) return;
+    const target = calcDone
+      ? nextRef.current
+      : step2Ref.current?.querySelector<HTMLButtonElement>("button");
+    target?.focus();
+  }, [calcF, calcDone]);
+
+  // 読み上げ用の結果通知(#474)。常に置いてある live region の文言を差し替える
+  const announce = verdict
+    ? `${verdict.message} ${verdict.pts}点(2点満点)。`
+    : calcF !== null
+      ? `${calc.build[0].label}を選びました。続けて${calc.build[1].label}を選んでください。`
+      : "";
+
   return (
     <>
+      <p role="status" className="sr-only">
+        {announce}
+      </p>
       <SceneCard question={question} onTerm={onTerm}>
         <p
           style={{
@@ -110,7 +132,10 @@ export function CalcEngine({
               <Eyebrow>{step.label}</Eyebrow>
               <span style={{ fontSize: 12, color: SHU }}>+1点</span>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <div
+              ref={stepIdx === 1 ? step2Ref : undefined}
+              style={{ display: "flex", flexDirection: "column", gap: 8 }}
+            >
               {step.options.map((o, i) => {
                 let border = LINE,
                   bg = CARD,
@@ -250,6 +275,7 @@ export function CalcEngine({
                 ))}
               </div>
               <button
+                ref={nextRef}
                 onClick={onNext}
                 style={{
                   width: "100%",
