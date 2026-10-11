@@ -180,9 +180,9 @@ export default function PlayPage() {
   const [activeTerm, setActiveTerm] = useState<string | null>(null);
   // セッション開始時点で「完璧」だった論点。判決後に新規完璧到達を検出するのに使う
   const [perfectAtStart, setPerfectAtStart] = useState<Set<number>>(new Set());
-  // このセッション中に解答の保存に失敗したか。成功時と同じ見た目のまま進ませず、
-  // 成績に残っていないことを伝える(#473)
-  const [saveError, setSaveError] = useState(false);
+  // このセッション中に保存できなかった解答の数。成功時と同じ見た目のまま進ませず、
+  // 成績に残っていないことを伝える(出題中の案内・中断の確認文で使う・#473)
+  const [saveFailures, setSaveFailures] = useState(0);
 
   // 保存済みの全件履歴から「肢ごとの最新結果」を復元する
   useEffect(() => {
@@ -224,7 +224,7 @@ export default function PlayPage() {
       setSessionSeq((n) => n + 1);
       setIdx(0);
       setRecords([]);
-      setSaveError(false);
+      setSaveFailures(0);
       setLessonOpen(false);
       setActiveTerm(null);
       setScreen("play");
@@ -290,7 +290,7 @@ export default function PlayPage() {
       })
       .catch((e) => {
         console.error("[storage] saveAttempt に失敗しました", e);
-        setSaveError(true);
+        setSaveFailures((n) => n + 1);
       });
   };
 
@@ -306,7 +306,7 @@ export default function PlayPage() {
     setSessionSeq((n) => n + 1);
     setIdx(0);
     setRecords([]);
-    setSaveError(false);
+    setSaveFailures(0);
     setLessonOpen(false);
     setActiveTerm(null);
     setScreen("play");
@@ -422,14 +422,17 @@ export default function PlayPage() {
   /**
    * 出題の途中で中断して検地帳へ戻る(#470)。解答済みの肢は recordItem で
    * 1肢ごとに保存済みなので、失われるのは判決(まとめ)の表示だけ。
-   * それを確認文で伝えてから戻る。新たに完璧到達した論点があれば、
+   * それを確認文で伝えてから戻る。ただし保存に失敗した肢があれば、
+   * 「保存済み」とは言わず、その肢数が成績に残らないことを伝える(#473)。新たに完璧到達した論点があれば、
    * 判決画面からの戻りと同じく ?stamped= で検地帳に朱印を押させる。
    */
   const quitSession = () => {
     const ok = window.confirm(
-      records.length > 0
-        ? `ここまでの${records.length}肢の解答は保存済みです。\n判決(まとめ)は表示されません。検地帳に戻りますか?`
-        : "まだ解答した肢はありません。検地帳に戻りますか?",
+      records.length === 0
+        ? "まだ解答した肢はありません。検地帳に戻りますか?"
+        : saveFailures > 0
+          ? `ここまでの${records.length}肢のうち${saveFailures}肢は、この端末に保存できなかったため成績に残りません。\n判決(まとめ)は表示されません。検地帳に戻りますか?`
+          : `ここまでの${records.length}肢の解答は保存済みです。\n判決(まとめ)は表示されません。検地帳に戻りますか?`,
     );
     if (!ok) return;
     const getHist = (qi: number, ci: number) => history[`${qi}-${ci}`];
@@ -1314,7 +1317,7 @@ export default function PlayPage() {
 
         {/* 解答の保存に失敗した(容量超過・プライベートモード等)。出題は続けられるが、
             成績に残っていないことを伝える(#473) */}
-        {saveError && (
+        {saveFailures > 0 && (
           <div
             role="alert"
             style={{

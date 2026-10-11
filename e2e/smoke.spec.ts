@@ -318,4 +318,13 @@ test("出題中: 解答を保存できないときは、成績に残らないこ
   if ((await reasons.count()) > 0) await reasons.first().click();
 
   await expect(saveAlert).toBeVisible();
+
+  // 中断の確認文も「保存済み」とは言わず、成績に残らないことを伝える
+  page.once("dialog", async (d) => {
+    expect(d.message()).toContain("1肢のうち1肢は、この端末に保存できなかったため成績に残りません");
+    expect(d.message()).not.toContain("保存済み");
+    await d.dismiss();
+  });
+  await page.getByRole("button", { name: /中断して検地帳へ/ }).click();
+  await expect(saveAlert).toBeVisible();
 });
