@@ -318,6 +318,9 @@ test("出題中: 解答を保存できないときは、成績に残らないこ
   if ((await reasons.count()) > 0) await reasons.first().click();
 
   await expect(saveAlert).toBeVisible();
+  // 解説までスクロールしていても、案内は画面内に残る(画面上部に貼り付く)
+  await nextBtn.scrollIntoViewIfNeeded();
+  await expect(saveAlert).toBeInViewport();
 
   // 中断の確認文も「保存済み」とは言わず、成績に残らないことを伝える
   page.once("dialog", async (d) => {
@@ -327,4 +330,36 @@ test("出題中: 解答を保存できないときは、成績に残らないこ
   });
   await page.getByRole("button", { name: /中断して検地帳へ/ }).click();
   await expect(saveAlert).toBeVisible();
+});
+
+/**
+ * 最後の肢で保存に失敗したまま判決へ進んでも、判決画面で成績に残らない
+ * 解答があることを伝える(出題画面の案内は画面遷移で消えるため・#473)。
+ */
+test("判決: 保存できなかった解答があれば、判決画面でも伝える", async ({
+  page,
+}) => {
+  await page.addInitScript((key) => {
+    const orig = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (k: string, v: string) {
+      if (k === key) throw new DOMException("full", "QuotaExceededError");
+      return orig.call(this, k, v);
+    };
+  }, STORAGE_KEY);
+  await page.goto("/");
+  await waitDashboardReady(page);
+  await page.getByRole("button", { name: /範囲を選んで始める/ }).click();
+  await page.getByRole("button", { name: "全解除", exact: true }).click();
+  await page
+    .getByRole("button", { name: /^権利関係\(民法\)/, expanded: false })
+    .click();
+  await page.getByRole("button", { name: /二重譲渡/ }).click();
+  await page.getByRole("button", { name: /開廷する/ }).click();
+
+  await answerZenshiSessionToVerdict(page);
+  await expect(
+    page
+      .getByRole("alert")
+      .filter({ hasText: "この端末に保存できなかったため成績に残っていません" }),
+  ).toBeVisible();
 });

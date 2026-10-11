@@ -11,6 +11,10 @@ export const STORAGE_WRITE_ERROR =
 /** 出題中の解答を保存できなかったとき。何が残らないかまで伝える */
 export const ATTEMPT_SAVE_ERROR = `${STORAGE_WRITE_ERROR}この解答は成績に残りません。`;
 
+/** 判決画面で、このセッション中に保存できなかった解答の数を伝える */
+export const attemptsNotSavedMessage = (count: number): string =>
+  `このセッションの解答のうち${count}肢は、この端末に保存できなかったため成績に残っていません(空き容量やプライベートモードをご確認ください)。`;
+
 /** お気に入りを保存できなかったとき */
 export const FAVORITE_SAVE_ERROR = `お気に入りを${STORAGE_WRITE_ERROR}`;
 

@@ -1232,6 +1232,7 @@ export default function PlayPage() {
         score={score}
         sessionMax={sessionMax}
         newlyPerfectIds={newlyPerfectIds}
+        saveFailures={saveFailures}
         onRetryMisses={startSessionMisses}
         onToTop={toTop}
       />
@@ -1322,6 +1323,10 @@ export default function PlayPage() {
             role="alert"
             style={{
               ...card,
+              // 解説を読むためにスクロールしていても見えるよう、画面上部に貼り付ける
+              position: "sticky",
+              top: 8,
+              zIndex: 5,
               padding: "12px 16px",
               marginTop: -12,
               marginBottom: 16,

@@ -20,7 +20,7 @@ import { page, col, card } from "@/lib/gameStyles";
 import { Eyebrow } from "@/components/Eyebrow";
 import { Stamp } from "@/components/Stamp";
 import { FavoriteButton } from "@/components/FavoriteButton";
-import { FAVORITE_SAVE_ERROR } from "@/lib/storageErrors";
+import { FAVORITE_SAVE_ERROR, attemptsNotSavedMessage } from "@/lib/storageErrors";
 
 /** 判決画面が扱うセッション成績1件(qi=問題添字 / ci=肢番号) */
 export type ItemRecord = { qi: number; ci: number; pts: number; max: number };
@@ -30,6 +30,7 @@ export function ResultScreen({
   score,
   sessionMax,
   newlyPerfectIds,
+  saveFailures = 0,
   onRetryMisses,
   onToTop,
 }: {
@@ -38,6 +39,8 @@ export function ResultScreen({
   sessionMax: number;
   /** このセッションで新たに完璧到達した論点の questionId(検地帳で朱印を押させる) */
   newlyPerfectIds: string[];
+  /** このセッション中に保存できなかった解答の数(#473)。0 なら案内を出さない */
+  saveFailures?: number;
   onRetryMisses: () => void;
   onToTop: () => void;
 }) {
@@ -97,6 +100,23 @@ export function ResultScreen({
   return (
     <div style={page}>
       <div style={col}>
+        {/* 保存できなかった解答がある。点数は表示するが、成績に残っていないことを
+            判決の前に伝える(出題画面の案内は画面遷移で消えるため・#473) */}
+        {saveFailures > 0 && (
+          <div
+            role="alert"
+            style={{
+              ...card,
+              padding: "12px 16px",
+              marginTop: 16,
+              borderLeft: `4px solid ${SHU}`,
+              fontSize: 13,
+              lineHeight: 1.8,
+            }}
+          >
+            {attemptsNotSavedMessage(saveFailures)}
+          </div>
+        )}
         <div style={{ textAlign: "center", margin: "36px 0 20px" }}>
           <Eyebrow>判決</Eyebrow>
           <div style={{ display: "flex", justifyContent: "center", margin: "20px 0 16px" }}>
