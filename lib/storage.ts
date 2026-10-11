@@ -161,8 +161,10 @@ export class LocalStorageAdapter implements StorageAdapter {
   }
 
   async saveAttempt(a: Attempt): Promise<void> {
-    // SSR(window 不在)では呼ばれない想定だが、念のため no-op にする
-    if (!this.available()) return;
+    // SSR(window 不在)では呼ばれない想定だが、念のため no-op にする。
+    // ブラウザで localStorage だけが使えない場合は no-op にせず、persist() の
+    // 例外で失敗を伝える(成功扱いにすると保存失敗の案内が出ない)
+    if (typeof window === "undefined") return;
     const attempts = this.read();
     attempts.push(a);
     // 容量超過・プライベートブラウジング等で setItem が投げた例外は reject として
@@ -195,7 +197,12 @@ export class LocalStorageAdapter implements StorageAdapter {
   }
 
   private writeFavorites(itemKeys: string[]): void {
-    if (!this.available()) return;
+    // SSR(window 不在)だけは no-op。ブラウザで localStorage が使えないときは
+    // 成功扱いにせず失敗を伝える(saveAttempt と同じ方針)
+    if (typeof window === "undefined") return;
+    if (!this.available()) {
+      throw new Error("localStorage が利用できないため保存できません");
+    }
     // 容量超過・ストレージ無効化等で setItem が投げた例外は握りつぶさず伝える。
     // 握りつぶすと、星は塗られたのに保存されていない状態になる(#473)
     window.localStorage.setItem(this.favoritesKey, JSON.stringify(itemKeys));

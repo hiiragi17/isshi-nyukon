@@ -388,3 +388,25 @@ describe("LocalStorageAdapter — お気に入り", () => {
     ]);
   });
 });
+
+describe("LocalStorageAdapter — ブラウザで localStorage だけが使えないとき(#473)", () => {
+  // ストレージを無効化したブラウザでは、window はあっても localStorage が null になる
+  const noStorageWindow = () => {
+    (globalThis as { window?: unknown }).window = { localStorage: null };
+  };
+
+  it("saveAttempt は成功扱いにせず reject する", async () => {
+    noStorageWindow();
+    const adapter = new LocalStorageAdapter("test:attempts");
+    await expect(
+      adapter.saveAttempt(attempt("q1", 0, 2, 2, "2026-07-01T00:00:00.000Z")),
+    ).rejects.toThrow();
+  });
+
+  it("toggleFavorite / toggleFavorites も reject する", async () => {
+    noStorageWindow();
+    const adapter = new LocalStorageAdapter("test:attempts", "test:favorites");
+    await expect(adapter.toggleFavorite("t1")).rejects.toThrow();
+    await expect(adapter.toggleFavorites(["t1-0", "t1-1"])).rejects.toThrow();
+  });
+});
