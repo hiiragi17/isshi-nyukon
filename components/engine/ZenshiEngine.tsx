@@ -193,6 +193,10 @@ export function ZenshiEngine({
       >
         <Eyebrow>肢 {ci + 1}</Eyebrow>
         <p style={{ fontFamily: SERIF, fontSize: 17, lineHeight: 2.05, margin: "10px 0 4px" }}>
+          {/* 判定スタンプ(右上に absolute 配置)の下に1行目が潜らないよう、右上に余白を取る(#479)。
+              判定前から取っておき、スタンプが出た瞬間に行の折り返しが変わらないようにする。
+              幅=回転後のスタンプの張り出し約54px+隙間、高さ=1行目だけにかかる値(行の高さ約35px未満) */}
+          <span aria-hidden="true" style={{ float: "right", width: 58, height: 28 }} />
           {choice.segments.map((seg, i) => {
             const tappable = phase === "locate";
             const revealed = phase === "reason" || phase === "explain";
