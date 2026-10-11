@@ -32,6 +32,7 @@ export async function generateMetadata({
 const COL_WIDTHS: Record<number, string[]> = {
   2: ["32%", "68%"],
   3: ["26%", "40%", "34%"],
+  4: ["22%", "26%", "26%", "26%"],
 };
 
 /**
