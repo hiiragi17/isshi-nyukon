@@ -8,6 +8,8 @@
  */
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+import { storage } from "@/lib/storage";
+import { FAVORITE_SAVE_ERROR } from "@/lib/storageErrors";
 import type { Question } from "@/types";
 import { ZenshiEngine } from "./ZenshiEngine";
 
@@ -166,5 +168,20 @@ describe("ZenshiEngine — フォーカス移動と読み上げ(#474)", () => {
     setup(0);
     expect(screen.getByRole("status")).toBeEmptyDOMElement();
     expect(document.activeElement).toBe(document.body);
+  });
+});
+
+describe("ZenshiEngine — お気に入りの保存失敗(#473)", () => {
+  it("保存に失敗したら、星を押した後に失敗の案内を出す", async () => {
+    const spy = vi
+      .spyOn(storage, "toggleFavorite")
+      .mockRejectedValue(new Error("QuotaExceededError"));
+    setup(0);
+    clickJudge("✕ 誤り"); // 判定ミス → 解説(explain)へ直行
+    fireEvent.click(
+      await screen.findByRole("button", { name: "お気に入りに追加する" }),
+    );
+    expect(await screen.findByRole("alert")).toHaveTextContent(FAVORITE_SAVE_ERROR);
+    spy.mockRestore();
   });
 });
