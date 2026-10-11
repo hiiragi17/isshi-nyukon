@@ -52,6 +52,7 @@ import { GrowthChart } from "@/components/GrowthChart";
 import { BackupPanel } from "@/components/BackupPanel";
 import { DisclaimerFooter } from "@/components/DisclaimerFooter";
 import { FavoriteButton } from "@/components/FavoriteButton";
+import { ATTEMPTS_LOAD_ERROR, FAVORITE_SAVE_ERROR } from "@/lib/storageErrors";
 
 /** SRS キューの対象 = 全問題の全肢 */
 const ALL_TARGETS = QUESTIONS.flatMap((q) =>
@@ -131,6 +132,10 @@ export default function Home() {
   const router = useRouter();
   // null = 未ロード(SSR / 初回)。ロード後に配列が入る(時刻依存の表示はロード後だけ)
   const [attempts, setAttempts] = useState<Attempt[] | null>(null);
+  // 成績の読み込みに失敗したか。失敗時は「記録ゼロ」と同じ表示にせず、別の案内を出す(#473)
+  const [loadError, setLoadError] = useState(false);
+  // お気に入りの保存に失敗したときの案内(選択中の論点詳細に出す)
+  const [favError, setFavError] = useState<string | null>(null);
   const [sel, setSel] = useState<string | null>(null);
   const [stampedIds, setStampedIds] = useState<Set<string>>(new Set());
   // お気に入り登録した論点(topicId)。null=未ロード
@@ -148,7 +153,10 @@ export default function Home() {
       })
       .catch((e) => {
         console.error("[storage] getAttempts に失敗しました", e);
-        if (alive) setAttempts([]);
+        if (alive) {
+          setLoadError(true);
+          setAttempts([]);
+        }
       });
     return () => {
       alive = false;
@@ -179,8 +187,14 @@ export default function Home() {
   const toggleTopicFavorite = (topicId: string) => {
     storage
       .toggleFavorites(itemKeysForTopic(topicId, QUESTIONS))
-      .then(setFavorites)
-      .catch((e) => console.error("[storage] toggleFavorites に失敗しました", e));
+      .then((keys) => {
+        setFavorites(keys);
+        setFavError(null);
+      })
+      .catch((e) => {
+        console.error("[storage] toggleFavorites に失敗しました", e);
+        setFavError(FAVORITE_SAVE_ERROR);
+      });
   };
 
   // 控えからの復元後に全件履歴を読み直して画面へ反映する
@@ -190,6 +204,7 @@ export default function Home() {
       .then(setAttempts)
       .catch((e) => {
         console.error("[storage] getAttempts に失敗しました", e);
+        setLoadError(true);
       });
   };
 
@@ -423,6 +438,19 @@ export default function Home() {
               onClick={() => toggleTopicFavorite(q.topicId ?? q.id)}
               inactiveColor={INK_SUB}
             />
+            {favError && (
+              <p
+                role="alert"
+                style={{
+                  margin: "6px 0 0",
+                  fontSize: 12,
+                  lineHeight: 1.7,
+                  color: DUE_URGENT,
+                }}
+              >
+                {favError}
+              </p>
+            )}
           </div>
         )}
         <button
@@ -522,7 +550,7 @@ export default function Home() {
             <span>
               集印{" "}
               <b style={{ fontFamily: SERIF, color: SHU, fontSize: 15 }}>
-                {loaded ? sealCount : "—"}
+                {loaded && !loadError ? sealCount : "—"}
               </b>
               /{TOTAL_TOPICS}
             </span>
@@ -547,6 +575,54 @@ export default function Home() {
           >
             成績を読み込んでいます…
           </div>
+        ) : loadError ? (
+          // 読み込み失敗。記録ゼロと同じ表示(全マス未着手・「まだ記録がありません」)に
+          // すると、記録が消えたと誤解させる。召喚状・検地帳・成長グラフ・控えは出さない
+          // (控えの復元で、読めなかっただけの記録を上書きさせないため)。
+          <>
+            <div
+              role="alert"
+              style={{
+                background: CARD,
+                border: `1px solid ${LINE}`,
+                borderLeft: `4px solid ${SHU}`,
+                borderRadius: RADIUS,
+                padding: "16px 18px",
+                marginBottom: 12,
+                fontSize: 13.5,
+                lineHeight: 1.8,
+              }}
+            >
+              {ATTEMPTS_LOAD_ERROR}
+              <button
+                onClick={() => window.location.reload()}
+                style={{
+                  ...outlineButton,
+                  display: "block",
+                  width: "100%",
+                  minHeight: 44,
+                  marginTop: 12,
+                  fontSize: 14,
+                  letterSpacing: 3,
+                }}
+              >
+                ページを再読み込みする
+              </button>
+            </div>
+            <button
+              onClick={() => router.push("/play")}
+              style={{
+                ...outlineButton,
+                width: "100%",
+                minHeight: 48,
+                marginBottom: 12,
+                fontSize: 14,
+                letterSpacing: 3,
+              }}
+            >
+              範囲を選んで始める(少量モードも)
+            </button>
+          </>
         ) : (
           <>
             {/* 本日の召喚状 */}
@@ -939,11 +1015,12 @@ export default function Home() {
                               key={topicId}
                               title={cellLabel}
                               aria-label={cellLabel}
-                              onClick={() =>
+                              onClick={() => {
+                                setFavError(null);
                                 setSel((cur) =>
                                   cur === topicId ? null : topicId,
-                                )
-                              }
+                                );
+                              }}
                               style={{
                                 aspectRatio: "1",
                                 minWidth: 0,
