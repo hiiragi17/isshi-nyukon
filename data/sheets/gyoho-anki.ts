@@ -5,21 +5,28 @@ import type { Sheet } from "@/types";
  * 35条/37条・監督処分ほか)。
  *
  * 数字・場所・記載事項を横断で表にして、直前に見直すためのコラム。
- * まだ一次ソース(e-Gov 等)の原文と突き合わせていないため `verified: false`
- * (CLAUDE.md の `verified` 運用。照合・承認は人が原文を見て行う)。
- * 照合表(下書き・全行⏳)は docs/verification/gyoho-verification.md の暗記シート節。
+ * 宅建業法・同法施行令・同法施行規則の e-Gov 原文と突き合わせ済みで `verified: true`
+ * (CLAUDE.md の `verified` 運用。照合表は docs/verification/gyoho-verification.md の暗記シート節)。
  */
 export const gyohoAnkiSheet: Sheet = {
   id: "gyoho-anki",
   title: "宅建業法・直前暗記",
   description:
     "宅建業法でよく問われる数字・場所・記載事項を表にまとめた1枚。営業保証金と保証協会、クーリング・オフ、手付金等の保全措置、35条と37条の比較、監督処分と免許など。",
-  law: "宅地建物取引業法・宅地建物取引業法施行規則",
-  verified: false,
-  source: { level: "unverified", answerLevel: "unverified" },
+  law: "宅地建物取引業法・宅地建物取引業法施行令・宅地建物取引業法施行規則",
+  verified: true,
+  source: {
+    level: "primary",
+    answerLevel: "primary",
+    note: "docs/verification/gyoho-verification.md「暗記シート(宅建業法・直前暗記)」の照合表(全行✅/⚠️、⏳なし)。e-Gov 法令検索の原文(hiiragi17 提示・2026-10-10)に当てた。条文に書かれていない読み(できる場所の具体例、告知書面に取引士の記名が不要、登記された権利は抹消予定でも説明、媒介・案内だけなら免許換え不要、保証協会の社員となった場合の取戻しに公告が不要など)を含む行は⚠️として照合表に明記し、hiiragi17 が承認した(2026-10-10)。",
+  },
   lawVersion: {
-    driftChecked: "unchecked",
-    note: "一次ソースとの照合も、法令基準日時点の版との差分確認もできていない。承認前は、条文の原文を確認してから使う。",
+    revisionId:
+      "宅地建物取引業法 327AC1000000176_20260401_507AC0000000068 / 宅地建物取引業法施行令 339CO0000000383_20260401_507CO0000000388 / 宅地建物取引業法施行規則 332M50004000012_20260401_507M60000802002",
+    verifiedAgainst: "2026-04-01",
+    examBasisDate: "2026-04-01",
+    driftChecked: "not_required",
+    note: "照合に使った宅建業法・同法施行令・同法施行規則の版は、いずれも施行日が令和8年4月1日で法令基準日そのもののため、差分確認は不要。examBasisDate は導出値(不動産適正取引推進機構の試験案内が「試験を実施する年度の4月1日現在施行されているもの」と相対的に定めている)。年度が変わったら再導出し、各法令の版との関係を再確認する(not_required は版と基準日が一致するときだけ使える)。",
   },
   intro: [
     "全部を丸暗記する必要はありません。業法で毎年のように問われる数字・場所・記載事項だけを、表で並べて覚えます。",
