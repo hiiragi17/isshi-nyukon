@@ -392,3 +392,33 @@ test("判決: 保存できなかった解答があれば、判決画面でも伝
       .filter({ hasText: "この端末に保存できなかったため成績に残っていません" }),
   ).toBeVisible();
 });
+
+/**
+ * 範囲選択画面は、通勤中の短いセッションに合う「少量で始める」を先頭に置き、
+ * 使う頻度の低い始め方はたたんでおく。最初の画面(390×844)に少量の開始ボタンが
+ * 見えること、たたんだ始め方・遊び方にも到達できることを確かめる。
+ */
+test("範囲選択: 少量モードが最初の画面に見え、たたんだ始め方にも到達できる", async ({
+  page,
+}) => {
+  await page.goto("/play");
+
+  await expect(
+    page.getByRole("button", { name: "5肢", exact: true }),
+  ).toBeInViewport();
+  for (const n of ["10肢", "20肢"]) {
+    await expect(page.getByRole("button", { name: n, exact: true })).toBeVisible();
+  }
+
+  // たたんだ項目は開くまで見えず、開けば既存の始め方がそろっている
+  const yokou = page.getByRole("button", { name: /予行に臨む/ });
+  await expect(yokou).toBeHidden();
+  await page.getByText(/ほかの始め方/).click();
+  await expect(yokou).toBeVisible();
+  await expect(page.getByText("免除対象の5科目だけ解く")).toBeVisible();
+  await expect(page.getByText("この分野だけ、数肢だけ")).toBeVisible();
+
+  await expect(page.getByText("三段で決着をつける")).toBeHidden();
+  await page.getByText("遊び方・用語の案内").click();
+  await expect(page.getByText("三段で決着をつける")).toBeVisible();
+});
