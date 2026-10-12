@@ -525,7 +525,7 @@ export default function PlayPage() {
             ← 検地帳
           </button>
           <div style={{ textAlign: "center", margin: "24px 0 32px" }}>
-            <Eyebrow>宅建・権利関係(民法)</Eyebrow>
+            <Eyebrow>宅建・全肢一問一答</Eyebrow>
             <h1
               style={{
                 fontFamily: SERIF,
@@ -543,6 +543,74 @@ export default function PlayPage() {
               全部の肢に、理由をつけて決着をつけるゲーム。
             </p>
           </div>
+
+          {totalItems >= 5 && (
+            <div style={{ ...card, marginBottom: 16 }}>
+              <Eyebrow>少量で始める</Eyebrow>
+              <div
+                style={{
+                  fontFamily: SERIF,
+                  fontWeight: 700,
+                  fontSize: 15,
+                  margin: "4px 0 4px",
+                }}
+              >
+                通勤のスキマに、数肢だけ
+              </div>
+              <p
+                style={{
+                  fontSize: 12.5,
+                  color: MUTED,
+                  margin: "0 0 12px",
+                  lineHeight: 1.8,
+                }}
+              >
+                下の「審理する論点を選ぶ」で選んだ範囲(最初は全論点)から、弱点・未着手を優先して出題します。
+              </p>
+              <div style={{ display: "flex", gap: 8 }}>
+                {[5, 10, 20]
+                  .filter((s) => s <= totalItems)
+                  .map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => startQuick(s)}
+                      style={{
+                        ...outlineButton,
+                        flex: 1,
+                        minHeight: 44,
+                        padding: "12px 0",
+                        fontSize: 15,
+                        letterSpacing: 2,
+                      }}
+                    >
+                      {s}肢
+                    </button>
+                  ))}
+              </div>
+            </div>
+          )}
+
+          {weakItems.length > 0 && (
+            <button
+              onClick={startWeak}
+              style={{
+                width: "100%",
+                padding: "14px 0",
+                fontSize: 15,
+                fontWeight: 700,
+                marginBottom: 16,
+                fontFamily: SERIF,
+                letterSpacing: 3,
+                color: SHU,
+                background: CARD,
+                border: `2px solid ${SHU}`,
+                borderRadius: RADIUS,
+                cursor: "pointer",
+              }}
+            >
+              弱点だけ復習する({weakItems.length}肢)
+            </button>
+          )}
 
           <div style={{ ...card, marginBottom: 16 }}>
             <Eyebrow>出題範囲</Eyebrow>
@@ -913,74 +981,24 @@ export default function PlayPage() {
             </button>
           </div>
 
-          {weakItems.length > 0 && (
-            <button
-              onClick={startWeak}
+          {/* 使う頻度が低い始め方は、最初の画面を軽くするためたたんでおく */}
+          <details style={{ marginBottom: 16 }}>
+            <summary
               style={{
-                width: "100%",
-                padding: "14px 0",
-                fontSize: 15,
-                fontWeight: 700,
-                marginBottom: 16,
+                minHeight: 44,
+                display: "flex",
+                alignItems: "center",
                 fontFamily: SERIF,
-                letterSpacing: 3,
-                color: SHU,
-                background: CARD,
-                border: `2px solid ${SHU}`,
-                borderRadius: RADIUS,
+                fontWeight: 700,
+                fontSize: 14,
+                letterSpacing: 2,
+                color: AI_BLUE,
                 cursor: "pointer",
               }}
             >
-              弱点だけ復習する({weakItems.length}肢)
-            </button>
-          )}
-
-          {totalItems >= 5 && (
-            <div style={{ ...card, marginBottom: 16 }}>
-              <Eyebrow>少量で始める</Eyebrow>
-              <div
-                style={{
-                  fontFamily: SERIF,
-                  fontWeight: 700,
-                  fontSize: 15,
-                  margin: "4px 0 4px",
-                }}
-              >
-                通勤のスキマに、数肢だけ
-              </div>
-              <p
-                style={{
-                  fontSize: 12.5,
-                  color: MUTED,
-                  margin: "0 0 12px",
-                  lineHeight: 1.8,
-                }}
-              >
-                選択中の範囲から、弱点・未着手を優先して出題します。
-              </p>
-              <div style={{ display: "flex", gap: 8 }}>
-                {[5, 10, 20]
-                  .filter((s) => s <= totalItems)
-                  .map((s) => (
-                    <button
-                      key={s}
-                      onClick={() => startQuick(s)}
-                      style={{
-                        ...outlineButton,
-                        flex: 1,
-                        minHeight: 44,
-                        padding: "12px 0",
-                        fontSize: 15,
-                        letterSpacing: 2,
-                      }}
-                    >
-                      {s}肢
-                    </button>
-                  ))}
-              </div>
-            </div>
-          )}
-
+              ほかの始め方(5問免除・分野別・予行演習)
+            </summary>
+            <div style={{ marginTop: 8 }}>
           {MENJO_ITEM_COUNT >= 5 && (
             <div style={{ ...card, marginBottom: 16 }}>
               <Eyebrow>{MENJO_LABEL}科目</Eyebrow>
@@ -1163,7 +1181,26 @@ export default function PlayPage() {
               </button>
             </div>
           )}
+            </div>
+          </details>
 
+          <details style={{ marginBottom: 16 }}>
+            <summary
+              style={{
+                minHeight: 44,
+                display: "flex",
+                alignItems: "center",
+                fontFamily: SERIF,
+                fontWeight: 700,
+                fontSize: 14,
+                letterSpacing: 2,
+                color: AI_BLUE,
+                cursor: "pointer",
+              }}
+            >
+              遊び方・用語の案内
+            </summary>
+            <div style={{ marginTop: 8 }}>
           {/* 遊び方・用語の案内は一度読めば足りる説明なので、開廷ボタンより下に置く */}
           <div style={{ ...card, marginBottom: 16 }}>
             <Eyebrow>遊び方</Eyebrow>
@@ -1210,6 +1247,8 @@ export default function PlayPage() {
               </span>
             </div>
           </div>
+            </div>
+          </details>
 
           <p style={{ fontSize: 11.5, color: MUTED, textAlign: "center", marginTop: 14 }}>
             ※ 成績はこの端末(ブラウザ)に保存されます
