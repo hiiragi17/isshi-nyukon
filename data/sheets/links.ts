@@ -77,8 +77,8 @@ export const SHEET_LINKS: Record<string, SheetLink> = {
   q53: { sheetId: "zei-anki", sectionId: "zei-kantei" }, // 不動産鑑定評価
   q54: { sheetId: "zei-anki", sectionId: "zei-kikou" }, // 住宅金融支援機構
   q57: { sheetId: "zei-anki", sectionId: "zei-keihin" }, // 景品表示法
-  q55: { sheetId: "zei-anki", sectionId: "zei-tochi" }, // 土地
-  q56: { sheetId: "zei-anki", sectionId: "zei-tatemono" }, // 建物
+  q55: { sheetId: "zei-tochi-tatemono", sectionId: "zei-tochi" }, // 土地
+  q56: { sheetId: "zei-tochi-tatemono", sectionId: "zei-tatemono" }, // 建物
 };
 
 /** 画面に出すリンク。見出しは暗記シート側の節の見出しを使う(二重管理しない) */
