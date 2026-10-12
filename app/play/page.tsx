@@ -493,6 +493,14 @@ export default function PlayPage() {
       0,
     );
     const allSelected = selected.size === QUESTIONS.length;
+    // 選択数は進捗サマリ(完璧 X/Y論点)と同じく topicId 単位で数える(頻出論点の2周目は1論点)
+    const countSelectedTopics = (indices: number[]): number =>
+      new Set(
+        indices
+          .filter((i) => selected.has(i))
+          .map((i) => QUESTIONS[i].topicId ?? QUESTIONS[i].id),
+      ).size;
+    const selectedTopics = countSelectedTopics([...selected]);
     const menjoOnly =
       selected.size === MENJO_INDICES.length &&
       MENJO_INDICES.every((i) => selected.has(i));
@@ -667,7 +675,7 @@ export default function PlayPage() {
               }}
             >
               <span style={{ fontFamily: SANS, fontSize: 12, color: MUTED }}>
-                {selected.size}/{QUESTIONS.length} 論点を選択中
+                {selectedTopics}/{UNIQUE_TOPIC_COUNT} 論点を選択中(全{totalItems}肢)
               </span>
               <button
                 type="button"
@@ -707,9 +715,7 @@ export default function PlayPage() {
               {CATEGORIES.map((cat, catIdx) => {
                 const catIndices = CATEGORY_INDICES.get(cat) ?? [];
                 const catAllOn = catIndices.every((i) => selected.has(i));
-                const catSelected = catIndices.filter((i) =>
-                  selected.has(i),
-                ).length;
+                const catSelected = countSelectedTopics(catIndices);
                 const catSummary = summarizeProgress(
                   (CATEGORY_TOPIC_IDS.get(cat) ?? []).map(groupStat),
                 );
@@ -804,7 +810,7 @@ export default function PlayPage() {
                           {/* たたんでいる間はチェックが見えないので、選択数を出しておく */}
                           {!catOpen && (
                             <span style={{ whiteSpace: "nowrap", color: MUTED }}>
-                              選択 {catSelected}件
+                              選択 {catSelected}論点
                             </span>
                           )}
                         </span>
@@ -893,6 +899,8 @@ export default function PlayPage() {
                             </span>
                             <span style={{ color: MUTED, fontWeight: 400, fontSize: 12 }}>
                               {qq.law}
+                              {TOPIC_ID_TO_QIS.get(qq.topicId ?? qq.id)![0] !== i &&
+                                " ・ 2周目"}
                               {tierLabel && ` ・ ${tierLabel}`}
                               {isMenjoQuestion(qq) && ` ・ ${MENJO_LABEL}`}
                             </span>
