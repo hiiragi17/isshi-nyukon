@@ -406,6 +406,9 @@ test("範囲選択: 少量モードが最初の画面に見え、たたんだ始
   await expect(
     page.getByRole("button", { name: "5肢", exact: true }),
   ).toBeInViewport();
+  for (const n of ["10肢", "20肢"]) {
+    await expect(page.getByRole("button", { name: n, exact: true })).toBeVisible();
+  }
 
   // たたんだ項目は開くまで見えず、開けば既存の始め方がそろっている
   const yokou = page.getByRole("button", { name: /予行に臨む/ });
