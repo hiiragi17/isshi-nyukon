@@ -985,9 +985,7 @@ export default function PlayPage() {
           <details style={{ marginBottom: 16 }}>
             <summary
               style={{
-                minHeight: 44,
-                display: "flex",
-                alignItems: "center",
+                padding: "14px 0",
                 fontFamily: SERIF,
                 fontWeight: 700,
                 fontSize: 14,
@@ -1187,9 +1185,7 @@ export default function PlayPage() {
           <details style={{ marginBottom: 16 }}>
             <summary
               style={{
-                minHeight: 44,
-                display: "flex",
-                alignItems: "center",
+                padding: "14px 0",
                 fontFamily: SERIF,
                 fontWeight: 700,
                 fontSize: 14,
