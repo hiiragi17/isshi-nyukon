@@ -422,3 +422,33 @@ test("範囲選択: 少量モードが最初の画面に見え、たたんだ始
   await page.getByText("遊び方・用語の案内").click();
   await expect(page.getByText("三段で決着をつける")).toBeVisible();
 });
+
+/**
+ * 範囲選択画面の「論点」の数え方は、全体の進捗(完璧 X/Y論点)・選択数・分野別の
+ * いずれも topicId 単位で揃える。頻出論点の2周目は別の論点としては数えず、
+ * 一覧では「2周目」と付記する。
+ */
+test("範囲選択: 論点数の表示が同じ単位で揃い、2周目が付記される", async ({
+  page,
+}) => {
+  await page.goto("/play");
+
+  const progress = await page.getByText(/^完璧 \d+\/\d+論点/).first().innerText();
+  const totalTopics = Number(progress.match(/完璧 \d+\/(\d+)論点/)?.[1]);
+  expect(totalTopics).toBeGreaterThan(0);
+
+  // 初期状態は全選択。選択数の分母・分子が、進捗の論点数と一致する
+  await expect(
+    page.getByText(`${totalTopics}/${totalTopics} 論点を選択中`),
+  ).toBeVisible();
+
+  // 全解除すると 0 に戻り、肢数の補足は付かない(開廷ボタンの表記と同じ単位)
+  await page.getByRole("button", { name: "全解除", exact: true }).click();
+  await expect(
+    page.getByText(new RegExp(`^0/${totalTopics} 論点を選択中`)),
+  ).toBeVisible();
+
+  // 頻出論点の2周目は、一覧で「2周目」と付記される
+  await page.getByRole("button", { name: /^宅建業法/, expanded: false }).click();
+  await expect(page.getByText(/・ 2周目/).first()).toBeVisible();
+});
