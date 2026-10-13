@@ -418,7 +418,7 @@ export function ZenshiEngine({
                   onClick={toggleItemFavorite}
                 />
                 {favorited && (
-                  <span style={{ fontSize: 12, color: MUTED }}>
+                  <span style={{ fontSize: 12, color: MUTED, marginLeft: 8 }}>
                     検地帳の「お気に入り」から出題できます
                   </span>
                 )}
