@@ -185,7 +185,9 @@ export function BackupPanel({
         >
           成績はこの端末(ブラウザ)にのみ保存されています。控えを書き出して
           保管しておけば、端末やブラウザを変えても復元できます。
-          控えには成績の履歴とお気に入りが含まれます。
+          {exportFavorites || favoritesLoading
+            ? "控えには成績の履歴とお気に入りが含まれます。"
+            : "お気に入りを読み込めなかったため、今回の控えには成績の履歴だけが含まれます。"}
         </p>
 
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>

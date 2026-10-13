@@ -88,6 +88,13 @@ describe("BackupPanel — 書き出し(お気に入りを含める)", () => {
     const json = await clickExportAndReadJson();
     expect(json).not.toHaveProperty("favorites");
     expect(screen.getByText(/お気に入りは読み込めなかったため含まれていません/)).toBeInTheDocument();
+    // 説明文も、実際に書き出す中身と食い違わない
+    expect(
+      screen.getByText(/今回の控えには成績の履歴だけが含まれます/),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(/控えには成績の履歴とお気に入りが含まれます/),
+    ).not.toBeInTheDocument();
   });
 
   it("成績もお気に入りも無いときだけ、書き出せない", () => {

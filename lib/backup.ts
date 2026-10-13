@@ -11,6 +11,7 @@
  * 不正・非対応の JSON は書き戻す前に BackupError で弾く。
  */
 import type { Attempt } from "@/types";
+import { parseItemKey } from "@/lib/storage";
 
 /**
  * 控えのスキーマ識別子。storage.ts の保存キー(:v1)と歩調を合わせ、
@@ -64,9 +65,16 @@ function isAttempt(v: unknown): v is Attempt {
   );
 }
 
-/** お気に入りとして妥当な形か(文字列だけの配列) */
+/**
+ * お気に入りとして妥当な形か。itemKey(`${questionId}-${choiceIndex}`)の形式の文字列だけの配列。
+ * 形式だけを見る。問題データから消えた問題のキーは、読み込み側が無視するので弾かない
+ * (問題の入れ替え前に書き出した控えも復元できるようにするため)。
+ */
 function isFavoriteList(v: unknown): v is string[] {
-  return Array.isArray(v) && v.every((k) => typeof k === "string");
+  return (
+    Array.isArray(v) &&
+    v.every((k) => typeof k === "string" && parseItemKey(k) !== null)
+  );
 }
 
 /**

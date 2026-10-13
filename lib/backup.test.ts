@@ -93,6 +93,36 @@ describe("お気に入りを含む控え(#507)", () => {
   });
 });
 
+describe("お気に入りの形式の検証(#507)", () => {
+  const withFavorites = (favorites: unknown) =>
+    JSON.stringify({
+      schema: BACKUP_SCHEMA,
+      exportedAt: "2026-07-15T00:00:00.000Z",
+      attempts: SAMPLE,
+      favorites,
+    });
+
+  it("itemKey の形式でない文字列が混ざる控えは弾く(成績にも触れない)", () => {
+    for (const bad of ["q1", "q1-", "-0", "q1-x", "q1- 1", "q1-1.5", ""]) {
+      expect(() => parseBackupFile(withFavorites(["q1-0", bad]))).toThrow(
+        BackupError,
+      );
+    }
+  });
+
+  it("questionId にハイフンを含む itemKey も受け入れる", () => {
+    expect(parseBackupFile(withFavorites(["q-sp-1-0"])).favorites).toEqual([
+      "q-sp-1-0",
+    ]);
+  });
+
+  it("形式が正しければ、いまの問題データに無い問題のキーでも弾かない(問題の入れ替え前の控えを復元できる)", () => {
+    expect(parseBackupFile(withFavorites(["removed-q-0"])).favorites).toEqual([
+      "removed-q-0",
+    ]);
+  });
+});
+
 describe("parseBackup — 不正な控えは書き戻す前に弾く", () => {
   it("壊れた JSON は BackupError", () => {
     expect(() => parseBackup("{broken")).toThrow(BackupError);
