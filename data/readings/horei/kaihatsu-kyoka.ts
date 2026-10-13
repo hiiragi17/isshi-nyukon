@@ -273,7 +273,7 @@ export const kaihatsuKyokaReading: Reading = {
           },
         ],
         article: "29条",
-        cite: "都市計画法29条1項柱書・1号・3号、2項2号(docs/verification/horei-verification.md「追加照合(#129分)」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領・Mami 2026-07-31承認)",
+        cite: "都市計画法29条1項柱書・1号・3号、2項2号(docs/verification/horei-verification.md「追加照合(#129分)」記載の逐語原文より転記。Mami 2026-07-31承認)",
       },
     },
     {
@@ -312,7 +312,7 @@ export const kaihatsuKyokaReading: Reading = {
           },
         ],
         article: "施行令21条",
-        cite: "都市計画法施行令21条柱書・4号・14号・17号・18号(docs/verification/horei-verification.md「追加照合(#248分)」記載の逐語原文より転記。hiiragi17提示・2026-08-27)",
+        cite: "都市計画法施行令21条柱書・4号・14号・17号・18号(docs/verification/horei-verification.md「追加照合(#248分)」記載の逐語原文より転記)",
       },
     },
     {
@@ -339,7 +339,7 @@ export const kaihatsuKyokaReading: Reading = {
           },
         ],
         article: "37条",
-        cite: "都市計画法37条(全文。docs/verification/horei-verification.md「追加照合(#129分)」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領・Mami 2026-07-31承認)",
+        cite: "都市計画法37条(全文。docs/verification/horei-verification.md「追加照合(#129分)」記載の逐語原文より転記。Mami 2026-07-31承認)",
       },
     },
     {
@@ -395,7 +395,7 @@ export const kaihatsuKyokaReading: Reading = {
           },
         ],
         article: "施行令19条",
-        cite: "都市計画法施行令19条1項・2項(全文。docs/verification/horei-verification.md「追加照合(#129分)」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領・Mami 2026-07-31承認)",
+        cite: "都市計画法施行令19条1項・2項(全文。docs/verification/horei-verification.md「追加照合(#129分)」記載の逐語原文より転記。Mami 2026-07-31承認)",
       },
     },
   ],

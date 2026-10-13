@@ -153,7 +153,7 @@ export const eigyouHoshoukinReading: Reading = {
           },
         ],
         article: "宅建業法25条",
-        cite: "宅建業法25条(全文。hiiragi17提示・2026-10-04。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
+        cite: "宅建業法25条(全文。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
       },
     },
     {
@@ -174,7 +174,7 @@ export const eigyouHoshoukinReading: Reading = {
           },
         ],
         article: "宅建業法26条",
-        cite: "宅建業法26条(全文。hiiragi17提示・2026-10-04。hoshou-kyoukai.ts〔q32読み物〕の引用と同一)",
+        cite: "宅建業法26条(全文。hoshou-kyoukai.ts〔q32読み物〕の引用と同一)",
       },
     },
     {
@@ -240,7 +240,7 @@ export const eigyouHoshoukinReading: Reading = {
           },
         ],
         article: "宅建業法施行規則15条",
-        cite: "宅建業法施行規則15条(全文。hiiragi17提示・2026-10-04。Law RevisionID 332M50004000012_20260401_507M60000802002)",
+        cite: "宅建業法施行規則15条(全文。Law RevisionID 332M50004000012_20260401_507M60000802002)",
       },
     },
     {
@@ -282,7 +282,7 @@ export const eigyouHoshoukinReading: Reading = {
           { label: "2項", text: "前項の権利の実行に関し必要な事項は、法務省令・国土交通省令で定める。" },
         ],
         article: "宅建業法27条",
-        cite: "宅建業法27条(全文。hiiragi17提示・2026-10-04)",
+        cite: "宅建業法27条(全文)",
       },
     },
     {
@@ -320,7 +320,7 @@ export const eigyouHoshoukinReading: Reading = {
           { label: "3項", text: "第二十五条第三項の規定は、第一項の規定により供託する場合に準用する。" },
         ],
         article: "宅建業法28条",
-        cite: "宅建業法28条(全文。hiiragi17提示・2026-10-04。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
+        cite: "宅建業法28条(全文。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
       },
     },
     {
@@ -351,7 +351,7 @@ export const eigyouHoshoukinReading: Reading = {
           },
         ],
         article: "宅地建物取引業者営業保証金規則2条〜5条",
-        cite: "宅地建物取引業者営業保証金規則2条〜5条(全文。hiiragi17提示・2026-10-04。Law RevisionID 332M50004010001_20210101_502M60000810003。2条〜4条の条見出しは提示された原文に含まれていないため記載しない)",
+        cite: "宅地建物取引業者営業保証金規則2条〜5条(全文。Law RevisionID 332M50004010001_20210101_502M60000810003。2条〜4条の条見出しは提示された原文に含まれていないため記載しない)",
       },
     },
     {

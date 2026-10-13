@@ -258,7 +258,7 @@ export const kukakuSeiriReading: Reading = {
           },
         ],
         article: "99条",
-        cite: "土地区画整理法99条1項〜3項(全文。1項はdocs/verification/horei-verification.md「土地区画整理法 — q50 の根拠」記載の逐語原文より転記〔hiiragi17提示・2026-07-30受領〕。2項・3項はhiiragi17がこの会話で提示したe-Gov逐語原文〔2026-09-05受領〕より転記)",
+        cite: "土地区画整理法99条1項〜3項(全文。1項はdocs/verification/horei-verification.md「土地区画整理法 — q50 の根拠」記載の逐語原文より転記。2項・3項はe-Gov逐語原文より転記)",
       },
     },
     {
@@ -274,7 +274,7 @@ export const kukakuSeiriReading: Reading = {
           },
         ],
         article: "104条",
-        cite: "土地区画整理法104条1項(全文。docs/verification/horei-verification.md「土地区画整理法 — q50 の根拠」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "土地区画整理法104条1項(全文。docs/verification/horei-verification.md「土地区画整理法 — q50 の根拠」記載の逐語原文より転記)",
       },
     },
     {
@@ -300,7 +300,7 @@ export const kukakuSeiriReading: Reading = {
             text: "第九十六条第一項又は第二項の規定により換地計画において定められた保留地は、前条第四項の公告があつた日の翌日において、施行者が取得する。",
           },
         ],
-        cite: "土地区画整理法96条1項・2項(全文。docs/verification/horei-verification.md「土地区画整理法 — q50 の根拠」記載の逐語原文および、hiiragi17がこの会話で提示した96条全文〔2026-09-05受領〕より転記)・104条11項(全文。同シート同節記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "土地区画整理法96条1項・2項(全文。docs/verification/horei-verification.md「土地区画整理法 — q50 の根拠」記載の逐語原文および96条全文(e-Gov原文)より転記)・104条11項(全文。同シート同節記載の逐語原文より転記)",
       },
     },
     {
@@ -316,7 +316,7 @@ export const kukakuSeiriReading: Reading = {
           },
         ],
         article: "76条",
-        cite: "土地区画整理法76条1項(柱書。全文。docs/verification/horei-verification.md「土地区画整理法 — q50 の根拠」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "土地区画整理法76条1項(柱書。全文。docs/verification/horei-verification.md「土地区画整理法 — q50 の根拠」記載の逐語原文より転記)",
       },
     },
   ],

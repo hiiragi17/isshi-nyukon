@@ -126,7 +126,7 @@ export const kanriKanrishaHoushikiReading: Reading = {
           },
         ],
         article: "宅建業法施行規則16条の2",
-        cite: "宅地建物取引業法施行規則16条の2柱書・9号(hiiragi17提示・2026-08-10、2026-09-14にe-Gov法令検索でも再確認)",
+        cite: "宅地建物取引業法施行規則16条の2柱書・9号(、2026-09-14にe-Gov法令検索でも再確認)",
       },
     },
   ],

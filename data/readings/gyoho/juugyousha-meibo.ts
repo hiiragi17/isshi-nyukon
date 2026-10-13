@@ -98,7 +98,7 @@ export const juugyoushaMeiboReading: Reading = {
           },
         ],
         article: "宅建業法48条",
-        cite: "宅建業法48条3項・4項(全文。gyoho-verification.md「q120」節・hiiragi17提示・2026-09-16で確認済みの原文を再利用)",
+        cite: "宅建業法48条3項・4項(全文。gyoho-verification.md「q120」節・で確認済みの原文を再利用)",
       },
     },
     {
@@ -146,7 +146,7 @@ export const juugyoushaMeiboReading: Reading = {
           },
         ],
         article: "宅建業法施行規則17条の2",
-        cite: "宅建業法施行規則17条の2(全4項。全文。hiiragi17提示・2026-10-02)",
+        cite: "宅建業法施行規則17条の2(全4項。全文)",
       },
     },
     {
@@ -204,7 +204,7 @@ export const juugyoushaMeiboReading: Reading = {
           },
         ],
         article: "宅建業法50条",
-        cite: "宅建業法50条1項・2項(全文。gyoho-verification.md「q119」「q120」節・hiiragi17提示・2026-09-15/16で確認済みの原文を再利用)",
+        cite: "宅建業法50条1項・2項(全文。gyoho-verification.md「q119」「q120」節・/16で確認済みの原文を再利用)",
       },
     },
     {
@@ -292,7 +292,7 @@ export const juugyoushaMeiboReading: Reading = {
           },
         ],
         article: "宅建業法施行規則19条",
-        cite: "宅建業法施行規則19条1項(全5号。全文。gyoho-verification.md「q119」「q120」節・hiiragi17提示・2026-09-15/16で確認済みの原文を再利用)・2項(全6号)・3項(全文。hiiragi17提示・2026-10-02)",
+        cite: "宅建業法施行規則19条1項(全5号。全文。gyoho-verification.md「q119」「q120」節・/16で確認済みの原文を再利用)・2項(全6号)・3項(全文)",
       },
     },
     {

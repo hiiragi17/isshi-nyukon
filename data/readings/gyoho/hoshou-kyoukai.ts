@@ -151,7 +151,7 @@ export const hoshouKyoukaiReading: Reading = {
           },
         ],
         article: "宅建業法64条の7",
-        cite: "宅建業法64条の7(全文。hiiragi17提示・2026-08-12)",
+        cite: "宅建業法64条の7(全文)",
       },
     },
     {
@@ -175,7 +175,7 @@ export const hoshouKyoukaiReading: Reading = {
           { label: "5項", text: "第一項の権利の実行に関し必要な事項は法務省令・国土交通省令で、第二項の認証に関し必要な事項は国土交通省令で定める。" },
         ],
         article: "宅建業法64条の8",
-        cite: "宅建業法64条の8(全文。hiiragi17提示・2026-08-12)",
+        cite: "宅建業法64条の8(全文)",
       },
     },
     {
@@ -210,7 +210,7 @@ export const hoshouKyoukaiReading: Reading = {
           },
         ],
         article: "宅建業法64条の9",
-        cite: "宅建業法64条の9(全文。hiiragi17提示・2026-08-10)",
+        cite: "宅建業法64条の9(全文)",
       },
     },
     {
@@ -244,7 +244,7 @@ export const hoshouKyoukaiReading: Reading = {
           { label: "6項", text: "第三十条第三項の規定は、第一項の規定により弁済業務保証金を取りもどす場合に準用する。" },
         ],
         article: "宅建業法64条の11",
-        cite: "宅建業法64条の11(全文。hiiragi17提示・2026-08-12)",
+        cite: "宅建業法64条の11(全文)",
       },
     },
     {
@@ -266,7 +266,7 @@ export const hoshouKyoukaiReading: Reading = {
           },
           { label: "26条2項", text: "前条第一項及び第三項から第五項までの規定は、前項の規定により供託する場合に準用する。" },
         ],
-        cite: "宅建業法64条の15(hiiragi17提示・2026-08-12)・26条(全文。hiiragi17提示・2026-08-10)",
+        cite: "宅建業法64条の15・26条(全文)",
       },
     },
     {

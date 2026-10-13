@@ -103,7 +103,7 @@ export const gyoushaMeiboReading: Reading = {
           },
         ],
         article: "宅建業法8条",
-        cite: "宅建業法8条(全文。hiiragi17提示・2026-10-04)",
+        cite: "宅建業法8条(全文)",
       },
     },
     {
@@ -168,7 +168,7 @@ export const gyoushaMeiboReading: Reading = {
           { label: "八号", text: "その他国土交通省令で定める書面", indent: true },
         ],
         article: "宅建業法4条",
-        cite: "宅建業法4条(1項・2項の全文。hiiragi17提示・2026-10-03。menkyo-todokede.ts〔q72読み物〕の引用と同一)",
+        cite: "宅建業法4条(1項・2項の全文。menkyo-todokede.ts〔q72読み物〕の引用と同一)",
       },
     },
     {
@@ -189,7 +189,7 @@ export const gyoushaMeiboReading: Reading = {
           },
         ],
         article: "宅建業法9条",
-        cite: "宅建業法9条(全文。hiiragi17提示・2026-08-11。menkyo-todokede.ts〔q72読み物〕の引用と同一)",
+        cite: "宅建業法9条(全文。menkyo-todokede.ts〔q72読み物〕の引用と同一)",
       },
     },
     {
@@ -229,7 +229,7 @@ export const gyoushaMeiboReading: Reading = {
           },
         ],
         article: "宅建業法10条",
-        cite: "宅建業法10条(全文。hiiragi17提示・2026-10-04)",
+        cite: "宅建業法10条(全文)",
       },
     },
     {
@@ -250,7 +250,7 @@ export const gyoushaMeiboReading: Reading = {
           },
         ],
         article: "宅建業法施行規則5条",
-        cite: "宅建業法施行規則5条(全文。hiiragi17提示・2026-10-04)",
+        cite: "宅建業法施行規則5条(全文)",
       },
     },
     {
@@ -297,7 +297,7 @@ export const gyoushaMeiboReading: Reading = {
           },
         ],
         article: "宅建業法11条",
-        cite: "宅建業法11条(全文。hiiragi17提示・2026-10-03および2026-10-04。menkyo-todokede.ts〔q72読み物〕の引用と同一)",
+        cite: "宅建業法11条(全文。および2026-10-04。menkyo-todokede.ts〔q72読み物〕の引用と同一)",
       },
     },
     {
@@ -339,7 +339,7 @@ export const gyoushaMeiboReading: Reading = {
           },
         ],
         article: "宅建業法施行規則6条",
-        cite: "宅建業法施行規則6条(全文。hiiragi17提示・2026-10-04)",
+        cite: "宅建業法施行規則6条(全文)",
       },
     },
     {

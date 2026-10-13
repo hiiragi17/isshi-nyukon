@@ -125,7 +125,7 @@ export const menkyoYohiReading: Reading = {
           },
         ],
         article: "宅建業法2条",
-        cite: "宅建業法2条(全文。gyoho-verification.md「q65」節の2026-10-02追記に記録した、hiiragi17提示・2026-10-02の原文)",
+        cite: "宅建業法2条(全文。gyoho-verification.md「q65」節の2026-10-02追記に記録した、)",
       },
     },
     {
@@ -160,7 +160,7 @@ export const menkyoYohiReading: Reading = {
             text: "宅地建物取引業法（以下「法」という。）第二条第一号の政令で定める公共の用に供する施設は、広場及び水路とする。",
           },
         ],
-        cite: "宅建業法施行令1条(全文。gyoho-verification.md「q65」節の2026-10-02追記に記録した、hiiragi17提示・2026-10-02の原文)",
+        cite: "宅建業法施行令1条(全文。gyoho-verification.md「q65」節の2026-10-02追記に記録した、)",
       },
     },
     {
@@ -189,7 +189,7 @@ export const menkyoYohiReading: Reading = {
           },
         ],
         article: "宅建業法78条",
-        cite: "宅建業法78条(全文。gyoho-verification.md「q85」節・hiiragi17提示・2026-08-10で確認済みの原文を再利用)",
+        cite: "宅建業法78条(全文。gyoho-verification.md「q85」節・で確認済みの原文を再利用)",
       },
     },
     {
@@ -238,7 +238,7 @@ export const menkyoYohiReading: Reading = {
           },
         ],
         article: "宅建業法77条",
-        cite: "宅建業法77条(全文。gyoho-verification.md「q65」節の2026-10-02追記に記録した、hiiragi17提示・2026-10-02の原文)",
+        cite: "宅建業法77条(全文。gyoho-verification.md「q65」節の2026-10-02追記に記録した、)",
       },
     },
     {
@@ -256,7 +256,7 @@ export const menkyoYohiReading: Reading = {
           },
         ],
         article: "宅建業法3条",
-        cite: "宅建業法3条1項(全文。hiiragi17提示・2026-08-11。menkyo.ts〔q15読み物〕の引用と同一)",
+        cite: "宅建業法3条1項(全文。menkyo.ts〔q15読み物〕の引用と同一)",
       },
     },
     {

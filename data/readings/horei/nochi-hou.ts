@@ -232,7 +232,7 @@ export const nochiHouReading: Reading = {
           },
         ],
         article: "3条",
-        cite: "農地法3条1項柱書(令和7年6月1日施行版。docs/verification/horei-verification.md「農地法 — q24 の根拠(2026-07-30 受領)」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "農地法3条1項柱書(令和7年6月1日施行版。docs/verification/horei-verification.md「農地法 — q24 の根拠(2026-07-30 受領)」記載の逐語原文より転記)",
       },
     },
     {
@@ -255,7 +255,7 @@ export const nochiHouReading: Reading = {
           },
         ],
         article: "4条",
-        cite: "農地法4条1項柱書・7号(令和7年6月1日施行版。docs/verification/horei-verification.md「農地法 — q24 の根拠(2026-07-30 受領)」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "農地法4条1項柱書・7号(令和7年6月1日施行版。docs/verification/horei-verification.md「農地法 — q24 の根拠(2026-07-30 受領)」記載の逐語原文より転記)",
       },
     },
     {
@@ -278,7 +278,7 @@ export const nochiHouReading: Reading = {
           },
         ],
         article: "5条",
-        cite: "農地法5条1項柱書・6号(令和7年6月1日施行版。docs/verification/horei-verification.md「農地法 — q24 の根拠(2026-07-30 受領)」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "農地法5条1項柱書・6号(令和7年6月1日施行版。docs/verification/horei-verification.md「農地法 — q24 の根拠(2026-07-30 受領)」記載の逐語原文より転記)",
       },
     },
   ],

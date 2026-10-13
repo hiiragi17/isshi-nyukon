@@ -173,7 +173,7 @@ export const kenchikuKakuninReading: Reading = {
           },
         ],
         article: "6条",
-        cite: "建築基準法6条1項柱書(1文目)・1号〜3号、別表第一(い)欄(令和8年4月1日施行版。docs/verification/horei-verification.md「建築基準法(建築確認)— q47 の根拠」記載の逐語原文より転記。柱書・1号・別表第一(い)欄はhiiragi17提示・2026-07-30受領、柱書の脱落していた括弧書き2箇所と2号・3号はhiiragi17提示・2026-09-05受領)",
+        cite: "建築基準法6条1項柱書(1文目)・1号〜3号、別表第一(い)欄(令和8年4月1日施行版。docs/verification/horei-verification.md「建築基準法(建築確認)— q47 の根拠」記載の逐語原文より転記。柱書・1号・別表第一(い)欄は、柱書の脱落していた括弧書き2箇所と2号・3号は)",
       },
     },
     {
@@ -189,7 +189,7 @@ export const kenchikuKakuninReading: Reading = {
           },
         ],
         article: "6条",
-        cite: "建築基準法6条2項(令和8年4月1日施行版。docs/verification/horei-verification.md「建築基準法(建築確認)— q47 の根拠」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "建築基準法6条2項(令和8年4月1日施行版。docs/verification/horei-verification.md「建築基準法(建築確認)— q47 の根拠」記載の逐語原文より転記)",
       },
     },
     {
@@ -205,7 +205,7 @@ export const kenchikuKakuninReading: Reading = {
           },
         ],
         article: "87条",
-        cite: "建築基準法87条1項前段(令和8年4月1日施行版。docs/verification/horei-verification.md「建築基準法(建築確認)— q47 の根拠」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "建築基準法87条1項前段(令和8年4月1日施行版。docs/verification/horei-verification.md「建築基準法(建築確認)— q47 の根拠」記載の逐語原文より転記)",
       },
     },
     {
@@ -245,7 +245,7 @@ export const kenchikuKakuninReading: Reading = {
           { label: "137条の18十号", text: "待合、料理店", indent: true },
           { label: "137条の18十一号", text: "映画スタジオ、テレビスタジオ", indent: true },
         ],
-        cite: "建築基準法施行令137条の18(令和7年12月1日施行版。docs/verification/horei-verification.md「87条1項の委任先」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "建築基準法施行令137条の18(令和7年12月1日施行版。docs/verification/horei-verification.md「87条1項の委任先」記載の逐語原文より転記)",
       },
     },
     {
@@ -276,7 +276,7 @@ export const kenchikuKakuninReading: Reading = {
           },
         ],
         article: "7条の6",
-        cite: "建築基準法7条の6第1項柱書・1号〜3号(令和8年4月1日施行版。docs/verification/horei-verification.md「建築基準法(建築確認)— q47 の根拠」記載の逐語原文より転記。柱書・3号はhiiragi17提示・2026-07-30受領、1号・2号はhiiragi17提示・2026-09-05受領)",
+        cite: "建築基準法7条の6第1項柱書・1号〜3号(令和8年4月1日施行版。docs/verification/horei-verification.md「建築基準法(建築確認)— q47 の根拠」記載の逐語原文より転記。柱書・3号は、1号・2号は)",
       },
     },
   ],

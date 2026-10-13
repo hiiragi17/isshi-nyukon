@@ -185,7 +185,7 @@ export const coolingOffReading: Reading = {
           },
         ],
         article: "宅建業法37条の2",
-        cite: "宅建業法37条の2(全文。hiiragi17提示・2026-08-10)",
+        cite: "宅建業法37条の2(全文)",
       },
     },
     {

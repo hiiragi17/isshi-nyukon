@@ -162,7 +162,7 @@ export const toshiKeikakuReading: Reading = {
           },
         ],
         article: "7条",
-        cite: "都市計画法7条1項(全文。docs/verification/horei-verification.md「追加照合(#129分)」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "都市計画法7条1項(全文。docs/verification/horei-verification.md「追加照合(#129分)」記載の逐語原文より転記)",
       },
     },
     {
@@ -182,7 +182,7 @@ export const toshiKeikakuReading: Reading = {
           },
         ],
         article: "施行令3条",
-        cite: "都市計画法施行令3条(全文。docs/verification/horei-verification.md「追加照合(Issue #244分)」記載の逐語原文より転記。hiiragi17提示・2026-09-05受領)",
+        cite: "都市計画法施行令3条(全文。docs/verification/horei-verification.md「追加照合(Issue #244分)」記載の逐語原文より転記)",
       },
     },
     {
@@ -219,7 +219,7 @@ export const toshiKeikakuReading: Reading = {
           },
         ],
         article: "12条の5",
-        cite: "都市計画法12条の5第1項(全文。docs/verification/horei-verification.md「追加照合(#129分)」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "都市計画法12条の5第1項(全文。docs/verification/horei-verification.md「追加照合(#129分)」記載の逐語原文より転記)",
       },
     },
     {
@@ -241,7 +241,7 @@ export const toshiKeikakuReading: Reading = {
           },
         ],
         article: "58条の2",
-        cite: "都市計画法58条の2第1項柱書・第3項(docs/verification/horei-verification.md「追加照合(#129分)」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "都市計画法58条の2第1項柱書・第3項(docs/verification/horei-verification.md「追加照合(#129分)」記載の逐語原文より転記)",
       },
     },
     {
@@ -263,7 +263,7 @@ export const toshiKeikakuReading: Reading = {
           },
         ],
         article: "65条",
-        cite: "都市計画法65条1項(docs/verification/horei-verification.md「追加照合(#129分)」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)、26条1項括弧書き(同シート「照合で見つかった要修正点」記載の逐語原文より転記。hiiragi17提示・2026-07-31受領)",
+        cite: "都市計画法65条1項(docs/verification/horei-verification.md「追加照合(#129分)」記載の逐語原文より転記)、26条1項括弧書き(同シート「照合で見つかった要修正点」記載の逐語原文より転記)",
       },
     },
   ],

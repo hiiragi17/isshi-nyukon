@@ -172,7 +172,7 @@ export const kikouReading: Reading = {
           },
         ],
         article: "13条",
-        cite: "住宅金融支援機構法13条1項1号・2号柱書・イ・ロ・ハ(全文。現在施行版。1号・2号イはhiiragi17提示のe-Gov全文・2026-09-24受領、2号柱書・ロ・ハはdata/questions/zei/kikou-2.tsのsource.note記載・hiiragi17提示・2026-09-12受領)",
+        cite: "住宅金融支援機構法13条1項1号・2号柱書・イ・ロ・ハ(全文。現在施行版。1号・2号イはe-Gov全文・2026-09-24受領、2号柱書・ロ・ハはdata/questions/zei/kikou-2.tsのsource.note記載)",
       },
     },
     {
@@ -190,7 +190,7 @@ export const kikouReading: Reading = {
           },
         ],
         article: "13条",
-        cite: "住宅金融支援機構法13条1項12号(全文。現在施行版。hiiragi17提示のe-Gov全文・2026-09-24受領)",
+        cite: "住宅金融支援機構法13条1項12号(全文。現在施行版。e-Gov全文・2026-09-24受領)",
       },
     },
     {
@@ -208,7 +208,7 @@ export const kikouReading: Reading = {
           },
         ],
         article: "13条",
-        cite: "住宅金融支援機構法13条1項5号(全文。現在施行版。hiiragi17提示のe-Gov全文・2026-09-24受領)",
+        cite: "住宅金融支援機構法13条1項5号(全文。現在施行版。e-Gov全文・2026-09-24受領)",
       },
     },
     {
@@ -224,7 +224,7 @@ export const kikouReading: Reading = {
           },
         ],
         article: "13条",
-        cite: "住宅金融支援機構法13条1項8号(全文。現在施行版。data/questions/zei/kikou-2.tsのsource.note記載。hiiragi17提示・2026-09-12受領)",
+        cite: "住宅金融支援機構法13条1項8号(全文。現在施行版。data/questions/zei/kikou-2.tsのsource.note記載)",
       },
     },
     {
@@ -240,7 +240,7 @@ export const kikouReading: Reading = {
           },
         ],
         article: "13条",
-        cite: "住宅金融支援機構法13条1項10号(全文。現在施行版。data/questions/zei/kikou-2.tsのsource.note記載。hiiragi17提示・2026-09-12受領)",
+        cite: "住宅金融支援機構法13条1項10号(全文。現在施行版。data/questions/zei/kikou-2.tsのsource.note記載)",
       },
     },
     {
@@ -256,7 +256,7 @@ export const kikouReading: Reading = {
           },
         ],
         article: "13条",
-        cite: "住宅金融支援機構法13条2項9号(全文。現在施行版。data/questions/zei/kikou-2.tsのsource.note記載。hiiragi17提示・2026-09-12受領)",
+        cite: "住宅金融支援機構法13条2項9号(全文。現在施行版。data/questions/zei/kikou-2.tsのsource.note記載)",
       },
     },
   ],

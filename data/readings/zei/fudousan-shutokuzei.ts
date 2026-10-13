@@ -247,7 +247,7 @@ export const fudousanShutokuzeiReading: Reading = {
           },
         ],
         article: "73条の15の2",
-        cite: "地方税法73条の15の2第1項・2項(全文。令和8年4月1日施行版。RevisionID 325AC0000000226_20260401_508AC0000000002。hiiragi17提示・2026-09-06受領)",
+        cite: "地方税法73条の15の2第1項・2項(全文。令和8年4月1日施行版。RevisionID 325AC0000000226_20260401_508AC0000000002)",
       },
     },
   ],

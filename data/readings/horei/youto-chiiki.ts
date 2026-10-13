@@ -184,7 +184,7 @@ export const youtoChiikiReading: Reading = {
           },
         ],
         article: "9条",
-        cite: "都市計画法9条1項〜13項(docs/verification/horei-verification.md「追加照合(#239分)」記載の逐語原文より転記。hiiragi17提示・2026-08-31受領)、13条1項7号後段(同シート「追加照合(#129分)」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "都市計画法9条1項〜13項(docs/verification/horei-verification.md「追加照合(#239分)」記載の逐語原文より転記)、13条1項7号後段(同シート「追加照合(#129分)」記載の逐語原文より転記)",
       },
     },
     {
@@ -236,7 +236,7 @@ export const youtoChiikiReading: Reading = {
           },
         ],
         article: "別表第二(わ)項",
-        cite: "建築基準法48条13項、別表第二(わ)項(全文。docs/verification/horei-verification.md「追加照合(#129分)」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "建築基準法48条13項、別表第二(わ)項(全文。docs/verification/horei-verification.md「追加照合(#129分)」記載の逐語原文より転記)",
       },
     },
     {
@@ -277,7 +277,7 @@ export const youtoChiikiReading: Reading = {
           },
         ],
         article: "別表第二(を)項",
-        cite: "建築基準法別表第二(を)項(全文。docs/verification/horei-verification.md「追加照合(#129分)」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "建築基準法別表第二(を)項(全文。docs/verification/horei-verification.md「追加照合(#129分)」記載の逐語原文より転記)",
       },
     },
     {
@@ -297,7 +297,7 @@ export const youtoChiikiReading: Reading = {
           },
         ],
         article: "91条",
-        cite: "建築基準法91条(全文。docs/verification/horei-verification.md「追加照合(#129分)」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "建築基準法91条(全文。docs/verification/horei-verification.md「追加照合(#129分)」記載の逐語原文より転記)",
       },
     },
     {
@@ -318,7 +318,7 @@ export const youtoChiikiReading: Reading = {
             text: "建築物の敷地が前項の規定による建築物の建蔽率に関する制限を受ける地域又は区域の二以上にわたる場合においては、当該建築物の建蔽率は、同項の規定による当該各地域又は区域内の建築物の建蔽率の限度にその敷地の当該地域又は区域内にある各部分の面積の敷地面積に対する割合を乗じて得たものの合計以下でなければならない。",
           },
         ],
-        cite: "建築基準法52条7項・53条2項(docs/verification/horei-verification.md「追加照合(#129分)」中「建築基準法(集団規定)— q9・q10・q49 の根拠」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "建築基準法52条7項・53条2項(docs/verification/horei-verification.md「追加照合(#129分)」中「建築基準法(集団規定)— q9・q10・q49 の根拠」記載の逐語原文より転記)",
       },
     },
   ],

@@ -129,7 +129,7 @@ export const menkyoReading: Reading = {
           },
         ],
         article: "宅建業法3条",
-        cite: "宅建業法3条(全文。hiiragi17提示・2026-08-11)",
+        cite: "宅建業法3条(全文)",
       },
     },
     {
@@ -193,7 +193,7 @@ export const menkyoReading: Reading = {
           },
         ],
         article: "宅建業法5条",
-        cite: "宅建業法5条(全文。hiiragi17提示・2026-08-11。柱書・1号・5号・十一号は2026-08-02/2026-08-10提示分と同一)",
+        cite: "宅建業法5条(全文。柱書・1号・5号・十一号は2026-08-02/2026-08-10提示分と同一)",
       },
     },
     {
@@ -214,7 +214,7 @@ export const menkyoReading: Reading = {
           },
         ],
         article: "宅建業法9条",
-        cite: "宅建業法9条(全文。hiiragi17提示・2026-08-11)",
+        cite: "宅建業法9条(全文)",
       },
     },
     {
@@ -231,7 +231,7 @@ export const menkyoReading: Reading = {
           },
         ],
         article: "宅建業法施行規則3条",
-        cite: "宅建業法施行規則3条(全文。hiiragi17提示・2026-08-10)",
+        cite: "宅建業法施行規則3条(全文)",
       },
     },
   ],

@@ -195,7 +195,7 @@ export const moridoKiseiReading: Reading = {
           },
         ],
         article: "2条",
-        cite: "宅地造成及び特定盛土等規制法2条1号・3号・7号(令和7年6月1日施行版。docs/verification/horei-verification.md「盛土規制法 — q26 の根拠」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "宅地造成及び特定盛土等規制法2条1号・3号・7号(令和7年6月1日施行版。docs/verification/horei-verification.md「盛土規制法 — q26 の根拠」記載の逐語原文より転記)",
       },
     },
     {
@@ -211,7 +211,7 @@ export const moridoKiseiReading: Reading = {
           },
         ],
         article: "10条",
-        cite: "宅地造成及び特定盛土等規制法10条1項(令和7年6月1日施行版。docs/verification/horei-verification.md「盛土規制法 — q26 の根拠」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "宅地造成及び特定盛土等規制法10条1項(令和7年6月1日施行版。docs/verification/horei-verification.md「盛土規制法 — q26 の根拠」記載の逐語原文より転記)",
       },
     },
     {
@@ -227,7 +227,7 @@ export const moridoKiseiReading: Reading = {
           },
         ],
         article: "12条",
-        cite: "宅地造成及び特定盛土等規制法12条1項(令和7年6月1日施行版。docs/verification/horei-verification.md「盛土規制法 — q26 の根拠」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "宅地造成及び特定盛土等規制法12条1項(令和7年6月1日施行版。docs/verification/horei-verification.md「盛土規制法 — q26 の根拠」記載の逐語原文より転記)",
       },
     },
     {
@@ -243,7 +243,7 @@ export const moridoKiseiReading: Reading = {
           },
         ],
         article: "17条",
-        cite: "宅地造成及び特定盛土等規制法17条1項(令和7年6月1日施行版。docs/verification/horei-verification.md「盛土規制法 — q26 の根拠」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "宅地造成及び特定盛土等規制法17条1項(令和7年6月1日施行版。docs/verification/horei-verification.md「盛土規制法 — q26 の根拠」記載の逐語原文より転記)",
       },
     },
     {
@@ -259,7 +259,7 @@ export const moridoKiseiReading: Reading = {
           },
         ],
         article: "30条",
-        cite: "宅地造成及び特定盛土等規制法30条1項(令和7年6月1日施行版。docs/verification/horei-verification.md「q100 盛土規制法2周目」記載の逐語原文より転記。hiiragi17提示・2026-09-04受領)",
+        cite: "宅地造成及び特定盛土等規制法30条1項(令和7年6月1日施行版。docs/verification/horei-verification.md「q100 盛土規制法2周目」記載の逐語原文より転記)",
       },
     },
     {
@@ -279,7 +279,7 @@ export const moridoKiseiReading: Reading = {
           },
         ],
         article: "31条",
-        cite: "宅地造成及び特定盛土等規制法31条1項・2項(令和7年6月1日施行版。docs/verification/horei-verification.md「q100 盛土規制法2周目」記載の逐語原文より転記。hiiragi17提示・2026-09-04受領)",
+        cite: "宅地造成及び特定盛土等規制法31条1項・2項(令和7年6月1日施行版。docs/verification/horei-verification.md「q100 盛土規制法2周目」記載の逐語原文より転記)",
       },
     },
     {
@@ -295,7 +295,7 @@ export const moridoKiseiReading: Reading = {
           },
         ],
         article: "32条",
-        cite: "宅地造成及び特定盛土等規制法32条(令和7年6月1日施行版。docs/verification/horei-verification.md「q100 盛土規制法2周目」記載の逐語原文より転記。hiiragi17提示・2026-09-04受領)",
+        cite: "宅地造成及び特定盛土等規制法32条(令和7年6月1日施行版。docs/verification/horei-verification.md「q100 盛土規制法2周目」記載の逐語原文より転記)",
       },
     },
     {
@@ -408,7 +408,7 @@ export const moridoKiseiReading: Reading = {
             text: "法第三十一条第二項の政令で定める資格は、第二十二条各号に掲げるものとする。",
           },
         ],
-        cite: "宅地造成及び特定盛土等規制法施行令21条柱書・1号・2号、23条柱書・1号〜5号、25条2項1号・2号、28条1項・2項、31条1項・2項(令和5年5月26日施行版。docs/verification/horei-verification.md「q100 盛土規制法2周目」記載の逐語原文より転記。hiiragi17提示・2026-09-04受領)・22条柱書・1号〜5号・25条2項柱書(令和5年5月26日施行版。hiiragi17提示・2026-09-18受領。RevisionID 337CO0000000016_20230526_504CO0000000393)",
+        cite: "宅地造成及び特定盛土等規制法施行令21条柱書・1号・2号、23条柱書・1号〜5号、25条2項1号・2号、28条1項・2項、31条1項・2項(令和5年5月26日施行版。docs/verification/horei-verification.md「q100 盛土規制法2周目」記載の逐語原文より転記)・22条柱書・1号〜5号・25条2項柱書(令和5年5月26日施行版。RevisionID 337CO0000000016_20230526_504CO0000000393)",
       },
     },
   ],

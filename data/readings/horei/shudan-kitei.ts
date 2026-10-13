@@ -237,7 +237,7 @@ export const shudanKiteiReading: Reading = {
           },
         ],
         article: "43条",
-        cite: "建築基準法43条1項〜2項(全文。1項はdocs/verification/horei-verification.md「建築基準法(集団規定)— q9・q10・q49 の根拠」記載の逐語原文より転記〔hiiragi17提示・2026-07-30受領〕。2項はhiiragi17がこの会話で提示したe-Gov逐語原文〔2026-09-05受領〕より転記)",
+        cite: "建築基準法43条1項〜2項(全文。1項はdocs/verification/horei-verification.md「建築基準法(集団規定)— q9・q10・q49 の根拠」記載の逐語原文より転記。2項はe-Gov逐語原文より転記)",
       },
     },
     {
@@ -255,7 +255,7 @@ export const shudanKiteiReading: Reading = {
           },
         ],
         article: "42条",
-        cite: "建築基準法42条1項柱書(全文。docs/verification/horei-verification.md「q99 建築基準法・集団規定2周目」節の逐語引用より転記。hiiragi17提示・2026-09-03受領)",
+        cite: "建築基準法42条1項柱書(全文。docs/verification/horei-verification.md「q99 建築基準法・集団規定2周目」節の逐語引用より転記)",
       },
     },
     {
@@ -271,7 +271,7 @@ export const shudanKiteiReading: Reading = {
           },
         ],
         article: "42条",
-        cite: "建築基準法42条2項(全文。docs/verification/horei-verification.md「建築基準法(集団規定)— q9・q10・q49 の根拠」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "建築基準法42条2項(全文。docs/verification/horei-verification.md「建築基準法(集団規定)— q9・q10・q49 の根拠」記載の逐語原文より転記)",
       },
     },
     {
@@ -287,7 +287,7 @@ export const shudanKiteiReading: Reading = {
           },
         ],
         article: "65条",
-        cite: "建築基準法65条2項(全文。docs/verification/horei-verification.md「建築基準法(集団規定)— q9・q10・q49 の根拠」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "建築基準法65条2項(全文。docs/verification/horei-verification.md「建築基準法(集団規定)— q9・q10・q49 の根拠」記載の逐語原文より転記)",
       },
     },
     {
@@ -329,7 +329,7 @@ export const shudanKiteiReading: Reading = {
           },
         ],
         article: "55条",
-        cite: "建築基準法55条1項〜5項(全文。1項はdocs/verification/horei-verification.md「建築基準法(集団規定)— q9・q10・q49 の根拠」記載の逐語原文より転記〔hiiragi17提示・2026-07-30受領〕。2項〜5項はhiiragi17がこの会話で提示したe-Gov逐語原文〔2026-09-05受領〕より転記)",
+        cite: "建築基準法55条1項〜5項(全文。1項はdocs/verification/horei-verification.md「建築基準法(集団規定)— q9・q10・q49 の根拠」記載の逐語原文より転記。2項〜5項はe-Gov逐語原文より転記)",
       },
     },
     {
@@ -369,7 +369,7 @@ export const shudanKiteiReading: Reading = {
           },
         ],
         article: "56条の2",
-        cite: "建築基準法56条の2第1項(対象区域を定める部分の抜粋)・4項(全文)、別表第四(い)欄(docs/verification/horei-verification.md「建築基準法(集団規定)— q9・q10・q49 の根拠」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "建築基準法56条の2第1項(対象区域を定める部分の抜粋)・4項(全文)、別表第四(い)欄(docs/verification/horei-verification.md「建築基準法(集団規定)— q9・q10・q49 の根拠」記載の逐語原文より転記)",
       },
     },
   ],

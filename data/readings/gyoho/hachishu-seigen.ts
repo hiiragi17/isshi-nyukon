@@ -207,7 +207,7 @@ export const hachishuSeigenReading: Reading = {
           },
         ],
         article: "宅建業法39条",
-        cite: "宅建業法39条(全文。hiiragi17提示・2026-08-19)",
+        cite: "宅建業法39条(全文)",
       },
     },
     {
@@ -227,7 +227,7 @@ export const hachishuSeigenReading: Reading = {
           },
         ],
         article: "宅建業法38条",
-        cite: "宅建業法38条(全文。hiiragi17提示・2026-08-19)",
+        cite: "宅建業法38条(全文)",
       },
     },
     {
@@ -253,7 +253,7 @@ export const hachishuSeigenReading: Reading = {
           },
         ],
         article: "宅建業法41条",
-        cite: "宅建業法41条1項本文・ただし書・4項(hiiragi17提示・2026-08-19・省略記号なしの全文)",
+        cite: "宅建業法41条1項本文・ただし書・4項(省略記号なしの全文)",
       },
     },
     {
@@ -275,7 +275,7 @@ export const hachishuSeigenReading: Reading = {
           },
         ],
         article: "宅建業法41条の2",
-        cite: "宅建業法41条の2第1項本文・ただし書(hiiragi17提示・2026-08-19・省略記号なしの全文)",
+        cite: "宅建業法41条の2第1項本文・ただし書(省略記号なしの全文)",
       },
     },
     {
@@ -297,7 +297,7 @@ export const hachishuSeigenReading: Reading = {
           },
         ],
         article: "宅地建物取引業法施行令3条の5",
-        cite: "宅地建物取引業法施行令3条の5(全文。hiiragi17提示・2026-08-19)",
+        cite: "宅地建物取引業法施行令3条の5(全文)",
       },
     },
   ],

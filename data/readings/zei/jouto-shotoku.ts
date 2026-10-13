@@ -207,7 +207,7 @@ export const joutoShotokuReading: Reading = {
           },
         ],
         article: "35条",
-        cite: "租税特別措置法35条2項柱書(全文)・2項1号括弧書き(全文。令和8年6月25日施行版。2項1号はhiiragi17提示・2026-09-19受領〔令和8年4月1日施行版。35条は両版で逐語一致〕。docs/verification/zei-verification.mdの「q52 譲渡所得の特例」エントリ記載の逐語原文より転記)",
+        cite: "租税特別措置法35条2項柱書(全文)・2項1号括弧書き(全文。令和8年6月25日施行版。2項1号は〔令和8年4月1日施行版。35条は両版で逐語一致〕。docs/verification/zei-verification.mdの「q52 譲渡所得の特例」エントリ記載の逐語原文より転記)",
       },
     },
     {

@@ -199,7 +199,7 @@ export const kantokuShobunReading: Reading = {
           { label: "4項五号", text: "前三号に規定する場合のほか、不正又は著しく不当な行為をしたとき。", indent: true },
         ],
         article: "宅建業法65条",
-        cite: "宅建業法65条(全4項・全号。hiiragi17提示・2026-08-20)",
+        cite: "宅建業法65条(全4項・全号)",
       },
     },
     {
@@ -253,7 +253,7 @@ export const kantokuShobunReading: Reading = {
           },
         ],
         article: "宅建業法66条",
-        cite: "宅建業法66条(全2項・全号。hiiragi17提示・2026-08-20)",
+        cite: "宅建業法66条(全2項・全号)",
       },
     },
     {
@@ -293,7 +293,7 @@ export const kantokuShobunReading: Reading = {
           },
         ],
         article: "宅建業法68条",
-        cite: "宅建業法68条(全4項・全号。hiiragi17提示・2026-08-20)",
+        cite: "宅建業法68条(全4項・全号)",
       },
     },
     {
@@ -325,7 +325,7 @@ export const kantokuShobunReading: Reading = {
           { label: "2項三号", text: "宅地建物取引士としてすべき事務を行い、情状が特に重いとき。", indent: true },
         ],
         article: "宅建業法68条の2",
-        cite: "宅建業法68条の2(全2項・全号。hiiragi17提示・2026-08-20)",
+        cite: "宅建業法68条の2(全2項・全号)",
       },
     },
     {
@@ -366,7 +366,7 @@ export const kantokuShobunReading: Reading = {
           { label: "13条1項一号ニ", text: "イからハまでに掲げる場合以外の場合であって行政庁が相当と認めるとき。", indent: true },
           { label: "13条1項二号", text: "前号イからニまでのいずれにも該当しないとき　弁明の機会の付与", indent: true },
         ],
-        cite: "宅建業法69条(全2項)・行政手続法13条1項(全2号・イ〜ニ。hiiragi17提示・2026-08-20)",
+        cite: "宅建業法69条(全2項)・行政手続法13条1項(全2号・イ〜ニ)",
       },
     },
     {
@@ -401,7 +401,7 @@ export const kantokuShobunReading: Reading = {
           },
         ],
         article: "宅建業法70条",
-        cite: "宅建業法70条(全5項。hiiragi17提示・2026-08-10。gyoho-verification.md q89エントリの承認済み逐語全文を再掲)",
+        cite: "宅建業法70条(全5項。gyoho-verification.md q89エントリの承認済み逐語全文を再掲)",
       },
     },
     {
@@ -436,7 +436,7 @@ export const kantokuShobunReading: Reading = {
             indent: true,
           },
         ],
-        cite: "宅建業法79条(全4号)・84条(全2号。hiiragi17提示・2026-08-10。gyoho-verification.md q89エントリの承認済み逐語全文を再掲)",
+        cite: "宅建業法79条(全4号)・84条(全2号。gyoho-verification.md q89エントリの承認済み逐語全文を再掲)",
       },
     },
   ],

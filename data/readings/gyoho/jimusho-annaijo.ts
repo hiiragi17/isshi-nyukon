@@ -117,7 +117,7 @@ export const jimushoAnnaijoReading: Reading = {
           },
         ],
         article: "宅建業法31条の3",
-        cite: "宅建業法31条の3(全文。gyoho-verification.md「q87 宅建士(2周目)」節・hiiragi17提示・2026-08-10で確認済みのものを再利用)",
+        cite: "宅建業法31条の3(全文。gyoho-verification.md「q87 宅建士(2周目)」節・で確認済みのものを再利用)",
       },
     },
     {
@@ -165,7 +165,7 @@ export const jimushoAnnaijoReading: Reading = {
           },
         ],
         article: "宅建業法46条",
-        cite: "宅建業法46条(全文。hoshu.tsで確認済みの原文を再利用)・48条3項・4項・49条(gyoho-verification.md「q120」節・hiiragi17提示・2026-09-16で確認済みの原文を再利用)",
+        cite: "宅建業法46条(全文。hoshu.tsで確認済みの原文を再利用)・48条3項・4項・49条(gyoho-verification.md「q120」節・で確認済みの原文を再利用)",
       },
     },
     {
@@ -228,7 +228,7 @@ export const jimushoAnnaijoReading: Reading = {
           },
         ],
         article: "宅建業法50条",
-        cite: "宅建業法50条1項・2項、施行規則19条1項(全5号)・3項(全文。gyoho-verification.md「q119」節・hiiragi17提示・2026-09-15で確認済みの原文を再利用)",
+        cite: "宅建業法50条1項・2項、施行規則19条1項(全5号)・3項(全文。gyoho-verification.md「q119」節・で確認済みの原文を再利用)",
       },
     },
     {

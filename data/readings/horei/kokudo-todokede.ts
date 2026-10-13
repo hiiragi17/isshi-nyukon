@@ -302,7 +302,7 @@ export const kokudoTodokedeReading: Reading = {
           },
         ],
         article: "14条",
-        cite: "国土利用計画法14条1項前段(令和7年6月1日施行版。docs/verification/horei-verification.md「国土利用計画法 — q25 の根拠」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "国土利用計画法14条1項前段(令和7年6月1日施行版。docs/verification/horei-verification.md「国土利用計画法 — q25 の根拠」記載の逐語原文より転記)",
       },
     },
     {
@@ -318,7 +318,7 @@ export const kokudoTodokedeReading: Reading = {
           },
         ],
         article: "23条",
-        cite: "国土利用計画法23条1項柱書(令和7年6月1日施行版。docs/verification/horei-verification.md「国土利用計画法 — q25 の根拠」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "国土利用計画法23条1項柱書(令和7年6月1日施行版。docs/verification/horei-verification.md「国土利用計画法 — q25 の根拠」記載の逐語原文より転記)",
       },
     },
     {
@@ -353,7 +353,7 @@ export const kokudoTodokedeReading: Reading = {
           },
         ],
         article: "23条",
-        cite: "国土利用計画法23条2項柱書・1号柱書・イ・ロ・ハ(令和7年6月1日施行版。docs/verification/horei-verification.md「国土利用計画法 — q25 の根拠」及び「追加照合(#197分)」記載の逐語原文より転記。hiiragi17提示)",
+        cite: "国土利用計画法23条2項柱書・1号柱書・イ・ロ・ハ(令和7年6月1日施行版。docs/verification/horei-verification.md「国土利用計画法 — q25 の根拠」及び「追加照合(#197分)」記載の逐語原文より転記)",
       },
     },
     {
@@ -369,7 +369,7 @@ export const kokudoTodokedeReading: Reading = {
           },
         ],
         article: "23条",
-        cite: "国土利用計画法23条2項2号(令和7年6月1日施行版。docs/verification/horei-verification.md「追加照合(#197分)」記載の逐語原文より転記。hiiragi17提示・2026-08-21)",
+        cite: "国土利用計画法23条2項2号(令和7年6月1日施行版。docs/verification/horei-verification.md「追加照合(#197分)」記載の逐語原文より転記)",
       },
     },
     {
@@ -401,7 +401,7 @@ export const kokudoTodokedeReading: Reading = {
             text: "第二十七条の四の規定は、監視区域に所在する土地について土地売買等の契約を締結しようとする場合について準用する。この場合において、同条第二項第一号中「同号イからハまでに規定する面積未満」とあるのは「同号イからハまでに規定する面積に満たない範囲内で都道府県知事が都道府県の規則で定める面積未満」と、「同号イからハまでに規定する面積以上」とあるのは「当該都道府県の規則で定められた面積以上」と、同条第三項中「次条第一項」とあるのは「第二十七条の八第一項」と、「同条第三項」とあるのは「同条第二項において準用する第二十七条の五第三項」と読み替えるものとする。",
           },
         ],
-        cite: "国土利用計画法27条の4第1項・2項柱書・1号、27条の7第1項(hiiragi17提示・2026-08-28。docs/verification/horei-verification.md「追加照合(PR #249分)」参照)",
+        cite: "国土利用計画法27条の4第1項・2項柱書・1号、27条の7第1項(docs/verification/horei-verification.md「追加照合(PR #249分)」参照)",
       },
     },
     {
@@ -419,7 +419,7 @@ export const kokudoTodokedeReading: Reading = {
           },
         ],
         article: "23条",
-        cite: "国土利用計画法23条2項3号(令和7年6月1日施行版。hiiragi17提示・2026-08-28。docs/verification/horei-verification.md「追加照合(PR #249分・23条2項3号)」参照)",
+        cite: "国土利用計画法23条2項3号(令和7年6月1日施行版。docs/verification/horei-verification.md「追加照合(PR #249分・23条2項3号)」参照)",
       },
     },
   ],

@@ -141,7 +141,7 @@ export const kenpeiYosekiReading: Reading = {
           },
         ],
         article: "53条",
-        cite: "建築基準法53条3項(柱書・一号・二号は docs/verification/horei-verification.md「建築基準法(集団規定)— q9・q10・q49 の根拠」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領。イ・ロは同シート「追加照合(#240分・2026-09-01)」記載の逐語原文より転記。「政令で定める建築物」の委任先はイ・ロとも未取得のため、その先へは踏み込んでいない)",
+        cite: "建築基準法53条3項(柱書・一号・二号は docs/verification/horei-verification.md「建築基準法(集団規定)— q9・q10・q49 の根拠」記載の逐語原文より転記。イ・ロは同シート「追加照合(#240分・2026-09-01)」記載の逐語原文より転記。「政令で定める建築物」の委任先はイ・ロとも未取得のため、その先へは踏み込んでいない)",
       },
     },
     {
@@ -164,7 +164,7 @@ export const kenpeiYosekiReading: Reading = {
           },
         ],
         article: "53条",
-        cite: "建築基準法53条6項(docs/verification/horei-verification.md「建築基準法(集団規定)— q9・q10・q49 の根拠」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "建築基準法53条6項(docs/verification/horei-verification.md「建築基準法(集団規定)— q9・q10・q49 の根拠」記載の逐語原文より転記)",
       },
     },
     {
@@ -212,7 +212,7 @@ export const kenpeiYosekiReading: Reading = {
           },
         ],
         article: "53条",
-        cite: "建築基準法53条1項(全文。docs/verification/horei-verification.md「追加照合(#240分・2026-09-01)」記載の逐語原文より転記。hiiragi17提示・2026-09-01受領)",
+        cite: "建築基準法53条1項(全文。docs/verification/horei-verification.md「追加照合(#240分・2026-09-01)」記載の逐語原文より転記)",
       },
     },
     {
@@ -270,7 +270,7 @@ export const kenpeiYosekiReading: Reading = {
           },
         ],
         article: "52条",
-        cite: "建築基準法52条1項(全文。docs/verification/horei-verification.md「追加照合(#240分・2026-09-01)」記載の逐語原文より転記。hiiragi17提示・2026-09-01受領)",
+        cite: "建築基準法52条1項(全文。docs/verification/horei-verification.md「追加照合(#240分・2026-09-01)」記載の逐語原文より転記)",
       },
     },
     {
@@ -301,7 +301,7 @@ export const kenpeiYosekiReading: Reading = {
           },
         ],
         article: "52条",
-        cite: "建築基準法52条2項(全文。docs/verification/horei-verification.md「建築基準法(集団規定)— q9・q10・q49 の根拠」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "建築基準法52条2項(全文。docs/verification/horei-verification.md「建築基準法(集団規定)— q9・q10・q49 の根拠」記載の逐語原文より転記)",
       },
     },
     {
@@ -322,7 +322,7 @@ export const kenpeiYosekiReading: Reading = {
             text: "建築物の敷地が前項の規定による建築物の建蔽率に関する制限を受ける地域又は区域の二以上にわたる場合においては、当該建築物の建蔽率は、同項の規定による当該各地域又は区域内の建築物の建蔽率の限度にその敷地の当該地域又は区域内にある各部分の面積の敷地面積に対する割合を乗じて得たものの合計以下でなければならない。",
           },
         ],
-        cite: "建築基準法52条7項・53条2項(docs/verification/horei-verification.md「建築基準法(集団規定)— q9・q10・q49 の根拠」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "建築基準法52条7項・53条2項(docs/verification/horei-verification.md「建築基準法(集団規定)— q9・q10・q49 の根拠」記載の逐語原文より転記)",
       },
     },
   ],

@@ -119,7 +119,7 @@ export const sanjunanaJouReading: Reading = {
           },
         ],
         article: "宅建業法37条",
-        cite: "宅建業法37条1項柱書・4号・5号・8号(hiiragi17提示・2026-08-18・省略記号なしの全文)",
+        cite: "宅建業法37条1項柱書・4号・5号・8号(省略記号なしの全文)",
       },
     },
     {
@@ -135,7 +135,7 @@ export const sanjunanaJouReading: Reading = {
           },
         ],
         article: "宅建業法37条",
-        cite: "宅建業法37条3項(全文。hiiragi17提示・2026-08-18)",
+        cite: "宅建業法37条3項(全文)",
       },
     },
     {
@@ -165,7 +165,7 @@ export const sanjunanaJouReading: Reading = {
           },
         ],
         article: "宅建業法37条",
-        cite: "宅建業法37条2項柱書・1号・2号・3号(hiiragi17提示・2026-08-09・省略記号なしの全文)",
+        cite: "宅建業法37条2項柱書・1号・2号・3号(省略記号なしの全文)",
       },
     },
     {
@@ -187,7 +187,7 @@ export const sanjunanaJouReading: Reading = {
           },
         ],
         article: "宅建業法37条",
-        cite: "宅建業法37条1項10号・11号(hiiragi17提示・2026-08-09・省略記号なしの全文)",
+        cite: "宅建業法37条1項10号・11号(省略記号なしの全文)",
       },
     },
   ],

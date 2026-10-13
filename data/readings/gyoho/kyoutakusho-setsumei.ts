@@ -111,7 +111,7 @@ export const kyoutakushoSetsumeiReading: Reading = {
           },
         ],
         article: "宅建業法35条の2",
-        cite: "宅建業法35条の2(全文。hiiragi17提示・2026-10-04。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
+        cite: "宅建業法35条の2(全文。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
       },
     },
     {

@@ -154,7 +154,7 @@ export const yosekiCalcReading: Reading = {
           },
         ],
         article: "52条",
-        cite: "建築基準法52条1項(全文。docs/verification/horei-verification.md「追加照合(#240分・2026-09-01)」記載の逐語原文より転記。hiiragi17提示・2026-09-01受領)",
+        cite: "建築基準法52条1項(全文。docs/verification/horei-verification.md「追加照合(#240分・2026-09-01)」記載の逐語原文より転記)",
       },
     },
     {
@@ -185,7 +185,7 @@ export const yosekiCalcReading: Reading = {
           },
         ],
         article: "52条",
-        cite: "建築基準法52条2項(全文。docs/verification/horei-verification.md「建築基準法(集団規定)— q9・q10・q49 の根拠」記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "建築基準法52条2項(全文。docs/verification/horei-verification.md「建築基準法(集団規定)— q9・q10・q49 の根拠」記載の逐語原文より転記)",
       },
     },
   ],

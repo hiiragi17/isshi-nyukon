@@ -144,7 +144,7 @@ export const menkyoTodokedeReading: Reading = {
           { label: "八号", text: "その他国土交通省令で定める書面", indent: true },
         ],
         article: "宅建業法4条",
-        cite: "宅建業法4条(1項・2項の全文。hiiragi17提示・2026-10-03。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
+        cite: "宅建業法4条(1項・2項の全文。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
       },
     },
     {
@@ -165,7 +165,7 @@ export const menkyoTodokedeReading: Reading = {
           },
         ],
         article: "宅建業法9条",
-        cite: "宅建業法9条(全文。hiiragi17提示・2026-08-11。menkyo.ts〔q15読み物〕の引用と同一)",
+        cite: "宅建業法9条(全文。menkyo.ts〔q15読み物〕の引用と同一)",
       },
     },
     {
@@ -219,7 +219,7 @@ export const menkyoTodokedeReading: Reading = {
           },
         ],
         article: "宅建業法7条",
-        cite: "宅建業法7条(全文。hiiragi17提示・2026-10-03。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
+        cite: "宅建業法7条(全文。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
       },
     },
     {
@@ -238,7 +238,7 @@ export const menkyoTodokedeReading: Reading = {
           },
         ],
         article: "宅建業法3条",
-        cite: "宅建業法3条2項・4項(hiiragi17提示・2026-08-11。menkyo.ts〔q15読み物〕の3条全6項のうち該当項を転記)",
+        cite: "宅建業法3条2項・4項(menkyo.ts〔q15読み物〕の3条全6項のうち該当項を転記)",
       },
     },
     {
@@ -303,7 +303,7 @@ export const menkyoTodokedeReading: Reading = {
           },
         ],
         article: "宅建業法11条",
-        cite: "宅建業法11条(全文。hiiragi17提示・2026-10-03。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
+        cite: "宅建業法11条(全文。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
       },
     },
     {

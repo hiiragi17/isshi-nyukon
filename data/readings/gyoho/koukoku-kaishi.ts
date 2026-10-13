@@ -127,7 +127,7 @@ export const koukokuKaishiReading: Reading = {
           },
         ],
         article: "宅建業法33条",
-        cite: "宅建業法33条(全文。hiiragi17提示・2026-10-04。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
+        cite: "宅建業法33条(全文。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
       },
     },
     {
@@ -148,7 +148,7 @@ export const koukokuKaishiReading: Reading = {
           },
         ],
         article: "宅建業法34条",
-        cite: "宅建業法34条(全文。hiiragi17提示・2026-10-04。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
+        cite: "宅建業法34条(全文。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
       },
     },
     {
@@ -165,7 +165,7 @@ export const koukokuKaishiReading: Reading = {
           },
         ],
         article: "宅建業法36条",
-        cite: "宅建業法36条(全文。hiiragi17提示・2026-10-04。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
+        cite: "宅建業法36条(全文。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
       },
     },
     {
@@ -345,7 +345,7 @@ export const koukokuKaishiReading: Reading = {
           },
         ],
         article: "宅建業法施行令2条の5",
-        cite: "宅地建物取引業法施行令2条の5(全文。hiiragi17提示・2026-10-04。Law RevisionID 339CO0000000383_20260401_507CO0000000388)",
+        cite: "宅地建物取引業法施行令2条の5(全文。Law RevisionID 339CO0000000383_20260401_507CO0000000388)",
       },
     },
     {

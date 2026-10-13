@@ -197,7 +197,7 @@ export const baikaiKeiyakuReading: Reading = {
           },
         ],
         article: "宅建業法34条の2",
-        cite: "宅建業法34条の2(全文。gyoho-verification.md q83エントリ・hiiragi17提示・2026-08-10)",
+        cite: "宅建業法34条の2(全文。gyoho-verification.md q83エントリ)",
       },
     },
     {
@@ -218,7 +218,7 @@ export const baikaiKeiyakuReading: Reading = {
           },
         ],
         article: "宅建業法施行規則15条の10",
-        cite: "宅建業法施行規則15条の10(全文。gyoho-verification.md q83エントリ・hiiragi17提示・2026-08-10)",
+        cite: "宅建業法施行規則15条の10(全文。gyoho-verification.md q83エントリ)",
       },
     },
   ],

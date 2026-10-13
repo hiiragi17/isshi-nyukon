@@ -161,7 +161,7 @@ export const hanshuuhouReading: Reading = {
             text: "宅地又は建物の売買契約の締結その他の政令で定める取引",
           },
         ],
-        cite: "犯罪収益移転防止法別表(第四条関係)第二条第二項第四十二号(宅地建物取引業者の行。hiiragi17提示・gyoho-verification.md q94エントリより転記)",
+        cite: "犯罪収益移転防止法別表(第四条関係)第二条第二項第四十二号(宅地建物取引業者の行。gyoho-verification.md q94エントリより転記)",
       },
     },
     {
@@ -281,7 +281,7 @@ export const hanshuuhouReading: Reading = {
           },
         ],
         article: "4条",
-        cite: "犯罪収益移転防止法4条(全文。hiiragi17提示・2026-08-26)",
+        cite: "犯罪収益移転防止法4条(全文)",
       },
     },
     {
@@ -327,7 +327,7 @@ export const hanshuuhouReading: Reading = {
           },
         ],
         article: "施行規則11条",
-        cite: "犯罪収益移転防止法施行規則11条2項(全文。hiiragi17提示・gyoho-verification.md q94エントリより転記。RevisionID 420M60000F5A001_20260401_508M60000F5A002)",
+        cite: "犯罪収益移転防止法施行規則11条2項(全文。gyoho-verification.md q94エントリより転記。RevisionID 420M60000F5A001_20260401_508M60000F5A002)",
       },
     },
     {
@@ -344,7 +344,7 @@ export const hanshuuhouReading: Reading = {
           },
         ],
         article: "5条",
-        cite: "犯罪収益移転防止法5条(全文。hiiragi17提示・2026-08-26)",
+        cite: "犯罪収益移転防止法5条(全文)",
       },
     },
     {
@@ -365,7 +365,7 @@ export const hanshuuhouReading: Reading = {
           },
         ],
         article: "6条",
-        cite: "犯罪収益移転防止法6条(全文。1項は hiiragi17提示・2026-08-26、2項は hiiragi17提示・gyoho-verification.md q94エントリより転記)",
+        cite: "犯罪収益移転防止法6条(全文。1項は 、2項は ・gyoho-verification.md q94エントリより転記)",
       },
     },
   ],

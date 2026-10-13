@@ -104,7 +104,7 @@ export const juugyoushaHyoushikiReading: Reading = {
           },
         ],
         article: "宅建業法48条",
-        cite: "宅建業法48条1項・2項(全文。gyoho-verification.md「q120」節・hiiragi17提示・2026-09-16で確認済みの原文を再利用)/宅建業法施行規則17条(全文。hiiragi17提示・2026-10-02)/国土交通省『宅地建物取引業法の解釈・運用の考え方』第48条第1項関係(令和8年4月1日施行版・同節で確認済みの原文を再利用)",
+        cite: "宅建業法48条1項・2項(全文。gyoho-verification.md「q120」節・で確認済みの原文を再利用)/宅建業法施行規則17条(全文)/国土交通省『宅地建物取引業法の解釈・運用の考え方』第48条第1項関係(令和8年4月1日施行版・同節で確認済みの原文を再利用)",
       },
     },
     {
@@ -157,7 +157,7 @@ export const juugyoushaHyoushikiReading: Reading = {
           },
         ],
         article: "宅建業法48条",
-        cite: "宅建業法48条3項・4項(全文。gyoho-verification.md「q120」節・hiiragi17提示・2026-09-16で確認済みの原文を再利用)/宅建業法施行規則17条の2(全4項。全文。hiiragi17提示・2026-10-02)",
+        cite: "宅建業法48条3項・4項(全文。gyoho-verification.md「q120」節・で確認済みの原文を再利用)/宅建業法施行規則17条の2(全4項。全文)",
       },
     },
     {
@@ -187,7 +187,7 @@ export const juugyoushaHyoushikiReading: Reading = {
             text: "宅地建物取引業者は、法第四十九条に規定する帳簿（前項の規定による記録が行われた同項のファイル又は電磁的記録媒体を含む。）を各事業年度の末日をもつて閉鎖するものとし、閉鎖後五年間（当該宅地建物取引業者が自ら売主となる新築住宅に係るものにあつては、十年間）当該帳簿を保存しなければならない。",
           },
         ],
-        cite: "宅建業法49条(全文。gyoho-verification.md「q120」節・hiiragi17提示・2026-09-16で確認済みの原文を再利用)/宅建業法施行規則18条3項(全文。hiiragi17提示・2026-10-02)",
+        cite: "宅建業法49条(全文。gyoho-verification.md「q120」節・で確認済みの原文を再利用)/宅建業法施行規則18条3項(全文)",
       },
     },
     {
@@ -242,7 +242,7 @@ export const juugyoushaHyoushikiReading: Reading = {
           },
         ],
         article: "宅建業法施行規則19条",
-        cite: "宅建業法50条1項、施行規則19条1項(全5号。全文。gyoho-verification.md「q120」節・hiiragi17提示・2026-09-16で確認済みの原文を再利用)",
+        cite: "宅建業法50条1項、施行規則19条1項(全5号。全文。gyoho-verification.md「q120」節・で確認済みの原文を再利用)",
       },
     },
     {

@@ -150,7 +150,7 @@ export const chikaKojiReading: Reading = {
           },
         ],
         article: "2条",
-        cite: "地価公示法2条1項・2項(全文。令和7年6月1日施行版。承認者〔hiiragi17〕提示・2026-09-19受領)",
+        cite: "地価公示法2条1項・2項(全文。令和7年6月1日施行版)",
       },
     },
     {
@@ -182,7 +182,7 @@ export const chikaKojiReading: Reading = {
           },
         ],
         article: "1条の2",
-        cite: "地価公示法1条の2(全文。令和7年6月1日施行版。docs/verification/zei-verification.mdの「q112 地価公示法(公示価格の効力の程度差) — 原文照合(2026-09-11)」記載の引用より転記。承認者〔hiiragi17〕提示・2026-09-11受領)",
+        cite: "地価公示法1条の2(全文。令和7年6月1日施行版。docs/verification/zei-verification.mdの「q112 地価公示法(公示価格の効力の程度差) — 原文照合(2026-09-11)」記載の引用より転記)",
       },
     },
     {
@@ -198,7 +198,7 @@ export const chikaKojiReading: Reading = {
           },
         ],
         article: "9条",
-        cite: "地価公示法9条(全文。令和7年6月1日施行版。docs/verification/zei-verification.mdの「q112 地価公示法(公示価格の効力の程度差) — 原文照合(2026-09-11)」記載の引用より転記。承認者〔hiiragi17〕提示・2026-09-11受領)",
+        cite: "地価公示法9条(全文。令和7年6月1日施行版。docs/verification/zei-verification.mdの「q112 地価公示法(公示価格の効力の程度差) — 原文照合(2026-09-11)」記載の引用より転記)",
       },
     },
     {
@@ -214,7 +214,7 @@ export const chikaKojiReading: Reading = {
           },
         ],
         article: "10条",
-        cite: "地価公示法10条(全文。令和7年6月1日施行版。docs/verification/zei-verification.mdの「q112 地価公示法(公示価格の効力の程度差) — 原文照合(2026-09-11)」記載の引用より転記。承認者〔hiiragi17〕提示・2026-09-11受領)",
+        cite: "地価公示法10条(全文。令和7年6月1日施行版。docs/verification/zei-verification.mdの「q112 地価公示法(公示価格の効力の程度差) — 原文照合(2026-09-11)」記載の引用より転記)",
       },
     },
   ],

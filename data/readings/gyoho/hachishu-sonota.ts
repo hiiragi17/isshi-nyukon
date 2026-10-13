@@ -38,7 +38,7 @@ export const hachishuSonotaReading: Reading = {
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "33条の2(柱書・一号・二号)・40条(1項・2項)・42条(1項・2項)は、hiiragi17がこの会話で2026-09-26に提示した逐語全文(e-Gov法令検索)で確認した。docs/verification/gyoho-verification.mdのq36エントリに記録された抜粋(2026-08-03承認)と突き合わせ、一字一句一致することを確認済み。78条2項はq76(shoyuuken-ryuuho.ts)・q85(cooling-off-2.ts)の照合で確認済みの逐語全文を再利用し、2026-09-15にhiiragi17がe-Gov法令検索で現在施行であることを再確認した。数値(2年・1年・30日)が肢の正誤を決めるためanswerLevel: primary。q36(hachishu-sonota.ts)・q117(hachishu-sonota-2.ts)の照合表もあわせて参照。",
+    note: "33条の2(柱書・一号・二号)・40条(1項・2項)・42条(1項・2項)は、hiiragi17がこの会話で2026-09-26に提示した逐語全文(e-Gov法令検索)で確認した。docs/verification/gyoho-verification.mdのq36エントリに記録された抜粋(2026-08-03承認)と突き合わせ、一字一句一致することを確認済み。78条2項はq76(shoyuuken-ryuuho.ts)・q85(cooling-off-2.ts)の照合で確認済みの逐語全文を再利用し、2026-09-15にe-Gov法令検索で現在施行であることを再確認した。数値(2年・1年・30日)が肢の正誤を決めるためanswerLevel: primary。q36(hachishu-sonota.ts)・q117(hachishu-sonota-2.ts)の照合表もあわせて参照。",
   },
   lawVersion: {
     revisionId: "327AC1000000176_20260401_507AC0000000068",
@@ -100,7 +100,7 @@ export const hachishuSonotaReading: Reading = {
           },
         ],
         article: "宅建業法33条の2",
-        cite: "宅建業法33条の2(全文。hiiragi17提示・2026-09-26)",
+        cite: "宅建業法33条の2(全文)",
       },
     },
     {
@@ -130,7 +130,7 @@ export const hachishuSonotaReading: Reading = {
           },
         ],
         article: "宅建業法40条",
-        cite: "宅建業法40条(全文。hiiragi17提示・2026-09-26)",
+        cite: "宅建業法40条(全文)",
       },
     },
     {
@@ -158,7 +158,7 @@ export const hachishuSonotaReading: Reading = {
           },
         ],
         article: "宅建業法42条",
-        cite: "宅建業法42条(全文。hiiragi17提示・2026-09-26)",
+        cite: "宅建業法42条(全文)",
       },
     },
     {
@@ -182,7 +182,7 @@ export const hachishuSonotaReading: Reading = {
           },
         ],
         article: "宅建業法78条",
-        cite: "宅建業法78条2項(全文。q76〔shoyuuken-ryuuho.ts〕・q85〔cooling-off-2.ts〕の照合〔2026-08-06・2026-08-10承認〕で確認済み。2026-09-15にhiiragi17がe-Gov法令検索で現在施行であることを再確認)",
+        cite: "宅建業法78条2項(全文。q76〔shoyuuken-ryuuho.ts〕・q85〔cooling-off-2.ts〕の照合〔2026-08-06・2026-08-10承認〕で確認済み。2026-09-15にe-Gov法令検索で現在施行であることを再確認)",
       },
     },
     {

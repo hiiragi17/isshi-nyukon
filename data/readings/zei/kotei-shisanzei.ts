@@ -324,7 +324,7 @@ export const koteiShisanzeiReading: Reading = {
           },
         ],
         article: "350条",
-        cite: "地方税法350条1項(令和8年6月5日施行版。docs/verification/zei-verification.mdの「q28 固定資産税」記載の逐語原文より転記)・2項(基準日版325AC0000000226_20260401_508AC0000000002。hiiragi17提示・2026-09-06受領)",
+        cite: "地方税法350条1項(令和8年6月5日施行版。docs/verification/zei-verification.mdの「q28 固定資産税」記載の逐語原文より転記)・2項(基準日版325AC0000000226_20260401_508AC0000000002)",
       },
     },
   ],

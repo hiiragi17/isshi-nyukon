@@ -161,7 +161,7 @@ export const tantaiKiteiReading: Reading = {
           },
         ],
         article: "28条",
-        cite: "建築基準法28条1項(全文。docs/verification/horei-verification.md「q69 建築基準法(単体規定)」節記載の逐語原文より転記。hiiragi17提示・2026-07-29に一次ソースで再照合)",
+        cite: "建築基準法28条1項(全文。docs/verification/horei-verification.md「q69 建築基準法(単体規定)」節記載の逐語原文より転記。に一次ソースで再照合)",
       },
     },
     {
@@ -193,7 +193,7 @@ export const tantaiKiteiReading: Reading = {
           },
         ],
         article: "19条",
-        cite: "建築基準法施行令19条3項(全文。docs/verification/horei-verification.md「q69 建築基準法(単体規定)」節記載の逐語原文より転記。hiiragi17提示・2026-07-29に一次ソースで再照合)",
+        cite: "建築基準法施行令19条3項(全文。docs/verification/horei-verification.md「q69 建築基準法(単体規定)」節記載の逐語原文より転記。に一次ソースで再照合)",
       },
     },
     {
@@ -219,7 +219,7 @@ export const tantaiKiteiReading: Reading = {
             text: "この告示は、脱炭素社会の実現に資するための建築物のエネルギー消費性能の向上に関する法律等の一部を改正する法律(令和四年法律第六十九号)附則第一条第三号に掲げる規定の施行の日(令和五年四月一日)から施行する。",
           },
         ],
-        cite: "令和5年国土交通省告示第86号(昭和55年建設省告示第1800号の一部改正。docs/verification/horei-verification.md「q69 建築基準法(単体規定)」節記載の逐語原文より転記。hiiragi17提示・2026-07-29受領)",
+        cite: "令和5年国土交通省告示第86号(昭和55年建設省告示第1800号の一部改正。docs/verification/horei-verification.md「q69 建築基準法(単体規定)」節記載の逐語原文より転記)",
       },
     },
     {
@@ -236,7 +236,7 @@ export const tantaiKiteiReading: Reading = {
             text: "法第28条第1項の規定に基づき、従来、住宅の居室における窓その他の開口部の採光に有効な面積は、その居室の床面積に対して1/7以上としなければならないとしていたところ、原則として1/7以上としつつ、床面において50ルックス以上の照度を確保することができる照明設備を設置する居室にあっては、1/10以上で良いこととした。",
           },
         ],
-        cite: "国土交通省技術的助言(令和5年3月24日付け国住指第533号・国住街第240号「脱炭素社会の実現に資するための建築物のエネルギー消費性能の向上に関する法律等の一部を改正する法律等の施行について」第1。docs/verification/horei-verification.md「q69 建築基準法(単体規定)」節記載の逐語原文より転記。hiiragi17提示・2026-07-29受領)",
+        cite: "国土交通省技術的助言(令和5年3月24日付け国住指第533号・国住街第240号「脱炭素社会の実現に資するための建築物のエネルギー消費性能の向上に関する法律等の一部を改正する法律等の施行について」第1。docs/verification/horei-verification.md「q69 建築基準法(単体規定)」節記載の逐語原文より転記)",
       },
     },
     {
@@ -252,7 +252,7 @@ export const tantaiKiteiReading: Reading = {
           },
         ],
         article: "21条",
-        cite: "建築基準法施行令21条1項(全文。docs/verification/horei-verification.md「q69 建築基準法(単体規定)」節記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "建築基準法施行令21条1項(全文。docs/verification/horei-verification.md「q69 建築基準法(単体規定)」節記載の逐語原文より転記)",
       },
     },
     {
@@ -271,7 +271,7 @@ export const tantaiKiteiReading: Reading = {
             text: "高さ三十一メートルをこえる建築物（政令で定めるものを除く。）には、非常用の昇降機を設けなければならない。",
           },
         ],
-        cite: "建築基準法33条(全文)・34条2項(全文)(docs/verification/horei-verification.md「q69 建築基準法(単体規定)」節記載の逐語原文より転記。hiiragi17提示・2026-07-30受領)",
+        cite: "建築基準法33条(全文)・34条2項(全文)(docs/verification/horei-verification.md「q69 建築基準法(単体規定)」節記載の逐語原文より転記)",
       },
     },
     {
@@ -302,7 +302,7 @@ export const tantaiKiteiReading: Reading = {
           },
         ],
         article: "28条の2",
-        cite: "建築基準法28条の2(全文。docs/verification/horei-verification.md「q69 建築基準法(単体規定)」節記載の要旨を、hiiragi17がこの会話で提示した逐語原文〔2026-09-05受領〕により全文引用に更新)",
+        cite: "建築基準法28条の2(全文。docs/verification/horei-verification.md「q69 建築基準法(単体規定)」節記載の要旨を、逐語原文により全文引用に更新)",
       },
     },
   ],
