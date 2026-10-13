@@ -141,6 +141,7 @@ export function BackupPanel({
         >
           成績はこの端末(ブラウザ)にのみ保存されています。控えを書き出して
           保管しておけば、端末やブラウザを変えても復元できます。
+          控えの対象は成績の履歴のみで、お気に入りは含まれません。
         </p>
 
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -189,6 +190,19 @@ export function BackupPanel({
             style={{ display: "none" }}
           />
         </div>
+
+        {attempts.length === 0 && (
+          <p
+            style={{
+              fontSize: 12,
+              color: MUTED,
+              lineHeight: 1.8,
+              margin: "12px 0 0",
+            }}
+          >
+            まだ記録がないため書き出せません。
+          </p>
+        )}
 
         {msg && (
           <p
