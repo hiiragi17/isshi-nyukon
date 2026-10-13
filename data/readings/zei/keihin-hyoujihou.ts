@@ -4,7 +4,7 @@ import type { Reading } from "@/types";
  * 景品表示法・表示規約(topicId: "q57")の読み物。
  *
  * Issue #291(#280の分割issue)。追加当初(2026-09-24)は、対応する問題(`keihin-hyoujihou.ts`、
- * verified: true・Mami 2026-08-02承認)の根拠記録(docs/verification/zei-verification.mdの
+ * verified: true・2026-08-02承認)の根拠記録(docs/verification/zei-verification.mdの
  * 「q57 — 原文照合(2026-08-02)」)が要点抜粋(「…」中略あり)だったため、抜粋のまま
  * `verified: false` で追加した。同日、この会話でe-Gov全文(景品表示法5条)を
  * 提示し、5条は全文に更新した。

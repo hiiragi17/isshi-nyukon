@@ -6,7 +6,7 @@ import type { Reading } from "@/types";
  * Issue #236(#235の分割issue)。q8(`kaihatsu-kyoka.ts`)と q91(2周目・
  * `kaihatsu-kyoka-2.ts`)の両方をカバーする。原文引用はすべて
  * `docs/verification/horei-verification.md`の「追加照合(#129分)」に記録済みの
- * 逐語原文(2026-07-30受領、Mami 2026-07-31承認)から転記した
+ * 逐語原文(2026-07-30受領・2026-07-31承認)から転記した
  * (都市計画法29条1項柱書・1号・3号・2項2号、37条本文・1号・2号、
  * 同法施行令19条1項〔表を含む〕・2項)。
  *
@@ -28,7 +28,7 @@ export const kaihatsuKyokaReading: Reading = {
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "都市計画法29条1項柱書・1号・3号・2項2号、37条本文・1号・2号、同法施行令19条1項(表を含む)・2項は、いずれも docs/verification/horei-verification.md の「追加照合(#129分)」に記録された逐語原文(2026-07-30受領・Mami 2026-07-31承認)をそのまま転記した。同法施行令21条(4号・14号・17号・18号)は「追加照合(#248分)」に記録された逐語原文(2026-08-27)をそのまま転記した。q8(kaihatsu-kyoka.ts)・q91(kaihatsu-kyoka-2.ts、2周目)の照合表(同シート内「q8 開発許可 — 原文裏取りの状況」「q91 開発許可2周目」)もあわせて参照。",
+    note: "都市計画法29条1項柱書・1号・3号・2項2号、37条本文・1号・2号、同法施行令19条1項(表を含む)・2項は、いずれも docs/verification/horei-verification.md の「追加照合(#129分)」に記録された逐語原文(2026-07-30受領・2026-07-31承認)をそのまま転記した。同法施行令21条(4号・14号・17号・18号)は「追加照合(#248分)」に記録された逐語原文(2026-08-27)をそのまま転記した。q8(kaihatsu-kyoka.ts)・q91(kaihatsu-kyoka-2.ts、2周目)の照合表(同シート内「q8 開発許可 — 原文裏取りの状況」「q91 開発許可2周目」)もあわせて参照。",
   },
   lawVersion: {
     revisionId: "343AC0000000100_20250604_507AC0000000051",
@@ -273,7 +273,7 @@ export const kaihatsuKyokaReading: Reading = {
           },
         ],
         article: "29条",
-        cite: "都市計画法29条1項柱書・1号・3号、2項2号(docs/verification/horei-verification.md「追加照合(#129分)」記載の逐語原文より転記。Mami 2026-07-31承認)",
+        cite: "都市計画法29条1項柱書・1号・3号、2項2号(docs/verification/horei-verification.md「追加照合(#129分)」記載の逐語原文より転記。2026-07-31承認)",
       },
     },
     {
@@ -339,7 +339,7 @@ export const kaihatsuKyokaReading: Reading = {
           },
         ],
         article: "37条",
-        cite: "都市計画法37条(全文。docs/verification/horei-verification.md「追加照合(#129分)」記載の逐語原文より転記。Mami 2026-07-31承認)",
+        cite: "都市計画法37条(全文。docs/verification/horei-verification.md「追加照合(#129分)」記載の逐語原文より転記。2026-07-31承認)",
       },
     },
     {
@@ -395,7 +395,7 @@ export const kaihatsuKyokaReading: Reading = {
           },
         ],
         article: "施行令19条",
-        cite: "都市計画法施行令19条1項・2項(全文。docs/verification/horei-verification.md「追加照合(#129分)」記載の逐語原文より転記。Mami 2026-07-31承認)",
+        cite: "都市計画法施行令19条1項・2項(全文。docs/verification/horei-verification.md「追加照合(#129分)」記載の逐語原文より転記。2026-07-31承認)",
       },
     },
   ],
