@@ -6,7 +6,7 @@
  * (判決画面の論点一覧・検地帳の論点詳細)の両方で使う共通コンポーネント。
  * どちらの単位かは呼び出し側の onClick が何を渡すかで決まる(このボタン自体は関知しない)。
  */
-import { SHU, MUTED, SANS, RADIUS } from "@/lib/tokens";
+import { SHU, MUTED, INK, SANS, RADIUS } from "@/lib/tokens";
 
 function StarIcon({ filled, color }: { filled: boolean; color: string }) {
   return (
@@ -27,6 +27,7 @@ export function FavoriteButton({
   onClick,
   size = "md",
   inactiveColor = MUTED,
+  showLabel = false,
 }: {
   active: boolean;
   onClick: () => void;
@@ -34,29 +35,43 @@ export function FavoriteButton({
   size?: "sm" | "md";
   /** 未登録時の色。墨地カード等、通常の MUTED だと沈む背景に置くときに上書きする */
   inactiveColor?: string;
+  /** sm のとき星の隣に短い文字を添える(アイコンだけだと意味が伝わらない場面用) */
+  showLabel?: boolean;
 }) {
   const color = active ? SHU : inactiveColor;
   if (size === "sm") {
+    // 文字は小さいので MUTED のままだとコントラスト不足(約3.65:1)。星アイコンだけ MUTED を保つ
+    const labelColor = active || inactiveColor !== MUTED ? color : INK;
+    const actionLabel = active ? "お気に入りから外す" : "お気に入りに追加する";
+    // 見えている文字(登録済み)をアクセシブルネームに含める(音声操作で見たとおりに呼べるように)
+    const accessibleName = showLabel && active ? `登録済み(${actionLabel})` : actionLabel;
     return (
       <button
         type="button"
         onClick={onClick}
         aria-pressed={active}
-        aria-label={active ? "お気に入りから外す" : "お気に入りに追加する"}
-        title={active ? "お気に入りから外す" : "お気に入りに追加する"}
+        aria-label={accessibleName}
+        title={accessibleName}
         style={{
           display: "inline-flex",
           alignItems: "center",
           justifyContent: "center",
-          width: 44,
+          gap: 4,
+          minWidth: 44,
           height: 44,
+          padding: showLabel ? "0 8px" : 0,
           flexShrink: 0,
+          fontFamily: SANS,
+          fontSize: 12.5,
+          fontWeight: 700,
+          color: labelColor,
           background: "transparent",
           border: "none",
           cursor: "pointer",
         }}
       >
         <StarIcon filled={active} color={color} />
+        {showLabel && (active ? "登録済み" : "お気に入り")}
       </button>
     );
   }

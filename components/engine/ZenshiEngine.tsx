@@ -387,9 +387,6 @@ export function ZenshiEngine({
                 {explainTitle}
               </b>
               <div style={{ display: "flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
-                {favorited !== null && (
-                  <FavoriteButton size="sm" active={favorited} onClick={toggleItemFavorite} />
-                )}
                 <span
                   style={{
                     fontFamily: SERIF,
@@ -404,6 +401,29 @@ export function ZenshiEngine({
                 </span>
               </div>
             </div>
+            {favorited !== null && (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                  columnGap: 4,
+                  margin: "0 0 8px -8px",
+                }}
+              >
+                <FavoriteButton
+                  size="sm"
+                  showLabel
+                  active={favorited}
+                  onClick={toggleItemFavorite}
+                />
+                {favorited && (
+                  <span style={{ fontSize: 12, color: INK, marginLeft: 8 }}>
+                    検地帳の「お気に入り」から出題できます
+                  </span>
+                )}
+              </div>
+            )}
             {favError && (
               <p role="alert" style={{ fontSize: 12.5, margin: "0 0 8px", color: SHU }}>
                 {FAVORITE_SAVE_ERROR}

@@ -168,6 +168,7 @@ export function ResultScreen({
                   {favorites !== null && (
                     <FavoriteButton
                       size="sm"
+                      showLabel
                       active={itemKeysForTopic(topicId, QUESTIONS).every((k) =>
                         favorites.includes(k),
                       )}
