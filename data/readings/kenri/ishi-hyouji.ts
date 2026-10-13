@@ -7,13 +7,13 @@ import type { Reading } from "@/types";
  * 同じ論点の2周目 `ishi-hyouji-2.ts`)と `docs/verification/kenri-verification.md` の
  * q18・q102 エントリ(承認済み)の範囲にとどめ、新しい要件・数字・判例は加えていない。
  *
- * 条文の逐語引用は93条〜95条の全文。承認者(hiiragi17)が提示した e-Gov 原文
+ * 条文の逐語引用は93条〜95条の全文。提示した e-Gov 原文
  * (民法 RevisionId 129AC0000000089_20260401_506AC0000000033・施行 令和8年4月1日)から転記した。
  * 提示原文の93条の条見出しは「(心裡り留保)」と「り」が混入していたが、これは「裡」に振られた
  * 読み仮名(ルビ)が貼り付け時に混ざったもので、原文の条見出しは「(心裡留保)」である
- * (承認者がe-Gov画面のスクリーンショットで確認。2026-10-04)。
+ * (e-Gov画面のスクリーンショットで確認。2026-10-04)。
  *
- * 追加時は `verified: false` とし、承認者(hiiragi17)が提示原文との突き合わせを
+ * 追加時は `verified: false` とし、提示原文との突き合わせを
  * 確認したうえで `verified: true` にした(CLAUDE.mdの`verified`運用に準拠)。
  */
 export const ishiHyoujiReading: Reading = {
@@ -25,7 +25,7 @@ export const ishiHyoujiReading: Reading = {
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "93条・94条・95条の逐語引用は、承認者(hiiragi17)提示の e-Gov 原文(民法 RevisionId 129AC0000000089_20260401_506AC0000000033・施行 令和8年4月1日)から転記した。本文は対応する問題(data/questions/kenri/ishi-hyouji.ts・ishi-hyouji-2.ts)の肢と、docs/verification/kenri-verification.md の q18・q102 エントリの範囲にとどめた。94条2項の第三者が『善意で足り、無過失・登記は不要』である点は、条文が要件を『善意』のみとすることによる(検証シート q18 肢2。無過失必要説もあるが宅建標準は善意のみ)。数値そのものが答えになる肢は無い。",
+    note: "93条・94条・95条の逐語引用は、e-Gov 原文(民法 RevisionId 129AC0000000089_20260401_506AC0000000033・施行 令和8年4月1日)から転記した。本文は対応する問題(data/questions/kenri/ishi-hyouji.ts・ishi-hyouji-2.ts)の肢と、docs/verification/kenri-verification.md の q18・q102 エントリの範囲にとどめた。94条2項の第三者が『善意で足り、無過失・登記は不要』である点は、条文が要件を『善意』のみとすることによる(検証シート q18 肢2。無過失必要説もあるが宅建標準は善意のみ)。数値そのものが答えになる肢は無い。",
   },
   lawVersion: {
     revisionId: "129AC0000000089_20260401_506AC0000000033",
@@ -119,7 +119,7 @@ export const ishiHyoujiReading: Reading = {
             text: "前項ただし書の規定による意思表示の無効は、善意の第三者に対抗することができない。",
           },
         ],
-        cite: "民法93条(RevisionId 129AC0000000089_20260401_506AC0000000033・施行 令和8年4月1日。承認者提示のe-Gov原文より転記)",
+        cite: "民法93条(RevisionId 129AC0000000089_20260401_506AC0000000033・施行 令和8年4月1日。e-Gov原文より転記)",
         article: "93条",
       },
     },
@@ -140,7 +140,7 @@ export const ishiHyoujiReading: Reading = {
             text: "前項の規定による意思表示の無効は、善意の第三者に対抗することができない。",
           },
         ],
-        cite: "民法94条(RevisionId 129AC0000000089_20260401_506AC0000000033・施行 令和8年4月1日。承認者提示のe-Gov原文より転記)",
+        cite: "民法94条(RevisionId 129AC0000000089_20260401_506AC0000000033・施行 令和8年4月1日。e-Gov原文より転記)",
         article: "94条",
       },
     },
@@ -191,7 +191,7 @@ export const ishiHyoujiReading: Reading = {
             text: "第一項の規定による意思表示の取消しは、善意でかつ過失がない第三者に対抗することができない。",
           },
         ],
-        cite: "民法95条(RevisionId 129AC0000000089_20260401_506AC0000000033・施行 令和8年4月1日。承認者提示のe-Gov原文より転記)",
+        cite: "民法95条(RevisionId 129AC0000000089_20260401_506AC0000000033・施行 令和8年4月1日。e-Gov原文より転記)",
         article: "95条",
       },
     },

@@ -6,7 +6,7 @@ import type { Reading } from "@/types";
  * 参考書モードのプロトタイプ(Issue #178)。原文引用は
  * `docs/verification/gyoho-verification.md` に既に人の承認を経て記録されている
  * 引用(施行規則16条の5 全文 = #124・2026-08-08 承認分)に加え、37条の2は
- * PR #179 レビュー(CodeRabbit指摘)を受けて hiiragi17 が提示した全文
+ * PR #179 レビュー(CodeRabbit指摘)を受けて 提示した全文
  * (2026-08-10)で更新・確認済み。
  */
 export const coolingOffReading: Reading = {
@@ -18,7 +18,7 @@ export const coolingOffReading: Reading = {
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "37条の2は hiiragi17提示の原文(2026-08-10、PR #179 レビュー対応)で全文確認。施行規則16条の5は gyoho-verification.md の q78 追加照合(2026-08-08 承認)の全文引用を転記。施行規則16条の6は hiiragi17提示の原文(2026-08-25、PR #230 判定フロー図レビュー対応)で全文確認(gyoho-verification.md q4 追加確認参照)",
+    note: "37条の2は 原文(2026-08-10、PR #179 レビュー対応)で全文確認。施行規則16条の5は gyoho-verification.md の q78 追加照合(2026-08-08 承認)の全文引用を転記。施行規則16条の6は 原文(2026-08-25、PR #230 判定フロー図レビュー対応)で全文確認(gyoho-verification.md q4 追加確認参照)",
   },
   lawVersion: {
     revisionId: "327AC1000000176_20260401_507AC0000000068",

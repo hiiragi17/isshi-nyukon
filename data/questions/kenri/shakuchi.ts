@@ -4,7 +4,7 @@ import type { Question } from "@/types";
 export const shakuchi: Question = {
   id: "q70",
   verified: true,
-  source: { level: "primary", note: "承認者が借地借家法の条文原文を提示し突合せ" },
+  source: { level: "primary", note: "借地借家法の条文原文を提示し突合せ" },
   lawVersion: {
     revisionId: "403AC0000000090_20260521",
     verifiedAgainst: "2026-05-21",

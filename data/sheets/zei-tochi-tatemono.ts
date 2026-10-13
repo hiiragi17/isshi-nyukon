@@ -6,7 +6,7 @@ import type { Sheet } from "@/types";
  * 5問免除科目(土地・建物)の取り違えやすい語を表にして、直前に見直すためのコラム。
  * 「税・その他・直前暗記」(zei-anki)から、一次ソースで照合できなかった記述を分けたシート。
  *
- * **照合前のため `verified: false`**(CLAUDE.md の `verified` 運用)。記述は条文・告示でなく、hiiragi17 が
+ * **照合前のため `verified: false`**(CLAUDE.md の `verified` 運用)。記述は条文・告示でなく、
  * 『公式の問題集の解説に載っていた』と確認したもの(書名・版・頁は未記録。Claude は解説を確認していない)。
  * 国土地理院の解説(治水地形分類図の内容)と食い違う/裏づけの無い点は
  * docs/verification/zei-verification.md の暗記シート節に記録している。
@@ -22,7 +22,7 @@ export const zeiTochiTatemonoSheet: Sheet = {
   source: {
     level: "unverified",
     answerLevel: "unverified",
-    note: "照合前。hiiragi17 が『公式の問題集の解説に載っていた』と確認した記述で、書名・版・頁は未記録(Claude は解説を確認していない)。国土地理院の解説(治水地形分類図の内容。secondary)とは、台地『古くて硬い』・自然堤防『水はけがよい』・後背湿地『新しい堆積』・砂州『粒径のそろった』・埋立地の条件付きの言い方・『重力式』『水圧を下げる』などが資料に無い/食い違う。建物の構造と材料・土壌汚染は資料が無い。docs/verification/zei-verification.md「暗記シート(税・その他・直前暗記)」の土地・建物の行(⚠️/⏳)を参照。書名・版・頁が分かったら記録し、一次ソースで照合できたら verified: true にする。",
+    note: "照合前。『公式の問題集の解説に載っていた』と確認した記述で、書名・版・頁は未記録(Claude は解説を確認していない)。国土地理院の解説(治水地形分類図の内容。secondary)とは、台地『古くて硬い』・自然堤防『水はけがよい』・後背湿地『新しい堆積』・砂州『粒径のそろった』・埋立地の条件付きの言い方・『重力式』『水圧を下げる』などが資料に無い/食い違う。建物の構造と材料・土壌汚染は資料が無い。docs/verification/zei-verification.md「暗記シート(税・その他・直前暗記)」の土地・建物の行(⚠️/⏳)を参照。書名・版・頁が分かったら記録し、一次ソースで照合できたら verified: true にする。",
   },
   lawVersion: {
     revisionId: "未照合",

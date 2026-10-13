@@ -8,12 +8,12 @@ import type { Reading } from "@/types";
  * `docs/verification/horei-verification.md`の「国土利用計画法 — q25 の根拠
  * (2026-07-30 受領)」「追加照合(#197分・2026-08-21)— q93 国土利用計画法
  * (事後届出)2周目」及び「追加照合(PR #249分・2026-08-28)」に記録済みの
- * 逐語原文(いずれもhiiragi17提示・e-Gov法令検索)から転記した(国土利用計画法
+ * 逐語原文(いずれもe-Gov法令検索)から転記した(国土利用計画法
  * 14条1項、23条1項柱書、23条2項柱書・1号柱書・イ・ロ・ハ・2号・3号、
  * 27条の4第1項・2項柱書・1号、27条の7第1項)。
  *
  * PR #249でのレビュー往復(CodeRabbit/Codex、計20スレッド)を経て、
- * hiiragi17が2026-08-28に verified: true への変更を承認した。
+ * 2026-08-28に verified: true への変更を承認した。
  */
 export const kokudoTodokedeReading: Reading = {
   topicId: "q25",
@@ -24,7 +24,7 @@ export const kokudoTodokedeReading: Reading = {
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "14条1項、23条1項柱書、23条2項柱書・1号柱書・イ・ロ・ハ・2号は、いずれも docs/verification/horei-verification.md の「国土利用計画法 — q25 の根拠(2026-07-30 受領)」及び「追加照合(#197分・2026-08-21)— q93 国土利用計画法(事後届出)2周目」に記録された逐語原文(hiiragi17提示)をそのまま転記した。q25(kokudo-todokede.ts)・q93(kokudo-todokede-2.ts、2周目)の照合表(同シート内「q25 事後届出 — 原文裏取りの状況」「q93 事後届出2周目」)もあわせて参照。27条の4第1項・2項柱書・1号、27条の7第1項、23条2項3号は、CodeRabbit/Codexレビュー指摘(PR #249)を受けてhiiragi17がこの会話で新たに提示したe-Gov逐語テキストをそのまま転記した(docs/verification/horei-verification.md「追加照合(PR #249分)」参照)。23条2項3号「その他政令で定める場合」が委任する政令の内容は未取得のため、その部分は引用・言及していない(この読み物のスコープ外として明記)。",
+    note: "14条1項、23条1項柱書、23条2項柱書・1号柱書・イ・ロ・ハ・2号は、いずれも docs/verification/horei-verification.md の「国土利用計画法 — q25 の根拠(2026-07-30 受領)」及び「追加照合(#197分・2026-08-21)— q93 国土利用計画法(事後届出)2周目」に記録された逐語原文をそのまま転記した。q25(kokudo-todokede.ts)・q93(kokudo-todokede-2.ts、2周目)の照合表(同シート内「q25 事後届出 — 原文裏取りの状況」「q93 事後届出2周目」)もあわせて参照。27条の4第1項・2項柱書・1号、27条の7第1項、23条2項3号は、CodeRabbit/Codexレビュー指摘(PR #249)を受けてこの会話で新たに提示したe-Gov逐語テキストをそのまま転記した(docs/verification/horei-verification.md「追加照合(PR #249分)」参照)。23条2項3号「その他政令で定める場合」が委任する政令の内容は未取得のため、その部分は引用・言及していない(この読み物のスコープ外として明記)。",
   },
   lawVersion: {
     revisionId: "349AC1000000092_20250601_504AC0000000068",

@@ -11,8 +11,8 @@ import type { Reading } from "@/types";
  * 両方をカバーする。
  *
  * 原文引用(43条1項・2項・78条2項)は、docs/verification/gyoho-verification.md
- * のq76エントリ(1114〜1116行目、承認者提示のe-Gov基準日版原文・2026-08-06承認)
- * およびq118エントリ(1142〜1143行目、hiiragi17が2026-09-15にe-Gov法令検索で
+ * のq76エントリ(1114〜1116行目、e-Gov基準日版原文・2026-08-06承認)
+ * およびq118エントリ(1142〜1143行目、2026-09-15にe-Gov法令検索で
  * 43条全文〔1項〜4項〕を改めて直接提示し一致確認済み)の**逐語全文**をそのまま
  * 転記した(中略なし)。78条2項はq36の読み物(hachishu-sonota.ts)で確認済みの
  * 逐語全文と同一のものを再利用する。3項・4項(売主が買主の借入れを保証した
@@ -31,7 +31,7 @@ export const shoyuukenRyuuhoReading: Reading = {
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "43条1項(本文・かっこ書・ただし書)・2項は、docs/verification/gyoho-verification.mdのq76エントリ(承認者提示のe-Gov基準日版原文・2026-08-06承認)およびq118エントリ(hiiragi17が2026-09-15にe-Gov法令検索で43条全文を改めて直接提示・一致確認)の逐語全文をそのまま転記した。78条2項はq36の読み物(hachishu-sonota.ts)で確認済みの逐語全文を再利用する。数値(代金の10分の3)が肢の正誤を決めるためanswerLevel: primary。q76(shoyuuken-ryuuho.ts)・q118(shoyuuken-ryuuho-2.ts)の照合表もあわせて参照。",
+    note: "43条1項(本文・かっこ書・ただし書)・2項は、docs/verification/gyoho-verification.mdのq76エントリ(e-Gov基準日版原文・2026-08-06承認)およびq118エントリ(2026-09-15にe-Gov法令検索で43条全文を改めて直接提示・一致確認)の逐語全文をそのまま転記した。78条2項はq36の読み物(hachishu-sonota.ts)で確認済みの逐語全文を再利用する。数値(代金の10分の3)が肢の正誤を決めるためanswerLevel: primary。q76(shoyuuken-ryuuho.ts)・q118(shoyuuken-ryuuho-2.ts)の照合表もあわせて参照。",
   },
   lawVersion: {
     revisionId: "327AC1000000176_20260401_507AC0000000068",

@@ -14,7 +14,7 @@ export const hachishuSeigen: Question = {
     verifiedAgainst: "2026-04-01",
     examBasisDate: "2026-04-01",
     driftChecked: "not_required",
-    note: "本則(38・39・41・41条の2)は基準日版。施行令3条の5(保全不要額1,000万)は承認者提示原文にRevisionIdの記載がなく、宅地建物取引業法施行令(昭和39年政令第383号)の現在施行版として識別(基準日と一致)",
+    note: "本則(38・39・41・41条の2)は基準日版。施行令3条の5(保全不要額1,000万)は原文にRevisionIdの記載がなく、宅地建物取引業法施行令(昭和39年政令第383号)の現在施行版として識別(基準日と一致)",
   },
   category: "宅建業法",
   topic: "8種制限(手付・保全措置)",
