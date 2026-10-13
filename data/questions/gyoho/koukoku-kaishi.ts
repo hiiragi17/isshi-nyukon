@@ -4,7 +4,7 @@ import type { Question } from "@/types";
 export const koukokuKaishi: Question = {
   id: "q73",
   verified: true,
-  source: { level: "primary", note: "承認者が宅建業法の条文原文を提示し突合せ" },
+  source: { level: "primary", note: "宅建業法の条文原文を提示し突合せ" },
   lawVersion: {
     revisionId: "327AC1000000176_20260401_507AC0000000068",
     verifiedAgainst: "2026-04-01",

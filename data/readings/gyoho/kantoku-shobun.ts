@@ -8,10 +8,10 @@ import type { Reading } from "@/types";
  *
  * 原文引用は次の2本立て。いずれも省略記号なしの逐語全文:
  * - 宅建業法65条・66条・67条・67条の2・68条・68条の2・69条(各全文)・行政手続法13条(全文):
- *   hiiragi17提示(2026-08-20。e-Govがこの環境からブロックされているため、チャットで
+ *   (2026-08-20。e-Govがこの環境からブロックされているため、チャットで
  *   直接提示された原文)
  * - 宅建業法70条(全5項)・79条(全4号)・84条(全2号): gyoho-verification.md q89エントリ
- *   (hiiragi17提示・2026-08-10)の承認済み逐語全文をそのまま再掲
+ *   (2026-08-10)の承認済み逐語全文をそのまま再掲
  *
  * 67条(所在不明取消)・67条の2(認可の取消し等)は、69条2項の聴聞の特例の列挙の有無を
  * 説明するために参照するが、lesson・q34/q89いずれの肢の対象でもないため「原文を読む」
@@ -26,7 +26,7 @@ export const kantokuShobunReading: Reading = {
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "65条(全4項)・66条(全2項)・67条(全2項)・67条の2(全3項)・68条(全4項)・68条の2(全2項)・69条(全2項)・行政手続法13条(全2項)は hiiragi17提示の原文全文(2026-08-20)で確認済み。70条(全5項)・79条(全4号)・84条(全2号)は gyoho-verification.md q89エントリの承認済み逐語全文(hiiragi17提示・2026-08-10)による。",
+    note: "65条(全4項)・66条(全2項)・67条(全2項)・67条の2(全3項)・68条(全4項)・68条の2(全2項)・69条(全2項)・行政手続法13条(全2項)は 原文全文(2026-08-20)で確認済み。70条(全5項)・79条(全4号)・84条(全2号)は gyoho-verification.md q89エントリの承認済み逐語全文(2026-08-10)による。",
   },
   lawVersion: {
     revisionId: "327AC1000000176_20260401_507AC0000000068",
@@ -199,7 +199,7 @@ export const kantokuShobunReading: Reading = {
           { label: "4項五号", text: "前三号に規定する場合のほか、不正又は著しく不当な行為をしたとき。", indent: true },
         ],
         article: "宅建業法65条",
-        cite: "宅建業法65条(全4項・全号。hiiragi17提示・2026-08-20)",
+        cite: "宅建業法65条(全4項・全号)",
       },
     },
     {
@@ -253,7 +253,7 @@ export const kantokuShobunReading: Reading = {
           },
         ],
         article: "宅建業法66条",
-        cite: "宅建業法66条(全2項・全号。hiiragi17提示・2026-08-20)",
+        cite: "宅建業法66条(全2項・全号)",
       },
     },
     {
@@ -293,7 +293,7 @@ export const kantokuShobunReading: Reading = {
           },
         ],
         article: "宅建業法68条",
-        cite: "宅建業法68条(全4項・全号。hiiragi17提示・2026-08-20)",
+        cite: "宅建業法68条(全4項・全号)",
       },
     },
     {
@@ -325,7 +325,7 @@ export const kantokuShobunReading: Reading = {
           { label: "2項三号", text: "宅地建物取引士としてすべき事務を行い、情状が特に重いとき。", indent: true },
         ],
         article: "宅建業法68条の2",
-        cite: "宅建業法68条の2(全2項・全号。hiiragi17提示・2026-08-20)",
+        cite: "宅建業法68条の2(全2項・全号)",
       },
     },
     {
@@ -366,7 +366,7 @@ export const kantokuShobunReading: Reading = {
           { label: "13条1項一号ニ", text: "イからハまでに掲げる場合以外の場合であって行政庁が相当と認めるとき。", indent: true },
           { label: "13条1項二号", text: "前号イからニまでのいずれにも該当しないとき　弁明の機会の付与", indent: true },
         ],
-        cite: "宅建業法69条(全2項)・行政手続法13条1項(全2号・イ〜ニ。hiiragi17提示・2026-08-20)",
+        cite: "宅建業法69条(全2項)・行政手続法13条1項(全2号・イ〜ニ)",
       },
     },
     {
@@ -374,7 +374,7 @@ export const kantokuShobunReading: Reading = {
       kind: "source",
       subtitle: "宅建業法70条(監督処分の公告等。全5項)",
       body: [
-        "gyoho-verification.md q89エントリ(hiiragi17提示・2026-08-10)の承認済み逐語全文をそのまま引用する。",
+        "gyoho-verification.md q89エントリ(2026-08-10)の承認済み逐語全文をそのまま引用する。",
       ],
       quote: {
         lines: [
@@ -401,7 +401,7 @@ export const kantokuShobunReading: Reading = {
           },
         ],
         article: "宅建業法70条",
-        cite: "宅建業法70条(全5項。hiiragi17提示・2026-08-10。gyoho-verification.md q89エントリの承認済み逐語全文を再掲)",
+        cite: "宅建業法70条(全5項。gyoho-verification.md q89エントリの承認済み逐語全文を再掲)",
       },
     },
     {
@@ -409,7 +409,7 @@ export const kantokuShobunReading: Reading = {
       kind: "source",
       subtitle: "宅建業法79条(罰則)・84条(両罰規定)",
       body: [
-        "79条は全4号のうち無免許事業(2号)・業務停止命令違反(4号)を含む全号を、84条は両罰規定の柱書と法人の罰金刑の号(1号・2号)を、それぞれ省略なしの全文で引用する。gyoho-verification.md q89エントリ(hiiragi17提示・2026-08-10)の承認済み逐語全文をそのまま引用する。",
+        "79条は全4号のうち無免許事業(2号)・業務停止命令違反(4号)を含む全号を、84条は両罰規定の柱書と法人の罰金刑の号(1号・2号)を、それぞれ省略なしの全文で引用する。gyoho-verification.md q89エントリ(2026-08-10)の承認済み逐語全文をそのまま引用する。",
       ],
       quote: {
         lines: [
@@ -436,7 +436,7 @@ export const kantokuShobunReading: Reading = {
             indent: true,
           },
         ],
-        cite: "宅建業法79条(全4号)・84条(全2号。hiiragi17提示・2026-08-10。gyoho-verification.md q89エントリの承認済み逐語全文を再掲)",
+        cite: "宅建業法79条(全4号)・84条(全2号。gyoho-verification.md q89エントリの承認済み逐語全文を再掲)",
       },
     },
   ],

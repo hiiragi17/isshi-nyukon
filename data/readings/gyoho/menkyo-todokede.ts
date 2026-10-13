@@ -14,18 +14,18 @@ import type { Reading } from "@/types";
  *
  * 原文引用(「原文を読む」)は、人が原文全文を確認済みのものだけをそのまま転記した
  * (省略記号なし):
- * - 宅建業法4条(1項・2項)・7条(全2項)・11条(全2項): hiiragi17が2026-10-03にこの会話で
+ * - 宅建業法4条(1項・2項)・7条(全2項)・11条(全2項): 2026-10-03にこの会話で
  *   e-Gov法令検索の原文全文を提示したもの(Law RevisionID
  *   327AC1000000176_20260401_507AC0000000068・令和8年4月1日施行。試験の法令基準日と一致)。
  *   照合シート「q72」節の「条文要約」は要約だったため、今回の全文提示で逐語引用に切り替えた
- * - 宅建業法9条(全2項): `menkyo.ts`(q15読み物)の「原文を読む」と同じ、hiiragi17提示の
+ * - 宅建業法9条(全2項): `menkyo.ts`(q15読み物)の「原文を読む」と同じ、
  *   原文全文(2026-08-11)
  * - 宅建業法3条2項・4項: 同じく`menkyo.ts`の3条(全6項)の該当項をそのまま転記(項単位の抜粋。
  *   各項の文言は省略していない)
  * - 宅建業法76条: `docs/verification/gyoho-verification.md`「q72」節(2026-07-28・監査C1)で
  *   確定した全文
  *
- * 追加時は人の確認前のAI下書きのため `verified: false` だったが、hiiragi17が内容を確認し
+ * 追加時は人の確認前のAI下書きのため `verified: false` だったが、内容を確認し
  * 2026-10-03に `verified: true` への更新を承認した(CLAUDE.mdの`verified`運用に準拠)。
  */
 export const menkyoTodokedeReading: Reading = {
@@ -37,7 +37,7 @@ export const menkyoTodokedeReading: Reading = {
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "宅建業法4条(1項・2項)・7条(全2項)・11条(全2項)はhiiragi17が2026-10-03に提示したe-Gov法令検索の原文全文(Law RevisionID 327AC1000000176_20260401_507AC0000000068)、9条(全2項)・3条2項・4項はhiiragi17提示の原文全文(2026-08-11)、76条は照合シートq72節(監査C1)で確定した全文から転記した。本文中の説明・表・「ここが狙われる」は、これらの原文から導いたAI下書きを、hiiragi17が確認・承認した(2026-10-03)。",
+    note: "宅建業法4条(1項・2項)・7条(全2項)・11条(全2項)は2026-10-03に提示したe-Gov法令検索の原文全文(Law RevisionID 327AC1000000176_20260401_507AC0000000068)、9条(全2項)・3条2項・4項は原文全文(2026-08-11)、76条は照合シートq72節(監査C1)で確定した全文から転記した。本文中の説明・表・「ここが狙われる」は、これらの原文から導いたAI下書きを、確認・承認した(2026-10-03)。",
   },
   lawVersion: {
     revisionId: "327AC1000000176_20260401_507AC0000000068",
@@ -144,7 +144,7 @@ export const menkyoTodokedeReading: Reading = {
           { label: "八号", text: "その他国土交通省令で定める書面", indent: true },
         ],
         article: "宅建業法4条",
-        cite: "宅建業法4条(1項・2項の全文。hiiragi17提示・2026-10-03。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
+        cite: "宅建業法4条(1項・2項の全文。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
       },
     },
     {
@@ -165,7 +165,7 @@ export const menkyoTodokedeReading: Reading = {
           },
         ],
         article: "宅建業法9条",
-        cite: "宅建業法9条(全文。hiiragi17提示・2026-08-11。menkyo.ts〔q15読み物〕の引用と同一)",
+        cite: "宅建業法9条(全文。menkyo.ts〔q15読み物〕の引用と同一)",
       },
     },
     {
@@ -219,7 +219,7 @@ export const menkyoTodokedeReading: Reading = {
           },
         ],
         article: "宅建業法7条",
-        cite: "宅建業法7条(全文。hiiragi17提示・2026-10-03。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
+        cite: "宅建業法7条(全文。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
       },
     },
     {
@@ -238,7 +238,7 @@ export const menkyoTodokedeReading: Reading = {
           },
         ],
         article: "宅建業法3条",
-        cite: "宅建業法3条2項・4項(hiiragi17提示・2026-08-11。menkyo.ts〔q15読み物〕の3条全6項のうち該当項を転記)",
+        cite: "宅建業法3条2項・4項(menkyo.ts〔q15読み物〕の3条全6項のうち該当項を転記)",
       },
     },
     {
@@ -303,7 +303,7 @@ export const menkyoTodokedeReading: Reading = {
           },
         ],
         article: "宅建業法11条",
-        cite: "宅建業法11条(全文。hiiragi17提示・2026-10-03。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
+        cite: "宅建業法11条(全文。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
       },
     },
     {

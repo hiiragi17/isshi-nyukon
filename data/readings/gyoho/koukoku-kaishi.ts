@@ -13,7 +13,7 @@ import type { Reading } from "@/types";
  * 担保特約・割賦)」(q36、`hachishu-sonota.ts`)、34条の2(媒介契約)は別論点「媒介契約
  * (一般・専任・専属専任)」(q14、`baikai-keiyaku.ts`)で扱うため、本文では説明しない。
  *
- * 原文引用(「原文を読む」)は、hiiragi17が2026-10-04にこの会話で提示した原文を、省略記号なしで
+ * 原文引用(「原文を読む」)は、2026-10-04にこの会話で提示した原文を、省略記号なしで
  * そのまま転記した:
  * - 宅建業法33条(全文)・34条(全2項)・36条(全文): 令和8年4月1日施行・現在施行
  *   (Law RevisionID 327AC1000000176_20260401_507AC0000000068)
@@ -25,7 +25,7 @@ import type { Reading } from "@/types";
  * 2条の5が引く各個別法(都市計画法・建築基準法・農地法など)の条文は原文未取得のため、本文では
  * それらの処分の内容を説明していない(2条の5の文言どおり、法令名と条番号を引くにとどめる)。
  *
- * 追加時は人の確認前のAI下書きのため `verified: false` だった。hiiragi17は2026-10-04に転記と
+ * 追加時は人の確認前のAI下書きのため `verified: false` だった。2026-10-04に転記と
  * 本文の内容を確認し、`verified: true` への更新を承認した(CLAUDE.mdの `verified` 運用に準拠)。
  */
 export const koukokuKaishiReading: Reading = {
@@ -37,7 +37,7 @@ export const koukokuKaishiReading: Reading = {
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "宅建業法33条・34条・36条は、hiiragi17が2026-10-04に提示した原文(Law RevisionID 327AC1000000176_20260401_507AC0000000068)を、省略なしで転記した。宅建業法施行令2条の5は、同日に提示された原文(柱書+1号〜40号。Law RevisionID 339CO0000000383_20260401_507CO0000000388)を、省略なしで転記した。本文中の説明・表・「ここが狙われる」は、これらの原文と、問題q73の承認済みの記録(gyoho-verification.md q73エントリ)から導いたAI下書きを、hiiragi17が確認・承認した(2026-10-04)。",
+    note: "宅建業法33条・34条・36条は、2026-10-04に提示した原文(Law RevisionID 327AC1000000176_20260401_507AC0000000068)を、省略なしで転記した。宅建業法施行令2条の5は、同日に提示された原文(柱書+1号〜40号。Law RevisionID 339CO0000000383_20260401_507CO0000000388)を、省略なしで転記した。本文中の説明・表・「ここが狙われる」は、これらの原文と、問題q73の承認済みの記録(gyoho-verification.md q73エントリ)から導いたAI下書きを、確認・承認した(2026-10-04)。",
   },
   lawVersion: {
     revisionId: "327AC1000000176_20260401_507AC0000000068",
@@ -127,7 +127,7 @@ export const koukokuKaishiReading: Reading = {
           },
         ],
         article: "宅建業法33条",
-        cite: "宅建業法33条(全文。hiiragi17提示・2026-10-04。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
+        cite: "宅建業法33条(全文。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
       },
     },
     {
@@ -148,7 +148,7 @@ export const koukokuKaishiReading: Reading = {
           },
         ],
         article: "宅建業法34条",
-        cite: "宅建業法34条(全文。hiiragi17提示・2026-10-04。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
+        cite: "宅建業法34条(全文。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
       },
     },
     {
@@ -165,7 +165,7 @@ export const koukokuKaishiReading: Reading = {
           },
         ],
         article: "宅建業法36条",
-        cite: "宅建業法36条(全文。hiiragi17提示・2026-10-04。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
+        cite: "宅建業法36条(全文。Law RevisionID 327AC1000000176_20260401_507AC0000000068)",
       },
     },
     {
@@ -345,7 +345,7 @@ export const koukokuKaishiReading: Reading = {
           },
         ],
         article: "宅建業法施行令2条の5",
-        cite: "宅地建物取引業法施行令2条の5(全文。hiiragi17提示・2026-10-04。Law RevisionID 339CO0000000383_20260401_507CO0000000388)",
+        cite: "宅地建物取引業法施行令2条の5(全文。Law RevisionID 339CO0000000383_20260401_507CO0000000388)",
       },
     },
     {

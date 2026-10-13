@@ -7,7 +7,7 @@ export const koteiShisanzei: Question = {
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "承認者が地方税法342条・343条・349条の3の2・350条・359条の原文を提示し突合せ(2026-07-29)。4肢すべての正誤が逐語原文で確定",
+    note: "地方税法342条・343条・349条の3の2・350条・359条の原文を提示し突合せ(2026-07-29)。4肢すべての正誤が逐語原文で確定",
   },
   lawVersion: {
     revisionId: "325AC0000000226_20260605_508AC0000000031",

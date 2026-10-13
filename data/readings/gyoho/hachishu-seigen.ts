@@ -4,7 +4,7 @@ import type { Reading } from "@/types";
  * 8種制限(手付・保全措置)(topicId: "q17")の読み物。
  *
  * Issue #180/#186。q17(`hachishu-seigen.ts`)と q82(2周目・`hachishu-seigen-2.ts`)の
- * 両方をカバーする。原文引用はすべて hiiragi17提示の逐語全文(2026-08-19。
+ * 両方をカバーする。原文引用はすべて 逐語全文(2026-08-19。
  * 38条・39条・41条・41条の2・施行令3条の5)で確認済み(省略記号なし)。
  * 41条1項・41条の2第1項のうち、保全措置の具体的な方法を定める1号・2号
  * (銀行等の保証委託契約/保険事業者の保証保険契約、指定保管機関への寄託等)は、
@@ -20,7 +20,7 @@ export const hachishuSeigenReading: Reading = {
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "38条(全2項)・39条(全3項)・41条(1項・4項)・41条の2(1項)は hiiragi17提示の原文全文(2026-08-19)で確認済み。施行令3条の5(政令で定める額=千万円)も同日提示の原文全文で確認済み。",
+    note: "38条(全2項)・39条(全3項)・41条(1項・4項)・41条の2(1項)は 原文全文(2026-08-19)で確認済み。施行令3条の5(政令で定める額=千万円)も同日提示の原文全文で確認済み。",
   },
   lawVersion: {
     revisionId: "327AC1000000176_20260401_507AC0000000068",
@@ -207,7 +207,7 @@ export const hachishuSeigenReading: Reading = {
           },
         ],
         article: "宅建業法39条",
-        cite: "宅建業法39条(全文。hiiragi17提示・2026-08-19)",
+        cite: "宅建業法39条(全文)",
       },
     },
     {
@@ -227,7 +227,7 @@ export const hachishuSeigenReading: Reading = {
           },
         ],
         article: "宅建業法38条",
-        cite: "宅建業法38条(全文。hiiragi17提示・2026-08-19)",
+        cite: "宅建業法38条(全文)",
       },
     },
     {
@@ -253,7 +253,7 @@ export const hachishuSeigenReading: Reading = {
           },
         ],
         article: "宅建業法41条",
-        cite: "宅建業法41条1項本文・ただし書・4項(hiiragi17提示・2026-08-19・省略記号なしの全文)",
+        cite: "宅建業法41条1項本文・ただし書・4項(省略記号なしの全文)",
       },
     },
     {
@@ -275,7 +275,7 @@ export const hachishuSeigenReading: Reading = {
           },
         ],
         article: "宅建業法41条の2",
-        cite: "宅建業法41条の2第1項本文・ただし書(hiiragi17提示・2026-08-19・省略記号なしの全文)",
+        cite: "宅建業法41条の2第1項本文・ただし書(省略記号なしの全文)",
       },
     },
     {
@@ -297,7 +297,7 @@ export const hachishuSeigenReading: Reading = {
           },
         ],
         article: "宅地建物取引業法施行令3条の5",
-        cite: "宅地建物取引業法施行令3条の5(全文。hiiragi17提示・2026-08-19)",
+        cite: "宅地建物取引業法施行令3条の5(全文)",
       },
     },
   ],

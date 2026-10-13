@@ -13,7 +13,7 @@ import type { Reading } from "@/types";
  * `docs/verification/zei-verification.md`「## q55 土地」節(4肢すべて承認済み)と
  * 対応する問題の lesson・explanation の範囲にとどめ、新しい数値・分類は加えていない。
  *
- * 転記元の問題・検証シート自体は承認済み(Mami 2026-07-18)だが、この読み物として
+ * 転記元の問題・検証シート自体は承認済み(2026-07-18)だが、この読み物として
  * 新たに書き起こした説明文自体は人の確認前のAI下書きのため、`verified: false`
  * のまま追加する(CLAUDE.mdの`verified`運用に準拠。「AIの下書き照合だけを根拠に
  * verified: true にしない」)。

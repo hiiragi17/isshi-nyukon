@@ -5,9 +5,9 @@ import type { Reading } from "@/types";
  *
  * Issue #180/#183。q32(`hoshou-kyoukai.ts`)と q88(2周目・`hoshou-kyoukai-2.ts`)の両方をカバーする。
  * 原文引用のうち64条の9(全4項)・26条(全2項)は gyoho-verification.md q88エントリの
- * hiiragi17提示原文全文(2026-08-10)をそのまま転記。64条の7(全3項)・64条の8(全5項)・
+ * 原文全文(2026-08-10)をそのまま転記。64条の7(全3項)・64条の8(全5項)・
  * 64条の11(全6項)・64条の15は、e-Govへのアクセスがこの環境からブロックされているため
- * hiiragi17に新規提示を依頼し、2026-08-12に提示された原文全文(省略記号なし)で確認した。
+ * に新規提示を依頼し、2026-08-12に提示された原文全文(省略記号なし)で確認した。
  * 施行令7条・2条の4は gyoho-verification.md q32/q31エントリの承認済み引用(2026-08-03)を転記。
  */
 export const hoshouKyoukaiReading: Reading = {
@@ -19,7 +19,7 @@ export const hoshouKyoukaiReading: Reading = {
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "64条の9(全4項)・26条(全2項)は hiiragi17提示の原文全文(2026-08-10。gyoho-verification.md q88エントリと同一)で確認済み。64条の7(全3項)・64条の8(全5項)・64条の11(全6項)・64条の15は hiiragi17提示の原文全文(2026-08-12)で確認済み。施行令7条(分担金の額)・2条の4(還付限度の算定)は gyoho-verification.md q32/q31エントリの承認済み引用(2026-08-03)をそのまま転記(いずれも省略記号を含まない条文全体)。",
+    note: "64条の9(全4項)・26条(全2項)は 原文全文(2026-08-10。gyoho-verification.md q88エントリと同一)で確認済み。64条の7(全3項)・64条の8(全5項)・64条の11(全6項)・64条の15は 原文全文(2026-08-12)で確認済み。施行令7条(分担金の額)・2条の4(還付限度の算定)は gyoho-verification.md q32/q31エントリの承認済み引用(2026-08-03)をそのまま転記(いずれも省略記号を含まない条文全体)。",
   },
   lawVersion: {
     revisionId: "327AC1000000176_20260401_507AC0000000068",
@@ -151,7 +151,7 @@ export const hoshouKyoukaiReading: Reading = {
           },
         ],
         article: "宅建業法64条の7",
-        cite: "宅建業法64条の7(全文。hiiragi17提示・2026-08-12)",
+        cite: "宅建業法64条の7(全文)",
       },
     },
     {
@@ -175,7 +175,7 @@ export const hoshouKyoukaiReading: Reading = {
           { label: "5項", text: "第一項の権利の実行に関し必要な事項は法務省令・国土交通省令で、第二項の認証に関し必要な事項は国土交通省令で定める。" },
         ],
         article: "宅建業法64条の8",
-        cite: "宅建業法64条の8(全文。hiiragi17提示・2026-08-12)",
+        cite: "宅建業法64条の8(全文)",
       },
     },
     {
@@ -210,7 +210,7 @@ export const hoshouKyoukaiReading: Reading = {
           },
         ],
         article: "宅建業法64条の9",
-        cite: "宅建業法64条の9(全文。hiiragi17提示・2026-08-10)",
+        cite: "宅建業法64条の9(全文)",
       },
     },
     {
@@ -244,7 +244,7 @@ export const hoshouKyoukaiReading: Reading = {
           { label: "6項", text: "第三十条第三項の規定は、第一項の規定により弁済業務保証金を取りもどす場合に準用する。" },
         ],
         article: "宅建業法64条の11",
-        cite: "宅建業法64条の11(全文。hiiragi17提示・2026-08-12)",
+        cite: "宅建業法64条の11(全文)",
       },
     },
     {
@@ -266,7 +266,7 @@ export const hoshouKyoukaiReading: Reading = {
           },
           { label: "26条2項", text: "前条第一項及び第三項から第五項までの規定は、前項の規定により供託する場合に準用する。" },
         ],
-        cite: "宅建業法64条の15(hiiragi17提示・2026-08-12)・26条(全文。hiiragi17提示・2026-08-10)",
+        cite: "宅建業法64条の15・26条(全文)",
       },
     },
     {

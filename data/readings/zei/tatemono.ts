@@ -14,7 +14,7 @@ import type { Reading } from "@/types";
  * 対応する問題の lesson・explanation の範囲にとどめ、新しい数値・分類は加えていない。
  *
  * `data/readings/zei/tochi.ts`(q55・Issue #292)と同じ扱い。転記元の問題・検証
- * シート自体は承認済み(Mami 2026-07-18)だが、この読み物として新たに書き起こした
+ * シート自体は承認済み(2026-07-18)だが、この読み物として新たに書き起こした
  * 説明文自体は人の確認前のAI下書きのため、`verified: false` のまま追加する
  * (CLAUDE.mdの`verified`運用に準拠。「AIの下書き照合だけを根拠にverified: true に
  * しない」)。

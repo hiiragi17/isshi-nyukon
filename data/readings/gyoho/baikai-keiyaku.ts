@@ -5,7 +5,7 @@ import type { Reading } from "@/types";
  *
  * Issue #180/#187。q14(`baikai-keiyaku.ts`)と q83(2周目・`baikai-keiyaku-2.ts`)の
  * 両方をカバーする。原文引用(34条の2 全12項・施行規則15条の10 全2項)は、
- * gyoho-verification.md の q83 エントリで hiiragi17が2026-08-10に提示した
+ * gyoho-verification.md の q83 エントリで 2026-08-10に提示した
  * 逐語全文(省略記号なし・承認済み)をそのまま転記した。q14エントリ(2026-08-02)は
  * 一部を(略)で要約していたが、この2026-08-10の全文提示により、q14時点で
  * 省略していた箇所(1項の号列記・11項・12項)も含めて逐語で確認できている。
@@ -19,7 +19,7 @@ export const baikaiKeiyakuReading: Reading = {
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "34条の2(全12項)・施行規則15条の10(全2項)は、gyoho-verification.md q83エントリの、hiiragi17が2026-08-10に提示した逐語全文(省略記号なし)で確認済み。q14エントリ(2026-08-02)の承認済み要約引用とも矛盾しない同一条文・同一版。",
+    note: "34条の2(全12項)・施行規則15条の10(全2項)は、gyoho-verification.md q83エントリの、2026-08-10に提示した逐語全文(省略記号なし)で確認済み。q14エントリ(2026-08-02)の承認済み要約引用とも矛盾しない同一条文・同一版。",
   },
   lawVersion: {
     revisionId: "327AC1000000176_20260401_507AC0000000068",
@@ -197,7 +197,7 @@ export const baikaiKeiyakuReading: Reading = {
           },
         ],
         article: "宅建業法34条の2",
-        cite: "宅建業法34条の2(全文。gyoho-verification.md q83エントリ・hiiragi17提示・2026-08-10)",
+        cite: "宅建業法34条の2(全文。gyoho-verification.md q83エントリ)",
       },
     },
     {
@@ -218,7 +218,7 @@ export const baikaiKeiyakuReading: Reading = {
           },
         ],
         article: "宅建業法施行規則15条の10",
-        cite: "宅建業法施行規則15条の10(全文。gyoho-verification.md q83エントリ・hiiragi17提示・2026-08-10)",
+        cite: "宅建業法施行規則15条の10(全文。gyoho-verification.md q83エントリ)",
       },
     },
   ],

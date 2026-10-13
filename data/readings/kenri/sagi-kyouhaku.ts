@@ -8,12 +8,12 @@ import type { Reading } from "@/types";
  * 新しい要件・数字・判例は加えていない。
  *
  * 条文の逐語引用は96条1項〜3項の全文。3項は検証シートに承認済みで記録されている引用、
- * 1項・2項は承認者(hiiragi17)が提示した e-Gov 原文(民法 RevisionId
+ * 1項・2項は提示した e-Gov 原文(民法 RevisionId
  * 129AC0000000089_20260401_506AC0000000033・施行 令和8年4月1日)から転記した。
  * 2項(第三者による詐欺)は対応する問題の肢の対象外のため、本文では説明を加えず、
  * 原文の引用にとどめる。
  *
- * 追加時は `verified: false` とし、承認者(hiiragi17)が提示原文との突き合わせを
+ * 追加時は `verified: false` とし、提示原文との突き合わせを
  * 確認したうえで `verified: true` にした(CLAUDE.mdの`verified`運用に準拠)。
  */
 export const sagiKyouhakuReading: Reading = {
@@ -25,7 +25,7 @@ export const sagiKyouhakuReading: Reading = {
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "96条1項〜3項の逐語引用は、承認者(hiiragi17)提示の e-Gov 原文(民法 RevisionId 129AC0000000089_20260401_506AC0000000033・施行 令和8年4月1日)から転記した(3項は docs/verification/kenri-verification.md の q2 エントリの承認済み引用とも一致)。本文は対応する問題(data/questions/kenri/sagi-kyouhaku.ts)の肢1〜4と同じ内容にとどめ、2項(第三者による詐欺)の説明は加えていない。数値そのものが答えになる肢は無い。",
+    note: "96条1項〜3項の逐語引用は、e-Gov 原文(民法 RevisionId 129AC0000000089_20260401_506AC0000000033・施行 令和8年4月1日)から転記した(3項は docs/verification/kenri-verification.md の q2 エントリの承認済み引用とも一致)。本文は対応する問題(data/questions/kenri/sagi-kyouhaku.ts)の肢1〜4と同じ内容にとどめ、2項(第三者による詐欺)の説明は加えていない。数値そのものが答えになる肢は無い。",
   },
   lawVersion: {
     revisionId: "129AC0000000089_20260401_506AC0000000033",
@@ -109,7 +109,7 @@ export const sagiKyouhakuReading: Reading = {
             text: "前二項の規定による詐欺による意思表示の取消しは、善意でかつ過失がない第三者に対抗することができない。",
           },
         ],
-        cite: "民法96条(RevisionId 129AC0000000089_20260401_506AC0000000033・施行 令和8年4月1日。承認者提示のe-Gov原文より転記)",
+        cite: "民法96条(RevisionId 129AC0000000089_20260401_506AC0000000033・施行 令和8年4月1日。e-Gov原文より転記)",
         article: "96条",
       },
     },
