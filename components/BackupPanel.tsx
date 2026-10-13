@@ -30,22 +30,33 @@ type Msg = { kind: "ok" | "error"; text: string } | null;
 export function BackupPanel({
   attempts,
   favorites,
+  favoritesError,
   onImported,
 }: {
   attempts: Attempt[];
-  /** いまのお気に入り(itemKey の配列)。控えに含めて書き出す */
-  favorites: string[];
+  /** いまのお気に入り(itemKey の配列)。null は読み込み中。控えに含めて書き出す */
+  favorites: string[] | null;
+  /** お気に入りを読み込めなかったとき。この間の favorites は信用できないので控えに含めない */
+  favoritesError: boolean;
   onImported: () => void;
 }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [msg, setMsg] = useState<Msg>(null);
 
+  // お気に入りの読み込み前に書き出すと、未読み込みを「0件」として控えに入れてしまい、
+  // 復元で本来のお気に入りが消える。読み込みが終わるまで書き出さない。
+  // 読み込みに失敗したときは、お気に入りを含めずに成績だけ書き出す(復元でお気に入りに触れない)
+  const favoritesLoading = favorites === null;
+  const exportFavorites =
+    favorites !== null && !favoritesError ? favorites : undefined;
   // 成績もお気に入りも無いときだけ、書き出す中身が無い
-  const nothingToExport = attempts.length === 0 && favorites.length === 0;
+  const nothingToExport =
+    attempts.length === 0 && (exportFavorites?.length ?? 0) === 0;
+  const exportDisabled = favoritesLoading || nothingToExport;
 
   const handleExport = () => {
     try {
-      const json = serializeBackup(attempts, new Date(), favorites);
+      const json = serializeBackup(attempts, new Date(), exportFavorites);
       const blob = new Blob([json], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -55,7 +66,9 @@ export function BackupPanel({
       URL.revokeObjectURL(url);
       setMsg({
         kind: "ok",
-        text: `控えを書き出しました(成績${attempts.length}件・お気に入り${favorites.length}肢)。`,
+        text: exportFavorites
+          ? `控えを書き出しました(成績${attempts.length}件・お気に入り${exportFavorites.length}肢)。`
+          : `控えを書き出しました(成績${attempts.length}件)。お気に入りは読み込めなかったため含まれていません。`,
       });
     } catch {
       setMsg({ kind: "error", text: "控えの書き出しに失敗しました。" });
@@ -178,7 +191,7 @@ export function BackupPanel({
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           <button
             onClick={handleExport}
-            disabled={nothingToExport}
+            disabled={exportDisabled}
             style={{
               flex: "1 1 140px",
               minHeight: 44,
@@ -187,10 +200,10 @@ export function BackupPanel({
               fontFamily: SERIF,
               letterSpacing: 2,
               color: CARD,
-              background: nothingToExport ? MUTED : AI_BLUE,
+              background: exportDisabled ? MUTED : AI_BLUE,
               border: "none",
               borderRadius: RADIUS,
-              cursor: nothingToExport ? "default" : "pointer",
+              cursor: exportDisabled ? "default" : "pointer",
             }}
           >
             控えを書き出す
@@ -222,7 +235,7 @@ export function BackupPanel({
           />
         </div>
 
-        {nothingToExport && (
+        {exportDisabled && (
           <p
             style={{
               fontSize: 12,
@@ -231,7 +244,9 @@ export function BackupPanel({
               margin: "12px 0 0",
             }}
           >
-            まだ成績もお気に入りもないため書き出せません。
+            {favoritesLoading
+              ? "お気に入りを読み込んでいます…"
+              : "まだ成績もお気に入りもないため書き出せません。"}
           </p>
         )}
 

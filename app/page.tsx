@@ -140,6 +140,9 @@ export default function Home() {
   const [stampedIds, setStampedIds] = useState<Set<string>>(new Set());
   // お気に入り登録した論点(topicId)。null=未ロード
   const [favorites, setFavorites] = useState<string[] | null>(null);
+  // お気に入りを読み込めなかった(または復元後に読み直せなかった)か。
+  // 失敗時の favorites は空配列に縮退するため、「本当に0件」とは区別して控えに伝える(#507)
+  const [favoritesError, setFavoritesError] = useState(false);
   // 選択マスの詳細パネル。タップ後にこの位置までスクロールさせる(#472)
   const detailRef = useRef<HTMLDivElement>(null);
 
@@ -173,7 +176,10 @@ export default function Home() {
       })
       .catch((e) => {
         console.error("[storage] getFavorites に失敗しました", e);
-        if (alive) setFavorites([]);
+        if (alive) {
+          setFavorites([]);
+          setFavoritesError(true);
+        }
       });
     return () => {
       alive = false;
@@ -208,9 +214,14 @@ export default function Home() {
       });
     storage
       .getFavorites()
-      .then(setFavorites)
+      .then((ids) => {
+        setFavorites(ids);
+        setFavoritesError(false);
+      })
       .catch((e) => {
         console.error("[storage] getFavorites に失敗しました", e);
+        // 画面に残っている一覧は復元前のもの。控えには含めない
+        setFavoritesError(true);
       });
   };
 
@@ -1127,7 +1138,8 @@ export default function Home() {
             {/* 記録の控え(書き出し・復元) — 端末依存のデータ消失に備える */}
             <BackupPanel
               attempts={attempts ?? []}
-              favorites={favorites ?? []}
+              favorites={favorites}
+              favoritesError={favoritesError}
               onImported={reloadAttempts}
             />
           </>
