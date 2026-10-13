@@ -57,6 +57,12 @@ test("バックアップ: 控えの書き出し→復元の往復", async ({ pag
   // お気に入りも控えに含まれる(#507)
   expect(parsed.favorites).toEqual(["q1-0"]);
 
+  // 復元で本当に置き換わることを見るため、復元の前に別のお気に入りへ変えておく
+  await page.evaluate(
+    (k) => window.localStorage.setItem(k, JSON.stringify(["q1-1"])),
+    FAVORITES_KEY,
+  );
+
   // 復元: window.confirm を受諾し、書き出したファイルを読み戻す
   page.on("dialog", (dialog) => dialog.accept());
   const fileChooserPromise = page.waitForEvent("filechooser");

@@ -54,9 +54,16 @@ export function BackupPanel({
     attempts.length === 0 && (exportFavorites?.length ?? 0) === 0;
   const exportDisabled = favoritesLoading || nothingToExport;
 
-  const handleExport = () => {
+  const handleExport = async () => {
     try {
-      const json = serializeBackup(attempts, new Date(), exportFavorites);
+      // 画面に持っている attempts / favorites は読み込み時点のもの。別タブで増減していても
+      // 古い内容を控えに入れないよう、書き出しを始める時点で保存済みの最新を読み直す。
+      // props は、ボタンを押せるか(読み込み済みか・中身があるか)の判定にだけ使う
+      const latestAttempts = await storage.getAttempts();
+      const latestFavorites = exportFavorites
+        ? await storage.getFavorites()
+        : undefined;
+      const json = serializeBackup(latestAttempts, new Date(), latestFavorites);
       const blob = new Blob([json], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -66,9 +73,9 @@ export function BackupPanel({
       URL.revokeObjectURL(url);
       setMsg({
         kind: "ok",
-        text: exportFavorites
-          ? `控えを書き出しました(成績${attempts.length}件・お気に入り${exportFavorites.length}肢)。`
-          : `控えを書き出しました(成績${attempts.length}件)。お気に入りは読み込めなかったため含まれていません。`,
+        text: latestFavorites
+          ? `控えを書き出しました(成績${latestAttempts.length}件・お気に入り${latestFavorites.length}肢)。`
+          : `控えを書き出しました(成績${latestAttempts.length}件)。お気に入りは読み込めなかったため含まれていません。`,
       });
     } catch {
       setMsg({ kind: "error", text: "控えの書き出しに失敗しました。" });
