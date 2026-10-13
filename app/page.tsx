@@ -197,7 +197,7 @@ export default function Home() {
       });
   };
 
-  // 控えからの復元後に全件履歴を読み直して画面へ反映する
+  // 控えからの復元後に全件履歴とお気に入りを読み直して画面へ反映する
   const reloadAttempts = () => {
     storage
       .getAttempts()
@@ -205,6 +205,12 @@ export default function Home() {
       .catch((e) => {
         console.error("[storage] getAttempts に失敗しました", e);
         setLoadError(true);
+      });
+    storage
+      .getFavorites()
+      .then(setFavorites)
+      .catch((e) => {
+        console.error("[storage] getFavorites に失敗しました", e);
       });
   };
 
@@ -1119,7 +1125,11 @@ export default function Home() {
             </p>
 
             {/* 記録の控え(書き出し・復元) — 端末依存のデータ消失に備える */}
-            <BackupPanel attempts={attempts ?? []} onImported={reloadAttempts} />
+            <BackupPanel
+              attempts={attempts ?? []}
+              favorites={favorites ?? []}
+              onImported={reloadAttempts}
+            />
           </>
         )}
 

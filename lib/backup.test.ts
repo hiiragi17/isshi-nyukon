@@ -10,6 +10,7 @@ import type { Attempt } from "@/types";
 import {
   serializeBackup,
   parseBackup,
+  parseBackupFile,
   backupFilename,
   BackupError,
   BACKUP_SCHEMA,
@@ -47,6 +48,48 @@ describe("serializeBackup / parseBackup — 控えの往復", () => {
     expect(file.schema).toBe(BACKUP_SCHEMA);
     expect(file.exportedAt).toBe(now.toISOString());
     expect(file.attempts).toHaveLength(SAMPLE.length);
+  });
+});
+
+describe("お気に入りを含む控え(#507)", () => {
+  const FAVS = ["q1-0", "q2-1"];
+
+  it("お気に入りが成績と一緒に往復する", () => {
+    const restored = parseBackupFile(
+      serializeBackup(SAMPLE, new Date(), FAVS),
+    );
+    expect(restored.attempts).toEqual(SAMPLE);
+    expect(restored.favorites).toEqual(FAVS);
+  });
+
+  it("お気に入りが0件でも、空配列として往復する(復元で全解除される)", () => {
+    const restored = parseBackupFile(serializeBackup(SAMPLE, new Date(), []));
+    expect(restored.favorites).toEqual([]);
+  });
+
+  it("旧形式の控え(favorites なし)も読め、favorites は null(今のお気に入りに触らない)", () => {
+    const restored = parseBackupFile(serializeBackup(SAMPLE));
+    expect(restored.attempts).toEqual(SAMPLE);
+    expect(restored.favorites).toBeNull();
+    expect(JSON.parse(serializeBackup(SAMPLE))).not.toHaveProperty("favorites");
+  });
+
+  it("parseBackup は成績だけを返す(従来の呼び出しを壊さない)", () => {
+    expect(parseBackup(serializeBackup(SAMPLE, new Date(), FAVS))).toEqual(
+      SAMPLE,
+    );
+  });
+
+  it("favorites が文字列配列でない控えは、成績が正しくても弾く", () => {
+    for (const bad of [{ not: "array" }, ["q1-0", 1], null, "q1-0"]) {
+      const json = JSON.stringify({
+        schema: BACKUP_SCHEMA,
+        exportedAt: "2026-07-15T00:00:00.000Z",
+        attempts: SAMPLE,
+        favorites: bad,
+      });
+      expect(() => parseBackupFile(json)).toThrow(BackupError);
+    }
   });
 });
 
