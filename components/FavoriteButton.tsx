@@ -43,13 +43,15 @@ export function FavoriteButton({
     // 文字は小さいので MUTED のままだとコントラスト不足(約3.65:1)。星アイコンだけ MUTED を保つ
     const labelColor = active || inactiveColor !== MUTED ? color : INK;
     const actionLabel = active ? "お気に入りから外す" : "お気に入りに追加する";
+    // 見えている文字(登録済み)をアクセシブルネームに含める(音声操作で見たとおりに呼べるように)
+    const accessibleName = showLabel && active ? `登録済み(${actionLabel})` : actionLabel;
     return (
       <button
         type="button"
         onClick={onClick}
         aria-pressed={active}
-        aria-label={actionLabel}
-        title={actionLabel}
+        aria-label={accessibleName}
+        title={accessibleName}
         style={{
           display: "inline-flex",
           alignItems: "center",
