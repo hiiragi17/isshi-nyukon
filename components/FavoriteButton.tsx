@@ -27,6 +27,7 @@ export function FavoriteButton({
   onClick,
   size = "md",
   inactiveColor = MUTED,
+  showLabel = false,
 }: {
   active: boolean;
   onClick: () => void;
@@ -34,29 +35,39 @@ export function FavoriteButton({
   size?: "sm" | "md";
   /** 未登録時の色。墨地カード等、通常の MUTED だと沈む背景に置くときに上書きする */
   inactiveColor?: string;
+  /** sm のとき星の隣に短い文字を添える(アイコンだけだと意味が伝わらない場面用) */
+  showLabel?: boolean;
 }) {
   const color = active ? SHU : inactiveColor;
   if (size === "sm") {
+    const actionLabel = active ? "お気に入りから外す" : "お気に入りに追加する";
     return (
       <button
         type="button"
         onClick={onClick}
         aria-pressed={active}
-        aria-label={active ? "お気に入りから外す" : "お気に入りに追加する"}
-        title={active ? "お気に入りから外す" : "お気に入りに追加する"}
+        aria-label={actionLabel}
+        title={actionLabel}
         style={{
           display: "inline-flex",
           alignItems: "center",
           justifyContent: "center",
-          width: 44,
+          gap: 4,
+          minWidth: 44,
           height: 44,
+          padding: showLabel ? "0 8px" : 0,
           flexShrink: 0,
+          fontFamily: SANS,
+          fontSize: 12.5,
+          fontWeight: 700,
+          color,
           background: "transparent",
           border: "none",
           cursor: "pointer",
         }}
       >
         <StarIcon filled={active} color={color} />
+        {showLabel && (active ? "登録済み" : "お気に入り")}
       </button>
     );
   }
