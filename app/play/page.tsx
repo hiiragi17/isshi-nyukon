@@ -174,6 +174,9 @@ export default function PlayPage() {
   const [idx, setIdx] = useState(0);
   const [records, setRecords] = useState<ItemRecord[]>([]);
   const [history, setHistory] = useState<{ [key: string]: Hist }>({});
+  // 履歴の読み込みが終わったか。終わるまでは history が空のため全論点が「未挑戦」に見え、
+  // 少量モードも全肢を「未着手」と分類してしまう。読み込み中の表示と開始ボタンの無効化に使う(#481)
+  const [historyLoaded, setHistoryLoaded] = useState(false);
   const [lessonOpen, setLessonOpen] = useState(false);
   // 範囲選択で論点一覧を開いている分野。既定は全分野たたんだ状態(分野の頭出しを優先)
   const [openCats, setOpenCats] = useState<Set<string>>(() => new Set());
@@ -201,8 +204,13 @@ export default function PlayPage() {
           }
         });
         setHistory(h);
+        setHistoryLoaded(true);
       })
-      .catch((e) => console.error("[storage] getAttempts に失敗しました", e));
+      .catch((e) => {
+        console.error("[storage] getAttempts に失敗しました", e);
+        // 読めなくても開始は止めない(?items= 側と同じく、空の履歴に縮退して続ける)
+        if (alive) setHistoryLoaded(true);
+      });
     return () => {
       alive = false;
     };
@@ -493,6 +501,12 @@ export default function PlayPage() {
       0,
     );
     const allSelected = selected.size === QUESTIONS.length;
+    // 履歴の読み込み中は成績を出さず、開始ボタンも押せなくする(#481)
+    const loading = !historyLoaded;
+    const loadingText = "成績を読み込んでいます…";
+    const startDisabledStyle = loading
+      ? { opacity: 0.5, cursor: "not-allowed" }
+      : {};
     // 選択数は進捗サマリ(完璧 X/Y論点)と同じく topicId 単位で数える(頻出論点の2周目は1論点)
     const countSelectedTopics = (indices: number[]): number =>
       new Set(
@@ -582,8 +596,10 @@ export default function PlayPage() {
                     <button
                       key={s}
                       onClick={() => startQuick(s)}
+                      disabled={loading}
                       style={{
                         ...outlineButton,
+                        ...startDisabledStyle,
                         flex: 1,
                         minHeight: 44,
                         padding: "12px 0",
@@ -658,11 +674,19 @@ export default function PlayPage() {
                   fontSize: 13,
                   fontWeight: 700,
                   color:
-                    overall.perfectTopics === overall.topics ? GREEN : INK,
+                    !loading && overall.perfectTopics === overall.topics
+                      ? GREEN
+                      : INK,
                 }}
               >
-                完璧 {overall.perfectTopics}/{overall.topics}論点・獲得{" "}
-                {overall.pts}/{overall.max}点
+                {loading ? (
+                  loadingText
+                ) : (
+                  <>
+                    完璧 {overall.perfectTopics}/{overall.topics}論点・獲得{" "}
+                    {overall.pts}/{overall.max}点
+                  </>
+                )}
               </span>
             </div>
             <div
@@ -799,13 +823,15 @@ export default function PlayPage() {
                             style={{
                               whiteSpace: "nowrap",
                               color:
+                                !loading &&
                                 catSummary.perfectTopics === catSummary.topics
                                   ? GREEN
                                   : MUTED,
                             }}
                           >
-                            完璧 {catSummary.perfectTopics}/{catSummary.topics}
-                            論点・{catSummary.pts}/{catSummary.max}点
+                            {loading
+                              ? loadingText
+                              : `完璧 ${catSummary.perfectTopics}/${catSummary.topics}論点・${catSummary.pts}/${catSummary.max}点`}
                           </span>
                           {/* たたんでいる間はチェックが見えないので、選択数を出しておく */}
                           {!catOpen && (
@@ -905,7 +931,7 @@ export default function PlayPage() {
                               {isMenjoQuestion(qq) && ` ・ ${MENJO_LABEL}`}
                             </span>
                           </span>
-                          {st.tried > 0 ? (
+                          {loading ? null : st.tried > 0 ? (
                             <span
                               style={{
                                 fontFamily: SERIF,
@@ -928,7 +954,7 @@ export default function PlayPage() {
                             </span>
                           )}
                         </div>
-                        {st.tried > 0 && (
+                        {!loading && st.tried > 0 && (
                           <div
                             style={{ height: 4, background: LINE, borderRadius: 2, marginTop: 10 }}
                           >
@@ -970,7 +996,7 @@ export default function PlayPage() {
           >
             <button
               onClick={startNormal}
-              disabled={selected.size === 0}
+              disabled={selected.size === 0 || loading}
               style={{
                 width: "100%",
                 padding: "16px 0",
@@ -979,10 +1005,10 @@ export default function PlayPage() {
                 fontFamily: SERIF,
                 letterSpacing: 5,
                 color: CARD,
-                background: selected.size === 0 ? MUTED : INK,
+                background: selected.size === 0 || loading ? MUTED : INK,
                 border: "none",
                 borderRadius: RADIUS,
-                cursor: selected.size === 0 ? "not-allowed" : "pointer",
+                cursor: selected.size === 0 || loading ? "not-allowed" : "pointer",
               }}
             >
               開廷する{selected.size > 0 && `(全${totalItems}肢)`}
@@ -1036,9 +1062,11 @@ export default function PlayPage() {
                       key={s}
                       type="button"
                       onClick={() => startMenjoQuick(s)}
+                      disabled={loading}
                       aria-label={`${MENJO_LABEL}科目から${s}肢`}
                       style={{
                         ...outlineButton,
+                        ...startDisabledStyle,
                         flex: 1,
                         minHeight: 44,
                         padding: "12px 0",
@@ -1052,9 +1080,11 @@ export default function PlayPage() {
                 <button
                   type="button"
                   onClick={() => startMenjoQuick(MENJO_ITEM_COUNT)}
+                  disabled={loading}
                   aria-label={`${MENJO_LABEL}科目を全${MENJO_ITEM_COUNT}肢`}
                   style={{
                     ...outlineButton,
+                    ...startDisabledStyle,
                     flex: 2,
                     minHeight: 44,
                     padding: "12px 0",
@@ -1122,9 +1152,11 @@ export default function PlayPage() {
                           key={s}
                           type="button"
                           onClick={() => startCategoryQuick(cat, s)}
+                          disabled={loading}
                           aria-label={`${cat}から${s}肢`}
                           style={{
                             ...outlineButton,
+                            ...startDisabledStyle,
                             flex: 1,
                             minHeight: 44,
                             padding: "8px 0",
@@ -1168,6 +1200,7 @@ export default function PlayPage() {
               </p>
               <button
                 onClick={startMock}
+                disabled={loading}
                 style={{
                   width: "100%",
                   minHeight: 44,
@@ -1180,7 +1213,8 @@ export default function PlayPage() {
                   background: CARD,
                   border: `2px solid ${AI_BLUE}`,
                   borderRadius: RADIUS,
-                  cursor: "pointer",
+                  cursor: loading ? "not-allowed" : "pointer",
+                  opacity: loading ? 0.5 : 1,
                 }}
               >
                 予行に臨む(約{MOCK_TOPIC_COUNT}論点)
