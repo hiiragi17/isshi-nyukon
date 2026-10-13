@@ -6,7 +6,7 @@
  * (判決画面の論点一覧・検地帳の論点詳細)の両方で使う共通コンポーネント。
  * どちらの単位かは呼び出し側の onClick が何を渡すかで決まる(このボタン自体は関知しない)。
  */
-import { SHU, MUTED, SANS, RADIUS } from "@/lib/tokens";
+import { SHU, MUTED, INK, SANS, RADIUS } from "@/lib/tokens";
 
 function StarIcon({ filled, color }: { filled: boolean; color: string }) {
   return (
@@ -40,6 +40,8 @@ export function FavoriteButton({
 }) {
   const color = active ? SHU : inactiveColor;
   if (size === "sm") {
+    // 文字は小さいので MUTED のままだとコントラスト不足(約3.65:1)。星アイコンだけ MUTED を保つ
+    const labelColor = active || inactiveColor !== MUTED ? color : INK;
     const actionLabel = active ? "お気に入りから外す" : "お気に入りに追加する";
     return (
       <button
@@ -60,7 +62,7 @@ export function FavoriteButton({
           fontFamily: SANS,
           fontSize: 12.5,
           fontWeight: 700,
-          color,
+          color: labelColor,
           background: "transparent",
           border: "none",
           cursor: "pointer",
