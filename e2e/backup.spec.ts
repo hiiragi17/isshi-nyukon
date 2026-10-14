@@ -2,9 +2,12 @@ import { test, expect } from "@playwright/test";
 import * as fs from "node:fs";
 import { STORAGE_KEY, waitDashboardReady } from "./helpers";
 
+// お気に入りの保存キー(lib/storage.ts の FAVORITES_STORAGE_KEY と同じ)
+const FAVORITES_KEY = "isshi-nyukon:favorites:v2";
+
 /**
  * バックアップの往復スモーク(Issue #95 の「余力があれば」枠)。
- *   成績を控えに書き出す → 同じファイルから復元する
+ *   成績とお気に入りを控えに書き出す → 同じファイルから復元する
  * まで一気通貫で、UI 経由の書き出し / 読み戻しが成立することを確認する。
  *
  * 事前の成績はテスト用に localStorage を直接シードして用意する
@@ -21,10 +24,14 @@ test("バックアップ: 控えの書き出し→復元の往復", async ({ pag
     },
   ];
   await page.addInitScript(
-    ({ key, data }) => {
-      window.localStorage.setItem(key, JSON.stringify(data));
+    ({ key, data, favKey }) => {
+      // 復元後に消えていないことを見るため、お気に入りは初回の1回だけシードする
+      if (window.localStorage.getItem(key) === null) {
+        window.localStorage.setItem(key, JSON.stringify(data));
+        window.localStorage.setItem(favKey, JSON.stringify(["q1-0"]));
+      }
     },
-    { key: STORAGE_KEY, data: seed },
+    { key: STORAGE_KEY, data: seed, favKey: FAVORITES_KEY },
   );
 
   await page.goto("/");
@@ -42,8 +49,19 @@ test("バックアップ: 控えの書き出し→復元の往復", async ({ pag
   // 書き出しに失敗するとパスが空になり得るため、読み込み前に存在を確かめる
   expect(downloadPath).toBeTruthy();
   const content = fs.readFileSync(downloadPath, "utf-8");
-  const parsed = JSON.parse(content) as { attempts: Array<{ questionId: string }> };
+  const parsed = JSON.parse(content) as {
+    attempts: Array<{ questionId: string }>;
+    favorites?: string[];
+  };
   expect(parsed.attempts.some((a) => a.questionId === "q1")).toBe(true);
+  // お気に入りも控えに含まれる(#507)
+  expect(parsed.favorites).toEqual(["q1-0"]);
+
+  // 復元で本当に置き換わることを見るため、復元の前に別のお気に入りへ変えておく
+  await page.evaluate(
+    (k) => window.localStorage.setItem(k, JSON.stringify(["q1-1"])),
+    FAVORITES_KEY,
+  );
 
   // 復元: window.confirm を受諾し、書き出したファイルを読み戻す
   page.on("dialog", (dialog) => dialog.accept());
@@ -55,4 +73,12 @@ test("バックアップ: 控えの書き出し→復元の往復", async ({ pag
   // 復元完了メッセージが表示される(dev の Next.js トーストと role が
   // 衝突するため、テキストで直接ねらう)
   await expect(page.getByText(/復元しました/)).toBeVisible();
+  await expect(page.getByText(/お気に入り1肢/).last()).toBeVisible();
+
+  // 復元後もお気に入りが保存されている
+  const favs = await page.evaluate(
+    (k) => window.localStorage.getItem(k),
+    FAVORITES_KEY,
+  );
+  expect(JSON.parse(favs ?? "null")).toEqual(["q1-0"]);
 });

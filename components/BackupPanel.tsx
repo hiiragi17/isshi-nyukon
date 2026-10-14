@@ -16,9 +16,10 @@ import type { Attempt } from "@/types";
 import { storage } from "@/lib/storage";
 import {
   serializeBackup,
-  parseBackup,
+  parseBackupFile,
   backupFilename,
   BackupError,
+  type BackupContents,
 } from "@/lib/backup";
 import { Eyebrow } from "@/components/Eyebrow";
 import { STORAGE_WRITE_ERROR } from "@/lib/storageErrors";
@@ -28,17 +29,41 @@ type Msg = { kind: "ok" | "error"; text: string } | null;
 
 export function BackupPanel({
   attempts,
+  favorites,
+  favoritesError,
   onImported,
 }: {
   attempts: Attempt[];
+  /** いまのお気に入り(itemKey の配列)。null は読み込み中。控えに含めて書き出す */
+  favorites: string[] | null;
+  /** お気に入りを読み込めなかったとき。この間の favorites は信用できないので控えに含めない */
+  favoritesError: boolean;
   onImported: () => void;
 }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [msg, setMsg] = useState<Msg>(null);
 
-  const handleExport = () => {
+  // お気に入りの読み込み前に書き出すと、未読み込みを「0件」として控えに入れてしまい、
+  // 復元で本来のお気に入りが消える。読み込みが終わるまで書き出さない。
+  // 読み込みに失敗したときは、お気に入りを含めずに成績だけ書き出す(復元でお気に入りに触れない)
+  const favoritesLoading = favorites === null;
+  const exportFavorites =
+    favorites !== null && !favoritesError ? favorites : undefined;
+  // 成績もお気に入りも無いときだけ、書き出す中身が無い
+  const nothingToExport =
+    attempts.length === 0 && (exportFavorites?.length ?? 0) === 0;
+  const exportDisabled = favoritesLoading || nothingToExport;
+
+  const handleExport = async () => {
     try {
-      const json = serializeBackup(attempts);
+      // 画面に持っている attempts / favorites は読み込み時点のもの。別タブで増減していても
+      // 古い内容を控えに入れないよう、書き出しを始める時点で保存済みの最新を読み直す。
+      // props は、ボタンを押せるか(読み込み済みか・中身があるか)の判定にだけ使う
+      const latestAttempts = await storage.getAttempts();
+      const latestFavorites = exportFavorites
+        ? await storage.getFavorites()
+        : undefined;
+      const json = serializeBackup(latestAttempts, new Date(), latestFavorites);
       const blob = new Blob([json], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -46,7 +71,12 @@ export function BackupPanel({
       a.download = backupFilename();
       a.click();
       URL.revokeObjectURL(url);
-      setMsg({ kind: "ok", text: `控えを書き出しました(${attempts.length}件)。` });
+      setMsg({
+        kind: "ok",
+        text: latestFavorites
+          ? `控えを書き出しました(成績${latestAttempts.length}件・お気に入り${latestFavorites.length}肢)。`
+          : `控えを書き出しました(成績${latestAttempts.length}件)。お気に入りは読み込めなかったため含まれていません。`,
+      });
     } catch {
       setMsg({ kind: "error", text: "控えの書き出しに失敗しました。" });
     }
@@ -59,10 +89,10 @@ export function BackupPanel({
     if (!file) return;
 
     // 1. 読み込み・検証。不正・非対応ならここで終わり、storage は一切触らない
-    let restored: Attempt[];
+    let restored: BackupContents;
     try {
       const text = await file.text();
-      restored = parseBackup(text);
+      restored = parseBackupFile(text);
     } catch (err) {
       setMsg({
         kind: "error",
@@ -75,14 +105,16 @@ export function BackupPanel({
     }
 
     const ok = window.confirm(
-      `いまの記録を、控え(${restored.length}件)で置き換えます。\nこの端末の現在の成績は失われます。よろしいですか?`,
+      restored.favorites
+        ? `いまの記録を、控え(成績${restored.attempts.length}件・お気に入り${restored.favorites.length}肢)で置き換えます。\nこの端末の現在の成績とお気に入りは失われます。よろしいですか?`
+        : `いまの成績を、控え(${restored.attempts.length}件)で置き換えます。\nこの端末の現在の成績は失われます(この控えにお気に入りは含まれないため、お気に入りはそのまま残ります)。よろしいですか?`,
     );
     if (!ok) return;
 
     // 2. 置換。保存が失敗したのに「復元しました」と誤表示しないよう、
     //    replaceAttempts の例外(容量超過・プライベートモード等)を捕まえる
     try {
-      await storage.replaceAttempts(restored);
+      await storage.replaceAttempts(restored.attempts);
     } catch {
       setMsg({
         kind: "error",
@@ -90,7 +122,26 @@ export function BackupPanel({
       });
       return;
     }
-    setMsg({ kind: "ok", text: `控えから復元しました(${restored.length}件)。` });
+    // お気に入りは、控えに含まれているときだけ置き換える(旧形式の控えでは触らない)。
+    // 成績は復元済みなので、ここで失敗したら「成績だけ戻った」と正直に伝える
+    if (restored.favorites) {
+      try {
+        await storage.saveFavorites(restored.favorites);
+      } catch {
+        setMsg({
+          kind: "error",
+          text: `成績は復元しましたが、お気に入りは復元できませんでした。${STORAGE_WRITE_ERROR}`,
+        });
+        onImported();
+        return;
+      }
+    }
+    setMsg({
+      kind: "ok",
+      text: restored.favorites
+        ? `控えから復元しました(成績${restored.attempts.length}件・お気に入り${restored.favorites.length}肢)。`
+        : `控えから復元しました(成績${restored.attempts.length}件。この控えにお気に入りは含まれないため、お気に入りはそのままです)。`,
+    });
     onImported();
   };
 
@@ -141,13 +192,15 @@ export function BackupPanel({
         >
           成績はこの端末(ブラウザ)にのみ保存されています。控えを書き出して
           保管しておけば、端末やブラウザを変えても復元できます。
-          控えの対象は成績の履歴のみで、お気に入りは含まれません。
+          {exportFavorites || favoritesLoading
+            ? "控えには成績の履歴とお気に入りが含まれます。"
+            : "お気に入りを読み込めなかったため、今回の控えには成績の履歴だけが含まれます。"}
         </p>
 
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           <button
             onClick={handleExport}
-            disabled={attempts.length === 0}
+            disabled={exportDisabled}
             style={{
               flex: "1 1 140px",
               minHeight: 44,
@@ -156,10 +209,10 @@ export function BackupPanel({
               fontFamily: SERIF,
               letterSpacing: 2,
               color: CARD,
-              background: attempts.length === 0 ? MUTED : AI_BLUE,
+              background: exportDisabled ? MUTED : AI_BLUE,
               border: "none",
               borderRadius: RADIUS,
-              cursor: attempts.length === 0 ? "default" : "pointer",
+              cursor: exportDisabled ? "default" : "pointer",
             }}
           >
             控えを書き出す
@@ -191,7 +244,7 @@ export function BackupPanel({
           />
         </div>
 
-        {attempts.length === 0 && (
+        {exportDisabled && (
           <p
             style={{
               fontSize: 12,
@@ -200,7 +253,9 @@ export function BackupPanel({
               margin: "12px 0 0",
             }}
           >
-            まだ記録がないため書き出せません。
+            {favoritesLoading
+              ? "お気に入りを読み込んでいます…"
+              : "まだ成績もお気に入りもないため書き出せません。"}
           </p>
         )}
 
