@@ -28,6 +28,8 @@ export const SHEET_LINKS: Record<string, SheetLink> = {
   q8: { sheetId: "horei-suuji", sectionId: "kaihatsu" },
   // 国土利用計画法
   q25: { sheetId: "horei-suuji", sectionId: "kokudo" },
+  // 土地区画整理法
+  q50: { sheetId: "horei-suuji", sectionId: "kukaku" },
   // 権利関係・表で覚える論点
   q70: { sheetId: "kenri-anki", sectionId: "kenri-shakuchi" }, // 借地借家法(借地権の種類・対抗力)
   q20: { sheetId: "kenri-anki", sectionId: "kenri-teiki-tatemono" }, // 借地借家法(存続期間・更新・定期借家)
