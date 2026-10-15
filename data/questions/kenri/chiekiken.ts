@@ -7,13 +7,13 @@ import type { Question } from "@/types";
  *
  * 条文は、2026-10-15 に提示された民法の原文(RevisionId
  * 129AC0000000089_20260401_506AC0000000033・施行 令和8年4月1日)と照合した
- * (docs/verification/kenri-verification.md の q126 エントリ)。人の承認までは
- * verified: false のまま。時効取得の期間(163条)は原文が未提示のため扱っていない。
+ * (docs/verification/kenri-verification.md の q126 エントリ)。2026-10-15 に
+ * 承認済み。時効取得の期間(163条)は原文が未提示のため扱っていない。
  * 判例(通行地役権と承役地の譲受人への対抗など)も扱っていない。
  */
 export const chiekiken: Question = {
   id: "q126",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",

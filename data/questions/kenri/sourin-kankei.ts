@@ -7,13 +7,13 @@ import type { Question } from "@/types";
  *
  * 条文は、2026-10-15 に提示された民法の原文(RevisionId
  * 129AC0000000089_20260401_506AC0000000033・施行 令和8年4月1日)と照合した
- * (docs/verification/kenri-verification.md の q125 エントリ)。人の承認までは
- * verified: false のまま。改正の経緯(施行日・改正法)は、提示された原文に記載が
+ * (docs/verification/kenri-verification.md の q125 エントリ)。2026-10-15 に
+ * 承認済み。改正の経緯(施行日・改正法)は、提示された原文に記載が
  * なく確認できていないため、問題文・解説には書いていない(fail-closed)。
  */
 export const sourinKankei: Question = {
   id: "q125",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
