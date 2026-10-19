@@ -473,46 +473,66 @@ export default function Home() {
             )}
           </div>
         )}
-        <button
-          onClick={() => goPlay(groupSessionKeys(qis))}
-          style={{
+        {/* 未着手で読み物がある論点は「先に読む」を主導線(朱)にし、解くのは副(輪郭)にする(#521)。
+            それ以外は今まで通り、解くが主・読むが副 */}
+        {(() => {
+          const topicId = q.topicId ?? q.id;
+          const hasReading = READINGS.has(topicId);
+          const readFirst = st.level === 0 && hasReading;
+          const primary = {
             width: "100%",
             minHeight: 44,
-            marginTop: 10,
-            fontSize: 13.5,
             fontWeight: 700,
             fontFamily: SERIF,
-            letterSpacing: 3,
             color: CARD,
             background: SHU,
             border: "none",
             borderRadius: RADIUS,
             cursor: "pointer",
-          }}
-        >
-          {action}
-        </button>
-        {READINGS.has(q.topicId ?? q.id) && (
-          <button
-            onClick={() => router.push(`/learn/${q.topicId ?? q.id}`)}
-            style={{
-              width: "100%",
-              minHeight: 44,
-              marginTop: 8,
-              fontSize: 12.5,
-              fontWeight: 700,
-              fontFamily: SERIF,
-              letterSpacing: 2,
-              color: CARD,
-              background: "transparent",
-              border: `1px solid ${INK_DOTTED}`,
-              borderRadius: RADIUS,
-              cursor: "pointer",
-            }}
-          >
-            この分野を読む(参考書モード)
-          </button>
-        )}
+          } as const;
+          const secondary = {
+            ...primary,
+            background: "transparent",
+            border: `1px solid ${INK_DOTTED}`,
+          } as const;
+          const playButton = (
+            <button
+              onClick={() => goPlay(groupSessionKeys(qis))}
+              style={{
+                ...(readFirst ? secondary : primary),
+                marginTop: readFirst ? 8 : 10,
+                fontSize: readFirst ? 12.5 : 13.5,
+                letterSpacing: readFirst ? 2 : 3,
+              }}
+            >
+              {action}
+            </button>
+          );
+          const readButton = hasReading && (
+            <button
+              onClick={() => router.push(`/learn/${topicId}`)}
+              style={{
+                ...(readFirst ? primary : secondary),
+                marginTop: readFirst ? 10 : 8,
+                fontSize: readFirst ? 13.5 : 12.5,
+                letterSpacing: readFirst ? 3 : 2,
+              }}
+            >
+              {readFirst ? "先に読む(参考書モード)" : "この分野を読む(参考書モード)"}
+            </button>
+          );
+          return readFirst ? (
+            <>
+              {readButton}
+              {playButton}
+            </>
+          ) : (
+            <>
+              {playButton}
+              {readButton}
+            </>
+          );
+        })()}
       </div>
     );
   };
