@@ -136,6 +136,9 @@ export default function Home() {
   const [loadError, setLoadError] = useState(false);
   // お気に入りの保存に失敗したときの案内(選択中の論点詳細に出す)
   const [favError, setFavError] = useState<string | null>(null);
+  // 初回の遊び方カードを閉じたか。保存はしない(成績0件のあいだだけ出るため、閉じた状態は
+  // 1回でも解けば不要になる。ストレージに持つ状態を増やさない)
+  const [introClosed, setIntroClosed] = useState(false);
   const [sel, setSel] = useState<string | null>(null);
   const [stampedIds, setStampedIds] = useState<Set<string>>(new Set());
   // お気に入り登録した論点(topicId)。null=未ロード
@@ -642,6 +645,67 @@ export default function Home() {
           </>
         ) : (
           <>
+            {/* 初回(成績0件)だけ出す遊び方。3段階の意味を、始める前に3行で伝える */}
+            {attempts.length === 0 && !introClosed && (
+              <div
+                style={{
+                  background: CARD,
+                  border: `1px solid ${LINE}`,
+                  borderLeft: `4px solid ${SHU}`,
+                  borderRadius: RADIUS,
+                  padding: "16px 18px",
+                  marginBottom: 12,
+                }}
+              >
+                <Eyebrow>はじめに</Eyebrow>
+                <div
+                  style={{
+                    fontFamily: SERIF,
+                    fontWeight: 700,
+                    fontSize: 15,
+                    margin: "4px 0 8px",
+                  }}
+                >
+                  全部の肢に、理由をつけて決着をつける
+                </div>
+                <ol
+                  style={{
+                    margin: 0,
+                    paddingLeft: 20,
+                    lineHeight: 1.9,
+                    fontSize: 13.5,
+                  }}
+                >
+                  <li>肢を読み、正しいか誤りかを判定する</li>
+                  <li>誤りなら、誤っている箇所をタップする</li>
+                  <li>なぜそう言えるのか、理由を選ぶ</li>
+                </ol>
+                <p
+                  style={{
+                    fontSize: 12.5,
+                    color: MUTED,
+                    margin: "8px 0 0",
+                    lineHeight: 1.8,
+                  }}
+                >
+                  勘で当たっても、理由が答えられなければ点は伸びません。知識ゼロでも大丈夫です。
+                </p>
+                <button
+                  onClick={() => setIntroClosed(true)}
+                  style={{
+                    ...outlineButton,
+                    width: "100%",
+                    minHeight: 44,
+                    marginTop: 12,
+                    fontSize: 13,
+                    letterSpacing: 3,
+                  }}
+                >
+                  わかった
+                </button>
+              </div>
+            )}
+
             {/* 本日の召喚状 */}
             {summonGroups.length > 0 && (
               <div
