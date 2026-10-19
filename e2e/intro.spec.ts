@@ -10,6 +10,15 @@ test("成績0件では「はじめに」が出て、閉じると消える", asyn
   await expect(
     page.getByText("全部の肢に、理由をつけて決着をつける", { exact: true }),
   ).toBeVisible();
+  for (const step of [
+    "肢を読み、正しいか誤りかを判定する",
+    "誤りなら、誤っている箇所をタップする",
+    "なぜそう言えるのか、理由を選ぶ",
+  ]) {
+    await expect(
+      page.getByRole("listitem").filter({ hasText: step }),
+    ).toBeVisible();
+  }
   await page.getByRole("button", { name: "わかった" }).click();
   await expect(
     page.getByText("全部の肢に、理由をつけて決着をつける", { exact: true }),
