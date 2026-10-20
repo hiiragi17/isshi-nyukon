@@ -109,9 +109,12 @@ export function ZenshiEngine({
   // 理由選択で迷ったときの導線(#524)。30秒レッスンは肢カードより上にあり、閉じたまま
   // 気づかれにくい。開いたあと画面外に残らないよう、レッスンまでスクロールして見せる。
   // 採点には関係しない(レッスンはもともと出題中にいつでも開ける)。
+  // 押したボタンは開いた直後に消えるので、フォーカスをレッスンの開閉ボタンへ移す
+  // (キーボード操作でフォーカスが失われ、ページ先頭から辿り直しになるのを避ける・#474 と同じ扱い)
   const openLessonFromReason = () => {
     onToggleLesson();
     requestAnimationFrame(() => {
+      lessonRef.current?.querySelector<HTMLButtonElement>("button")?.focus({ preventScroll: true });
       const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
       lessonRef.current?.scrollIntoView({
         block: "start",

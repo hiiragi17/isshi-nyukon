@@ -47,6 +47,8 @@ test("理由選択: 30秒レッスンが閉じていれば導線が出て、押�
   await expect(lesson).toHaveAttribute("aria-expanded", "true");
   // 理由選択の場面のまま(押しても選択肢は消えず、フェーズも進まない)
   await expect(page.locator("button.opt-btn").first()).toBeVisible();
+  // 押したボタンは消えるが、フォーカスは失われずレッスンの開閉ボタンへ移る
+  await expect(lesson).toBeFocused();
   // 開いたあとは導線を出さない
   await expect(hint).toHaveCount(0);
   // レッスンが画面内に出る(上に残って見えないままにならない)
