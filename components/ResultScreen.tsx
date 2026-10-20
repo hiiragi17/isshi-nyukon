@@ -119,6 +119,9 @@ export function ResultScreen({
         )}
         <div style={{ textAlign: "center", margin: "36px 0 20px" }}>
           <Eyebrow>判決</Eyebrow>
+          <div style={{ fontSize: 11.5, color: MUTED, marginTop: 4 }}>
+            今回の結果
+          </div>
           <div style={{ display: "flex", justifyContent: "center", margin: "20px 0 16px" }}>
             <Stamp text={passed ? "合格" : "追試"} color={passed ? SHU : AI_BLUE} />
           </div>
