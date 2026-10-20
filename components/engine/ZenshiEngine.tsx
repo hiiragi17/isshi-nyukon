@@ -93,6 +93,7 @@ export function ZenshiEngine({
   const choiceCardRef = useRef<HTMLDivElement>(null);
   const reasonListRef = useRef<HTMLDivElement>(null);
   const nextRef = useRef<HTMLButtonElement>(null);
+  const lessonRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const target =
       phase === "locate"
@@ -104,6 +105,20 @@ export function ZenshiEngine({
             : null;
     target?.focus();
   }, [phase]);
+
+  // 理由選択で迷ったときの導線(#524)。30秒レッスンは肢カードより上にあり、閉じたまま
+  // 気づかれにくい。開いたあと画面外に残らないよう、レッスンまでスクロールして見せる。
+  // 採点には関係しない(レッスンはもともと出題中にいつでも開ける)。
+  const openLessonFromReason = () => {
+    onToggleLesson();
+    requestAnimationFrame(() => {
+      const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+      lessonRef.current?.scrollIntoView({
+        block: "start",
+        behavior: reduce ? "auto" : "smooth",
+      });
+    });
+  };
 
   const finishChoice = (pts: number) => {
     onComplete({ pts, max: choice.correct ? 2 : 3 });
@@ -177,12 +192,14 @@ export function ZenshiEngine({
         {announce}
       </p>
       <SceneCard question={question} onTerm={onTerm} />
-      <LessonAccordion
-        lesson={question.lesson}
-        open={lessonOpen}
-        onToggle={onToggleLesson}
-        onTerm={onTerm}
-      />
+      <div ref={lessonRef} style={{ scrollMarginTop: 12 }}>
+        <LessonAccordion
+          lesson={question.lesson}
+          open={lessonOpen}
+          onToggle={onToggleLesson}
+          onTerm={onTerm}
+        />
+      </div>
 
       {/* 肢カード */}
       <div
@@ -339,6 +356,27 @@ export function ZenshiEngine({
                 仕上げです。<b style={{ color: INK }}>なぜ誤りなのか</b>、理由を選んでください。(+1点)
               </p>
             </div>
+          )}
+          {!lessonOpen && (
+            <button
+              onClick={openLessonFromReason}
+              style={{
+                display: "block",
+                minHeight: 44,
+                margin: "0 0 4px",
+                padding: "0 4px",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                fontFamily: SANS,
+                fontSize: 13,
+                fontWeight: 700,
+                color: AI_BLUE,
+                textDecoration: "underline",
+              }}
+            >
+              迷ったら、30秒レッスンを開く
+            </button>
           )}
           <div ref={reasonListRef} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {shuffledReasons.map((r, i) => (
