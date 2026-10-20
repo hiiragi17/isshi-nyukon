@@ -677,7 +677,33 @@ export default function Home() {
                   marginBottom: 12,
                 }}
               >
-                <Eyebrow>はじめに</Eyebrow>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Eyebrow>はじめに</Eyebrow>
+                  <button
+                    onClick={() => setIntroClosed(true)}
+                    style={{
+                      minHeight: 44,
+                      margin: "-12px -10px -8px 0",
+                      padding: "0 10px",
+                      fontSize: 13,
+                      letterSpacing: 2,
+                      color: AI_BLUE,
+                      background: "transparent",
+                      border: "none",
+                      fontFamily: SERIF,
+                      fontWeight: 700,
+                      cursor: "pointer",
+                    }}
+                  >
+                    わかった
+                  </button>
+                </div>
                 <div
                   style={{
                     fontFamily: SERIF,
@@ -710,19 +736,6 @@ export default function Home() {
                 >
                   勘で当たっても、理由が答えられなければ点は伸びません。知識ゼロでも大丈夫です。
                 </p>
-                <button
-                  onClick={() => setIntroClosed(true)}
-                  style={{
-                    ...outlineButton,
-                    width: "100%",
-                    minHeight: 44,
-                    marginTop: 12,
-                    fontSize: 13,
-                    letterSpacing: 3,
-                  }}
-                >
-                  わかった
-                </button>
               </div>
             )}
 
@@ -748,6 +761,7 @@ export default function Home() {
                     style={{ fontSize: 11, letterSpacing: 2.5, color: INK_SUB }}
                   >
                     本日の召喚状
+                    <span style={{ letterSpacing: 0.5 }}>(今日の復習)</span>
                   </div>
                   <div style={{ fontSize: 11, color: INK_SUB }}>
                     忘却期限の近い順
@@ -761,7 +775,7 @@ export default function Home() {
                     lineHeight: 1.8,
                   }}
                 >
-                  前回失点した肢・忘れかけの肢・未着手の肢から、今日やるべき順に選んでいます。
+                  前回失点した肢・忘れかけの肢・未着手の肢から、今日やるべき順に選んでいます。「開廷する」で出題が始まります。
                 </p>
                 <div
                   style={{
@@ -1000,6 +1014,7 @@ export default function Home() {
                   style={{ fontSize: 11, letterSpacing: 2.5, color: MUTED }}
                 >
                   検地帳 — 分野×論点
+                  <span style={{ letterSpacing: 0.5 }}>(進み具合の一覧)</span>
                 </div>
                 <div
                   style={{
@@ -1021,6 +1036,16 @@ export default function Home() {
                   <span>免 = {MENJO_LABEL}</span>
                 </div>
               </div>
+              <p
+                style={{
+                  margin: "-4px 0 12px",
+                  fontSize: 11.5,
+                  color: MUTED,
+                  lineHeight: 1.8,
+                }}
+              >
+                集印 = 完璧にした論点の数
+              </p>
 
               <div
                 style={{ display: "flex", flexDirection: "column", gap: 14 }}

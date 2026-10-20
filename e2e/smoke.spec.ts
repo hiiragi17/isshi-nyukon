@@ -283,6 +283,7 @@ test("出題中: キーボードの Enter だけで判定から判決まで進�
     }
   }
   await expect(page.getByText("判決", { exact: true })).toBeVisible();
+  await expect(page.getByText("今回の結果", { exact: true })).toBeVisible();
 });
 
 /**
