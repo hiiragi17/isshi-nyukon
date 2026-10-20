@@ -25,5 +25,5 @@ test("成績0件: 開廷するがはじめの画面(390x844)に入る", async ({
 
   await expect(
     page.getByRole("button", { name: /^開廷する/ }),
-  ).toBeInViewport();
+  ).toBeInViewport({ ratio: 1 });
 });

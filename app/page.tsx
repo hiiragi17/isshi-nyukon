@@ -603,6 +603,16 @@ export default function Home() {
             </span>
           </div>
         </div>
+        <p
+          style={{
+            margin: "-6px 0 12px",
+            fontSize: 11.5,
+            color: MUTED,
+            lineHeight: 1.8,
+          }}
+        >
+          集印 = 完璧にした論点の数
+        </p>
 
         {!loaded ? (
           <div
@@ -1036,16 +1046,6 @@ export default function Home() {
                   <span>免 = {MENJO_LABEL}</span>
                 </div>
               </div>
-              <p
-                style={{
-                  margin: "-4px 0 12px",
-                  fontSize: 11.5,
-                  color: MUTED,
-                  lineHeight: 1.8,
-                }}
-              >
-                集印 = 完璧にした論点の数
-              </p>
 
               <div
                 style={{ display: "flex", flexDirection: "column", gap: 14 }}
