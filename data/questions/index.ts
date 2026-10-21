@@ -127,6 +127,7 @@ import { toukei2 } from "./zei/toukei-2";
 import { sourinKankei } from "./kenri/sourin-kankei";
 import { chiekiken } from "./kenri/chiekiken";
 import { setsubiSecchiken } from "./kenri/setsubi-secchiken";
+import { gyomuKinshi } from "./gyoho/gyomu-kinshi";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -261,6 +262,7 @@ const RAW_QUESTIONS: Question[] = [
   sourinKankei,
   chiekiken,
   setsubiSecchiken,
+  gyomuKinshi,
 ];
 
 /**
