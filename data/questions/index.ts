@@ -130,6 +130,7 @@ import { setsubiSecchiken } from "./kenri/setsubi-secchiken";
 import { gyomuKinshi } from "./gyoho/gyomu-kinshi";
 import { gyomuKinshi2 } from "./gyoho/gyomu-kinshi-2";
 import { shoyuushaFumeiTochi } from "./kenri/shoyuusha-fumei-tochi";
+import { tanpoBukken } from "./kenri/tanpo-bukken";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -267,6 +268,7 @@ const RAW_QUESTIONS: Question[] = [
   gyomuKinshi,
   gyomuKinshi2,
   shoyuushaFumeiTochi,
+  tanpoBukken,
 ];
 
 /**
