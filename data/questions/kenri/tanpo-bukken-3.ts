@@ -58,7 +58,7 @@ export const tanpoBukken3: Question = {
         "担保しない。",
       ],
       correct: false,
-      wrongIndex: 1,
+      wrongIndex: 2,
       reasons: [
         {
           text: "質権は、元本、利息、違約金、質権の実行の費用などを担保するとされ、設定行為に別段の定めがあるときに限って、この範囲と異なる扱いができるから",
