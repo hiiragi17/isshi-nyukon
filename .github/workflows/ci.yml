@@ -22,7 +22,7 @@ jobs:
           persist-credentials: false
 
       # pnpm のバージョンは package.json の packageManager フィールドから解決する
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
 
       - uses: actions/setup-node@v4
         with:
