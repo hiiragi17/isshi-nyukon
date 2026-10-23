@@ -134,6 +134,7 @@ import { tanpoBukken } from "./kenri/tanpo-bukken";
 import { sonotaHouki } from "./horei/sonota-houki";
 import { tanpoBukken2 } from "./kenri/tanpo-bukken-2";
 import { tanpoBukken3 } from "./kenri/tanpo-bukken-3";
+import { tanpoBukken4 } from "./kenri/tanpo-bukken-4";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -275,6 +276,7 @@ const RAW_QUESTIONS: Question[] = [
   sonotaHouki,
   tanpoBukken2,
   tanpoBukken3,
+  tanpoBukken4,
 ];
 
 /**
