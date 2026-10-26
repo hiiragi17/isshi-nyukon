@@ -139,6 +139,7 @@ import { tanpoBukken5 } from "./kenri/tanpo-bukken-5";
 import { tanpoBukken6 } from "./kenri/tanpo-bukken-6";
 import { tanpoBukken7 } from "./kenri/tanpo-bukken-7";
 import { tanpoBukken8 } from "./kenri/tanpo-bukken-8";
+import { tanpoBukken9 } from "./kenri/tanpo-bukken-9";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -285,6 +286,7 @@ const RAW_QUESTIONS: Question[] = [
   tanpoBukken6,
   tanpoBukken7,
   tanpoBukken8,
+  tanpoBukken9,
 ];
 
 /**
