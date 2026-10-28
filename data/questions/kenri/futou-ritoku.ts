@@ -3,11 +3,11 @@ import type { Question } from "@/types";
 /** q143 不当利得・事務管理(債務不存在の認識・不法原因給付・悪意の受益者・事務管理の費用償還)(民法702条・704条・705条・708条) */
 export const futouRitoku: Question = {
   id: "q143",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "民法697条〜702条・703条〜708条の原文を e-Gov 法令API v2(2026-10-28、asof=2026-04-01 で取得。law_revision_id=129AC0000000089_20260401_506AC0000000033)で確認。AI が取得した原文との照合(未承認)。肢1=705条/肢2=708条/肢3=704条/肢4=702条1項・3項。kenri-verification.md q143 参照",
+    note: "民法697条〜702条・703条〜708条の原文を e-Gov 法令API v2(2026-10-28、asof=2026-04-01 で取得。law_revision_id=129AC0000000089_20260401_506AC0000000033)で確認。AI が取得した原文との照合。承認者(hiiragi17)の指示により verified: true(2026-10-28)。肢1=705条/肢2=708条/肢3=704条/肢4=702条1項・3項。kenri-verification.md q143 参照",
   },
   lawVersion: {
     revisionId: "129AC0000000089_20260401_506AC0000000033",

@@ -3,11 +3,11 @@ import type { Question } from "@/types";
 /** q144 贈与(書面によらない贈与の解除・負担付贈与・死因贈与・定期贈与)(民法550条・552条〜554条) */
 export const zouyo: Question = {
   id: "q144",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "民法549条〜554条の原文を e-Gov 法令API v2(2026-10-28、asof=2026-04-01 で取得。law_revision_id=129AC0000000089_20260401_506AC0000000033)で確認。AI が取得した原文との照合(未承認)。肢1=550条/肢2=553条/肢3=554条/肢4=552条。kenri-verification.md q144 参照",
+    note: "民法549条〜554条の原文を e-Gov 法令API v2(2026-10-28、asof=2026-04-01 で取得。law_revision_id=129AC0000000089_20260401_506AC0000000033)で確認。AI が取得した原文との照合。承認者(hiiragi17)の指示により verified: true(2026-10-28)。肢1=550条/肢2=553条/肢3=554条/肢4=552条。kenri-verification.md q144 参照",
   },
   lawVersion: {
     revisionId: "129AC0000000089_20260401_506AC0000000033",

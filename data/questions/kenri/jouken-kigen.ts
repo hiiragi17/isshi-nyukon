@@ -3,11 +3,11 @@ import type { Question } from "@/types";
 /** q142 条件・期限(停止条件の効力・成否未定の間の権利・条件成就の妨害・随意条件)(民法127条・129条・130条・134条) */
 export const joukenKigen: Question = {
   id: "q142",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "民法127条〜137条の原文を e-Gov 法令API v2(2026-10-28、asof=2026-04-01 で取得。law_revision_id=129AC0000000089_20260401_506AC0000000033)で確認。AI が取得した原文との照合(未承認)。肢1=127条1項・3項/肢2=129条/肢3=130条1項/肢4=134条。kenri-verification.md q142 参照",
+    note: "民法127条〜137条の原文を e-Gov 法令API v2(2026-10-28、asof=2026-04-01 で取得。law_revision_id=129AC0000000089_20260401_506AC0000000033)で確認。AI が取得した原文との照合。承認者(hiiragi17)の指示により verified: true(2026-10-28)。肢1=127条1項・3項/肢2=129条/肢3=130条1項/肢4=134条。kenri-verification.md q142 参照",
   },
   lawVersion: {
     revisionId: "129AC0000000089_20260401_506AC0000000033",
