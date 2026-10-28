@@ -7,55 +7,61 @@ import type { CSSProperties } from "react";
 import { CARD, AI_BLUE, SHU, SERIF } from "@/lib/tokens";
 import type { SpotAdProps } from "./types";
 
+/** 認容済みゾーンの丸印+番号バッジ。モジュールスコープに置き、再レンダー時の
+ *  再マウント(fade-up アニメーション再発火)を避ける */
+function Mark({
+  id,
+  inset,
+  rot,
+  badge,
+  found,
+}: {
+  id: string;
+  inset: string;
+  rot: number;
+  badge: CSSProperties;
+  found: string[];
+}) {
+  if (!found.includes(id)) return null;
+  return (
+    <>
+      <span
+        className="fade-up"
+        style={{
+          position: "absolute",
+          inset,
+          border: "2.5px solid rgba(191,59,51,0.85)",
+          borderRadius: "50%",
+          transform: `rotate(${rot}deg)`,
+          pointerEvents: "none",
+        }}
+      />
+      <span
+        style={{
+          position: "absolute",
+          ...badge,
+          width: 20,
+          height: 20,
+          borderRadius: "50%",
+          background: SHU,
+          color: CARD,
+          fontSize: 11,
+          fontWeight: 800,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontFamily: SERIF,
+        }}
+      >
+        {found.indexOf(id) + 1}
+      </span>
+    </>
+  );
+}
+
 export function MidoridaiAd({ found, pending, done, onTap }: SpotAdProps) {
   const zb = (id: string) =>
     `2px solid ${pending === id ? AI_BLUE : "transparent"}`;
-
-  const Mark = ({
-    id,
-    inset,
-    rot,
-    badge,
-  }: {
-    id: string;
-    inset: string;
-    rot: number;
-    badge: CSSProperties;
-  }) =>
-    found.includes(id) ? (
-      <>
-        <span
-          className="fade-up"
-          style={{
-            position: "absolute",
-            inset,
-            border: "2.5px solid rgba(191,59,51,0.85)",
-            borderRadius: "50%",
-            transform: `rotate(${rot}deg)`,
-            pointerEvents: "none",
-          }}
-        />
-        <span
-          style={{
-            position: "absolute",
-            ...badge,
-            width: 20,
-            height: 20,
-            borderRadius: "50%",
-            background: SHU,
-            color: CARD,
-            fontSize: 11,
-            fontWeight: 800,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontFamily: SERIF,
-          }}
-        >
-          {found.indexOf(id) + 1}
-        </span>
-      </>
-    ) : null;
 
   return (
     <div style={{ position: "relative", padding: "14px 10px 10px" }}>
@@ -137,7 +143,7 @@ export function MidoridaiAd({ found, pending, done, onTap }: SpotAdProps) {
             }}
           >
             新築
-            <Mark id="A" inset="-5px -7px" rot={-3} badge={{ top: -13, left: -13 }} />
+            <Mark id="A" inset="-5px -7px" rot={-3} badge={{ top: -13, left: -13 }} found={found} />
           </button>
           <button
             onClick={() => onTap("B")}
@@ -155,7 +161,7 @@ export function MidoridaiAd({ found, pending, done, onTap }: SpotAdProps) {
             <span style={{ color: "#C7000B", fontSize: 14.5, fontWeight: 800 }}>
               日本一の眺望!陽当り良好
             </span>
-            <Mark id="B" inset="-4px -6px" rot={-2} badge={{ top: -13, right: -10 }} />
+            <Mark id="B" inset="-4px -6px" rot={-2} badge={{ top: -13, right: -10 }} found={found} />
           </button>
         </div>
 
@@ -201,7 +207,7 @@ export function MidoridaiAd({ found, pending, done, onTap }: SpotAdProps) {
           >
             ※写真はイメージです(当社施工例)
           </div>
-          <Mark id="D" inset="6px 20px" rot={-2} badge={{ top: -8, right: 8 }} />
+          <Mark id="D" inset="6px 20px" rot={-2} badge={{ top: -8, right: 8 }} found={found} />
         </button>
 
         <button
@@ -251,7 +257,7 @@ export function MidoridaiAd({ found, pending, done, onTap }: SpotAdProps) {
           >
             <span style={{ color: "#888" }}>交通</span>
             <b>みどり線「みどり台」駅 徒歩3分(約650m)</b>
-            <Mark id="C" inset="0 90px 0 46px" rot={-1} badge={{ top: -9, right: 84 }} />
+            <Mark id="C" inset="0 90px 0 46px" rot={-1} badge={{ top: -9, right: 84 }} found={found} />
           </button>
           <button
             onClick={() => onTap("safeMadori")}

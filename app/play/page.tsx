@@ -256,7 +256,6 @@ export default function PlayPage() {
         begin(new Set());
       });
     // マウント時に一度だけ。参照する QUESTIONS / 関数はモジュール定数
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const item = sessionItems[idx];

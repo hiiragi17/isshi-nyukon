@@ -11,55 +11,61 @@ import type { SpotAdProps } from "./types";
 /** この広告の accent(賃貸チラシは青系にして q6 の朱と区別) */
 const BLUE = "#1F6FB2";
 
+/** 認容済みゾーンの丸印+番号バッジ。モジュールスコープに置き、再レンダー時の
+ *  再マウント(fade-up アニメーション再発火)を避ける */
+function Mark({
+  id,
+  inset,
+  rot,
+  badge,
+  found,
+}: {
+  id: string;
+  inset: string;
+  rot: number;
+  badge: CSSProperties;
+  found: string[];
+}) {
+  if (!found.includes(id)) return null;
+  return (
+    <>
+      <span
+        className="fade-up"
+        style={{
+          position: "absolute",
+          inset,
+          border: "2.5px solid rgba(191,59,51,0.85)",
+          borderRadius: "50%",
+          transform: `rotate(${rot}deg)`,
+          pointerEvents: "none",
+        }}
+      />
+      <span
+        style={{
+          position: "absolute",
+          ...badge,
+          width: 20,
+          height: 20,
+          borderRadius: "50%",
+          background: SHU,
+          color: CARD,
+          fontSize: 11,
+          fontWeight: 800,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontFamily: SERIF,
+        }}
+      >
+        {found.indexOf(id) + 1}
+      </span>
+    </>
+  );
+}
+
 export function SakuraAd({ found, pending, done, onTap }: SpotAdProps) {
   const zb = (id: string) =>
     `2px solid ${pending === id ? AI_BLUE : "transparent"}`;
-
-  const Mark = ({
-    id,
-    inset,
-    rot,
-    badge,
-  }: {
-    id: string;
-    inset: string;
-    rot: number;
-    badge: CSSProperties;
-  }) =>
-    found.includes(id) ? (
-      <>
-        <span
-          className="fade-up"
-          style={{
-            position: "absolute",
-            inset,
-            border: "2.5px solid rgba(191,59,51,0.85)",
-            borderRadius: "50%",
-            transform: `rotate(${rot}deg)`,
-            pointerEvents: "none",
-          }}
-        />
-        <span
-          style={{
-            position: "absolute",
-            ...badge,
-            width: 20,
-            height: 20,
-            borderRadius: "50%",
-            background: SHU,
-            color: CARD,
-            fontSize: 11,
-            fontWeight: 800,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontFamily: SERIF,
-          }}
-        >
-          {found.indexOf(id) + 1}
-        </span>
-      </>
-    ) : null;
 
   return (
     <div style={{ position: "relative", padding: "14px 10px 10px" }}>
@@ -142,7 +148,7 @@ export function SakuraAd({ found, pending, done, onTap }: SpotAdProps) {
             }}
           >
             初期費用0円!
-            <Mark id="cost" inset="-5px -7px" rot={-3} badge={{ top: -13, left: -13 }} />
+            <Mark id="cost" inset="-5px -7px" rot={-3} badge={{ top: -13, left: -13 }} found={found} />
           </button>
           <button
             onClick={() => onTap("best")}
@@ -160,7 +166,7 @@ export function SakuraAd({ found, pending, done, onTap }: SpotAdProps) {
             <span style={{ color: BLUE, fontSize: 14.5, fontWeight: 800 }}>
               地域最安値・掘り出し物件!
             </span>
-            <Mark id="best" inset="-4px -6px" rot={-2} badge={{ top: -13, right: -10 }} />
+            <Mark id="best" inset="-4px -6px" rot={-2} badge={{ top: -13, right: -10 }} found={found} />
           </button>
         </div>
 
@@ -231,7 +237,7 @@ export function SakuraAd({ found, pending, done, onTap }: SpotAdProps) {
           >
             <span style={{ color: "#888" }}>交通</span>
             <b>さくら線「さくら中央」駅 徒歩1分(約200m)</b>
-            <Mark id="walk" inset="0 84px 0 46px" rot={-1} badge={{ top: -9, right: 78 }} />
+            <Mark id="walk" inset="0 84px 0 46px" rot={-1} badge={{ top: -9, right: 78 }} found={found} />
           </button>
           <button
             onClick={() => onTap("area")}
@@ -255,7 +261,7 @@ export function SakuraAd({ found, pending, done, onTap }: SpotAdProps) {
           >
             <span style={{ color: "#888" }}>専有面積</span>
             <b>28.0㎡(バルコニー含む)</b>
-            <Mark id="area" inset="0 66px 0 60px" rot={-1} badge={{ top: -9, right: 60 }} />
+            <Mark id="area" inset="0 66px 0 60px" rot={-1} badge={{ top: -9, right: 60 }} found={found} />
           </button>
           <button
             onClick={() => onTap("safeDeposit")}
