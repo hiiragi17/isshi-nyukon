@@ -244,6 +244,9 @@ export default function Home() {
   useEffect(() => {
     const raw = new URLSearchParams(window.location.search).get("stamped");
     if (!raw) return;
+    // URL は SSR 時に読めない外部の値。初期 state に入れると hydration が食い違うため、
+    // マウント後に一度だけ取り込む
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setStampedIds(new Set(raw.split(",").filter(Boolean)));
     window.history.replaceState(null, "", window.location.pathname);
   }, []);
@@ -319,16 +322,12 @@ export default function Home() {
   }, [queue]);
   const summonKeys = summonList.map((s) => itemKey(s.questionId, s.choiceIndex));
   // 本日分 = キュー先頭の DAILY_SUMMON_SIZE 肢。一覧の表示もこの範囲で組む
-  const todayList = useMemo(
-    () => summonList.slice(0, DAILY_SUMMON_SIZE),
-    [summonList],
-  );
   const todayKeys = summonKeys.slice(0, DAILY_SUMMON_SIZE);
   // 論点ごとにまとめる(キュー順=切迫順を保つ)
   const summonGroups = useMemo(() => {
     const seen = new Map<string, { head: SrsItemState; count: number }>();
     const order: string[] = [];
-    for (const s of todayList) {
+    for (const s of summonList.slice(0, DAILY_SUMMON_SIZE)) {
       const g = seen.get(s.questionId);
       if (g) g.count++;
       else {
@@ -337,7 +336,7 @@ export default function Home() {
       }
     }
     return order.map((qid) => ({ qid, ...seen.get(qid)! }));
-  }, [todayList]);
+  }, [summonList]);
 
   const dueLabel = (s: SrsItemState): { text: string; color: string } => {
     if (s.bucket === "weak") return { text: "要復習", color: DUE_URGENT };
