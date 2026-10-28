@@ -143,6 +143,7 @@ import { tanpoBukken9 } from "./kenri/tanpo-bukken-9";
 import { joukenKigen } from "./kenri/jouken-kigen";
 import { futouRitoku } from "./kenri/futou-ritoku";
 import { zouyo } from "./kenri/zouyo";
+import { kigen } from "./kenri/kigen";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -293,6 +294,7 @@ const RAW_QUESTIONS: Question[] = [
   joukenKigen,
   futouRitoku,
   zouyo,
+  kigen,
 ];
 
 /**
