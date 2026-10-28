@@ -58,7 +58,7 @@ export const futouRitoku: Question = {
         "その給付したものの返還を請求することができない。",
       ],
       correct: false,
-      wrongIndex: 1,
+      wrongIndex: 2,
       reasons: [
         {
           text: "不法な原因が受益者についてのみ存したときは、給付をした者は、その給付したものの返還を請求することができると定められているから",
@@ -107,7 +107,7 @@ export const futouRitoku: Question = {
         "本人のために支出した有益な費用の全額を、本人に請求することができる。",
       ],
       correct: false,
-      wrongIndex: 1,
+      wrongIndex: 2,
       reasons: [
         {
           text: "管理者が本人の意思に反して事務管理をしたときは、本人が現に利益を受けている限度においてのみ、有益な費用の償還請求などの規定が適用されるから",

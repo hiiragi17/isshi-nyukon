@@ -108,7 +108,7 @@ export const kigen: Question = {
         "期限の利益を主張することができる。",
       ],
       correct: false,
-      wrongIndex: 0,
+      wrongIndex: 2,
       reasons: [
         {
           text: "債務者が破産手続開始の決定を受けたときは、債務者は、期限の利益を主張することができないと定められているから",

@@ -107,7 +107,7 @@ export const zouyo: Question = {
         "その効力を失わない。",
       ],
       correct: false,
-      wrongIndex: 1,
+      wrongIndex: 2,
       reasons: [
         {
           text: "定期の給付を目的とする贈与は、贈与者又は受贈者の死亡によって、その効力を失うと定められているから",

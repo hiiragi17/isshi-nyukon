@@ -107,7 +107,7 @@ export const joukenKigen: Question = {
         "有効である。",
       ],
       correct: false,
-      wrongIndex: 1,
+      wrongIndex: 2,
       reasons: [
         {
           text: "停止条件付法律行為は、その条件が単に債務者の意思のみに係るときは、無効とすると定められているから",
