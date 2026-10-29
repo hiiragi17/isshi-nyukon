@@ -4,11 +4,11 @@ import type { Question } from "@/types";
 export const jikoKeiyaku: Question = {
   id: "q146",
   topicId: "q3",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "Issue #117: 民法108条1項(自己契約・双方代理は、債務の履行と本人があらかじめ許諾した行為を除き、代理権を有しない者がした行為とみなす)・113条1項(無権代理行為は本人の追認がなければ本人に効力を生じない)を根拠に作問した。2026-10-29 に AI が e-Gov 法令API v2(asof=2026-04-01)から取得した108条・113条・116条の原文と突き合わせた(AIの下書き照合。人の承認待ちのため verified は false)。肢の正誤は条文の文言だけで決まり、数値肢は無い(F8 非該当)。kenri-verification.md q146 参照",
+    note: "Issue #117: 民法108条1項(自己契約・双方代理は、債務の履行と本人があらかじめ許諾した行為を除き、代理権を有しない者がした行為とみなす)・113条1項(無権代理行為は本人の追認がなければ本人に効力を生じない)を根拠に作問した。2026-10-29 に AI が e-Gov 法令API v2(asof=2026-04-01)から取得した108条・113条・116条の原文と突き合わせた(AIの下書き照合。hiiragi17 が承認し 2026-10-29 に verified を true にした)。肢の正誤は条文の文言だけで決まり、数値肢は無い(F8 非該当)。kenri-verification.md q146 参照",
   },
   lawVersion: {
     revisionId: "129AC0000000089_20260401_506AC0000000033",
