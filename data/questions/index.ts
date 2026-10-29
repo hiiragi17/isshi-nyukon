@@ -109,6 +109,7 @@ import { hyokenDairi2 } from "./kenri/hyoken-dairi-2";
 import { teitouken2 } from "./kenri/teitouken-2";
 import { jikoKeiyaku } from "./kenri/jiko-keiyaku";
 import { teitouken3 } from "./kenri/teitouken-3";
+import { jutakuLoanKoujo } from "./zei/jutaku-loan-koujo";
 import { fudousanTouki2 } from "./kenri/fudousan-touki-2";
 import { kubunShoyuu2 } from "./kenri/kubun-shoyuu-2";
 import { koteiShisanzei2 } from "./zei/kotei-shisanzei-2";
@@ -299,6 +300,7 @@ const RAW_QUESTIONS: Question[] = [
   kigen,
   jikoKeiyaku,
   teitouken3,
+  jutakuLoanKoujo,
 ];
 
 /**
