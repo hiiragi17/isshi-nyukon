@@ -84,6 +84,7 @@ import { sanjunanaJou2 } from "./gyoho/sanjunana-jou-2";
 import { hachishuSeigen2 } from "./gyoho/hachishu-seigen-2";
 import { baikaiKeiyaku2 } from "./gyoho/baikai-keiyaku-2";
 import { hoshu2 } from "./gyoho/hoshu-2";
+import { hoshu3 } from "./gyoho/hoshu-3";
 import { coolingOff2 } from "./gyoho/cooling-off-2";
 import { menkyo2 } from "./gyoho/menkyo-2";
 import { takkenshi2 } from "./gyoho/takkenshi-2";
@@ -301,6 +302,7 @@ const RAW_QUESTIONS: Question[] = [
   jikoKeiyaku,
   teitouken3,
   jutakuLoanKoujo,
+  hoshu3,
 ];
 
 /**
