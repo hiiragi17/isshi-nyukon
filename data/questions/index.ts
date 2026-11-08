@@ -85,6 +85,10 @@ import { hachishuSeigen2 } from "./gyoho/hachishu-seigen-2";
 import { baikaiKeiyaku2 } from "./gyoho/baikai-keiyaku-2";
 import { hoshu2 } from "./gyoho/hoshu-2";
 import { hoshu3 } from "./gyoho/hoshu-3";
+import { hoshuChintai } from "./gyoho/hoshu-chintai";
+import { hoshuBaibaiSoho } from "./gyoho/hoshu-baibai-soho";
+import { hoshuTeirenAkiya } from "./gyoho/hoshu-teiren-akiya";
+import { hoshuMenzei } from "./gyoho/hoshu-menzei";
 import { coolingOff2 } from "./gyoho/cooling-off-2";
 import { menkyo2 } from "./gyoho/menkyo-2";
 import { takkenshi2 } from "./gyoho/takkenshi-2";
@@ -303,6 +307,10 @@ const RAW_QUESTIONS: Question[] = [
   teitouken3,
   jutakuLoanKoujo,
   hoshu3,
+  hoshuChintai,
+  hoshuBaibaiSoho,
+  hoshuTeirenAkiya,
+  hoshuMenzei,
 ];
 
 /**
