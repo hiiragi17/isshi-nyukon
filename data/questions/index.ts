@@ -89,6 +89,10 @@ import { hoshuChintai } from "./gyoho/hoshu-chintai";
 import { hoshuBaibaiSoho } from "./gyoho/hoshu-baibai-soho";
 import { hoshuTeirenAkiya } from "./gyoho/hoshu-teiren-akiya";
 import { hoshuMenzei } from "./gyoho/hoshu-menzei";
+import { kenpeiCalc } from "./horei/kenpei-calc";
+import { kenpeiCalc2 } from "./horei/kenpei-calc-2";
+import { yosekiCalc2 } from "./horei/yoseki-calc-2";
+import { yosekiCalc3 } from "./horei/yoseki-calc-3";
 import { coolingOff2 } from "./gyoho/cooling-off-2";
 import { menkyo2 } from "./gyoho/menkyo-2";
 import { takkenshi2 } from "./gyoho/takkenshi-2";
@@ -311,6 +315,10 @@ const RAW_QUESTIONS: Question[] = [
   hoshuBaibaiSoho,
   hoshuTeirenAkiya,
   hoshuMenzei,
+  kenpeiCalc,
+  kenpeiCalc2,
+  yosekiCalc2,
+  yosekiCalc3,
 ];
 
 /**
