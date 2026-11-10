@@ -4,11 +4,11 @@ import type { Question } from "@/types";
 export const eigyouHoshoukinCalc: Question = {
   id: "q158",
   topicId: "q31",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "宅建業法25条2項(営業保証金の額は、主たる事務所及びその他の事務所ごとに、取引の実情及び取引の相手方の利益の保護を考慮して、政令で定める額)と、その委任先の宅建業法施行令2条の4(主たる事務所につき千万円、その他の事務所につき事務所ごとに五百万円の割合による金額の合計額)を、e-Gov法令API v2(asof=2026-04-01)の逐語で確認(2026-11-10)。金額は政令に委任されているので、施行令の原文を取得してから書いた。計算は 1,000万円 + 500万円 × 3か所 = 2,500万円。照合の詳細は docs/verification/gyoho-verification.md #q158。AIによる下書き照合であり、人の承認前なので verified は false。",
+    note: "宅建業法25条2項(営業保証金の額は、主たる事務所及びその他の事務所ごとに、取引の実情及び取引の相手方の利益の保護を考慮して、政令で定める額)と、その委任先の宅建業法施行令2条の4(主たる事務所につき千万円、その他の事務所につき事務所ごとに五百万円の割合による金額の合計額)を、e-Gov法令API v2(asof=2026-04-01)の逐語で確認(2026-11-10)。金額は政令に委任されているので、施行令の原文を取得してから書いた。計算は 1,000万円 + 500万円 × 3か所 = 2,500万円。照合の詳細は docs/verification/gyoho-verification.md #q158。AIによる下書き照合のあと、hiiragi17の承認(2026-11-10)で verified を true にした。",
   },
   lawVersion: {
     revisionId: "327AC1000000176_20260401_507AC0000000068",

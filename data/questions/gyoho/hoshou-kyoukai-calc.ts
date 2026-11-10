@@ -4,11 +4,11 @@ import type { Question } from "@/types";
 export const hoshouKyoukaiCalc: Question = {
   id: "q159",
   topicId: "q32",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "宅建業法64条の9第1項(保証協会に加入しようとする者は、加入しようとする日までに、主たる事務所及びその他の事務所ごとに政令で定める額の弁済業務保証金分担金を保証協会に納付)と、その委任先の宅建業法施行令7条(主たる事務所につき六十万円、その他の事務所につき事務所ごとに三十万円の割合による金額の合計額)を、e-Gov法令API v2(asof=2026-04-01)の逐語で確認(2026-11-10)。金額は政令に委任されているので、施行令の原文を取得してから書いた。計算は 60万円 + 30万円 × 4か所 = 180万円。照合の詳細は docs/verification/gyoho-verification.md #q159。AIによる下書き照合であり、人の承認前なので verified は false。",
+    note: "宅建業法64条の9第1項(保証協会に加入しようとする者は、加入しようとする日までに、主たる事務所及びその他の事務所ごとに政令で定める額の弁済業務保証金分担金を保証協会に納付)と、その委任先の宅建業法施行令7条(主たる事務所につき六十万円、その他の事務所につき事務所ごとに三十万円の割合による金額の合計額)を、e-Gov法令API v2(asof=2026-04-01)の逐語で確認(2026-11-10)。金額は政令に委任されているので、施行令の原文を取得してから書いた。計算は 60万円 + 30万円 × 4か所 = 180万円。照合の詳細は docs/verification/gyoho-verification.md #q159。AIによる下書き照合のあと、hiiragi17の承認(2026-11-10)で verified を true にした。",
   },
   lawVersion: {
     revisionId: "327AC1000000176_20260401_507AC0000000068",
