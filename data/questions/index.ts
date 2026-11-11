@@ -96,6 +96,9 @@ import { yosekiCalc3 } from "./horei/yoseki-calc-3";
 import { eigyouHoshoukinCalc } from "./gyoho/eigyou-hoshoukin-calc";
 import { hoshouKyoukaiCalc } from "./gyoho/hoshou-kyoukai-calc";
 import { hoshouKyoukaiCalc2 } from "./gyoho/hoshou-kyoukai-calc-2";
+import { souzokubun3 } from "./kenri/souzokubun-3";
+import { souzokubun4 } from "./kenri/souzokubun-4";
+import { souzokubun5 } from "./kenri/souzokubun-5";
 import { coolingOff2 } from "./gyoho/cooling-off-2";
 import { menkyo2 } from "./gyoho/menkyo-2";
 import { takkenshi2 } from "./gyoho/takkenshi-2";
@@ -325,6 +328,9 @@ const RAW_QUESTIONS: Question[] = [
   eigyouHoshoukinCalc,
   hoshouKyoukaiCalc,
   hoshouKyoukaiCalc2,
+  souzokubun3,
+  souzokubun4,
+  souzokubun5,
 ];
 
 /**
