@@ -30,12 +30,12 @@ export const souzokubun5: Question = {
   ],
   diagram: {
     nodes: [
-      { id: "A", x: 117, y: 100, label: "A", sub: "被相続人" },
-      { id: "B", x: 240, y: 100, label: "B", sub: "配偶者" },
-      { id: "C", x: 40, y: 190, label: "C", sub: "兄" },
-      { id: "D", x: 150, y: 190, label: "D", sub: "弟(先に死亡)" },
-      { id: "E", x: 110, y: 265, label: "E", sub: "甥(代襲)" },
-      { id: "F", x: 200, y: 265, label: "F", sub: "姪(代襲)" },
+      { id: "B", x: 50, y: 45, label: "B", sub: "配偶者" },
+      { id: "A", x: 150, y: 45, label: "A", sub: "被相続人" },
+      { id: "C", x: 50, y: 140, label: "C", sub: "兄" },
+      { id: "D", x: 140, y: 140, label: "D", sub: "弟(先に死亡)" },
+      { id: "E", x: 235, y: 95, label: "E", sub: "甥(代襲)" },
+      { id: "F", x: 300, y: 145, label: "F", sub: "姪(代襲)" },
     ],
     edges: [
       { from: "A", to: "B", label: "婚姻", dashed: true },

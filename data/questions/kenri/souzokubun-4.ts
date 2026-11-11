@@ -30,15 +30,15 @@ export const souzokubun4: Question = {
   ],
   diagram: {
     nodes: [
-      { id: "A", x: 117, y: 100, label: "A", sub: "被相続人" },
-      { id: "B", x: 240, y: 100, label: "B", sub: "配偶者" },
-      { id: "C", x: 60, y: 190, label: "C", sub: "兄(父母の双方が同じ)" },
-      { id: "D", x: 175, y: 190, label: "D", sub: "弟(父のみ同じ)" },
+      { id: "A", x: 130, y: 48, label: "A", sub: "被相続人" },
+      { id: "B", x: 255, y: 48, label: "B", sub: "配偶者" },
+      { id: "C", x: 60, y: 140, label: "C", sub: "兄(父母の双方が同じ)" },
+      { id: "D", x: 200, y: 140, label: "D", sub: "弟(父のみ同じ)" },
     ],
     edges: [
       { from: "A", to: "B", label: "婚姻", dashed: true },
-      { from: "A", to: "C", label: "兄弟(父母の双方が同じ)", dashed: true },
-      { from: "A", to: "D", label: "兄弟(父のみ同じ)", dashed: true },
+      { from: "A", to: "C", label: "兄弟", dashed: true },
+      { from: "A", to: "D", label: "兄弟", dashed: true },
     ],
   },
   calc: {
