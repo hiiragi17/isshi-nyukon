@@ -3,61 +3,9 @@
  * もとの SpotAd の内容をそのまま移設したもの(見た目・挙動は不変)。
  * レイアウトは意図的にハードコード(既決事項: 広告ごとに bespoke)。
  */
-import type { CSSProperties } from "react";
-import { CARD, AI_BLUE, SHU, SERIF } from "@/lib/tokens";
+import { AI_BLUE, SHU, SERIF } from "@/lib/tokens";
+import { Mark } from "./Mark";
 import type { SpotAdProps } from "./types";
-
-/** 認容済みゾーンの丸印+番号バッジ。モジュールスコープに置き、再レンダー時の
- *  再マウント(fade-up アニメーション再発火)を避ける */
-function Mark({
-  id,
-  inset,
-  rot,
-  badge,
-  found,
-}: {
-  id: string;
-  inset: string;
-  rot: number;
-  badge: CSSProperties;
-  found: string[];
-}) {
-  if (!found.includes(id)) return null;
-  return (
-    <>
-      <span
-        className="fade-up"
-        style={{
-          position: "absolute",
-          inset,
-          border: "2.5px solid rgba(191,59,51,0.85)",
-          borderRadius: "50%",
-          transform: `rotate(${rot}deg)`,
-          pointerEvents: "none",
-        }}
-      />
-      <span
-        style={{
-          position: "absolute",
-          ...badge,
-          width: 20,
-          height: 20,
-          borderRadius: "50%",
-          background: SHU,
-          color: CARD,
-          fontSize: 11,
-          fontWeight: 800,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontFamily: SERIF,
-        }}
-      >
-        {found.indexOf(id) + 1}
-      </span>
-    </>
-  );
-}
 
 export function MidoridaiAd({ found, pending, done, onTap }: SpotAdProps) {
   const zb = (id: string) =>
