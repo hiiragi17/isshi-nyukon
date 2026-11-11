@@ -3,7 +3,7 @@
  * q6(朱・戸建売買)/ q11(青・賃貸)/ q57(深緑・分譲マンション)とは配色・レイアウトを変えた
  * bespoke な宅地分譲チラシ(土色)。
  * 違反ゾーン: kyori(駅までの距離の誇大表示・32条)/ kaihatsuB(開発許可の申請中に広告・33条)/
- *   torihiki(物件概要に取引態様の記載がない・34条1項)。
+ *   torihiki(広告のどこにも取引態様の記載がない。物件概要欄で気づく・34条1項)。
  * 適法: kaihatsuA(開発許可の取得後の広告)/ safeAddress / safePrice。
  */
 import { AI_BLUE, SHU, SERIF } from "@/lib/tokens";
@@ -238,7 +238,7 @@ export function TsubasaAd({ found, pending, done, onTap }: SpotAdProps) {
           </button>
         </div>
 
-        {/* 物件概要(取引態様の記載がない → 34条1項違反) */}
+        {/* 物件概要(広告のどこにも取引態様の記載がない → 34条1項違反) */}
         <button
           onClick={() => onTap("torihiki")}
           style={{
