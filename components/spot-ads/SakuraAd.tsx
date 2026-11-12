@@ -4,64 +4,12 @@
  * 違反ゾーン: walk(徒歩分数)/ area(専有面積にバルコニー算入)/
  *   cost(初期費用0円の誤認)/ best(根拠なき最安値)。適法: safeRent / safeDeposit / safeAddress。
  */
-import type { CSSProperties } from "react";
-import { CARD, AI_BLUE, SHU, SERIF } from "@/lib/tokens";
+import { AI_BLUE, SHU, SERIF } from "@/lib/tokens";
+import { Mark } from "./Mark";
 import type { SpotAdProps } from "./types";
 
 /** この広告の accent(賃貸チラシは青系にして q6 の朱と区別) */
 const BLUE = "#1F6FB2";
-
-/** 認容済みゾーンの丸印+番号バッジ。モジュールスコープに置き、再レンダー時の
- *  再マウント(fade-up アニメーション再発火)を避ける */
-function Mark({
-  id,
-  inset,
-  rot,
-  badge,
-  found,
-}: {
-  id: string;
-  inset: string;
-  rot: number;
-  badge: CSSProperties;
-  found: string[];
-}) {
-  if (!found.includes(id)) return null;
-  return (
-    <>
-      <span
-        className="fade-up"
-        style={{
-          position: "absolute",
-          inset,
-          border: "2.5px solid rgba(191,59,51,0.85)",
-          borderRadius: "50%",
-          transform: `rotate(${rot}deg)`,
-          pointerEvents: "none",
-        }}
-      />
-      <span
-        style={{
-          position: "absolute",
-          ...badge,
-          width: 20,
-          height: 20,
-          borderRadius: "50%",
-          background: SHU,
-          color: CARD,
-          fontSize: 11,
-          fontWeight: 800,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontFamily: SERIF,
-        }}
-      >
-        {found.indexOf(id) + 1}
-      </span>
-    </>
-  );
-}
 
 export function SakuraAd({ found, pending, done, onTap }: SpotAdProps) {
   const zb = (id: string) =>
