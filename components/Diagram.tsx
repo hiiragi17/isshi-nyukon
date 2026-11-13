@@ -25,6 +25,9 @@ function nodeFontSize(label: string): number {
   return Math.max(8, Math.floor(34 / label.length));
 }
 
+/** 図の標準の高さ(viewBox)。幅は 340 固定 */
+const BASE_HEIGHT = 185;
+
 export function Diagram({ data }: { data: DiagramData }) {
   const R = 22;
   const nodeById = Object.fromEntries(data.nodes.map((n) => [n.id, n]));
@@ -35,9 +38,16 @@ export function Diagram({ data }: { data: DiagramData }) {
   // ノードの上に出す(下に置くと枝やその中点ラベルと重なるため)
   const cy =
     data.nodes.reduce((acc, n) => acc + n.y, 0) / (data.nodes.length || 1);
+  // viewBox の高さ。基本は 185。ノード(と、その下に出るサブラベル)が収まらない図だけ
+  // 下へ広げる。ノードの最大 y が 145 以下の図は従来どおり 185 のまま(見た目は変わらない)。
+  // サブラベルが下に出るのは重心以下のノード(y + R + 15 が基線、+3 は字の下端)
+  const height = Math.max(
+    BASE_HEIGHT,
+    ...data.nodes.map((n) => (n.y < cy ? n.y + R + 2 : n.y + R + 18)),
+  );
   return (
     <svg
-      viewBox="0 0 340 185"
+      viewBox={`0 0 340 ${height}`}
       style={{ width: "100%", maxWidth: 360, display: "block", margin: "0 auto" }}
       role="img"
       aria-label="登場人物の関係図"
