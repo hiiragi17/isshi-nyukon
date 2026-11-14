@@ -6,7 +6,7 @@ import { PAPER } from "@/lib/tokens";
  * ホーム画面に追加すると standalone(ブラウザUIなし)で起動する。
  *
  * インストール後も配信元オリジンは変わらないため、localStorage の成績
- * (isshi-nyukon:attempts:v1)は Android / デスクトップではブラウザと共有される。
+ * (isshi-nyukon:attempts:v2)は Android / デスクトップではブラウザと共有される。
  * iOS のみホーム画面アプリが別ストレージになるので、既存成績の引き継ぎは
  * 控え(BackupPanel の書き出し / 復元)で行う。
  */

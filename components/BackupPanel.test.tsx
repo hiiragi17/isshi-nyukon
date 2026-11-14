@@ -21,11 +21,12 @@ const ATTEMPT: Attempt = {
   pts: 2,
   max: 2,
   answeredAt: "2026-07-20T00:00:00.000Z",
+  questionRevision: 1,
 };
 
 // 控えは書き出しの時点で保存済みの最新を読むので、テストでも localStorage に用意する
 // (キーは lib/storage.ts の STORAGE_KEY / FAVORITES_STORAGE_KEY と同じ)
-const ATTEMPTS_KEY = "isshi-nyukon:attempts:v1";
+const ATTEMPTS_KEY = "isshi-nyukon:attempts:v2";
 const FAVORITES_KEY = "isshi-nyukon:favorites:v2";
 const seedStorage = (attempts: Attempt[], favorites: string[]) => {
   window.localStorage.setItem(ATTEMPTS_KEY, JSON.stringify(attempts));
