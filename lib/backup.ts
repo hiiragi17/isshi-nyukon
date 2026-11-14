@@ -14,10 +14,17 @@ import type { Attempt } from "@/types";
 import { parseItemKey } from "@/lib/storage";
 
 /**
- * 控えのスキーマ識別子。storage.ts の保存キー(:v1)と歩調を合わせ、
- * 将来スキーマを変えたときに古い控えを判別できるようにする。
+ * 控えのスキーマ識別子。storage.ts の保存キー(:v2)と歩調を合わせ、
+ * スキーマを変えたときに古い控えを判別できるようにする。
+ * v2 で `Attempt` に `questionRevision`(回答時の問題の版番号)を足した(#592)。
  */
-export const BACKUP_SCHEMA = "isshi-nyukon:attempts:v1";
+export const BACKUP_SCHEMA = "isshi-nyukon:attempts:v2";
+
+/**
+ * 版番号を持たない旧形式の控え。どの版の問題への回答かを判別できないので、
+ * 復元せずに断る(成績のリセットと同じ扱い)。
+ */
+const LEGACY_BACKUP_SCHEMAS: readonly string[] = ["isshi-nyukon:attempts:v1"];
 
 /**
  * 書き出す控えファイルの中身。
@@ -57,6 +64,12 @@ function isAttempt(v: unknown): v is Attempt {
     typeof a.choiceIndex === "number" &&
     typeof a.pts === "number" &&
     typeof a.max === "number" &&
+    // 回答時の問題の版番号(1以上の整数)。集計は、これが現在の問題データの版と
+    // 一致する記録だけを使う。現在の問題にない問題ID・版の記録も、ここでは弾かない
+    // (読み込み側 lib/attempts.ts が無視する。お気に入りの控えと同じ扱い)
+    typeof a.questionRevision === "number" &&
+    Number.isInteger(a.questionRevision) &&
+    a.questionRevision >= 1 &&
     // answeredAt は日時として解釈できる文字列に限る。壊れた値を復元すると
     // SRS(nextReviewDate → dueAt の toISOString)が Invalid Date で
     // 例外を投げ、ダッシュボードが描画できなくなるため、ここで弾く。
@@ -114,6 +127,14 @@ export function parseBackupFile(json: string): BackupContents {
   }
   const file = parsed as Record<string, unknown>;
 
+  if (
+    typeof file.schema === "string" &&
+    LEGACY_BACKUP_SCHEMAS.includes(file.schema)
+  ) {
+    throw new BackupError(
+      "この控えは古い形式です(問題の版番号の記録がないため、復元できません)。",
+    );
+  }
   if (file.schema !== BACKUP_SCHEMA) {
     throw new BackupError(
       "この控えは対応していない版で書き出されています(復元できません)。",

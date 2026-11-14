@@ -10,11 +10,13 @@
  * - `source.answerLevel` 未指定 → `source.level` と同じ
  * - `lawVersion`         未指定 → `{ driftChecked: "unchecked" }`
  * - `topicId`            未指定 → 自分の `id`(論点グルーピングの既定値)
+ * - `revision`           未指定 → `1`(内容の版番号。成績との照合に使う・#592)
  *
  * 「記録が無い」と「弱い記録がある」を同じ扱いにすることで、埋まっていない
  * ものが常に見える状態を保つ。
  */
 import type { LawVersion, Question, SourceRef } from "@/types";
+import { revisionOf } from "@/lib/attempts";
 
 /** 記録が無いときの source(最も弱い側) */
 export const UNVERIFIED_SOURCE: SourceRef = { level: "unverified" };
@@ -32,6 +34,7 @@ export function normalizeQuestion(q: Question): Question {
     ...q,
     verified: q.verified ?? false,
     topicId: q.topicId ?? q.id,
+    revision: revisionOf(q),
     // 既定値は共有オブジェクトなので、必ずコピーを返す。
     // 返り値を書き換えられても入力や既定値を汚染しないようにするため。
     source: q.source

@@ -207,10 +207,20 @@ type Attempt = {
   pts: number;
   max: number;
   answeredAt: string;      // ISO日時
+  questionRevision: number; // 回答時に画面が表示した問題の版番号(Question.revision)
 };
 // 保存: 履歴を全件配列で持つ(最新だけでなく)
 // → 弱点判定=最新の結果 / 間隔反復=最終挑戦日 / 成長グラフ=全履歴
 ```
+
+**問題の版番号による照合(Issue #592)。** 問題の肢を直すと、直す前の `Attempt` が、直したあとの肢の結果として扱われてしまう。そこで、問題に内容の版番号(`Question.revision`。未指定は1)を持たせ、回答時に画面が表示した版を `Attempt.questionRevision` に記録する。
+
+- 集計(弱点判定・SRS・成長グラフ・習熟・進捗)は、**記録の版番号が、現在の問題データの版番号と一致する `Attempt` だけ**を使う。一致しない記録は、履歴として残すが、集計に使わない(全件履歴は保つ)
+- フィルタは `lib/attempts.ts`(`loadAttempts` / `currentAttempts`)の1か所。`StorageAdapter` の外に置く(Adapter は全件をそのまま返す。控えの書き出しは全件を使う)
+- **時刻では判別しない。** `answeredAt` は端末の時計で、Service Worker はオフライン時に古いページを返すため、時刻の比較は成り立たない
+- `revision` は、採点や肢の識別に影響する変更(肢の内容・並び順・追加と削除・設問文・場面・図・誤り箇所と理由の選択肢・配点)のたびに1つ上げる。誤字の修正などでは上げない
+- 導入時に成績をリセットした。保存キーを `isshi-nyukon:attempts:v2` に変え、版番号を持たない v1 のデータは読まない(端末には残す)。控えのスキーマも v2 にし、v1 形式の控えは復元せずに断る
+- 経緯と、本試験形式モードとの関係は `docs/design-exam-format.md` 4章・5章
 
 ---
 

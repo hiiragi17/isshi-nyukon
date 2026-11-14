@@ -21,6 +21,7 @@ test("バックアップ: 控えの書き出し→復元の往復", async ({ pag
       pts: 2,
       max: 2,
       answeredAt: "2026-07-20T00:00:00.000Z",
+      questionRevision: 1,
     },
   ];
   await page.addInitScript(

@@ -23,7 +23,7 @@ function attempt(
   max: number,
   answeredAt: string,
 ): Attempt {
-  return { questionId, choiceIndex, pts, max, answeredAt };
+  return { questionId, choiceIndex, pts, max, answeredAt, questionRevision: 1 };
 }
 
 const SAMPLE: Attempt[] = [
@@ -164,7 +164,14 @@ describe("parseBackup — 不正な控えは書き戻す前に弾く", () => {
       schema: BACKUP_SCHEMA,
       exportedAt: "2026-07-15T00:00:00.000Z",
       attempts: [
-        { questionId: "q1", choiceIndex: 0, pts: "2", max: 2, answeredAt: "x" },
+        {
+          questionId: "q1",
+          choiceIndex: 0,
+          pts: "2",
+          max: 2,
+          answeredAt: "2026-07-01T00:00:00.000Z",
+          questionRevision: 1,
+        },
       ],
     });
     expect(() => parseBackup(bad)).toThrow(BackupError);
@@ -184,6 +191,7 @@ describe("parseBackup — 不正な控えは書き戻す前に弾く", () => {
           pts: 2,
           max: 2,
           answeredAt: "not-a-date",
+          questionRevision: 1,
         },
       ],
     });
@@ -199,5 +207,68 @@ describe("backupFilename — 日付入りのファイル名", () => {
     expect(backupFilename(new Date(2026, 0, 3))).toBe(
       "isshi-nyukon-backup-20260103.json",
     );
+  });
+});
+
+describe("問題の版番号(questionRevision)と旧形式の控え(#592)", () => {
+  const fileWith = (attempts: unknown[], schema: string = BACKUP_SCHEMA) =>
+    JSON.stringify({
+      schema,
+      exportedAt: "2026-11-14T00:00:00.000Z",
+      attempts,
+    });
+  const base = {
+    questionId: "q1",
+    choiceIndex: 0,
+    pts: 2,
+    max: 2,
+    answeredAt: "2026-11-01T00:00:00.000Z",
+  };
+
+  it("questionRevision は往復で保たれる(版が違う記録も、そのまま残る)", () => {
+    const mixed: Attempt[] = [
+      { ...base, questionRevision: 1 },
+      { ...base, choiceIndex: 1, questionRevision: 2 },
+      { ...base, questionId: "q9", questionRevision: 7 },
+    ];
+    const restored = parseBackup(serializeBackup(mixed));
+    expect(restored).toEqual(mixed);
+    expect(restored.map((a) => a.questionRevision)).toEqual([1, 2, 7]);
+  });
+
+  it("古い形式(v1)の控えは、中身が正しくても、理由を示して断る", () => {
+    const legacy = fileWith([base], "isshi-nyukon:attempts:v1");
+    expect(() => parseBackupFile(legacy)).toThrow(BackupError);
+    expect(() => parseBackupFile(legacy)).toThrow(/古い形式/);
+  });
+
+  it("古い形式(v1)の控えは、questionRevision を持っていても断る(スキーマで判別する)", () => {
+    const legacy = fileWith(
+      [{ ...base, questionRevision: 1 }],
+      "isshi-nyukon:attempts:v1",
+    );
+    expect(() => parseBackupFile(legacy)).toThrow(/古い形式/);
+  });
+
+  it("現行スキーマでも、questionRevision の無い記録が混ざっていれば断る", () => {
+    expect(() =>
+      parseBackupFile(fileWith([{ ...base, questionRevision: 1 }, base])),
+    ).toThrow(BackupError);
+  });
+
+  it("questionRevision が1以上の整数でない記録は断る", () => {
+    for (const bad of [0, -1, 1.5, "1", null, Number.NaN]) {
+      expect(() =>
+        parseBackupFile(fileWith([{ ...base, questionRevision: bad }])),
+      ).toThrow(BackupError);
+    }
+  });
+
+  it("いまの問題データに無い問題ID・版の記録は断らない(読み込み側が無視する)", () => {
+    const stale = [
+      { ...base, questionId: "removed-q", questionRevision: 1 },
+      { ...base, questionRevision: 99 },
+    ];
+    expect(parseBackupFile(fileWith(stale)).attempts).toEqual(stale);
   });
 });

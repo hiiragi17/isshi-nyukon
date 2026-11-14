@@ -39,6 +39,7 @@ test("着手済みの論点では、解くが主・読むが副のまま", async
             pts: 0,
             max: 2,
             answeredAt: new Date().toISOString(),
+            questionRevision: 1,
           },
         ]),
       );
