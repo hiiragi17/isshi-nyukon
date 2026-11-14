@@ -17,6 +17,7 @@
  */
 import type { Attempt, Question } from "@/types";
 import type { StorageAdapter } from "@/lib/storage";
+import { itemCountOf } from "@/lib/items";
 
 /** `Question.revision` を省略したときの版番号 */
 export const DEFAULT_QUESTION_REVISION = 1;
@@ -33,17 +34,30 @@ export function revisionOf(q: Pick<Question, "revision">): number {
  * - 版番号が現在の問題と一致しない記録(直す前の問題への回答。古い版を表示して
  *   回答した記録も、表示した版が記録されているのでここで落ちる)
  * - 現在の問題データにない問題IDの記録(問題の入れ替え前の記録)
+ * - 現在の問題にない肢の記録(`choiceIndex` が肢数の範囲外。壊れた記録や、
+ *   手で書き換えた控え。肢に結べないので、成長グラフの回答数や得点率にも数えない)
  * - 版番号を持たない記録(壊れた保存データ。fail-closed)
  */
 export function currentAttempts(
   attempts: Attempt[],
-  questions: Pick<Question, "id" | "revision">[],
+  questions: Question[],
 ): Attempt[] {
-  const revisions = new Map<string, number>();
-  for (const q of questions) revisions.set(q.id, revisionOf(q));
-  return attempts.filter(
-    (a) => revisions.get(a.questionId) === a.questionRevision,
-  );
+  const current = new Map<string, { revision: number; itemCount: number }>();
+  for (const q of questions) {
+    current.set(q.id, { revision: revisionOf(q), itemCount: itemCountOf(q) });
+  }
+  return attempts.filter((a) => {
+    // 問題IDが現在の問題データにあることを先に確かめる。確かめずに版番号だけを
+    // 比べると、未知の問題ID(undefined)と版番号のない記録(undefined)が一致してしまう
+    const q = current.get(a.questionId);
+    if (!q) return false;
+    return (
+      a.questionRevision === q.revision &&
+      Number.isInteger(a.choiceIndex) &&
+      a.choiceIndex >= 0 &&
+      a.choiceIndex < q.itemCount
+    );
+  });
 }
 
 /** 読み込んだ成績。`all`=保存されている全件 / `current`=集計に使ってよい記録 */
@@ -56,7 +70,7 @@ export type LoadedAttempts = { all: Attempt[]; current: Attempt[] };
  */
 export async function loadAttempts(
   adapter: Pick<StorageAdapter, "getAttempts">,
-  questions: Pick<Question, "id" | "revision">[],
+  questions: Question[],
 ): Promise<LoadedAttempts> {
   const all = await adapter.getAttempts();
   return { all, current: currentAttempts(all, questions) };

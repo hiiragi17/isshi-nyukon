@@ -118,6 +118,31 @@ describe("currentAttempts — 版番号が一致する記録だけを返す", ()
     expect(currentAttempts([broken], QUESTIONS)).toEqual([]);
   });
 
+  it("未知の問題IDで、版番号も持たない記録は落とす(undefined 同士を一致とみなさない)", () => {
+    const broken = {
+      questionId: "removed",
+      choiceIndex: 0,
+      pts: 2,
+      max: 2,
+      answeredAt: "2026-11-01T00:00:00.000Z",
+    } as Attempt;
+    expect(currentAttempts([broken], QUESTIONS)).toEqual([]);
+  });
+
+  it("現在の問題にない肢(choiceIndex が範囲外・整数でない)の記録は落とし、成長グラフにも数えない", () => {
+    const ok = attempt("qB", 1, 3, 3, "2026-11-01T00:00:00.000Z", 1);
+    const outOfRange = [
+      attempt("qB", 2, 3, 3, "2026-11-01T00:00:00.000Z", 1), // 肢は 0 と 1 だけ
+      attempt("qB", -1, 2, 2, "2026-11-01T00:00:00.000Z", 1),
+      attempt("qB", 0.5, 2, 2, "2026-11-01T00:00:00.000Z", 1),
+    ];
+    const current = currentAttempts([...outOfRange, ok], QUESTIONS);
+    expect(current).toEqual([ok]);
+    const growth = buildGrowth(current, QUESTIONS);
+    expect(growth.totalAttempts).toBe(1);
+    expect(growth.avgScoreRate).toBe(1);
+  });
+
   it("正規化していない問題(revision 省略)も版1として照合する", () => {
     const a = attempt("raw", 0, 2, 2, "2026-11-01T00:00:00.000Z", 1);
     expect(currentAttempts([a], [q2("raw")])).toEqual([a]);
