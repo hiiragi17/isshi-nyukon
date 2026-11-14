@@ -37,6 +37,7 @@ test("成績がある場合は「はじめに」を出さない", async ({ page 
             pts: 2,
             max: 2,
             answeredAt: new Date().toISOString(),
+            questionRevision: 1,
           },
         ]),
       );

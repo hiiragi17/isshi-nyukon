@@ -23,6 +23,7 @@ import { QUESTIONS } from "@/data/questions";
 import { READINGS } from "@/data/readings";
 import type { Attempt } from "@/types";
 import { storage, latestByItem, itemKey, parseItemKey } from "@/lib/storage";
+import { loadAttempts } from "@/lib/attempts";
 import { itemCountOf, itemKeysForTopic } from "@/lib/items";
 import {
   topicProgress,
@@ -131,7 +132,10 @@ function agoLabel(iso: string | null, now: Date): string {
 export default function Home() {
   const router = useRouter();
   // null = 未ロード(SSR / 初回)。ロード後に配列が入る(時刻依存の表示はロード後だけ)
+  // 集計に使うのは、問題の版番号が現在の問題データと合う記録だけ(lib/attempts・#592)
   const [attempts, setAttempts] = useState<Attempt[] | null>(null);
+  // 保存されている全件(版が合わない記録も含む)。控えに書き出す中身があるかの判定に使う
+  const [storedAttempts, setStoredAttempts] = useState<Attempt[]>([]);
   // 成績の読み込みに失敗したか。失敗時は「記録ゼロ」と同じ表示にせず、別の案内を出す(#473)
   const [loadError, setLoadError] = useState(false);
   // お気に入りの保存に失敗したときの案内(選択中の論点詳細に出す)
@@ -152,10 +156,11 @@ export default function Home() {
   // 全件履歴をロード
   useEffect(() => {
     let alive = true;
-    storage
-      .getAttempts()
-      .then((a) => {
-        if (alive) setAttempts(a);
+    loadAttempts(storage, QUESTIONS)
+      .then(({ all, current }) => {
+        if (!alive) return;
+        setAttempts(current);
+        setStoredAttempts(all);
       })
       .catch((e) => {
         console.error("[storage] getAttempts に失敗しました", e);
@@ -208,9 +213,11 @@ export default function Home() {
 
   // 控えからの復元後に全件履歴とお気に入りを読み直して画面へ反映する
   const reloadAttempts = () => {
-    storage
-      .getAttempts()
-      .then(setAttempts)
+    loadAttempts(storage, QUESTIONS)
+      .then(({ all, current }) => {
+        setAttempts(current);
+        setStoredAttempts(all);
+      })
       .catch((e) => {
         console.error("[storage] getAttempts に失敗しました", e);
         setLoadError(true);
@@ -1245,7 +1252,7 @@ export default function Home() {
 
             {/* 記録の控え(書き出し・復元) — 端末依存のデータ消失に備える */}
             <BackupPanel
-              attempts={attempts ?? []}
+              attempts={storedAttempts}
               favorites={favorites}
               favoritesError={favoritesError}
               onImported={reloadAttempts}

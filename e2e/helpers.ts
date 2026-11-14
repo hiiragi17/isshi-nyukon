@@ -1,7 +1,7 @@
 import { expect, type Page } from "@playwright/test";
 
 /** localStorage 上の成績保存キー(lib/storage.ts の STORAGE_KEY と一致させる) */
-export const STORAGE_KEY = "isshi-nyukon:attempts:v1";
+export const STORAGE_KEY = "isshi-nyukon:attempts:v2";
 
 /**
  * ダッシュボードの読み込み完了を待つ。

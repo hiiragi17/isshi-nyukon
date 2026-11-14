@@ -53,6 +53,16 @@ export type Question = {
    * `driftChecked: "unchecked"` の既定値に正規化される(fail-closed)。
    */
   lawVersion?: LawVersion;
+  /**
+   * 問題の内容の版番号。省略時は 1(読み込み境界の `normalizeQuestion` で正規化)。
+   * **採点や肢の識別に影響する変更のたびに、1つ上げる。** 対象は、肢の内容
+   * (○×の反転を含む)・肢の並び順・肢の追加と削除・設問文・場面・図・
+   * 誤り箇所と理由の選択肢・配点。誤字の修正など、採点にも肢の識別にも
+   * 影響しない変更では上げない。
+   * 成績(`Attempt.questionRevision`)と突き合わせ、版が合わない記録を集計から
+   * 外すのに使う(`lib/attempts.ts` / #592)。
+   */
+  revision?: number;
   lesson: string[]; // 30秒レッスン(3行程度)
   diagram?: Diagram; // 登場人物の関係図(省略可)
   choices?: Choice[]; // type 未指定(zenshi)のとき
@@ -358,6 +368,13 @@ export type Attempt = {
   pts: number;
   max: number; // ○肢=2 / ×肢=3 / calc=2 / spot=errorCount
   answeredAt: string; // ISO日時
+  /**
+   * 回答時に**画面が実際に表示した**問題データの版番号(`Question.revision`)。
+   * 現在の問題データの版番号と一致する記録だけを集計に使う(`lib/attempts.ts`)。
+   * 時刻(`answeredAt`)では判別しない——端末の時計と、オフライン時に古いページを
+   * 返す Service Worker のために、時刻の比較が成り立たないため(#592)。
+   */
+  questionRevision: number;
 };
 
 export type MasteryState = "perfect" | "learning" | "untouched";

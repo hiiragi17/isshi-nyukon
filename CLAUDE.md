@@ -100,7 +100,7 @@ v1 にRDBは無い。データは「静的な問題データ(バンドル)」+�
 | `CalcSpec` | 計算問題(報酬・建蔽率容積率・相続分)。given / answer / steps / distractors |
 | `SpotSpec` / `AdElement` | マイソク間違い探し。layout / errors / errorCount |
 | `Term` | 用語辞書エントリ(word / aliases / def / category) |
-| `Attempt` | 成績1件(questionId / choiceIndex / pts / max / answeredAt) |
+| `Attempt` | 成績1件(questionId / choiceIndex / pts / max / answeredAt / questionRevision) |
 | `SourceRef` | 照合に使ったソースの強さ(`level`: primary / mirrored / secondary / unverified)。様式なら `fileId` も |
 | `LawVersion` | 照合に用いた法令の版と試験の法令基準日の関係(`revisionId` / `verifiedAgainst` / `examBasisDate` / `driftChecked`) |
 | `MasteryState` | `perfect` / `learning` / `untouched` |
@@ -113,6 +113,9 @@ v1 にRDBは無い。データは「静的な問題データ(バンドル)」+�
 - `Attempt` を **全件履歴で保存**(最新だけでなく)
 - 弱点判定=最新の結果 / SRS=最終挑戦日 / 成長グラフ=全履歴
 - アクセスは `StorageAdapter` 経由のみ(アプリ側は localStorage を直接触らない)
+- **集計に使うのは、問題の版番号が合う記録だけ**(Issue #592)。`Attempt.questionRevision`(回答時に画面が表示した問題の版)が、現在の `Question.revision`(未指定は1)と一致しない記録は、履歴に残すが集計に使わない。成績を読む画面は、`storage.getAttempts()` を直接集計に渡さず、**必ず `lib/attempts.ts` の `loadAttempts` / `currentAttempts` を通す**(フィルタは Adapter の外・この1か所)。時刻(`answeredAt`)では判別しない
+- **`Question.revision` は、採点や肢の識別に影響する変更のたびに1つ上げる**(肢の内容・○×の反転・並び順・追加と削除・設問文・場面・図・誤り箇所と理由の選択肢・配点)。誤字の修正などでは上げない。上げ忘れると、直す前の成績が、直したあとの肢の結果として集計される
+- 保存キーは `isshi-nyukon:attempts:v2`、控えのスキーマも v2(導入時に成績をリセット。v1 のデータは読まず、v1 形式の控えは断る)
 
 ## ディレクトリ構成(目標)
 

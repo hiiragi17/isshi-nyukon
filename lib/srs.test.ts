@@ -19,7 +19,7 @@ function attempt(
   max: number,
   answeredAt: string,
 ): Attempt {
-  return { questionId, choiceIndex, pts, max, answeredAt };
+  return { questionId, choiceIndex, pts, max, answeredAt, questionRevision: 1 };
 }
 
 const DAY_MS = 24 * 60 * 60 * 1000;

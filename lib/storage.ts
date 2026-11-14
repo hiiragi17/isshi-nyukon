@@ -18,7 +18,11 @@ import { toggleFavorite, toggleFavoriteGroup } from "@/lib/favorites";
  * 呼び出し側はそれを捕まえて利用者に伝える(#473)。
  */
 export interface StorageAdapter {
-  /** 保存済みの Attempt を全件、記録順(古い→新しい)で返す */
+  /**
+   * 保存済みの Attempt を全件、記録順(古い→新しい)で返す。
+   * 問題の版番号が合わない記録も含めて返す(Adapter は絞らない)。集計に使う側は
+   * `lib/attempts.ts` の `loadAttempts` / `currentAttempts` を通す(#592)。
+   */
   getAttempts(): Promise<Attempt[]>;
   /** Attempt を1件、履歴の末尾に追記する(既存は上書きしない) */
   saveAttempt(a: Attempt): Promise<void>;
@@ -48,8 +52,14 @@ export interface StorageAdapter {
   toggleFavorites(itemKeys: string[]): Promise<string[]>;
 }
 
-/** localStorage 上の保存キー。バージョンを含めてスキーマ変更に備える */
-const STORAGE_KEY = "isshi-nyukon:attempts:v1";
+/**
+ * localStorage 上の保存キー。バージョンを含めてスキーマ変更に備える。
+ * v2 で `Attempt` に回答時の問題の版番号(`questionRevision`)を足し、成績を
+ * リセットした(#592)。v1 の記録は版番号を持たず、どの版の問題への回答かを
+ * 判別できないため、引き継がずに空から始める。旧キーのデータは消さずに残すが、
+ * 読まない。
+ */
+export const STORAGE_KEY = "isshi-nyukon:attempts:v2";
 /**
  * お気に入り(itemKey)の保存キー。成績履歴とは別キーで独立に持つ。
  * v1 は論点(topicId)単位で保存していたが、肢単位に細分化したため v2 で

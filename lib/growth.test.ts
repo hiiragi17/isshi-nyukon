@@ -24,7 +24,7 @@ function attempt(
   max: number,
   answeredAt: string,
 ): Attempt {
-  return { questionId, choiceIndex, pts, max, answeredAt };
+  return { questionId, choiceIndex, pts, max, answeredAt, questionRevision: 1 };
 }
 
 /** 肢2つの zenshi 問題(○肢=2点 / ×肢=3点)を最小構成で作る */

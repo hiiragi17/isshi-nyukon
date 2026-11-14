@@ -11,6 +11,7 @@ import {
   parseItemKey,
   latestByItem,
   LocalStorageAdapter,
+  STORAGE_KEY,
 } from "@/lib/storage";
 
 /** テスト用に Attempt を作るヘルパー */
@@ -21,7 +22,7 @@ function attempt(
   max: number,
   answeredAt: string,
 ): Attempt {
-  return { questionId, choiceIndex, pts, max, answeredAt };
+  return { questionId, choiceIndex, pts, max, answeredAt, questionRevision: 1 };
 }
 
 describe("itemKey — 肢の一意キー", () => {
@@ -186,6 +187,34 @@ describe("LocalStorageAdapter", () => {
     await expect(
       adapter.saveAttempt(attempt("q1", 0, 2, 2, "2026-07-01T00:00:00.000Z")),
     ).rejects.toThrow("QuotaExceededError");
+  });
+
+  it("保存のリセット(#592): 既定のキーは v2 で、旧キー(v1)のデータは読まず、消しもしない", async () => {
+    const LEGACY_KEY = "isshi-nyukon:attempts:v1";
+    expect(STORAGE_KEY).toBe("isshi-nyukon:attempts:v2");
+    const store = new Map<string, string>();
+    // リセット前の成績(版番号を持たない旧形式)が端末に残っている状態
+    const legacy = JSON.stringify([
+      {
+        questionId: "q1",
+        choiceIndex: 0,
+        pts: 2,
+        max: 2,
+        answeredAt: "2026-07-01T00:00:00.000Z",
+      },
+    ]);
+    store.set(LEGACY_KEY, legacy);
+    globals.window = fakeLocalStorage(store);
+
+    const adapter = new LocalStorageAdapter();
+    await expect(adapter.getAttempts()).resolves.toEqual([]);
+
+    // 新しい記録は v2 に入り、旧キーは書き換えられない
+    const a = attempt("q1", 0, 0, 2, "2026-11-14T00:00:00.000Z");
+    await adapter.saveAttempt(a);
+    await expect(adapter.getAttempts()).resolves.toEqual([a]);
+    expect(JSON.parse(store.get(STORAGE_KEY)!)).toEqual([a]);
+    expect(store.get(LEGACY_KEY)).toBe(legacy);
   });
 
   it("キーが違えば履歴は分離される", async () => {

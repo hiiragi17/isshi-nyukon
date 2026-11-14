@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { QUESTIONS } from "@/data/questions";
 import { storage, latestByItem, itemKey, parseItemKey } from "@/lib/storage";
+import { loadAttempts, revisionOf } from "@/lib/attempts";
 import { itemCountOf } from "@/lib/items";
 import { maxOf } from "@/lib/scoring";
 import {
@@ -190,11 +191,11 @@ export default function PlayPage() {
   // 保存済みの全件履歴から「肢ごとの最新結果」を復元する
   useEffect(() => {
     let alive = true;
-    storage
-      .getAttempts()
-      .then((attempts) => {
+    loadAttempts(storage, QUESTIONS)
+      .then(({ current }) => {
         if (!alive) return;
-        const latest = latestByItem(attempts);
+        // 版番号が現在の問題と合う記録だけで復元する(lib/attempts・#592)
+        const latest = latestByItem(current);
         const h: { [key: string]: Hist } = {};
         QUESTIONS.forEach((q, qi) => {
           const n = itemCountOf(q);
@@ -237,10 +238,9 @@ export default function PlayPage() {
       setActiveTerm(null);
       setScreen("play");
     };
-    storage
-      .getAttempts()
-      .then((attempts) => {
-        const latest = latestByItem(attempts);
+    loadAttempts(storage, QUESTIONS)
+      .then(({ current }) => {
+        const latest = latestByItem(current);
         const getLatest = (qi: number, ci: number): Hist | undefined => {
           const a = latest.get(itemKey(QUESTIONS[qi].id, ci));
           return a ? { pts: a.pts, max: a.max } : undefined;
@@ -294,6 +294,9 @@ export default function PlayPage() {
         pts,
         max,
         answeredAt: new Date().toISOString(),
+        // 画面が実際に表示した問題データ(このページが読み込んだ QUESTIONS)の版。
+        // 古いページがキャッシュから出た場合は、その古い版が記録される(#592)
+        questionRevision: revisionOf(QUESTIONS[qi]),
       })
       .catch((e) => {
         console.error("[storage] saveAttempt に失敗しました", e);
