@@ -100,6 +100,10 @@ import { souzokubun3 } from "./kenri/souzokubun-3";
 import { souzokubun4 } from "./kenri/souzokubun-4";
 import { souzokubun5 } from "./kenri/souzokubun-5";
 import { koukokuKaishiSpot } from "./gyoho/koukoku-kaishi-spot";
+import { shutokuzeiCalc } from "./zei/shutokuzei-calc";
+import { shutokuzeiCalc2 } from "./zei/shutokuzei-calc-2";
+import { koteiShisanzeiCalc } from "./zei/kotei-shisanzei-calc";
+import { koteiShisanzeiCalc2 } from "./zei/kotei-shisanzei-calc-2";
 import { coolingOff2 } from "./gyoho/cooling-off-2";
 import { menkyo2 } from "./gyoho/menkyo-2";
 import { takkenshi2 } from "./gyoho/takkenshi-2";
@@ -333,6 +337,10 @@ const RAW_QUESTIONS: Question[] = [
   souzokubun4,
   souzokubun5,
   koukokuKaishiSpot,
+  shutokuzeiCalc,
+  shutokuzeiCalc2,
+  koteiShisanzeiCalc,
+  koteiShisanzeiCalc2,
 ];
 
 /**
