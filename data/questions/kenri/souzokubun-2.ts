@@ -34,8 +34,8 @@ export const souzokubun2: Question = {
       { id: "A", x: 175, y: 45, label: "A", sub: "被相続人" },
       { id: "C", x: 60, y: 145, label: "C", sub: "子" },
       { id: "D", x: 175, y: 145, label: "D", sub: "子(先に死亡)" },
-      { id: "E", x: 130, y: 220, label: "E", sub: "孫(代襲)" },
-      { id: "F", x: 220, y: 220, label: "F", sub: "孫(代襲)" },
+      { id: "E", x: 70, y: 225, label: "E", sub: "孫(代襲)" },
+      { id: "F", x: 280, y: 225, label: "F", sub: "孫(代襲)" },
     ],
     edges: [
       { from: "A", to: "B", label: "婚姻", dashed: true },
