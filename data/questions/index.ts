@@ -167,6 +167,7 @@ import { joukenKigen } from "./kenri/jouken-kigen";
 import { futouRitoku } from "./kenri/futou-ritoku";
 import { zouyo } from "./kenri/zouyo";
 import { kigen } from "./kenri/kigen";
+import { juuyouJikou3 } from "./gyoho/juuyou-jikou-3";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -341,6 +342,7 @@ const RAW_QUESTIONS: Question[] = [
   shutokuzeiCalc2,
   koteiShisanzeiCalc,
   koteiShisanzeiCalc2,
+  juuyouJikou3,
 ];
 
 /**
