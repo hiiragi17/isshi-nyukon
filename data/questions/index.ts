@@ -170,6 +170,7 @@ import { kigen } from "./kenri/kigen";
 import { juuyouJikou3 } from "./gyoho/juuyou-jikou-3";
 import { sanjunanaJou3 } from "./gyoho/sanjunana-jou-3";
 import { baikaiKeiyaku3 } from "./gyoho/baikai-keiyaku-3";
+import { hachishuSeigen3 } from "./gyoho/hachishu-seigen-3";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -347,6 +348,7 @@ const RAW_QUESTIONS: Question[] = [
   juuyouJikou3,
   sanjunanaJou3,
   baikaiKeiyaku3,
+  hachishuSeigen3,
 ];
 
 /**
