@@ -59,7 +59,7 @@ export const jimushoAnnaijo3: Question = {
         "成年者である専任の宅建士を置く必要はない。",
       ],
       correct: false,
-      wrongIndex: 1,
+      wrongIndex: 2,
       reasons: [
         {
           text: "業務に関し展示会その他これに類する催しを実施する場所で、契約の申込みを受けるものも、成年者である専任の宅建士を1以上置くべき場所とされているから",
