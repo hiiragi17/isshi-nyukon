@@ -3,11 +3,11 @@ import type { Question } from "@/types";
 /** q177 不在者の財産管理・失踪宣告(管理人の権限・失踪期間・死亡とみなされる時点・取消しによる返還の範囲)(民法25条〜32条) */
 export const fuzaisha: Question = {
   id: "q177",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "民法25条〜32条・103条の原文を e-Gov 法令API v2(2026-11-20、asof=2026-04-01 で取得。law_revision_id=129AC0000000089_20260401_506AC0000000033)で確認。AI が取得した原文との照合で、人の承認前。肢1=31条/肢2=30条2項/肢3=32条2項/肢4=28条前段。kenri-verification.md q177 参照",
+    note: "民法25条〜32条・103条の原文を e-Gov 法令API v2(2026-11-20、asof=2026-04-01 で取得。law_revision_id=129AC0000000089_20260401_506AC0000000033)で確認。AI が取得した原文との照合。承認者(hiiragi17)の指示により verified: true(2026-11-20)。肢1=31条/肢2=30条2項/肢3=32条2項/肢4=28条前段。kenri-verification.md q177 参照",
   },
   lawVersion: {
     revisionId: "129AC0000000089_20260401_506AC0000000033",
