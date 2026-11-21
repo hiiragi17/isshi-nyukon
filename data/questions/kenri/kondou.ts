@@ -3,11 +3,11 @@ import type { Question } from "@/types";
 /** q179 混同(物権の混同・債権の混同)(民法179条・520条) */
 export const kondou: Question = {
   id: "q179",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "民法179条・180条・520条・440条の原文を e-Gov 法令API v2(2026-11-21、asof=2026-04-01 で取得。law_revision_id=129AC0000000089_20260401_506AC0000000033)で確認。AI が取得した原文との照合で、人の承認前。肢1=179条1項本文/肢2=179条1項ただし書(その物が第三者の権利の目的であるとき)/肢3=520条ただし書/肢4=179条3項。kenri-verification.md q179 参照",
+    note: "民法179条・180条・520条・440条の原文を e-Gov 法令API v2(2026-11-21、asof=2026-04-01 で取得。law_revision_id=129AC0000000089_20260401_506AC0000000033)で確認。AI が取得した原文との照合。承認者(hiiragi17)の指示により verified: true(2026-11-21)。肢1=179条1項本文/肢2=179条1項ただし書(その物が第三者の権利の目的であるとき)/肢3=520条ただし書/肢4=179条3項。kenri-verification.md q179 参照",
   },
   lawVersion: {
     revisionId: "129AC0000000089_20260401_506AC0000000033",
