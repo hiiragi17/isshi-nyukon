@@ -139,13 +139,6 @@ const LAW_VERSION_SYNC_EXCEPTIONS: Record<string, { diff: LawVersionDiff; reason
     reason:
       "読み物と q52 は所得税法(令和8年6月25日施行版。analysed)。q111 は租税特別措置法36条の2(基準日版。not_required)に依拠しており、法令が違う。",
   },
-  "q53/q53": {
-    diff: {
-      driftChecked: { reading: "unchecked", question: "checked" },
-    },
-    reason:
-      "同じ不動産鑑定評価基準について、読み物(2026-09-23)は利用者提供の PDF が国土交通省の現行公開版そのものか確認できないとして unchecked、問題は PDF の改正履歴から checked としている。判断が分かれており、どちらに揃えるかは要確認(#426 の PR で報告)。",
-  },
   "q123/q124": {
     diff: {
       revisionId: { reading: "令和8年地価公示の概要(国土交通省、令和8年3月18日公表)", question: "年次別法人企業統計調査(令和7年度)結果の概要(財務省、令和8年9月1日公表)" },
