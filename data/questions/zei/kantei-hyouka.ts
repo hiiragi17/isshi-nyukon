@@ -12,8 +12,8 @@ export const kanteiHyouka: Question = {
   },
   lawVersion: {
     verifiedAgainst: "2014-05-01",
-    driftChecked: "checked",
-    note: "不動産鑑定評価基準は法令ではなく国土交通省が定める鑑定評価の基準。国交省 PDF 冒頭に改正履歴が明記され、最終改正は平成26年5月1日(2014-05-01)で以後の改正は記載されていない=現行の基準。法令の examBasisDate(年度の4月1日施行という相対規則)は基準には直接当てはまらないため未設定とし、fileId で版を識別する。e-Gov の RevisionID は存在しない",
+    driftChecked: "unchecked",
+    note: "不動産鑑定評価基準は法令ではなく国土交通省が定める鑑定評価の基準。国交省 PDF 冒頭の改正履歴の最終は平成26年5月1日(2014-05-01)で、以後の改正は記載されていない。ただし、PDF の改正履歴は作成時点(作成日時メタデータ 2015-11-27)までのことしか示さず、基準日(2026-04-01)時点でも同じ内容であることは示さない。2026-11-23 に国交省サイト(https://www.mlit.go.jp/common/001043585.pdf)から同じ PDF を取得したが、これが現行の公開版であることを示す国交省の一覧ページは確認できなかった。読み物(data/readings/zei/kantei-hyouka.ts)と同じく、fail-closed の既定値 unchecked とする(#426。当初は checked)。法令の examBasisDate(年度の4月1日施行という相対規則)は基準には直接当てはまらないため未設定とし、fileId で版を識別する。e-Gov の RevisionID は存在しない",
   },
   category: "税・その他",
   topic: "不動産鑑定評価",

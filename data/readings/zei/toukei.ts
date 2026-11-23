@@ -16,7 +16,8 @@ import type { Reading } from "@/types";
  * 統計は毎年数値が変わる。数値の出典と公表時期を本文に明記し、年度が変わったときの
  * 見直し箇所がわかるようにした。年度更新の機械チェック(`data/questions/integrity.test.ts`)の
  * 対象は問題(q123・q124)の `lawVersion.examBasisDate` で、読み物は現時点でその対象外のため、
- * 問題の数値を更新するときは、この読み物も一緒に見直すこと。
+ * 問題の数値を更新するときは、この読み物も一緒に見直すこと。問題の `lawVersion` だけを更新して
+ * この読み物を直し忘れた場合は、`data/readings/law-version-sync.test.ts`(#426)が検出する。
  *
  * 追加時は `verified: false` とし、提示原文との突き合わせを
  * 確認したうえで `verified: true` にした(CLAUDE.mdの`verified`運用に準拠)。
