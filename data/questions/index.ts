@@ -176,6 +176,7 @@ import { kashiTanpoRikou3 } from "./gyoho/kashi-tanpo-rikou-3";
 import { hanshuuhou3 } from "./gyoho/hanshuuhou-3";
 import { fuzaisha } from "./kenri/fuzaisha";
 import { juuyouJikou4 } from "./gyoho/juuyou-jikou-4";
+import { kondou } from "./kenri/kondou";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -359,6 +360,7 @@ const RAW_QUESTIONS: Question[] = [
   hanshuuhou3,
   fuzaisha,
   juuyouJikou4,
+  kondou,
 ];
 
 /**
