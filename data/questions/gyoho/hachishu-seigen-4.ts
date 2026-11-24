@@ -4,11 +4,11 @@ import type { Question } from "@/types";
 export const hachishuSeigen4: Question = {
   id: "q180",
   topicId: "q17",
-  verified: false,
+  verified: true,
   source: {
     level: "primary",
     answerLevel: "primary",
-    note: "宅建業法38条・39条・78条2項の原文を e-Gov 法令API v2(asof=2026-04-01 で取得。law_revision_id 327AC1000000176_20260401_507AC0000000068)で確認。AI が取得した原文との照合で、人の承認前。肢1=39条1項(代金の額の十分の二を『超える』額の手付を受領することができない)/肢2=39条2項・3項(前項の規定に反する特約で、買主に不利なものは、無効)/肢3=38条1項(『損害賠償の額を予定し、又は違約金を定めるときは』の定めに対する制限)/肢4=78条2項(37条の2から43条までは宅建業者相互間の取引に適用しない)。照合の詳細は docs/verification/gyoho-verification.md の q180",
+    note: "宅建業法38条・39条・78条2項の原文を e-Gov 法令API v2(asof=2026-04-01 で取得。law_revision_id 327AC1000000176_20260401_507AC0000000068)で確認。AI が取得した原文との照合。承認者(hiiragi17)の指示により verified: true(2026-11-24)。肢1=39条1項(代金の額の十分の二を『超える』額の手付を受領することができない)/肢2=39条2項・3項(前項の規定に反する特約で、買主に不利なものは、無効)/肢3=38条1項(『損害賠償の額を予定し、又は違約金を定めるときは』の定めに対する制限)/肢4=78条2項(37条の2から43条までは宅建業者相互間の取引に適用しない)。照合の詳細は docs/verification/gyoho-verification.md の q180",
   },
   lawVersion: {
     revisionId: "327AC1000000176_20260401_507AC0000000068",
