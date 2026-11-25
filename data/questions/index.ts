@@ -180,6 +180,7 @@ import { kondou } from "./kenri/kondou";
 import { hachishuSeigen4 } from "./gyoho/hachishu-seigen-4";
 import { baikaiKeiyaku4 } from "./gyoho/baikai-keiyaku-4";
 import { sanjugoSanjunanaShiwake } from "./gyoho/sanjugo-sanjunana-shiwake";
+import { jimushoAnnaijo4 } from "./gyoho/jimusho-annaijo-4";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -367,6 +368,7 @@ const RAW_QUESTIONS: Question[] = [
   hachishuSeigen4,
   baikaiKeiyaku4,
   sanjugoSanjunanaShiwake,
+  jimushoAnnaijo4,
 ];
 
 /**
