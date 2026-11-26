@@ -33,8 +33,7 @@ export const jimushoAnnaijo4: Question = {
     {
       segments: [
         "本店の専任の宅地建物取引士は、",
-        "本店の通常の勤務時間のうち、週に2日だけ勤務していれば足り、",
-        "常勤している必要はない。",
+        "本店の通常の勤務時間のうち週に2日だけ勤務していれば足り、常勤している必要はない。",
       ],
       correct: false,
       wrongIndex: 1,
