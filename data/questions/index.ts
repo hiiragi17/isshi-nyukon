@@ -182,6 +182,7 @@ import { baikaiKeiyaku4 } from "./gyoho/baikai-keiyaku-4";
 import { sanjugoSanjunanaShiwake } from "./gyoho/sanjugo-sanjunana-shiwake";
 import { jimushoAnnaijo4 } from "./gyoho/jimusho-annaijo-4";
 import { jimushoAnnaijo5 } from "./gyoho/jimusho-annaijo-5";
+import { takkenshi3 } from "./gyoho/takkenshi-3";
 
 /**
  * 全問題(生データ)。既存の順序(q1〜q6)は履歴キーやスコアリングが配列
@@ -371,6 +372,7 @@ const RAW_QUESTIONS: Question[] = [
   sanjugoSanjunanaShiwake,
   jimushoAnnaijo4,
   jimushoAnnaijo5,
+  takkenshi3,
 ];
 
 /**
